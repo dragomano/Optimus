@@ -1,0 +1,13 @@
+#optimus p.description{text-align:center;margin:2px;border-radius:6px}
+.windowbg2{margin-bottom:6px}
+.centertext table{width:100%}
+div[class=min]{float:left;width:50%}
+#optimus .clear{margin-bottom:5px}
+.content {padding: 1em 2em}
+.content textarea[name*="robots"]{width:90%;font-size:.9em}
+.content ul {margin:0;padding-left:30px;text-align:left}
+.content p {padding-left:10px}
+dl.settings {margin:0 !important}
+dl.settings dt, dl.settings dd {width:50% !important}
+textarea#optimus_description {width: 80%}
+.block_code {width: 90%}

@@ -1,0 +1,4 @@
+[center][color=red][size=16pt][b]Optimus Brave[/b][/size][/color]
+[color=blue][b][size=10pt]By Bugo[/size][/b][/color]
+
+[color=green]ѕеред вами мод, который, возможно, поможет вам решить р€д проблем, св€занных с индексацией форума в поисковиках.[/color][hr][b]ќсоба€ благодарность[/b]: [url=http://www.yworld.ru/forum/index.php?action=profile;u=1]Yworld_garry[/url] за тему [url=http://www.simplemachines.ru/index.php/topic,5089.0.html]ѕерва€ верси€ robots.txt[/url].[/center][hr]ћод распростран€етс€ по лицензии [url=http://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url]
