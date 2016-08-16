@@ -10,17 +10,16 @@ if ((SMF == 'SSI') && !$user_info['is_admin'])
 
 // Removing settings
 //$smcFunc['db_query']('', "DELETE FROM {db_prefix}settings WHERE variable LIKE 'optimus_%'");
-$smcFunc['db_query']('', "DELETE FROM {db_prefix}scheduled_tasks WHERE task LIKE 'optimus_sitemap'");
 
 // Hooks
 $hooks = array(
-	'integrate_pre_include' => '$sourcedir/Subs-Optimus.php',
+	'integrate_pre_include'   => '$sourcedir/Subs-Optimus.php',
 	'integrate_admin_include' => '$sourcedir/Admin-Optimus.php',
-	'integrate_load_theme' => 'optimus_home',
-	'integrate_admin_areas' => 'optimus_admin_areas',
-	'integrate_menu_buttons' => 'optimus_operations',
-	'integrate_buffer' => 'optimus_buffer',
-	'integrate_create_topic' => 'optimus_sitemap'
+	'integrate_load_theme'    => 'optimus_home',
+	'integrate_admin_areas'   => 'optimus_admin_areas',
+	'integrate_menu_buttons'  => 'optimus_operations',
+	'integrate_buffer'        => 'optimus_buffer',
+	'integrate_create_topic'  => 'optimus_sitemap',
 );
 
 $call = 'remove_integration_function';

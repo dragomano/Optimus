@@ -2,35 +2,31 @@
 <!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
-	<name>Optimus Brave</name>
-	<version>1.8.7</version>
+	<name>Optimus</name>
+	<version>1.9</version>
 	<type>modification</type>
 	
 	<install for="2.0 - 2.0.99">
 		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<readme parsebbc="true">readme/readme.txt</readme>
-		<require-file name="files/Optimus.template.php" destination="$themedir">Template file</require-file>
-		<require-file name="core/Admin-Optimus.php" destination="$sourcedir">Core file</require-file>
-		<require-file name="core/Subs-Optimus.php" destination="$sourcedir">Core file</require-file>
-		<require-dir name="files/languages" destination="$themedir">Language files</require-dir>
-		<require-dir name="files/css" destination="$themedir">CSS files</require-dir>
+		<require-file name="engine/Admin-Optimus.php" destination="$sourcedir">Core file</require-file>
+		<require-file name="engine/Subs-Optimus.php" destination="$sourcedir">Core file</require-file>		
+		<require-file name="default/Optimus.template.php" destination="$themedir">Template file</require-file>
+		<require-dir name="default/languages" destination="$themedir">Language files</require-dir>
+		<require-dir name="default/css" destination="$themedir">CSS files</require-dir>
 		<database>install.php</database>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 	
 	<uninstall for="2.0 - 2.0.99">
 		<code>uninstall.php</code>
+		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/css/optimus.css" />
 		<remove-file name="$themedir/css/sitemap.xsl" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$sourcedir/Admin-Optimus.php" />
 		<remove-file name="$sourcedir/Subs-Optimus.php" />
-		<remove-file name="$languagedir/Optimus.english.php" />
-		<remove-file name="$languagedir/Optimus.russian.php" />
-		<remove-file name="$languagedir/Optimus.russian-utf8.php" />
-		<remove-file name="$languagedir/Optimus.turkish.php" />
-		<remove-file name="$languagedir/Optimus.turkish-utf8.php" />
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 	
