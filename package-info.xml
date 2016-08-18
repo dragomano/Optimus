@@ -15,18 +15,20 @@
 		<require-file name="default/Optimus.template.php" destination="$themedir">Template file</require-file>
 		<require-dir name="default/languages" destination="$themedir">Language files</require-dir>
 		<require-dir name="default/css" destination="$themedir">CSS files</require-dir>
-		<database>install.php</database>
+		<code>add_settings.php</code>
+        <code>hooks.php</code>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 	
 	<uninstall for="SMF 2.1 Beta 2, 2.1 - 2.1.99">
-		<code>uninstall.php</code>
 		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/css/optimus.css" />
 		<remove-file name="$themedir/css/sitemap.xsl" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$sourcedir/Admin-Optimus.php" />
 		<remove-file name="$sourcedir/Subs-Optimus.php" />
+		<code>add_settings.php</code>
+        <code>hooks.php</code>
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 	

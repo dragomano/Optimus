@@ -9,7 +9,7 @@ $txt['optimus_common_desc'] = 'On this page you can change a forum description, 
 $txt['optimus_main_page'] = 'Homepage';
 $txt['optimus_common_info'] = 'Well, content of the description tag may be taken into account when the robot determines if a page matches a search query.';
 $txt['optimus_portal_compat'] = 'Portal integration';
-$txt['optimus_portal_compat_set'] = array('None', 'PortaMx', 'SimplePortal');
+$txt['optimus_portal_compat_set'] = array('None', 'PortaMx', 'SimplePortal/EhPortal');
 $txt['optimus_portal_index'] = 'Portal homepage title';
 $txt['optimus_forum_index'] = 'Forum homepage title';
 $txt['optimus_description'] = 'The forum annotation<br /><span class="smalltext">Will be used as content of the meta-tag <strong>description</strong>.</span>';
@@ -22,7 +22,6 @@ $txt['optimus_templates'] = array(
 	'board' => array('{board_name}', ' - page {#} - ', '{forum_name}'),
 	'topic' => array('{topic_name}', ' - page {#} - ', '{board_name} - {forum_name}')
 );
-$txt['optimus_board_description'] = 'Display board description as the meta-tag <strong>description</strong>';
 $txt['optimus_topic_description'] = 'Display topic description as the meta-tag <strong>description</strong><br /><span class="smalltext">Use <a href="http://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank">Topic Descriptions mod</a> to create short descriptions for topics.</span>';
 $txt['optimus_404_status'] = 'Return <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">403/404 code</a> depending on the requested page\'s status';
 $txt['optimus_404_page_title'] = '404 - Page not found';

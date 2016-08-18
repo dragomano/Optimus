@@ -19,36 +19,36 @@ define('OB_VER', '2.0 beta');
 define('OB_LINK', 'http://dragomano.ru/mods/optimus');
 define('OB_AUTHOR', 'Bugo');
 
-// integrate_load_theme hook
-function optimus_home()
+function loadOptimusHooks()
 {
-	global $modSettings, $scripturl, $boardurl, $context, $mbname, $txt;
+	add_integration_function('integrate_load_theme', 'addOptimusLoadTheme', false);
+	add_integration_function('integrate_load_theme', 'addOptimusCounters', false);
+    add_integration_function('integrate_admin_areas', 'addOptimusAdminArea', false);
+    add_integration_function('integrate_modify_modifications', 'addOptimusAdminAction', false);
+    add_integration_function('integrate_menu_buttons', 'addOptimusCopyright', false);
+    add_integration_function('integrate_menu_buttons', 'addOptimusOperations', false);
+	add_integration_function('integrate_buffer', 'addOptimusBuffer', false);
+	add_integration_function('integrate_create_topic', 'getOptimusSitemap', false);
+}
 
-	loadLanguage('Optimus/Optimus');
+// integrate_load_theme hook
+function addOptimusLoadTheme()
+{
+	global $txt, $modSettings;
 
-	if (!empty($modSettings['optimus_remove_indexphp']) && empty($modSettings['queryless_urls'])) {
-		$scripturl = $boardurl . '/';
-		$context['javascript_vars']['smf_scripturl'] = '"' . $scripturl . '"';
-	}
+	loadLanguage('Optimus/');
 
-	// Portal
-	if (!isset($modSettings['optimus_portal_compat']))
-		$modSettings['optimus_portal_compat'] = 0;
-
-	if (!empty($modSettings['optimus_portal_compat'])) {
-		if (!empty($modSettings['pmx_frontmode']) || (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1)) {
-			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']) && !empty($modSettings['optimus_portal_index']))	{
-				$context['forum_name'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
-			}
-		}
-	}
-
-	// Forum
+	// Forum title
 	$txt['forum_index'] = '%1$s';
 	if (!empty($modSettings['optimus_forum_index']))
 		$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
+}
 
-	// Counters
+// ¬ыводим счетчики
+function addOptimusCounters()
+{
+	global $modSettings, $context;
+
 	$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
 
 	if (!in_array($context['current_action'], $ignored_actions)) {
@@ -72,55 +72,164 @@ function optimus_home()
 		if (!empty($modSettings['optimus_count_code']) && !empty($modSettings['optimus_count_code_css']))
 			addInlineCss($modSettings['optimus_count_code_css']);
 	}
+}
 
-	// Special fix for PortaMx
-	if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 1) {
-		if (empty($_REQUEST['action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic'])) {
-			// ƒл€ режима "Ѕез главной страницы, направл€ть сразу на форум"
-			if (!empty($modSettings['optimus_meta']) && empty($modSettings['pmx_frontmode'])) {
-				$meta = '';
-				$test = @unserialize($modSettings['optimus_meta']);
+function addOptimusCopyright()
+{
+    global $context;
 
-				foreach ($test as $var) {
-					$meta .= "\n\t" . '<meta name="' . $var['name'] . '" content="' . $var['content'] . '">';
-				}
-
-				$context['html_headers'] .= $meta;
-			}
-		}
-	}
+    if ($context['current_action'] == 'credits') {
+        $context['copyrights']['mods'][] = '<a href="' . OB_LINK . '" target="_blank" title="' . OB_VER . '">Optimus</a> &copy; 2010&ndash;' . date('Y') . ', ' . OB_AUTHOR;
+    }
 }
 
 // integrate_menu_buttons hook
-function optimus_operations()
+function addOptimusOperations()
 {
 	global $modSettings, $context, $scripturl, $smcFunc, $boarddir, $forum_copyright, $boardurl, $txt;
 
-	// Canonical url for portal mods
-	if (!empty($modSettings['optimus_portal_compat']) && in_array($context['current_action'], array('forum', 'community')))
-		$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
+	if (!isset($modSettings['optimus_portal_compat']))
+		$modSettings['optimus_portal_compat'] = 0;
 
-	// Description
+	// Some hacks for portal mods
+	if (!empty($modSettings['optimus_portal_compat'])) {
+		// PortaMx
+		if ($modSettings['optimus_portal_compat'] == 1) {
+			if (isset($context['current_action']) && $context['current_action'] == 'community') {
+				if (empty($modSettings['pmx_frontmode'])) {
+					$context['canonical_url'] = $boardurl . '/';
+				} else {
+					$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
+				}
+			} else {
+				if (empty($_REQUEST['action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic'])) {
+					$context['canonical_url'] = $boardurl . '/';
+
+					// Portal title
+					if (!empty($modSettings['optimus_portal_index']))
+						$context['page_title'] .= ' - ' . $modSettings['optimus_portal_index'];
+				}
+			}
+		}
+
+		// EhPortal
+		if ($modSettings['optimus_portal_compat'] == 2 && isset($context['current_action'])) {
+			if ($context['current_action'] == 'portal') {
+				$context['canonical_url'] = $boardurl . '/';
+
+				// Portal title
+				if (!empty($modSettings['optimus_portal_index']))
+					$context['page_title'] .= ' - ' . $modSettings['optimus_portal_index'];
+			}
+
+			if ($context['current_action'] == 'forum') {
+				$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
+			}
+		}
+	}
+
+	// Forum description
 	if (empty($context['current_action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic']))
 		$context['meta_description'] = !empty($modSettings['optimus_description']) ? $smcFunc['htmlspecialchars']($modSettings['optimus_description']) : $context['meta_description'];
 
-	get_optimus_page_templates();
+	getOptimusPageTemplates();
 
-	get_optimus_aeva_media();
+	getOptimusAevaMedia();
 
-	get_optimus_http_status();
+	getOptimusHttpStatus();
 
 	// XML sitemap link
 	if (!empty($modSettings['optimus_sitemap_link']) && file_exists($boarddir . '/sitemap.xml'))
 		$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml" target="_blank">' . $txt['optimus_sitemap_xml_link'] . '</a>';
+}
 
-	// Copyright Info
-	if ($context['current_action'] == 'credits')
-		$context['copyrights']['mods'][] = '<a href="' . OB_LINK . '" target="_blank" title="' . OB_VER . '">Optimus</a> &copy; 2010&ndash;' . date('Y') . ', ' . OB_AUTHOR;
+/**
+ * This called via integrate_buffer hook
+ *
+ * @param  array $buffer [принимаем текущее содержимое буфера страницы]
+ * @return array $buffer [возвращаем новое содержимое буфера, с произведенными заменами]
+ */
+function addOptimusBuffer(&$buffer)
+{
+	global $context, $modSettings, $scripturl, $boardurl, $settings, $forum_copyright;
+
+	if (isset($_REQUEST['xml']) || $context['current_action'] == 'printpage')
+		return $buffer;
+
+	$replacements = array();
+
+	if (!empty($modSettings['optimus_remove_indexphp']) && empty($modSettings['queryless_urls'])) {
+		$index = $scripturl;
+		$del_index = $boardurl . '/';
+		$replacements[$index] = $del_index;
+	}
+
+	// Verification tags
+	if (isset($context['canonical_url']) && !empty($modSettings['optimus_meta'])) {
+		$meta = '';
+		$test = @unserialize($modSettings['optimus_meta']);
+
+		foreach ($test as $var) {
+			$meta .= "\n\t" . '<meta name="' . $var['name'] . '" content="' . $var['content'] . '">';
+		}
+
+		$charset_meta = '<meta charset="' . $context['character_set'] . '">';
+		$check_meta = $charset_meta . $meta;
+		$replacements[$charset_meta] = $check_meta;
+	}
+
+	// Open Graph for media pages
+	if ($context['current_action'] == 'media' && !empty($_REQUEST['sa']) && !empty($_REQUEST['in'])) {
+		if ($_REQUEST['sa'] == 'item') {
+			$item = (int) $_REQUEST['in'];
+
+			if (function_exists('aeva_getItemData')) {
+				$handler = new aeva_media_handler;
+				$exif = @unserialize($context['item_data']['exif']);
+
+				if ($context['item_data']['type'] == 'video') {
+					$xmlns = 'html' . ($context['right_to_left'] ? ' dir="rtl"' : '');
+					$new_xmlns = $xmlns . ' xmlns:og="http://ogp.me/ns#"';
+					$replacements[$xmlns] = $new_xmlns;
+
+					$duration = $exif['duration'];
+
+					$context['page_title_html_safe'] = $context['item_data']['title'];
+					$context['canonical_url'] = $scripturl . '?action=media;sa=item;in=' . $item;
+					$settings['og_image'] = $scripturl . '?action=media;sa=media;in=' . $item . ';thumb';
+
+					if (!empty($context['item_data']['description']))
+						$context['meta_description'] = html_entity_decode($context['item_data']['description'], ENT_QUOTES, $context['character_set']);
+
+					$context['ogp_meta'] = '
+	<meta property="og:video" content="' . $boardurl . '/MGalleryItem.php?id=' . $item . '">
+	<meta property="og:video:height" content="' . $context['item_data']['height'] . '">
+	<meta property="og:video:width" content="' . $context['item_data']['width'] . '">
+	<meta property="og:video:type" content="' . $handler->getMimeFromExt($context['item_data']['filename']) . '">
+	<meta property="og:duration" content="' . $duration . '" />';
+				}
+
+				if (!empty($context['ogp_meta'])) {
+					$head = '<title>' . $context['page_title_html_safe'] . '</title>';
+					$new_head = $context['ogp_meta'] . "\n\t" . $head;
+					$replacements[$head] = $new_head;
+				}
+			}
+		}
+	}
+
+	// Counters
+	$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
+	if (!in_array($context['current_action'], $ignored_actions)) {
+		if (!empty($modSettings['optimus_count_code']))
+			$replacements[$forum_copyright] = $modSettings['optimus_count_code'] . '<br>' . $forum_copyright;
+	}
+
+	return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 }
 
 // ќбрабатываем шаблоны заголовков страниц
-function get_optimus_page_templates()
+function getOptimusPageTemplates()
 {
 	global $modSettings, $txt, $context, $topicinfo, $board_info;
 
@@ -181,7 +290,7 @@ function get_optimus_page_templates()
 		$context['page_title'] = strtr($topic_name_tpl . $topic_page_number . $topic_site_tpl, $trans);
 		$context['meta_description'] = !empty($modSettings['optimus_topic_description']) && !empty($context['topic_description']) ? $context['topic_description'] : '';
 
-		get_optimus_og_image();
+		getOptimusOgImage();
 	}
 
 	// Boards
@@ -198,7 +307,7 @@ function get_optimus_page_templates()
 }
 
 // ƒостаем URL вложени€ из первого сообщени€ темы
-function get_optimus_og_image()
+function getOptimusOgImage()
 {
 	global $modSettings, $settings, $smcFunc, $context, $scripturl;
 
@@ -231,7 +340,7 @@ function get_optimus_og_image()
 }
 
 // Set canonical URLs and descriptions for AM pages
-function get_optimus_aeva_media()
+function getOptimusAevaMedia()
 {
 	global $context, $scripturl, $smcFunc;
 
@@ -252,7 +361,7 @@ function get_optimus_aeva_media()
 }
 
 // ¬озвращаемые коды состо€ни€, в зависимости от ситуации
-function get_optimus_http_status()
+function getOptimusHttpStatus()
 {
 	global $modSettings, $board_info, $context, $txt;
 
@@ -281,93 +390,12 @@ function get_optimus_http_status()
 }
 
 /**
- * This called via integrate_buffer hook
- *
- * @param  array $buffer [принимаем текущее содержимое буфера страницы]
- * @return array $buffer [возвращаем новое содержимое буфера, с произведенными модом заменами]
- */
-function optimus_buffer(&$buffer)
-{
-	global $modSettings, $context, $txt, $scripturl, $settings, $boardurl, $sourcedir, $forum_copyright;
-
-	if (isset($_REQUEST['xml']) || $context['current_action'] == 'printpage')
-		return $buffer;
-
-	$replacements = array();
-
-	if (empty($_REQUEST['action']) || !empty($_REQUEST['board']) || !empty($_REQUEST['topic']) || $context['current_action'] == 'media') {
-		// Verification tags
-		if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 2) {
-			$meta = '';
-			$test = @unserialize($modSettings['optimus_meta']);
-
-			foreach ($test as $var) {
-				$meta .= "\n\t" . '<meta name="' . $var['name'] . '" content="' . $var['content'] . '">';
-			}
-
-			$charset_meta = '<meta charset="' . $context['character_set'] . '">';
-			$check_meta = $charset_meta . $meta;
-			$replacements[$charset_meta] = $check_meta;
-		}
-	}
-
-	// Open Graph for media pages
-	if ($context['current_action'] == 'media' && !empty($_REQUEST['sa']) && !empty($_REQUEST['in'])) {
-		if ($_REQUEST['sa'] == 'item') {
-			$item = (int) $_REQUEST['in'];
-
-			if (function_exists('aeva_getItemData')) {
-				$handler = new aeva_media_handler;
-				$exif = @unserialize($context['item_data']['exif']);
-
-				if ($context['item_data']['type'] == 'video') {
-					$xmlns = 'html' . ($context['right_to_left'] ? ' dir="rtl"' : '');
-					$new_xmlns = $xmlns . ' xmlns:og="http://ogp.me/ns#"';
-					$replacements[$xmlns] = $new_xmlns;
-
-					$duration = $exif['duration'];
-
-					$context['page_title_html_safe'] = $context['item_data']['title'];
-					$context['canonical_url'] = $scripturl . '?action=media;sa=item;in=' . $item;
-					$settings['og_image'] = $scripturl . '?action=media;sa=media;in=' . $item . ';thumb';
-
-					if (!empty($context['item_data']['description']))
-						$context['meta_description'] = html_entity_decode($context['item_data']['description'], ENT_QUOTES, $context['character_set']);
-
-					$context['ogp_meta'] = '
-	<meta property="og:video" content="' . $boardurl . '/MGalleryItem.php?id=' . $item . '">
-	<meta property="og:video:height" content="' . $context['item_data']['height'] . '">
-	<meta property="og:video:width" content="' . $context['item_data']['width'] . '">
-	<meta property="og:video:type" content="' . $handler->getMimeFromExt($context['item_data']['filename']) . '">
-	<meta property="og:duration" content="' . $duration . '" />';
-				}
-
-				if (!empty($context['ogp_meta'])) {
-					$head = '<title>' . $context['page_title_html_safe'] . '</title>';
-					$new_head = $context['ogp_meta'] . "\n\t" . $head;
-					$replacements[$head] = $new_head;
-				}
-			}
-		}
-	}
-
-	// Counters
-	$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
-	if (!in_array($context['current_action'], $ignored_actions)) {
-		if (!empty($modSettings['optimus_count_code']))
-			$replacements[$forum_copyright] = $modSettings['optimus_count_code'] . '<br>' . $forum_copyright;
-	}
-
-	return str_replace(array_keys($replacements), array_values($replacements), $buffer);
-}
-
-/**
  * ќбработка дат
  *
  * @param  string $timestamp [принимаем отметку времени страницы]
  * @return string $result    [возвращаем отметку времени в новом формате, дл€ карты сайта]
  */
-function get_optimus_sitemap_date($timestamp = '')
+function getOptimusSitemapDate($timestamp = '')
 {
 	$timestamp = empty($timestamp) ? time() : $timestamp;
 	$gmt = substr(date("O", $timestamp), 0, 3) . ':00';
@@ -383,7 +411,7 @@ function get_optimus_sitemap_date($timestamp = '')
  * @param  string $data [текст дл€ вставки в файл]
  * @return bool         [true при успешном создании, false в противном случае]
  */
-function create_optimus_file($path, $data)
+function createOptimusFile($path, $data)
 {
 	if (!$fp = @fopen($path, 'w'))
 		return false;
@@ -401,7 +429,7 @@ function create_optimus_file($path, $data)
  *
  * @param  array $array [массив страниц дл€ занесени€ в карту]
  */
-function check_optimus_count_urls($array)
+function checkOptimusCountUrls($array)
 {
 	global $txt;
 
@@ -416,7 +444,7 @@ function check_optimus_count_urls($array)
  *
  * @param  string $file [принимаем ссылку на файл]
  */
-function check_optimus_filesize($file)
+function checkOptimusFilesize($file)
 {
 	global $txt;
 
@@ -434,7 +462,7 @@ function check_optimus_filesize($file)
  * @param  string $time [принимаем врем€ изменени€ страницы]
  * @return string       [возвращаем одно из предустановленных значений, дл€ установки периодичности проверки]
  */
-function get_optimus_sitemap_frequency($time)
+function getOptimusSitemapFrequency($time)
 {
 	$frequency = time() - $time;
 
@@ -455,7 +483,7 @@ function get_optimus_sitemap_frequency($time)
  *
  * @return bool [true дл€ заполнени€ отчета в журнале диспетчера задач]
  */
-function optimus_sitemap()
+function getOptimusSitemap()
 {
 	global $modSettings, $sourcedir, $boardurl, $smcFunc, $scripturl, $context, $boarddir;
 
@@ -524,8 +552,8 @@ function optimus_sitemap()
 	$fm[] = array(
 		'loc'        => $boardurl . '/',
 		'wap'        => $scripturl . '/?' . $mobile_type,
-		'lastmod'    => get_optimus_sitemap_date($last_edit),
-		'changefreq' => get_optimus_sitemap_frequency($last_edit),
+		'lastmod'    => getOptimusSitemapDate($last_edit),
+		'changefreq' => getOptimusSitemapFrequency($last_edit),
 		'priority'   => 1,
 	);
 
@@ -539,8 +567,8 @@ function optimus_sitemap()
 				$fm[] = array(
 					'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
 					'wap'        => $scripturl . '?board=' . $entry['id_board'] . '.0;' . $mobile_type,
-					'lastmod'    => get_optimus_sitemap_date($last_edit),
-					'changefreq' => get_optimus_sitemap_frequency($last_edit),
+					'lastmod'    => getOptimusSitemapDate($last_edit),
+					'changefreq' => getOptimusSitemapFrequency($last_edit),
 					'priority'   => 0.8,
 				);
 			}
@@ -549,8 +577,8 @@ function optimus_sitemap()
 			$fm[] = array(
 				'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
 				'wap'        => $scripturl . '?board=' . $entry['id_board'] . '.0;' . $mobile_type,
-				'lastmod'    => get_optimus_sitemap_date($last_edit),
-				'changefreq' => get_optimus_sitemap_frequency($last_edit),
+				'lastmod'    => getOptimusSitemapDate($last_edit),
+				'changefreq' => getOptimusSitemapFrequency($last_edit),
 				'priority'   => 0.8,
 			);
 		}
@@ -584,8 +612,8 @@ function optimus_sitemap()
 				$fm[] = array(
 					'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $scripturl . '?topic=' . $entry['id_topic'] . '.0',
 					'wap'        => $scripturl . '?topic=' . $entry['id_topic'] . '.0;' . $mobile_type,
-					'lastmod'    => get_optimus_sitemap_date($last_edit),
-					'changefreq' => get_optimus_sitemap_frequency($last_edit),
+					'lastmod'    => getOptimusSitemapDate($last_edit),
+					'changefreq' => getOptimusSitemapFrequency($last_edit),
 					'priority'   => 0.6,
 				);
 			}
@@ -595,8 +623,8 @@ function optimus_sitemap()
 			$fm[] = array(
 				'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $scripturl . '?topic=' . $entry['id_topic'] . '.0',
 				'wap'        => $scripturl . '?topic=' . $entry['id_topic'] . '.0;' . $mobile_type,
-				'lastmod'    => get_optimus_sitemap_date($last_edit),
-				'changefreq' => get_optimus_sitemap_frequency($last_edit),
+				'lastmod'    => getOptimusSitemapDate($last_edit),
+				'changefreq' => getOptimusSitemapFrequency($last_edit),
 				'priority'   => 0.6,
 			);
 		}
@@ -683,7 +711,7 @@ function optimus_sitemap()
 	$footer = '</urlset>';
 	$out = '';
 
-	check_optimus_count_urls($fm);
+	checkOptimusCountUrls($fm);
 
 	foreach ($fm as $entry)	{
 		$out .= $t . '<url>' . $n;
@@ -764,8 +792,8 @@ function optimus_sitemap()
 
 	// —оздаем обычную карту сайта
 	$sitemap = $boarddir . '/sitemap.xml';
-	create_optimus_file($sitemap, $out);
-	check_optimus_filesize($sitemap);
+	createOptimusFile($sitemap, $out);
+	checkOptimusFilesize($sitemap);
 
 	//  арта дл€ мобилок
 	if (!empty($mobile_type)) {
@@ -773,8 +801,8 @@ function optimus_sitemap()
 		$xml_data = $header . $mobile . $footer;
 		$sitemap = $boarddir . '/sitemap_mobile.xml';
 
-		create_optimus_file($sitemap, $xml_data);
-		check_optimus_filesize($sitemap);
+		createOptimusFile($sitemap, $xml_data);
+		checkOptimusFilesize($sitemap);
 	}
 
 	//  арта ссылок на изображени€ в √алерее
@@ -783,8 +811,8 @@ function optimus_sitemap()
 		$xml_data = $header . $images . $footer;
 		$sitemap = $boarddir . '/sitemap_images.xml';
 
-		create_optimus_file($sitemap, $xml_data);
-		check_optimus_filesize($sitemap);
+		createOptimusFile($sitemap, $xml_data);
+		checkOptimusFilesize($sitemap);
 	}
 
 	//  арта ссылок на видеоролики в √алерее
@@ -793,8 +821,8 @@ function optimus_sitemap()
 		$xml_data = $header . $videos . $footer;
 		$sitemap = $boarddir . '/sitemap_videos.xml';
 
-		create_optimus_file($sitemap, $xml_data);
-		check_optimus_filesize($sitemap);
+		createOptimusFile($sitemap, $xml_data);
+		checkOptimusFilesize($sitemap);
 	}
 
 	// Return for the log...

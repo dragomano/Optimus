@@ -20,7 +20,7 @@ if (!defined('SMF'))
  *
  * @param  array &$admin_areas [массив кнопок в меню админки]
  */
-function optimus_admin_areas(&$admin_areas)
+function addOptimusAdminArea(&$admin_areas)
 {
 	global $txt;
 
@@ -33,10 +33,10 @@ function optimus_admin_areas(&$admin_areas)
 		array(
 			'optimus' => array(
 				'label'    => $txt['optimus_title'],
-				'function' => 'optimus_area_settings',
+				'function' => 'addOptimusAreaSettings',
 				'icon'     => 'optimus',
 				'subsections' => array(
-					'common'       => array($txt['optimus_common_title']),
+					'base'         => array($txt['optimus_common_title']),
 					'extra'        => array($txt['optimus_extra_title']),
 					'verification' => array($txt['optimus_verification_title']),
 					'counters'     => array($txt['optimus_counters']),
@@ -50,7 +50,7 @@ function optimus_admin_areas(&$admin_areas)
 }
 
 // Здесь подключаем все имеющиеся функции с настройками мода
-function optimus_area_settings()
+function addOptimusAreaSettings()
 {
 	global $sourcedir, $context, $txt;
 
@@ -61,21 +61,21 @@ function optimus_area_settings()
 	loadTemplate('Optimus');
 
 	$subActions = array(
-		'common'       => 'optimus_common_settings',
-		'extra'        => 'optimus_extra_settings',
-		'verification' => 'optimus_verification_settings',
-		'counters'     => 'optimus_counters_settings',
-		'robots'       => 'optimus_robots_settings',
-		'map'          => 'optimus_map_settings',
+		'base'         => 'addOptimusBaseSettings',
+		'extra'        => 'addOptimusExtraSettings',
+		'verification' => 'addOptimusVerificationSettings',
+		'counters'     => 'addOptimusCountersSettings',
+		'robots'       => 'addOptimusRobotsSettings',
+		'map'          => 'addOptimusMapSettings',
 	);
 
-	loadGeneralSettingParameters($subActions, 'common');
+	loadGeneralSettingParameters($subActions, 'base');
 
 	// Load up all the tabs...
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['optimus_title'],
 		'tabs' => array(
-			'common' => array(
+			'base' => array(
 				'description' => $txt['optimus_common_desc'],
 			),
 			'extra' => array(
@@ -100,13 +100,13 @@ function optimus_area_settings()
 }
 
 // Страница настроек - Общие настройки
-function optimus_common_settings($return_config = false)
+function addOptimusBaseSettings($return_config = false)
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'common';
+	$context['sub_template'] = 'base';
 	$context['page_title'] .= ' - ' . $txt['optimus_common_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=common;save';
+	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
 
 	$config_vars = array(
 		array('int',   'optimus_portal_compat'),
@@ -144,7 +144,7 @@ function optimus_common_settings($return_config = false)
 }
 
 // Страница настроек - Дополнительно
-function optimus_extra_settings()
+function addOptimusExtraSettings()
 {
 	global $context, $txt, $scripturl;
 
@@ -171,7 +171,7 @@ function optimus_extra_settings()
 }
 
 // Страница настроек - Проверочные мета-теги
-function optimus_verification_settings($return_config = false)
+function addOptimusVerificationSettings($return_config = false)
 {
 	global $context, $txt, $scripturl;
 
@@ -208,7 +208,7 @@ function optimus_verification_settings($return_config = false)
 }
 
 // Страница настроек - Счётчики
-function optimus_counters_settings($return_config = false)
+function addOptimusCountersSettings($return_config = false)
 {
 	global $context, $txt, $scripturl;
 
@@ -240,7 +240,7 @@ function optimus_counters_settings($return_config = false)
 }
 
 // Страница настроек - Файл robots.txt
-function optimus_robots_settings()
+function addOptimusRobotsSettings()
 {
 	global $context, $txt, $scripturl, $robots_path;
 
@@ -251,7 +251,7 @@ function optimus_robots_settings()
 	$robots_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
 	$context['robots_content'] = file_exists($robots_path) ? @file_get_contents($robots_path) : '';
 
-	optimus_robots_create();
+	getOptimusRobotsCreate();
 
 	if (isset($_GET['save'])) {
 		checkSession();
@@ -266,7 +266,7 @@ function optimus_robots_settings()
 }
 
 // Страница настроек - Карта форума
-function optimus_map_settings()
+function addOptimusMapSettings()
 {
 	global $context, $txt, $scripturl;
 
@@ -286,7 +286,7 @@ function optimus_map_settings()
 	if (isset($_GET['save'])) {
 		checkSession();
 
-		optimus_sitemap();
+		getOptimusSitemap();
 
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
@@ -298,7 +298,7 @@ function optimus_map_settings()
 }
 
 // Функция создания файла robots.txt
-function optimus_robots_create()
+function getOptimusRobotsCreate()
 {
 	global $boardurl, $smcFunc, $boarddir, $modSettings, $context, $sourcedir, $txt, $scripturl;
 

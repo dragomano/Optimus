@@ -12,7 +12,7 @@
  * @version 2.0 beta
  */
 
-function template_common()
+function template_base()
 {
 	global $context, $txt, $smcFunc, $modSettings;
 
@@ -107,14 +107,6 @@ function template_common()
 	echo '
 					</dl>
 					<dl class="settings">
-						<dt>
-							<span>
-								<label for="optimus_board_description">', $txt['optimus_board_description'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_board_description" id="optimus_board_description"', !empty($modSettings['optimus_board_description']) ? ' checked="checked"' : '', ' />
-						</dd>
 						<dt>
 							<span>
 								<label for="optimus_topic_description">', $txt['optimus_topic_description'], '</label>
