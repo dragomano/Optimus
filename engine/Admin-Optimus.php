@@ -16,9 +16,9 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * Раздел настроек мода в админке
+ * Р Р°Р·РґРµР» РЅР°СЃС‚СЂРѕРµРє РјРѕРґР° РІ Р°РґРјРёРЅРєРµ
  *
- * @param  array &$admin_areas [массив кнопок в меню админки]
+ * @param  array &$admin_areas [РјР°СЃСЃРёРІ РєРЅРѕРїРѕРє РІ РјРµРЅСЋ Р°РґРјРёРЅРєРё]
  */
 function addOptimusAdminArea(&$admin_areas)
 {
@@ -49,7 +49,7 @@ function addOptimusAdminArea(&$admin_areas)
 	);
 }
 
-// Здесь подключаем все имеющиеся функции с настройками мода
+// Р—РґРµСЃСЊ РїРѕРґРєР»СЋС‡Р°РµРј РІСЃРµ РёРјРµСЋС‰РёРµСЃСЏ С„СѓРЅРєС†РёРё СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РјРѕРґР°
 function addOptimusAreaSettings()
 {
 	global $sourcedir, $context, $txt;
@@ -99,7 +99,7 @@ function addOptimusAreaSettings()
 	call_helper($subActions[$_REQUEST['sa']]);
 }
 
-// Страница настроек - Общие настройки
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РћР±С‰РёРµ РЅР°СЃС‚СЂРѕР№РєРё
 function addOptimusBaseSettings($return_config = false)
 {
 	global $context, $txt, $scripturl;
@@ -143,7 +143,7 @@ function addOptimusBaseSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Дополнительно
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ
 function addOptimusExtraSettings()
 {
 	global $context, $txt, $scripturl;
@@ -170,7 +170,7 @@ function addOptimusExtraSettings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Проверочные мета-теги
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РџСЂРѕРІРµСЂРѕС‡РЅС‹Рµ РјРµС‚Р°-С‚РµРіРё
 function addOptimusVerificationSettings($return_config = false)
 {
 	global $context, $txt, $scripturl;
@@ -207,7 +207,7 @@ function addOptimusVerificationSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Счётчики
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РЎС‡С‘С‚С‡РёРєРё
 function addOptimusCountersSettings($return_config = false)
 {
 	global $context, $txt, $scripturl;
@@ -239,7 +239,7 @@ function addOptimusCountersSettings($return_config = false)
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Файл robots.txt
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - Р¤Р°Р№Р» robots.txt
 function addOptimusRobotsSettings()
 {
 	global $context, $txt, $scripturl, $robots_path;
@@ -265,7 +265,7 @@ function addOptimusRobotsSettings()
 	}
 }
 
-// Страница настроек - Карта форума
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РљР°СЂС‚Р° С„РѕСЂСѓРјР°
 function addOptimusMapSettings()
 {
 	global $context, $txt, $scripturl;
@@ -297,14 +297,14 @@ function addOptimusMapSettings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Функция создания файла robots.txt
+// Р¤СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»Р° robots.txt
 function getOptimusRobotsCreate()
 {
 	global $boardurl, $smcFunc, $boarddir, $modSettings, $context, $sourcedir, $txt, $scripturl;
 
 	$url_path = @parse_url($boardurl, PHP_URL_PATH);
 
-	// Запрашиваем все имеющиеся права доступа для гостей
+	// Р—Р°РїСЂР°С€РёРІР°РµРј РІСЃРµ РёРјРµСЋС‰РёРµСЃСЏ РїСЂР°РІР° РґРѕСЃС‚СѓРїР° РґР»СЏ РіРѕСЃС‚РµР№
 	$yes = array();
 
 	$request = $smcFunc['db_query']('', '
@@ -321,12 +321,12 @@ function getOptimusRobotsCreate()
 
 	// SimplePortal
 	$sp = isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1 && function_exists('sportal_init');
-	// Файл, используемый SP при автономном режиме
+	// Р¤Р°Р№Р», РёСЃРїРѕР»СЊР·СѓРµРјС‹Р№ SP РїСЂРё Р°РІС‚РѕРЅРѕРјРЅРѕРј СЂРµР¶РёРјРµ
 	$autosp = !empty($modSettings['sp_standalone_url']) ? substr($modSettings['sp_standalone_url'], strlen($boardurl)) : '';
 
 	// PortaMx
 	$pm = !empty($modSettings['pmx_frontmode']) && function_exists('PortaMx');
-	// Проверяем, не является ли экшен forum алиасом для community (в PortaMx)
+	// РџСЂРѕРІРµСЂСЏРµРј, РЅРµ СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌРєС€РµРЅ forum Р°Р»РёР°СЃРѕРј РґР»СЏ community (РІ PortaMx)
 	$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
 
 	// Aeva Media
@@ -370,7 +370,7 @@ function getOptimusRobotsCreate()
 
 	$sef = $pretty || $simplesef;
 
-	// Проверяем существование файла sitemap
+	// РџСЂРѕРІРµСЂСЏРµРј СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ С„Р°Р№Р»Р° sitemap
 	$map = 'sitemap.xml';
 	$path_map = $boardurl . '/' . $map;
 	clearstatcache();
@@ -380,7 +380,7 @@ function getOptimusRobotsCreate()
 	else
 		$map = $path_map;
 
-	// Заполняем основной массив
+	// Р—Р°РїРѕР»РЅСЏРµРј РѕСЃРЅРѕРІРЅРѕР№ РјР°СЃСЃРёРІ
 	$robots = array(
 		"User-agent: Googlebot-Image",
 		$aeva ? "Allow: " . $url_path . "/*media*item" : "",
@@ -412,7 +412,7 @@ function getOptimusRobotsCreate()
 		"Allow: " . $url_path . "/",
 		"|",
 		substr($txt['lang_locale'], 0, 2) == 'ru' ? "User-agent: Baiduspider\nDisallow: " . $url_path . "/\n|" : "",
-		// Правила для всех остальных пауков
+		// РџСЂР°РІРёР»Р° РґР»СЏ РІСЃРµС… РѕСЃС‚Р°Р»СЊРЅС‹С… РїР°СѓРєРѕРІ
 		"User-agent: *",
 		// Main
 		"Allow: " . $url_path . "/$",
@@ -485,7 +485,7 @@ Disallow: /*all" : "",
 		!empty($modSettings['queryless_urls'])
 			? ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$")
 			: ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic"),
-		// Все остальные страницы
+		// Р’СЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹
 		$sef ? "" : "Disallow: " . $url_path . "/",
 		// Sitemap XML
 		!empty($map) ? "Sitemap: " . $map : "",

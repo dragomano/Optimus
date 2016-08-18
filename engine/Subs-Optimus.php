@@ -23,10 +23,10 @@ function loadOptimusHooks()
 {
 	add_integration_function('integrate_load_theme', 'addOptimusLoadTheme', false);
 	add_integration_function('integrate_load_theme', 'addOptimusCounters', false);
-    add_integration_function('integrate_admin_areas', 'addOptimusAdminArea', false);
-    add_integration_function('integrate_modify_modifications', 'addOptimusAdminAction', false);
-    add_integration_function('integrate_menu_buttons', 'addOptimusCopyright', false);
-    add_integration_function('integrate_menu_buttons', 'addOptimusOperations', false);
+	add_integration_function('integrate_admin_areas', 'addOptimusAdminArea', false);
+	add_integration_function('integrate_modify_modifications', 'addOptimusAdminAction', false);
+	add_integration_function('integrate_menu_buttons', 'addOptimusCopyright', false);
+	add_integration_function('integrate_menu_buttons', 'addOptimusOperations', false);
 	add_integration_function('integrate_buffer', 'addOptimusBuffer', false);
 	add_integration_function('integrate_create_topic', 'getOptimusSitemap', false);
 }
@@ -44,7 +44,7 @@ function addOptimusLoadTheme()
 		$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
 }
 
-// Выводим счетчики
+// Р’С‹РІРѕРґРёРј СЃС‡РµС‚С‡РёРєРё
 function addOptimusCounters()
 {
 	global $modSettings, $context;
@@ -146,8 +146,8 @@ function addOptimusOperations()
 /**
  * This called via integrate_buffer hook
  *
- * @param  array $buffer [принимаем текущее содержимое буфера страницы]
- * @return array $buffer [возвращаем новое содержимое буфера, с произведенными заменами]
+ * @param  array $buffer [РїСЂРёРЅРёРјР°РµРј С‚РµРєСѓС‰РµРµ СЃРѕРґРµСЂР¶РёРјРѕРµ Р±СѓС„РµСЂР° СЃС‚СЂР°РЅРёС†С‹]
+ * @return array $buffer [РІРѕР·РІСЂР°С‰Р°РµРј РЅРѕРІРѕРµ СЃРѕРґРµСЂР¶РёРјРѕРµ Р±СѓС„РµСЂР°, СЃ РїСЂРѕРёР·РІРµРґРµРЅРЅС‹РјРё Р·Р°РјРµРЅР°РјРё]
  */
 function addOptimusBuffer(&$buffer)
 {
@@ -228,7 +228,7 @@ function addOptimusBuffer(&$buffer)
 	return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 }
 
-// Обрабатываем шаблоны заголовков страниц
+// РћР±СЂР°Р±Р°С‚С‹РІР°РµРј С€Р°Р±Р»РѕРЅС‹ Р·Р°РіРѕР»РѕРІРєРѕРІ СЃС‚СЂР°РЅРёС†
 function getOptimusPageTemplates()
 {
 	global $modSettings, $txt, $context, $topicinfo, $board_info;
@@ -266,7 +266,7 @@ function getOptimusPageTemplates()
 		}
 	}
 
-	// Номер текущей страницы в заголовке (при условии, что страниц несколько)
+	// РќРѕРјРµСЂ С‚РµРєСѓС‰РµР№ СЃС‚СЂР°РЅРёС†С‹ РІ Р·Р°РіРѕР»РѕРІРєРµ (РїСЂРё СѓСЃР»РѕРІРёРё, С‡С‚Рѕ СЃС‚СЂР°РЅРёС† РЅРµСЃРєРѕР»СЊРєРѕ)
 	$board_page_number = $topic_page_number = '';
 	if ($context['current_action'] != 'wiki') {
 		if (!empty($context['page_info']['current_page']) && $context['page_info']['num_pages'] != 1) {
@@ -306,7 +306,7 @@ function getOptimusPageTemplates()
 	}
 }
 
-// Достаем URL вложения из первого сообщения темы
+// Р”РѕСЃС‚Р°РµРј URL РІР»РѕР¶РµРЅРёСЏ РёР· РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ С‚РµРјС‹
 function getOptimusOgImage()
 {
 	global $modSettings, $settings, $smcFunc, $context, $scripturl;
@@ -314,7 +314,7 @@ function getOptimusOgImage()
 	if (empty($modSettings['optimus_og_image']))
 		return;
 
-	// Кэшируем запрос
+	// РљСЌС€РёСЂСѓРµРј Р·Р°РїСЂРѕСЃ
 	if (($settings['og_image'] = cache_get_data('og_image_' . $context['current_topic'], 3600)) == null) {
 		$request = $smcFunc['db_query']('', '
 			SELECT IFNULL(id_attach, 0) AS id
@@ -360,7 +360,7 @@ function getOptimusAevaMedia()
 	}
 }
 
-// Возвращаемые коды состояния, в зависимости от ситуации
+// Р’РѕР·РІСЂР°С‰Р°РµРјС‹Рµ РєРѕРґС‹ СЃРѕСЃС‚РѕСЏРЅРёСЏ, РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЃРёС‚СѓР°С†РёРё
 function getOptimusHttpStatus()
 {
 	global $modSettings, $board_info, $context, $txt;
@@ -368,7 +368,7 @@ function getOptimusHttpStatus()
 	if (empty($modSettings['optimus_404_status']) || empty($board_info['error']))
 		return;
 
-	// Страница не существует?
+	// РЎС‚СЂР°РЅРёС†Р° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚?
 	if ($board_info['error'] == 'exist') {
 		header('HTTP/1.1 404 Not Found');
 
@@ -378,7 +378,7 @@ function getOptimusHttpStatus()
 		$context['page_title'] = $txt['optimus_404_page_title'];
 	}
 
-	// Нет доступа?
+	// РќРµС‚ РґРѕСЃС‚СѓРїР°?
 	if ($board_info['error'] == 'access') {
 		header('HTTP/1.1 403 Forbidden');
 
@@ -390,10 +390,10 @@ function getOptimusHttpStatus()
 }
 
 /**
- * Обработка дат
+ * РћР±СЂР°Р±РѕС‚РєР° РґР°С‚
  *
- * @param  string $timestamp [принимаем отметку времени страницы]
- * @return string $result    [возвращаем отметку времени в новом формате, для карты сайта]
+ * @param  string $timestamp [РїСЂРёРЅРёРјР°РµРј РѕС‚РјРµС‚РєСѓ РІСЂРµРјРµРЅРё СЃС‚СЂР°РЅРёС†С‹]
+ * @return string $result    [РІРѕР·РІСЂР°С‰Р°РµРј РѕС‚РјРµС‚РєСѓ РІСЂРµРјРµРЅРё РІ РЅРѕРІРѕРј С„РѕСЂРјР°С‚Рµ, РґР»СЏ РєР°СЂС‚С‹ СЃР°Р№С‚Р°]
  */
 function getOptimusSitemapDate($timestamp = '')
 {
@@ -405,11 +405,11 @@ function getOptimusSitemapDate($timestamp = '')
 }
 
 /**
- * Создаем файл карты
+ * РЎРѕР·РґР°РµРј С„Р°Р№Р» РєР°СЂС‚С‹
  *
- * @param  string $path [путь к файлу]
- * @param  string $data [текст для вставки в файл]
- * @return bool         [true при успешном создании, false в противном случае]
+ * @param  string $path [РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ]
+ * @param  string $data [С‚РµРєСЃС‚ РґР»СЏ РІСЃС‚Р°РІРєРё РІ С„Р°Р№Р»]
+ * @return bool         [true РїСЂРё СѓСЃРїРµС€РЅРѕРј СЃРѕР·РґР°РЅРёРё, false РІ РїСЂРѕС‚РёРІРЅРѕРј СЃР»СѓС‡Р°Рµ]
  */
 function createOptimusFile($path, $data)
 {
@@ -425,9 +425,9 @@ function createOptimusFile($path, $data)
 }
 
 /**
- * Если количество урлов больше 50000, заканчиваем сказку
+ * Р•СЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ СѓСЂР»РѕРІ Р±РѕР»СЊС€Рµ 50000, Р·Р°РєР°РЅС‡РёРІР°РµРј СЃРєР°Р·РєСѓ
  *
- * @param  array $array [массив страниц для занесения в карту]
+ * @param  array $array [РјР°СЃСЃРёРІ СЃС‚СЂР°РЅРёС† РґР»СЏ Р·Р°РЅРµСЃРµРЅРёСЏ РІ РєР°СЂС‚Сѓ]
  */
 function checkOptimusCountUrls($array)
 {
@@ -440,9 +440,9 @@ function checkOptimusCountUrls($array)
 }
 
 /**
- * Если размер файла превышает 10 МБ, отправляем запись в Журнал ошибок
+ * Р•СЃР»Рё СЂР°Р·РјРµСЂ С„Р°Р№Р»Р° РїСЂРµРІС‹С€Р°РµС‚ 10 РњР‘, РѕС‚РїСЂР°РІР»СЏРµРј Р·Р°РїРёСЃСЊ РІ Р–СѓСЂРЅР°Р» РѕС€РёР±РѕРє
  *
- * @param  string $file [принимаем ссылку на файл]
+ * @param  string $file [РїСЂРёРЅРёРјР°РµРј СЃСЃС‹Р»РєСѓ РЅР° С„Р°Р№Р»]
  */
 function checkOptimusFilesize($file)
 {
@@ -457,10 +457,10 @@ function checkOptimusFilesize($file)
 }
 
 /**
- * Определяем периодичность обновлений
+ * РћРїСЂРµРґРµР»СЏРµРј РїРµСЂРёРѕРґРёС‡РЅРѕСЃС‚СЊ РѕР±РЅРѕРІР»РµРЅРёР№
  *
- * @param  string $time [принимаем время изменения страницы]
- * @return string       [возвращаем одно из предустановленных значений, для установки периодичности проверки]
+ * @param  string $time [РїСЂРёРЅРёРјР°РµРј РІСЂРµРјСЏ РёР·РјРµРЅРµРЅРёСЏ СЃС‚СЂР°РЅРёС†С‹]
+ * @return string       [РІРѕР·РІСЂР°С‰Р°РµРј РѕРґРЅРѕ РёР· РїСЂРµРґСѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№, РґР»СЏ СѓСЃС‚Р°РЅРѕРІРєРё РїРµСЂРёРѕРґРёС‡РЅРѕСЃС‚Рё РїСЂРѕРІРµСЂРєРё]
  */
 function getOptimusSitemapFrequency($time)
 {
@@ -479,15 +479,15 @@ function getOptimusSitemapFrequency($time)
 }
 
 /**
- * Генерация карты форума
+ * Р“РµРЅРµСЂР°С†РёСЏ РєР°СЂС‚С‹ С„РѕСЂСѓРјР°
  *
- * @return bool [true для заполнения отчета в журнале диспетчера задач]
+ * @return bool [true РґР»СЏ Р·Р°РїРѕР»РЅРµРЅРёСЏ РѕС‚С‡РµС‚Р° РІ Р¶СѓСЂРЅР°Р»Рµ РґРёСЃРїРµС‚С‡РµСЂР° Р·Р°РґР°С‡]
  */
 function getOptimusSitemap()
 {
 	global $modSettings, $sourcedir, $boardurl, $smcFunc, $scripturl, $context, $boarddir;
 
-	// Прежде всего проверяем, активировано ли создание карты форума (в настройках)
+	// РџСЂРµР¶РґРµ РІСЃРµРіРѕ РїСЂРѕРІРµСЂСЏРµРј, Р°РєС‚РёРІРёСЂРѕРІР°РЅРѕ Р»Рё СЃРѕР·РґР°РЅРёРµ РєР°СЂС‚С‹ С„РѕСЂСѓРјР° (РІ РЅР°СЃС‚СЂРѕР№РєР°С…)
 	if (empty($modSettings['optimus_sitemap_enable']))
 		return;
 
@@ -521,7 +521,7 @@ function getOptimusSitemap()
 	if (file_exists($sourcedir . '/PortaMx/PortaMxSEF.php') && function_exists('create_sefurl'))
 		$sef = true;
 
-	// Объявляем массивы, с которыми будем работать
+	// РћР±СЉСЏРІР»СЏРµРј РјР°СЃСЃРёРІС‹, СЃ РєРѕС‚РѕСЂС‹РјРё Р±СѓРґРµРј СЂР°Р±РѕС‚Р°С‚СЊ
 	$fm = $media = $boards = $topics = array();
 
 	// Boards
@@ -548,7 +548,7 @@ function getOptimusSitemap()
 	}
 	$last_edit = max($last);
 
-	// Здесь быстренько заполняем информацию о главной странице
+	// Р—РґРµСЃСЊ Р±С‹СЃС‚СЂРµРЅСЊРєРѕ Р·Р°РїРѕР»РЅСЏРµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РіР»Р°РІРЅРѕР№ СЃС‚СЂР°РЅРёС†Рµ
 	$fm[] = array(
 		'loc'        => $boardurl . '/',
 		'wap'        => $scripturl . '/?' . $mobile_type,
@@ -557,11 +557,11 @@ function getOptimusSitemap()
 		'priority'   => 1,
 	);
 
-	// А здесь — для разделов
+	// Рђ Р·РґРµСЃСЊ вЂ” РґР»СЏ СЂР°Р·РґРµР»РѕРІ
 	foreach ($boards as $entry)	{
 		$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
 
-		// Поддержка мода BoardNoIndex
+		// РџРѕРґРґРµСЂР¶РєР° РјРѕРґР° BoardNoIndex
 		if (!empty($modSettings['BoardNoIndex_enabled'])) {
 			if (!in_array($entry['id_board'], @unserialize($modSettings['BoardNoIndex_select_boards']))) {
 				$fm[] = array(
@@ -606,7 +606,7 @@ function getOptimusSitemap()
 	foreach ($topics as $entry)	{
 		$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
 
-		// Поддержка мода BoardNoIndex
+		// РџРѕРґРґРµСЂР¶РєР° РјРѕРґР° BoardNoIndex
 		if (!empty($modSettings['BoardNoIndex_enabled'])) {
 			if (!in_array($entry['id_board'], @unserialize($modSettings['BoardNoIndex_select_boards']))) {
 				$fm[] = array(
@@ -722,7 +722,7 @@ function getOptimusSitemap()
 		$out .= $t . '</url>' . $n;
 	}
 
-	// Это для мобилок, задел на будущее
+	// Р­С‚Рѕ РґР»СЏ РјРѕР±РёР»РѕРє, Р·Р°РґРµР» РЅР° Р±СѓРґСѓС‰РµРµ
 	if (!empty($mobile_type)) {
 		$mobile = '';
 		foreach ($fm as $entry) {
@@ -736,7 +736,7 @@ function getOptimusSitemap()
 		}
 	}
 
-	// Карта изображений в Галерее
+	// РљР°СЂС‚Р° РёР·РѕР±СЂР°Р¶РµРЅРёР№ РІ Р“Р°Р»РµСЂРµРµ
 	$images = '';
 	foreach ($media as $entry) {
 		if (!empty($entry['image'])) {
@@ -750,7 +750,7 @@ function getOptimusSitemap()
 		}
 	}
 
-	// Карта видеороликов в Галерее
+	// РљР°СЂС‚Р° РІРёРґРµРѕСЂРѕР»РёРєРѕРІ РІ Р“Р°Р»РµСЂРµРµ
 	$videos = '';
 	foreach ($media as $entry) {
 		if (!empty($entry['video'])) {
@@ -790,12 +790,12 @@ function getOptimusSitemap()
 
 	$out = $header . $out . $footer;
 
-	// Создаем обычную карту сайта
+	// РЎРѕР·РґР°РµРј РѕР±С‹С‡РЅСѓСЋ РєР°СЂС‚Сѓ СЃР°Р№С‚Р°
 	$sitemap = $boarddir . '/sitemap.xml';
 	createOptimusFile($sitemap, $out);
 	checkOptimusFilesize($sitemap);
 
-	// Карта для мобилок
+	// РљР°СЂС‚Р° РґР»СЏ РјРѕР±РёР»РѕРє
 	if (!empty($mobile_type)) {
 		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . $n . '<?xml-stylesheet type="text/xsl" href="' . $boardurl . '/Themes/default/css/sitemap.xsl"?>' . $n . '<urlset ' . $xmlns_mobile . '>' . $n;
 		$xml_data = $header . $mobile . $footer;
@@ -805,7 +805,7 @@ function getOptimusSitemap()
 		checkOptimusFilesize($sitemap);
 	}
 
-	// Карта ссылок на изображения в Галерее
+	// РљР°СЂС‚Р° СЃСЃС‹Р»РѕРє РЅР° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РІ Р“Р°Р»РµСЂРµРµ
 	if (!empty($images)) {
 		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . $n . '<?xml-stylesheet type="text/xsl" href="' . $boardurl . '/Themes/default/css/sitemap.xsl"?>' . $n . '<urlset ' . $xmlns_image . '>' . $n;
 		$xml_data = $header . $images . $footer;
@@ -815,7 +815,7 @@ function getOptimusSitemap()
 		checkOptimusFilesize($sitemap);
 	}
 
-	// Карта ссылок на видеоролики в Галерее
+	// РљР°СЂС‚Р° СЃСЃС‹Р»РѕРє РЅР° РІРёРґРµРѕСЂРѕР»РёРєРё РІ Р“Р°Р»РµСЂРµРµ
 	if (!empty($videos)) {
 		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . $n . '<?xml-stylesheet type="text/xsl" href="' . $boardurl . '/Themes/default/css/sitemap.xsl"?>' . $n . '<urlset ' . $xmlns_video . '>' . $n;
 		$xml_data = $header . $videos . $footer;
