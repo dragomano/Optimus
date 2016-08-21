@@ -103,7 +103,7 @@ span {
 	<h1>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></h1>
 	<h3><xsl:choose><xsl:when test="sm:sitemapindex">Total files: <xsl:value-of select="count(sm:sitemapindex/sm:sitemap)"/></xsl:when><xsl:otherwise>Total URLs: <xsl:value-of select="count(sm:urlset/sm:url)"/></xsl:otherwise></xsl:choose></h3>
 	<xsl:apply-templates/>
-	<span>Powered by <a href="http://dragomano.ru/page/optimus-brave">Optimus Brave</a></span>
+	<span>Powered by <a href="http://dragomano.ru/mods/optimus">Optimus</a></span>
 </body>
 </html>
 </xsl:template>
