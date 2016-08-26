@@ -24,7 +24,6 @@ function loadOptimusHooks()
 	add_integration_function('integrate_load_theme', 'addOptimusLoadTheme', false);
 	add_integration_function('integrate_load_theme', 'addOptimusCounters', false);
 	add_integration_function('integrate_admin_areas', 'addOptimusAdminArea', false);
-	add_integration_function('integrate_modify_modifications', 'addOptimusAdminAction', false);
 	add_integration_function('integrate_menu_buttons', 'addOptimusCopyright', false);
 	add_integration_function('integrate_menu_buttons', 'addOptimusOperations', false);
 	add_integration_function('integrate_buffer', 'addOptimusBuffer', false);
