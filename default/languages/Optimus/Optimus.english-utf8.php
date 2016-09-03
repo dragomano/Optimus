@@ -82,7 +82,7 @@ $txt['optimus_links'] = array(
 	'Changing of .htaccess' => 'http://httpd.apache.org/docs/trunk/howto/htaccess.html'
 );
 
-$txt['optimus_sitemap_section'] = 'Optimus Sitemap';
+$txt['optimus_sitemap_title'] = 'Optimus Sitemap';
 $txt['optimus_sitemap_desc'] = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below.';
 
 $txt['optimus_sitemap_enable'] = 'Create and periodically update Sitemap XML file';
