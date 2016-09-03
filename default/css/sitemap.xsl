@@ -14,19 +14,18 @@
 <head>
 	<style type="text/css">
 body {
-    width: 60%;
+    width: 70%;
 	background: #ccc;
     margin: 40px auto;
     font-family: 'trebuchet MS', 'Lucida sans', Arial;
-    font-size: 14px;
+    font-size: 100%;
     color: #444;
 }
 h1, h3 {
     text-align: center;
 }
 table {
-    *border-collapse: collapse;
-	background: #fff;
+    background: #fff;
     border-spacing: 0;
     width: 100%;  
     border: solid #ccc 1px;
@@ -73,46 +72,27 @@ span {
 	display: block;
 	margin: 1em;
 	border-radius: 6px;
-	background-color:#F1F1F1;
-	padding:10px;
-	text-align:center;
+	background-color: #F1F1F1;
+	padding: 10px;
+	text-align: center;
 }
-@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px)  {
+@media all and (-webkit-min-device-pixel-ratio: 0) {
     body {
-        width: 96%;
+        font-size: 2em;
     }
-	table, thead, tbody, th, td, tr { 
-		display: block; 
-	}
-	thead tr { 
-		position: absolute;
-		top: -9999px;
-		left: -9999px;
-	}
-	tr {
-	    border: 1px solid #ccc;
+}
+@media only screen and (max-device-width: 480px) {
+    body {
+        width: 90%;
     }
-	tr:nth-of-type(1) {
-	    display: none;
+    td {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+    } 
+    tr:first-child, td:nth-of-type(1), td:nth-of-type(4), td:nth-of-type(5) {
+        display: none;
     }
-	td { 
-		border: none;
-		border-bottom: 1px solid #eee; 
-		position: relative;
-		padding-left: 40%; 
-	}
-	td:before { 
-		position: absolute;
-		left: 6px;
-		width: 45%; 
-		padding-right: 10px; 
-		white-space: nowrap;
-	}
-	td:nth-of-type(1):before { content: ""; }
-	td:nth-of-type(2):before { content: "URL"; }
-	td:nth-of-type(3):before { content: "Last Modified"; }
-	td:nth-of-type(4):before { content: "Frequency"; }
-	td:nth-of-type(5):before { content: "Priority"; }
 }
 	</style>
 	<title>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></title>
