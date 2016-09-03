@@ -21,9 +21,9 @@ body {
     font-size: 14px;
     color: #444;
 }
-
-h1,h3 {text-align: center}
-
+h1, h3 {
+    text-align: center;
+}
 table {
     *border-collapse: collapse;
 	background: #fff;
@@ -33,68 +33,86 @@ table {
     border-radius: 6px;
     box-shadow: 0 1px 1px #ccc; 	
 }
-
 tr:hover {
     background: #fbf8e9;
-    -o-transition: all 0.1s ease-in-out;
-    -webkit-transition: all 0.1s ease-in-out;
-    -moz-transition: all 0.1s ease-in-out;
-    -ms-transition: all 0.1s ease-in-out;
     transition: all 0.1s ease-in-out;     
 }    
-    
 td, th {
     border-left: 1px solid #ccc;
     border-top: 1px solid #ccc;
     padding: 10px;
     text-align: left;    
 }
-
 th {
     background-color: #dce9f9;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-    background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
-    background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
+    background-image: linear-gradient(top, #ebf3fc, #dce9f9);
     box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;        
+    text-shadow: 0 1px 0 rgba(255,255,255,.5);
     border-top: none;
-    text-shadow: 0 1px 0 rgba(255,255,255,.5); 
 }
-
 td:first-child, th:first-child {
     border-left: none;
 }
-
 th:first-child {
     border-radius: 6px 0 0 0;
 }
-
 th:last-child {
     border-radius: 0 6px 0 0;
 }
-
 tr:last-child td:first-child {
     border-radius: 0 0 0 6px;
 }
-
 tr:last-child td:last-child {
     border-radius: 0 0 6px 0;
 }
-
 tbody tr:nth-child(even) {
     background: #f5f5f5;
     box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;        
 }  
-
 span {
 	display: block;
 	margin: 1em;
 	border-radius: 6px;
 	background-color:#F1F1F1;
 	padding:10px;
-	text-align:center
+	text-align:center;
+}
+@media only screen and (max-width: 760px), (min-device-width: 768px) and (max-device-width: 1024px)  {
+    body {
+        width: 96%;
+    }
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	tr {
+	    border: 1px solid #ccc;
+    }
+	tr:nth-of-type(1) {
+	    display: none;
+    }
+	td { 
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 40%; 
+	}
+	td:before { 
+		position: absolute;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+	td:nth-of-type(1):before { content: ""; }
+	td:nth-of-type(2):before { content: "URL"; }
+	td:nth-of-type(3):before { content: "Last Modified"; }
+	td:nth-of-type(4):before { content: "Frequency"; }
+	td:nth-of-type(5):before { content: "Priority"; }
 }
 	</style>
 	<title>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></title>
