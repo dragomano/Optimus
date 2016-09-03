@@ -124,53 +124,6 @@ function template_base()
 							<input type="checkbox" name="optimus_404_status" id="optimus_404_status"', !empty($modSettings['optimus_404_status']) ? ' checked="checked"' : '', ' />
 						</dd>
 					</dl>
-					<hr class="hrcolor clear" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
-					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
-				</div>
-				<span class="botslice"><span></span></span>
-			</div>
-
-		</form>
-	</div>
-	<br class="clear" />';
-}
-
-function template_extra()
-{
-	global $context, $txt, $smcFunc, $modSettings;
-
-	echo '
-	<div id="optimus">
-		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
-
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['optimus_extra_title'], '</h3>
-			</div>
-
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							<span>
-								<label for="optimus_remove_indexphp">', $txt['optimus_remove_indexphp'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_remove_indexphp" id="optimus_remove_indexphp"', !empty($modSettings['optimus_remove_indexphp']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_og_image">', $txt['optimus_og_image'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_og_image" id="optimus_og_image"', !empty($modSettings['optimus_og_image']) ? ' checked="checked"' : '', ' />
-						</dd>
-					</dl>
-					<hr class="hrcolor clear" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>

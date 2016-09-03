@@ -156,8 +156,9 @@ function addOptimusBuffer(&$buffer)
 		return $buffer;
 
 	$replacements = array();
-
-	if (!empty($modSettings['optimus_remove_indexphp']) && empty($modSettings['queryless_urls'])) {
+	
+	// Remove index.php from URLs
+	if (!empty($modSettings['optimus_remove_indexphp']) && empty($modSettings['queryless_urls']) && empty($modSettings['simplesef_enable'])) {
 		$index = $scripturl;
 		$del_index = $boardurl . '/';
 		$replacements[$index] = $del_index;

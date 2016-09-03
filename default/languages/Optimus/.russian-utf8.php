@@ -34,7 +34,7 @@ $txt['optimus_403_h3'] = 'Извините, но у вас нет доступа
 $txt['optimus_extra_title'] = 'Дополнительно';
 $txt['optimus_extra_desc'] = 'Некоторые фиксы, а также активация поддержки Open Graph. Наслаждайтесь!';
 
-$txt['optimus_remove_indexphp'] = 'Убрать "index.php" из адресов форума';
+$txt['optimus_remove_indexphp'] = 'Убрать "index.php" из адресов форума<br /><span class="smalltext">Не работает при активации мода <a href="http://dragomano.ru/translations/simplesef" target="_blank">SimpleSEF</a>.</span>';
 $txt['optimus_og_image'] = 'Использовать вложение в первом сообщении темы в качестве изображения для Open Graph';
 
 $txt['optimus_verification_title'] = 'Проверочные мета-теги';

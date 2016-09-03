@@ -146,15 +146,17 @@ function addOptimusBaseSettings($return_config = false)
 // Страница настроек - Дополнительно
 function addOptimusExtraSettings()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $scripturl, $modSettings, $sourcedir;
 
-	$context['sub_template'] = 'extra';
 	$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
+	
+	$sef = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
 
 	$config_vars = array(
-		array('check', 'optimus_remove_indexphp'),
-		array('text',  'optimus_og_image'),
+		array('title', 'optimus_extra_title'),
+		array('check', 'optimus_remove_indexphp', 'disabled' => $sef ? true : false),
+		array('check', 'optimus_og_image'),
 	);
 
 	// Saving?
