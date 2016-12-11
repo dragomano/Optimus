@@ -124,7 +124,7 @@ function optimus_operations()
 // Обрабатываем шаблоны заголовков страниц
 function get_optimus_page_templates()
 {
-	global $modSettings, $txt, $context, $topicinfo, $board_info, $smcFunc, $scripturl;
+	global $modSettings, $txt, $context, $topicinfo, $board_info, $smcFunc;
 
 	if (!empty($modSettings['optimus_templates']) && strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
 		$templates = @unserialize($modSettings['optimus_templates']);
