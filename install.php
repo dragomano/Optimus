@@ -31,6 +31,7 @@ $newSettings = array(
 	'optimus_forum_index'        => $smcFunc['substr']($txt['forum_index'], 7),
 	'optimus_description'        => $context['forum_name'],
 	'optimus_templates'          => 'a:0:{}',
+    'optimus_no_first_number'    => 0,
 	'optimus_sitemap_topic_size' => 1,
 	'optimus_meta'               => 'a:0:{}',
 	'optimus_count_code_css'     => '.copyright a>img {opacity: 0.3} .copyright a:hover>img {opacity: 1.0} #footerarea ul li.copyright {line-height: normal; padding: 0}',

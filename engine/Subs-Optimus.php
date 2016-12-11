@@ -162,7 +162,9 @@ function get_optimus_page_templates()
 	// Номер текущей страницы в заголовке (при условии, что страниц несколько)
 	$board_page_number = $topic_page_number = '';
 	if ($context['current_action'] != 'wiki') {
-		if (!empty($context['page_info']['current_page']) && $context['page_info']['num_pages'] != 1) {
+        if (!empty($context['page_info']['current_page']) && $context['page_info']['num_pages'] != 1 && (
+            ($context['page_info']['current_page'] == 1 && empty($modSettings['optimus_no_first_number'])) || $context['page_info']['current_page'] != 1)
+        ) {
 			$trans = array("{#}" => $context['page_info']['current_page']);
 			$board_page_number = strtr($board_page_tpl, $trans);
 			$topic_page_number = strtr($topic_page_tpl, $trans);
