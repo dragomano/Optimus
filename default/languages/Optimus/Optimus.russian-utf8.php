@@ -22,6 +22,7 @@ $txt['optimus_templates'] = array(
 	'board' => array('{board_name}', ' - стр. {#} - ', '{forum_name}'),
 	'topic' => array('{topic_name}', ' - стр. {#} - ', '{board_name} - {forum_name}')
 );
+$txt['optimus_no_first_number'] = 'Не выводить номер на первой странице';
 $txt['optimus_board_description'] = 'Выводить описание раздела в мета-теге <strong>description</strong>';
 $txt['optimus_topic_description'] = 'Выводить описание темы в мета-теге <strong>description</strong><br /><span class="smalltext">Для создания описаний к темам используйте мод <a href="http://dragomano.ru/translations/topic-descriptions" target="_blank">Topic Descriptions</a>.</span>';
 $txt['optimus_404_status'] = 'Возвращать <a href="http://ru.wikipedia.org/wiki/HTTP#.D0.9A.D0.BE.D0.B4.D1.8B_.D1.81.D0.BE.D1.81.D1.82.D0.BE.D1.8F.D0.BD.D0.B8.D1.8F" target="_blank">код 403/404</a>, в зависимости от статуса запрашиваемой страницы';

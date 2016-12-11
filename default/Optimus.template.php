@@ -107,6 +107,14 @@ function template_common()
 	echo '
 					</dl>
 					<dl class="settings">
+					    <dt>
+							<span>
+								<label for="optimus_no_first_number">', $txt['optimus_no_first_number'], '</label>
+							</span>
+						</dt>
+						<dd>
+							<input type="checkbox" name="optimus_no_first_number" id="optimus_no_first_number"', !empty($modSettings['optimus_no_first_number']) ? ' checked="checked"' : '', ' />
+						</dd>
 						<dt>
 							<span>
 								<label for="optimus_board_description">', $txt['optimus_board_description'], '</label>

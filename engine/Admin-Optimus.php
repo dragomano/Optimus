@@ -111,6 +111,7 @@ function optimus_common_settings()
 		array('text',  'optimus_portal_index'),
 		array('text',  'optimus_forum_index'),
 		array('text',  'optimus_description'),
+        array('check', 'optimus_no_first_number'),
 		array('check', 'optimus_board_description'),
 		array('check', 'optimus_topic_description'),
 		array('check', 'optimus_404_status'),

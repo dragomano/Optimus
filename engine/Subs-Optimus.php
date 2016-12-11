@@ -124,7 +124,7 @@ function optimus_operations()
 // Обрабатываем шаблоны заголовков страниц
 function get_optimus_page_templates()
 {
-	global $modSettings, $txt, $context, $topicinfo, $board_info, $smcFunc, $scripturl;
+	global $modSettings, $txt, $context, $topicinfo, $board_info, $smcFunc;
 
 	if (!empty($modSettings['optimus_templates']) && strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
 		$templates = @unserialize($modSettings['optimus_templates']);
@@ -162,7 +162,9 @@ function get_optimus_page_templates()
 	// Номер текущей страницы в заголовке (при условии, что страниц несколько)
 	$board_page_number = $topic_page_number = '';
 	if ($context['current_action'] != 'wiki') {
-		if (!empty($context['page_info']['current_page']) && $context['page_info']['num_pages'] != 1) {
+        if (!empty($context['page_info']['current_page']) && $context['page_info']['num_pages'] != 1 && (
+            ($context['page_info']['current_page'] == 1 && empty($modSettings['optimus_no_first_number'])) || $context['page_info']['current_page'] != 1)
+        ) {
 			$trans = array("{#}" => $context['page_info']['current_page']);
 			$board_page_number = strtr($board_page_tpl, $trans);
 			$topic_page_number = strtr($topic_page_tpl, $trans);
@@ -289,9 +291,9 @@ function get_optimus_http_status()
  * @param  array $buffer [принимаем текущее содержимое буфера страницы]
  * @return array $buffer [возвращаем новое содержимое буфера, с произведенными модом заменами]
  */
-function optimus_buffer(&$buffer)
+function optimus_buffer($buffer)
 {
-	global $context, $modSettings, $mbname, $scripturl, $boardurl, $sourcedir, $forum_copyright, $boarddir, $txt;
+	global $context, $modSettings, $mbname, $scripturl, $boardurl, $forum_copyright, $boarddir, $txt;
 
 	if (isset($_REQUEST['xml']) || $context['current_action'] == 'printpage')
 		return $buffer;
