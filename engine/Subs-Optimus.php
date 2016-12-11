@@ -293,7 +293,7 @@ function get_optimus_http_status()
  */
 function optimus_buffer(&$buffer)
 {
-	global $context, $modSettings, $mbname, $scripturl, $boardurl, $sourcedir, $forum_copyright, $boarddir, $txt;
+	global $context, $modSettings, $mbname, $scripturl, $boardurl, $forum_copyright, $boarddir, $txt;
 
 	if (isset($_REQUEST['xml']) || $context['current_action'] == 'printpage')
 		return $buffer;
