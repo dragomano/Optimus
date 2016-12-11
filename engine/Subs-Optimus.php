@@ -291,7 +291,7 @@ function get_optimus_http_status()
  * @param  array $buffer [принимаем текущее содержимое буфера страницы]
  * @return array $buffer [возвращаем новое содержимое буфера, с произведенными модом заменами]
  */
-function optimus_buffer(&$buffer)
+function optimus_buffer($buffer)
 {
 	global $context, $modSettings, $mbname, $scripturl, $boardurl, $forum_copyright, $boarddir, $txt;
 
