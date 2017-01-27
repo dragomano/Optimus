@@ -279,7 +279,7 @@ function getOptimusPageTemplates()
 	// Topics
 	if (!empty($context['topic_first_message'])) {
 		$trans = array(
-			"{topic_name}" => $topicinfo['subject'],
+            "{topic_name}" => $context['topicinfo']['subject'],
 			"{board_name}" => strip_tags($board_info['name']),
 			"{cat_name}"   => $board_info['cat']['name'],
 			"{forum_name}" => $context['forum_name'],
