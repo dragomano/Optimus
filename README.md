@@ -1,5 +1,5 @@
 # SMF Optimus mod
-* **Author:** Bugo [dragomano.ru](http://odragomano.ru)
+* **Author:** Bugo [dragomano.ru](http://dragomano.ru)
 * **License:** [Artistic License 2.0](http://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0
 * **Hooks only:** Yes
