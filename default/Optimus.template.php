@@ -6,10 +6,10 @@
  * @package Optimus
  * @link http://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo http://dragomano.ru/mods/optimus
- * @copyright 2010-2016 Bugo
+ * @copyright 2010-2017 Bugo
  * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9
+ * @version 1.9.2
  */
 
 function template_common()
@@ -107,7 +107,7 @@ function template_common()
 	echo '
 					</dl>
 					<dl class="settings">
-					    <dt>
+						<dt>
 							<span>
 								<label for="optimus_no_first_number">', $txt['optimus_no_first_number'], '</label>
 							</span>
@@ -170,11 +170,11 @@ function template_extra()
 					<dl class="settings">
 						<dt>
 							<span>
-								<label for="optimus_remove_indexphp">', $txt['optimus_remove_indexphp'], '</label>
+								<label for="optimus_remove_last_bc_item">', $txt['optimus_remove_last_bc_item'], '</label>
 							</span>
 						</dt>
 						<dd>
-							<input type="checkbox" name="optimus_remove_indexphp" id="optimus_remove_indexphp"', !empty($modSettings['optimus_remove_indexphp']) ? ' checked="checked"' : '', ' />
+							<input type="checkbox" name="optimus_remove_last_bc_item" id="optimus_remove_last_bc_item"', !empty($modSettings['optimus_remove_last_bc_item']) ? ' checked="checked"' : '', ' />
 						</dd>
 						<dt>
 							<span>
@@ -192,7 +192,7 @@ function template_extra()
 						<dd>
 							<input type="checkbox" name="optimus_open_graph" id="optimus_open_graph"', !empty($modSettings['optimus_open_graph']) ? ' checked="checked"' : '', ' />
 						</dd>';
-						
+
 	if (!empty($modSettings['optimus_open_graph'])) {
 		echo '
 						<dt>
@@ -204,7 +204,7 @@ function template_extra()
 							<input type="text" class="input_text" value="', !empty($modSettings['optimus_og_image']) ? $modSettings['optimus_og_image'] : '', '" id="optimus_og_image" name="optimus_og_image" size="60" />
 						</dd>';
 	}
-	
+
 	echo '
 					</dl>
 					<hr class="hrcolor clear" />
@@ -295,8 +295,8 @@ function template_counters()
 					<label for="optimus_count_code">', $txt['optimus_count_code'], '</label><br />
 					<textarea id="optimus_count_code" name="optimus_count_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_count_code']) ? $modSettings['optimus_count_code'] : '', '</textarea>
 					<br /><br />
-					<label for="optimus_count_code_css">', $txt['optimus_count_code_css'], '</label><br />
-					<textarea id="optimus_count_code_css" name="optimus_count_code_css" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_count_code_css']) ? $modSettings['optimus_count_code_css'] : '', '</textarea>
+					<label for="optimus_counters_css">', $txt['optimus_counters_css'], '</label><br />
+					<textarea id="optimus_counters_css" name="optimus_count_code_css" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_counters_css']) ? $modSettings['optimus_counters_css'] : '', '</textarea>
 					<br /><br />
 					<label for="optimus_ignored_actions">', $txt['optimus_ignored_actions'], '</label><br/>
 					<input type="text" class="input_text" value="', !empty($modSettings['optimus_ignored_actions']) ? $modSettings['optimus_ignored_actions'] : '', '" id="optimus_ignored_actions" name="optimus_ignored_actions" style="width: 99%" />
@@ -367,59 +367,6 @@ function template_robots()
 					<div class="clear"></div>
 					<span class="botslice"><span></span></span>
 
-					<hr class="hrcolor clear" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
-				</div>
-				<span class="botslice"><span></span></span>
-			</div>
-
-		</form>
-	</div>
-	<br class="clear" />';
-}
-
-function template_map()
-{
-	global $context, $txt, $modSettings, $boarddir, $boardurl;
-
-	echo '
-	<div id="optimus">
-		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
-
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['optimus_sitemap_xml_link'], '</h3>
-			</div>
-
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							<span>
-								<label for="optimus_sitemap_enable">', $txt['optimus_sitemap_enable'], ' (<span class="smalltext">', (file_exists($boarddir . "/sitemap.xml") ? '<strong><a href="' . $boardurl . '/sitemap.xml" target="_blank">sitemap.xml</a></strong>' : ''), '</span>)</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_sitemap_enable" id="optimus_sitemap_enable"', !empty($modSettings['optimus_sitemap_enable']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_sitemap_link">', $txt['optimus_sitemap_link'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_sitemap_link" id="optimus_sitemap_link"', !empty($modSettings['optimus_sitemap_link']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_sitemap_topic_size">', $txt['optimus_sitemap_topic_size'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="text" class="input_text" value="', !empty($modSettings['optimus_sitemap_topic_size']) ? $modSettings['optimus_sitemap_topic_size'] : '', '" id="optimus_sitemap_topic_size" name="optimus_sitemap_topic_size" size="6"/>
-						</dd>
-					</dl>
 					<hr class="hrcolor clear" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>

@@ -1,10 +1,22 @@
 <?php
 
+/**
+ * english language file
+ *
+ * @package Optimus
+ * @link http://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo http://dragomano.ru/mods/optimus
+ * @copyright 2010-2017 Bugo
+ * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @version 1.9.2
+ */
+
 $txt['optimus_main'] = 'Optimus';
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_common_title'] = 'Base settings';
-$txt['optimus_common_desc'] = 'On this page you can change a forum description, manage of pages titles\'s templates.';
+$txt['optimus_common_desc'] = 'On this page you can change a forum description, manage of pages titles\'s templates, enable/disable Sitemap XML generation.';
 
 $txt['optimus_main_page'] = 'Homepage';
 $txt['optimus_common_info'] = 'Well, content of the description tag may be taken into account when the robot determines if a page matches a search query.';
@@ -36,9 +48,9 @@ $txt['optimus_403_h3'] = 'Sorry, but you have no access to this page.';
 $txt['optimus_extra_title'] = 'Extra';
 $txt['optimus_extra_desc'] = 'Here you can find some fixes for your forum. Additionally you can enable Open Graph support. Enjoy!';
 
-$txt['optimus_remove_indexphp'] = 'Remove "index.php" from URLs';
+$txt['optimus_remove_last_bc_item'] = 'The correct breadcrumbs (the last item will not be a link)';
 $txt['optimus_correct_prevnext'] = 'The correct rel="next" and rel="prev" (pagination for topics)';
-$txt['optimus_open_graph'] = 'Enable Open Graph support';
+$txt['optimus_open_graph'] = 'Enable Open Graph support (your theme\'s code will not be valid!)';
 $txt['optimus_og_image'] = 'Link to your default Open Graph image<br /><span class="smalltext">It will be replaced by the attachment of the first message in topics (if exists).</span>';
 
 $txt['optimus_verification_title'] = 'Verification meta tags';
@@ -63,7 +75,7 @@ $txt['optimus_counters_desc'] = 'You can add and change any counters in this sec
 $txt['optimus_head_code'] = 'Invisible counters loading on <strong>head</strong> section (<a href="http://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
 $txt['optimus_stat_code'] = 'Other invisible counters (<a href="http://piwik.org/" target="_blank">Piwik</a> etc)';
 $txt['optimus_count_code'] = 'Visible counters (<a href="http://www.freestats.com/" target="_blank">FreeStats</a>, <a href="http://www.superstats.com/" target="_blank">SuperStats</a>, <a href="http://www.prtracker.com/FreeCounter.html" target="_blank">PRTracker</a> etc)';
-$txt['optimus_count_code_css'] = 'Appearance for visible counters (CSS code)';
+$txt['optimus_counters_css'] = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 $txt['optimus_ga_note'] = '';
 
@@ -84,11 +96,16 @@ $txt['optimus_links'] = array(
 );
 
 $txt['optimus_sitemap_title'] = 'Optimus Sitemap';
-$txt['optimus_sitemap_desc'] = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below.';
+$txt['optimus_sitemap_desc'] = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated <strong>WHEN YOU CREATE</strong> new topics (or <em>when you saving</em> settings on your page).';
 
 $txt['optimus_sitemap_enable'] = 'Create and periodically update Sitemap XML file';
 $txt['optimus_sitemap_link'] = 'Show Sitemap XML-link on the footer';
-$txt['optimus_sitemap_topic_size'] = 'Add to sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_boards']      = 'Add links to boards to the sitemap<br /><span class="smalltext error">Boards that closed to guests will NOT be added.</span>';
+$txt['optimus_sitemap_topics'] = 'Add to the sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_mobile']      = 'Create and periodically update Sitemap XML file for mobile devices';
+$txt['optimus_sitemap_aeva']        = 'Create and periodically update Sitemap XML file for <a href="//dragomano.ru/translations/aeva-media" target="_blank">Aeva Media</a> images and videos';
+$txt['optimus_sitemap_gallery']     = 'Create and periodically update Sitemap XML file for <a href="//dragomano.ru/translations/smf-gallery" target="_blank">SMF Gallery</a> images';
+$txt['optimus_sitemap_classifieds'] = 'Create and periodically update Sitemap XML file for <a href="//dragomano.ru/mods/simple-classifieds" target="_blank">Simple Classifieds</a> items';
 
 $txt['optimus_sitemap_rec'] = ' Optimus is not able to split files into several parts.';
 $txt['optimus_sitemap_url_limit'] = 'Sitemap file must have no more than 50,000 URLs!';
