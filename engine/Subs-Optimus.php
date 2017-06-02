@@ -9,13 +9,13 @@
  * @copyright 2010-2017 Bugo
  * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.2
+ * @version 1.9.3
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-define('OB_VER', '1.9.2');
+define('OB_VER', '1.9.3');
 define('OB_LINK', '//dragomano.ru/mods/optimus');
 define('OB_AUTHOR', 'Bugo');
 
@@ -408,8 +408,23 @@ function optimus_buffer($buffer)
 		$new_xmlns = $xmlns . ' xmlns:og="http://ogp.me/ns#"';
 		$replacements[$xmlns] = $new_xmlns;
 
-		$open_graph = '<meta property="og:title" content="' . $context['page_title_html_safe'] . '" />
-	<meta property="og:type" content="website" />
+		$open_graph = '<meta property="og:title" content="' . $context['page_title_html_safe'] . '" />';
+
+		if (!empty($context['optimus_og_type'])) {
+			$type = key($context['optimus_og_type']);
+			$open_graph .= '
+	<meta property="og:type" content="' . $type . '" />';
+
+			foreach ($context['optimus_og_type'][$type] as $t_key => $t_value) {
+				$open_graph .= '
+	<meta property="' . $type . ':' . $t_key . '" content="' . $t_value . '" />';
+			}
+		}
+		else
+			$open_graph .= '
+	<meta property="og:type" content="website" />';
+
+		$open_graph .= '
 	<meta property="og:url" content="' . $context['canonical_url'] . '" />';
 
 		if (!empty($modSettings['optimus_og_image'])) {
