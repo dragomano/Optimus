@@ -23,7 +23,6 @@
 	<uninstall for="SMF 2.1 Beta 3, SMF 2.1 Beta 4, 2.1 - 2.1.99">
 		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/css/optimus.css" />
-		<remove-file name="$themedir/css/sitemap.xsl" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$sourcedir/Admin-Optimus.php" />
 		<remove-file name="$sourcedir/Subs-Optimus.php" />
