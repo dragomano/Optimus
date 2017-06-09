@@ -9,7 +9,7 @@
  * @copyright 2010-2017 Bugo
  * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.2
+ * @version 1.9.3
  */
 
 $txt['optimus_main'] = 'Optimus';
