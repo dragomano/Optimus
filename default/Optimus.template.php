@@ -6,7 +6,7 @@
  * @package Optimus
  * @link http://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo http://dragomano.ru/mods/optimus
- * @copyright 2010-2016 Bugo
+ * @copyright 2010-2017 Bugo
  * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @version 2.0 beta
