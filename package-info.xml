@@ -7,9 +7,8 @@
 	<type>modification</type>
 	
 	<install for="SMF 2.1 Beta 3, SMF 2.1 Beta 4, 2.1 - 2.1.99">
-		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
-		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<readme parsebbc="true">readme/readme.txt</readme>
+		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<require-file name="engine/Admin-Optimus.php" destination="$sourcedir">Core file</require-file>
 		<require-file name="engine/Subs-Optimus.php" destination="$sourcedir">Core file</require-file>		
 		<require-file name="default/Optimus.template.php" destination="$themedir">Template file</require-file>

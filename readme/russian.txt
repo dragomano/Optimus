@@ -1,4 +1,4 @@
 [center][color=red][size=16pt][b]Optimus[/b][/size][/color]
 [color=blue][b][size=10pt]By Bugo[/size][/b][/color]
 
-[color=green]Перед вами мод, который, возможно, поможет вам решить ряд проблем, связанных с индексацией форума в поисковиках.[/color][/center][hr]Мод распространяется по лицензии [url=http://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url]
+[color=green]РџРµСЂРµРґ РІР°РјРё РјРѕРґ, РєРѕС‚РѕСЂС‹Р№, РІРѕР·РјРѕР¶РЅРѕ, РїРѕРјРѕР¶РµС‚ РІР°Рј СЂРµС€РёС‚СЊ СЂСЏРґ РїСЂРѕР±Р»РµРј, СЃРІСЏР·Р°РЅРЅС‹С… СЃ РёРЅРґРµРєСЃР°С†РёРµР№ С„РѕСЂСѓРјР° РІ РїРѕРёСЃРєРѕРІРёРєР°С….[/color][/center][hr]РњРѕРґ СЂР°СЃРїСЂРѕСЃС‚СЂР°РЅСЏРµС‚СЃСЏ РїРѕ Р»РёС†РµРЅР·РёРё [url=http://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url]
