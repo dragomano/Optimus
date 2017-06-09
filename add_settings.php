@@ -30,6 +30,8 @@ foreach ($mod_settings as $new_setting => $new_value) {
     }
 }
 
+updateSettings(array('optimus_sitemap_link' => 0));
+
 if (SMF == 'SSI') {
     echo 'Database changes are complete! <a href="/">Return to the main page</a>.';
 }
