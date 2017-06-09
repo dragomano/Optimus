@@ -105,15 +105,14 @@ function addOptimusBaseSettings($return_config = false)
 	global $context, $txt, $scripturl;
 
 	$context['sub_template'] = 'base';
-	$context['page_title'] .= ' - ' . $txt['optimus_common_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
+	$context['page_title']  .= ' - ' . $txt['optimus_common_title'];
+	$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=base;save';
 
 	$config_vars = array(
 		array('int',   'optimus_portal_compat'),
 		array('text',  'optimus_portal_index'),
 		array('text',  'optimus_forum_index'),
 		array('text',  'optimus_description'),
-		array('check', 'optimus_board_description'),
 		array('check', 'optimus_topic_description'),
 		array('check', 'optimus_404_status'),
 	);
@@ -122,8 +121,7 @@ function addOptimusBaseSettings($return_config = false)
 	foreach ($txt['optimus_templates'] as $name => $template) {
 		$templates[$name] = array(
 			'name' => isset($_POST['' . $name . '_name']) ? $_POST['' . $name . '_name'] : '',
-			'page' => isset($_POST['' . $name . '_page']) ? $_POST['' . $name . '_page'] : '',
-			'site' => isset($_POST['' . $name . '_site']) ? $_POST['' . $name . '_site'] : '',
+			'site' => isset($_POST['' . $name . '_site']) ? $_POST['' . $name . '_site'] : '',		
 		);
 	}
 
@@ -146,16 +144,14 @@ function addOptimusBaseSettings($return_config = false)
 // Страница настроек - Дополнительно
 function addOptimusExtraSettings()
 {
-	global $context, $txt, $scripturl, $modSettings, $sourcedir;
+	global $context, $txt, $scripturl;
 
 	$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
+	$context['post_url']    = $scripturl . '?action=admin;area=optimus;sa=extra;save';
 	
-	$sef = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
-
 	$config_vars = array(
 		array('title', 'optimus_extra_title'),
-		array('check', 'optimus_remove_indexphp', 'disabled' => $sef ? true : false),
+		array('check', 'optimus_remove_last_bc_item'),
 		array('check', 'optimus_og_image'),
 	);
 
@@ -215,14 +211,12 @@ function addOptimusCountersSettings($return_config = false)
 	global $context, $txt, $scripturl;
 
 	$context['sub_template'] = 'counters';
-	$context['page_title'] .= ' - ' . $txt['optimus_counters'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=counters;save';
+	$context['page_title']  .= ' - ' . $txt['optimus_counters'];
+	$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=counters;save';
 
 	$config_vars = array(
     	array('large_text', 'optimus_head_code'),
 		array('large_text', 'optimus_stat_code'),
-		array('large_text', 'optimus_count_code'),
-		array('large_text', 'optimus_count_code_css'),
 		array('text', 'optimus_ignored_actions'),
 	);
 
@@ -247,8 +241,8 @@ function addOptimusRobotsSettings()
 	global $context, $txt, $scripturl, $robots_path;
 
 	$context['sub_template'] = 'robots';
-	$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
+	$context['page_title']  .= ' - ' . $txt['optimus_robots_title'];
+	$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
 	$robots_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
 	$context['robots_content'] = file_exists($robots_path) ? @file_get_contents($robots_path) : '';
@@ -270,16 +264,19 @@ function addOptimusRobotsSettings()
 // Страница настроек - Карта форума
 function addOptimusMapSettings()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $scripturl, $boarddir, $modSettings;
 
-	$context['sub_template'] = 'map';
-	$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=map;save';
+	$context['page_title']  .= ' - ' . $txt['optimus_sitemap_title'];
+	$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=map;save';
 
 	$config_vars = array(
+		array('title', 'optimus_sitemap_xml_link'),
 		array('check', 'optimus_sitemap_enable'),
-		array('check', 'optimus_sitemap_link'),
-		array('int',   'optimus_sitemap_topic_size'),
+		array('check', 'optimus_sitemap_link', 'disabled' => file_exists($boarddir . '/sitemap.xml') ? false : true),
+		array('check', 'optimus_sitemap_boards', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('int',   'optimus_sitemap_topics', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('check', 'optimus_sitemap_gallery', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('check', 'optimus_sitemap_classifieds', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
 	);
 
 	clearstatcache();
@@ -402,14 +399,6 @@ function getOptimusRobotsCreate()
 		$gal ? "Allow: " . $url_path . "/*gallery*view" : "",
 		"Disallow: " . $url_path . "/",
 		"|",
-		"User-agent: Googlebot-Mobile",
-		"Allow: " . $url_path . "/*wap",
-		"Disallow: " . $url_path . "/",
-		"|",
-		"User-agent: YandexImageResizer",
-		"Allow: " . $url_path . "/*wap",
-		"Disallow: " . $url_path . "/",
-		"|",
 		"User-agent: MediaPartners-Google",
 		"Allow: " . $url_path . "/",
 		"|",
@@ -474,12 +463,9 @@ Disallow: /*unread
 Disallow: /*topicseen
 Disallow: /*showtopic
 Disallow: /*prev_next
-Disallow: /*imode
-Disallow: /*wap
 Disallow: /*all" : "",
 
 		"Disallow: " . $url_path . "/*action",
-		$sef ? "" : "Disallow: " . $url_path . "/*board=*wap\nDisallow: " . $url_path . "/*board=*imode\nDisallow: " . $url_path . "/*topic=*wap\nDisallow: " . $url_path . "/*topic=*imode",
 		!empty($modSettings['queryless_urls']) || $sef ? "" : "Disallow: " . $url_path . "/*topic=*.msg\nDisallow: " . $url_path . "/*topic=*.new",
 		$sef ? "" : "Disallow: " . $url_path . "/*;",
 		"Disallow: " . $url_path . "/*PHPSESSID",

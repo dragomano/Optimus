@@ -6,7 +6,7 @@
 	<version>2.0 beta</version>
 	<type>modification</type>
 	
-	<install for="SMF 2.1 Beta 2, 2.1 - 2.1.99">
+	<install for="SMF 2.1 Beta 3, SMF 2.1 Beta 4, 2.1 - 2.1.99">
 		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<readme parsebbc="true">readme/readme.txt</readme>
@@ -20,7 +20,7 @@
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 	
-	<uninstall for="SMF 2.1 Beta 2, 2.1 - 2.1.99">
+	<uninstall for="SMF 2.1 Beta 3, SMF 2.1 Beta 4, 2.1 - 2.1.99">
 		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/css/optimus.css" />
 		<remove-file name="$themedir/css/sitemap.xsl" />

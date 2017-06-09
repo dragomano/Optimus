@@ -19,9 +19,8 @@ if (!empty($context['uninstalling'])) {
 }
 
 $hooks = array(
-    'integrate_pre_include'   => '$sourcedir/Subs-Optimus.php',
-	'integrate_admin_include' => '$sourcedir/Admin-Optimus.php',
-    'integrate_pre_load'      => 'loadOptimusHooks'
+    'integrate_pre_include' => '$sourcedir/Subs-Optimus.php',
+    'integrate_pre_load'    => 'loadOptimusHooks'
 );
 
 foreach ($hooks as $hook => $function) {

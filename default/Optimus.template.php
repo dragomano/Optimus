@@ -23,7 +23,7 @@ function template_base()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['optimus_main_page'], '</h3>
 			</div>
-			<p class="description">', $txt['optimus_common_info'], '</p>
+			<p class="information">', $txt['optimus_common_info'], '</p>
 
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
@@ -84,7 +84,7 @@ function template_base()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['optimus_all_pages'], '</h3>
 			</div>
-			<p class="description">', $txt['optimus_tpl_info'], '</p>
+			<p class="information">', $txt['optimus_tpl_info'], '</p>
 
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
@@ -99,8 +99,8 @@ function template_base()
 						</dt>
 						<dd>
 							<input type="text" class="input_text" value="', isset($templates[$name]['name']) ? $templates[$name]['name'] : $template[0], '" name="', $name, '_name" size="', !empty($templates[$name]['name']) ? $smcFunc['strlen']($templates[$name]['name']) : 14, '" />&nbsp;
-							<input type="text" class="input_text" value="', isset($templates[$name]['page']) ? $templates[$name]['page'] : $template[1], '" name="', $name, '_page" size="', !empty($templates[$name]['page']) ? $smcFunc['strlen']($templates[$name]['page']) : 14, '" />&nbsp;
-							<input type="text" class="input_text" value="', isset($templates[$name]['site']) ? $templates[$name]['site'] : $template[2], '" name="', $name, '_site" size="', !empty($templates[$name]['site']) ? $smcFunc['strlen']($templates[$name]['site']) : 28, '" />
+							<input type="text" class="input_text" value="', isset($templates[$name]['site']) ? $templates[$name]['site'] : $template[2], '" name="', $name, '_site" size="', !empty($templates[$name]['site']) ? $smcFunc['strlen']($templates[$name]['site']) + 2 : 28, '" />
+							 - ', $txt['page'], ' {#}
 						</dd>';
 	}
 
@@ -147,7 +147,7 @@ function template_verification()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['optimus_codes'], '</h3>
 			</div>
-			<p class="description">', $txt['optimus_meta_info'], '</p>
+			<p class="information">', $txt['optimus_meta_info'], '</p>
 
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
@@ -209,12 +209,6 @@ function template_counters()
 					<br />
 					<label for="optimus_stat_code">', $txt['optimus_stat_code'], '</label><br />
 					<textarea id="optimus_stat_code" name="optimus_stat_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_stat_code']) ? $modSettings['optimus_stat_code'] : '', '</textarea>
-					<br /><br />
-					<label for="optimus_count_code">', $txt['optimus_count_code'], '</label><br />
-					<textarea id="optimus_count_code" name="optimus_count_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_count_code']) ? $modSettings['optimus_count_code'] : '', '</textarea>
-					<br /><br />
-					<label for="optimus_count_code_css">', $txt['optimus_count_code_css'], '</label><br />
-					<textarea id="optimus_count_code_css" name="optimus_count_code_css" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_count_code_css']) ? $modSettings['optimus_count_code_css'] : '', '</textarea>
 					<br /><br />
 					<label for="optimus_ignored_actions">', $txt['optimus_ignored_actions'], '</label><br/>
 					<input type="text" class="input_text" value="', !empty($modSettings['optimus_ignored_actions']) ? $modSettings['optimus_ignored_actions'] : '', '" id="optimus_ignored_actions" name="optimus_ignored_actions" style="width: 99%" />
@@ -288,60 +282,6 @@ function template_robots()
 
 					<hr class="hrcolor clear" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
-				</div>
-				<span class="botslice"><span></span></span>
-			</div>
-
-		</form>
-	</div>
-	<br class="clear" />';
-}
-
-function template_map()
-{
-	global $context, $txt, $modSettings, $boarddir, $boardurl;
-
-	echo '
-	<div id="optimus">
-		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
-
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['optimus_sitemap_xml_link'], '</h3>
-			</div>
-
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							<span>
-								<label for="optimus_sitemap_enable">', $txt['optimus_sitemap_enable'], ' (<span class="smalltext">', (file_exists($boarddir . "/sitemap.xml") ? '<strong><a href="' . $boardurl . '/sitemap.xml" target="_blank">sitemap.xml</a></strong>' : ''), '</span>)</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_sitemap_enable" id="optimus_sitemap_enable"', !empty($modSettings['optimus_sitemap_enable']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_sitemap_link">', $txt['optimus_sitemap_link'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_sitemap_link" id="optimus_sitemap_link"', !empty($modSettings['optimus_sitemap_link']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_sitemap_topic_size">', $txt['optimus_sitemap_topic_size'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="text" class="input_text" value="', !empty($modSettings['optimus_sitemap_topic_size']) ? $modSettings['optimus_sitemap_topic_size'] : '', '" id="optimus_sitemap_topic_size" name="optimus_sitemap_topic_size" size="6"/>
-						</dd>
-					</dl>
-					<hr class="hrcolor clear" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
 				</div>
 				<span class="botslice"><span></span></span>
