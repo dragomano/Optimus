@@ -124,9 +124,7 @@ function optimus_operations()
 		$context['optimus_description'] = !empty($modSettings['optimus_description']) ? $smcFunc['htmlspecialchars']($modSettings['optimus_description']) : '';
 
 	get_optimus_page_templates();
-
 	get_optimus_aeva_media();
-
 	get_optimus_http_status();
 
 	// Copyright Info
@@ -188,7 +186,7 @@ function get_optimus_page_templates()
 			"{topic_name}" => $context['subject'],
 			"{board_name}" => strip_tags($board_info['name']),
 			"{cat_name}"   => $board_info['cat']['name'],
-			"{forum_name}" => $context['forum_name'],
+			"{forum_name}" => $context['forum_name']
 		);
 
 		$topic_page_number = !empty($topic_page_number) ? $topic_page_number : (!empty($topic_site_tpl) ? ' - ' : '');
@@ -196,9 +194,10 @@ function get_optimus_page_templates()
 		$context['page_title'] = strtr($topic_name_tpl . $topic_page_number . $topic_site_tpl, $trans);
 		
 		if (!empty($modSettings['optimus_topic_description'])) {
-			get_optimus_description();
-		
-			$context['optimus_description'] = !empty($context['topic_description']) ? $context['topic_description'] : $context['optimus_description'];
+			if (!empty($context['topic_description']))
+				$context['optimus_description'] = $context['topic_description'];
+			else
+				get_optimus_description();
 		}
 
 		get_optimus_og_image();
@@ -247,8 +246,7 @@ function get_optimus_description()
 		if ($smcFunc['strlen']($row['body']) > 160)
 			$row['body'] = $smcFunc['substr']($row['body'], 0, 157) . '...';
 
-		if ($smcFunc['strlen']($row['body']) > 80)
-			$context['optimus_description'] = $row['body'];
+		$context['optimus_description'] = $row['body'];
 	}
 
 	$smcFunc['db_free_result']($request);

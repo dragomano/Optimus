@@ -4,12 +4,12 @@
  * english language file
  *
  * @package Optimus
- * @link http://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo http://dragomano.ru/mods/optimus
+ * @link http       : //custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo http: //dragomano.ru/mods/optimus
  * @copyright 2010-2017 Bugo
- * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ * @license http: //opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.2
+ * @version 1.9.3
  */
 
 $txt['optimus_main']  = 'Optimus';
@@ -24,7 +24,7 @@ $txt['optimus_portal_compat']     = 'Portal integration';
 $txt['optimus_portal_compat_set'] = array('None', 'PortaMx', 'SimplePortal');
 $txt['optimus_portal_index']      = 'Portal homepage title';
 $txt['optimus_forum_index']       = 'Forum homepage title';
-$txt['optimus_description'] = 'The forum annotation<br /><span class="smalltext">Will be used as content of the meta-tag <strong>description</strong>.</span>';
+$txt['optimus_description']       = 'The forum annotation<br /><span class="smalltext">Will be used as content of the meta-tag <strong>description</strong>.</span>';
 
 $txt['optimus_all_pages'] = 'Topic & board pages';
 $txt['optimus_tpl_info']  = 'Possible variables:<br/><strong>{board_name}</strong> &mdash; board name, <strong>{topic_name}</strong> &mdash; topic subject,<br/><strong>{#}</strong> &mdash; current page number, <strong>{cat_name}</strong> &mdash; category name, <strong>{forum_name}</strong> &mdash; your forum name.';
@@ -103,8 +103,8 @@ $txt['optimus_sitemap_link']        = 'Show Sitemap XML-link on the footer';
 $txt['optimus_sitemap_boards']      = 'Add links to boards to the sitemap<br /><span class="smalltext error">Boards that closed to guests will NOT be added.</span>';
 $txt['optimus_sitemap_topics']      = 'Add to the sitemap only those topics that have the number of replies is more than';
 $txt['optimus_sitemap_mobile']      = 'Create and periodically update Sitemap XML file for mobile devices';
-$txt['optimus_sitemap_aeva']        = 'Create and periodically update Sitemap XML file for <a href="//dragomano.ru/translations/aeva-media" target="_blank">Aeva Media</a> images and videos';
-$txt['optimus_sitemap_gallery']     = 'Create and periodically update Sitemap XML file for <a href="//dragomano.ru/translations/smf-gallery" target="_blank">SMF Gallery</a> images';
+$txt['optimus_sitemap_aeva']        = 'Create and periodically update Sitemap XML file for <a href="http://media.noisen.com/item/2765/" target="_blank">Aeva Media</a> images and videos';
+$txt['optimus_sitemap_gallery']     = 'Create and periodically update Sitemap XML file for <a href="https://custom.simplemachines.org/mods/index.php?mod=473" target="_blank">SMF Gallery</a> images';
 $txt['optimus_sitemap_classifieds'] = 'Create and periodically update Sitemap XML file for <a href="//dragomano.ru/mods/simple-classifieds" target="_blank">Simple Classifieds</a> items';
 
 $txt['optimus_sitemap_rec']        = ' Optimus is not able to split files into several parts.';
