@@ -6,48 +6,41 @@
  * @package Optimus
  * @link http://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo http://dragomano.ru/mods/optimus
- * @copyright 2010-2016 Bugo
+ * @copyright 2010-2017 Bugo
  * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9
+ * @version 1.9.3
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * Раздел настроек мода в админке
+ * Р Р°Р·РґРµР» РЅР°СЃС‚СЂРѕРµРє РјРѕРґР° РІ Р°РґРјРёРЅРєРµ
  *
- * @param  array &$admin_areas [массив кнопок в меню админки]
+ * @param  array &$admin_areas [РјР°СЃСЃРёРІ РєРЅРѕРїРѕРє РІ РјРµРЅСЋ Р°РґРјРёРЅРєРё]
  */
 function optimus_admin_areas(&$admin_areas)
 {
 	global $txt;
-
-	$counter = array_search('featuresettings', array_keys($admin_areas['config']['areas'])) + 1;
-
-	$admin_areas['config']['areas'] = array_merge(
-		array_slice($admin_areas['config']['areas'], 0, $counter, true),
+	
+	$admin_areas['config']['areas']['optimus'] =
 		array(
-			'optimus' => array(
-				'label'    => $txt['optimus_title'],
-				'function' => create_function(null, 'optimus_area_settings();'),
-				'icon'     => 'maintain.gif',
-				'subsections' => array(
-					'common'       => array($txt['optimus_common_title']),
-					'extra'        => array($txt['optimus_extra_title']),
-					'verification' => array($txt['optimus_verification_title']),
-					'counters'     => array($txt['optimus_counters']),
-					'robots'       => array($txt['optimus_robots_title']),
-					'map'          => array($txt['optimus_sitemap_title']),
-				),
-			),
-		),
-		array_slice($admin_areas['config']['areas'], $counter, count($admin_areas['config']['areas']), true)
-	);
+			'label'    => $txt['optimus_title'],
+			'function' => create_function(null, 'optimus_area_settings();'),
+			'icon'     => 'maintain.gif',
+			'subsections' => array(
+				'common'       => array($txt['optimus_common_title']),
+				'extra'        => array($txt['optimus_extra_title']),
+				'verification' => array($txt['optimus_verification_title']),
+				'counters'     => array($txt['optimus_counters']),
+				'robots'       => array($txt['optimus_robots_title']),
+				'map'          => array($txt['optimus_sitemap_title'])
+			)
+		);
 }
 
-// Подключаем все имеющиеся функции с настройками мода
+// РџРѕРґРєР»СЋС‡Р°РµРј РІСЃРµ РёРјРµСЋС‰РёРµСЃСЏ С„СѓРЅРєС†РёРё СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РјРѕРґР°
 function optimus_area_settings()
 {
 	global $sourcedir, $context, $txt;
@@ -97,7 +90,7 @@ function optimus_area_settings()
 	call_user_func($subActions[$_REQUEST['sa']]);
 }
 
-// Страница настроек - Общие настройки
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РћР±С‰РёРµ РЅР°СЃС‚СЂРѕР№РєРё
 function optimus_common_settings()
 {
 	global $context, $txt, $scripturl;
@@ -111,7 +104,7 @@ function optimus_common_settings()
 		array('text',  'optimus_portal_index'),
 		array('text',  'optimus_forum_index'),
 		array('text',  'optimus_description'),
-        array('check', 'optimus_no_first_number'),
+		array('check', 'optimus_no_first_number'),
 		array('check', 'optimus_board_description'),
 		array('check', 'optimus_topic_description'),
 		array('check', 'optimus_404_status'),
@@ -141,7 +134,7 @@ function optimus_common_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Дополнительно
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ
 function optimus_extra_settings()
 {
 	global $context, $txt, $scripturl, $modSettings, $settings;
@@ -155,7 +148,7 @@ function optimus_extra_settings()
 	}
 
 	$config_vars = array(
-		array('check', 'optimus_remove_indexphp'),
+		array('check', 'optimus_remove_last_bc_item'),
 		array('check', 'optimus_correct_prevnext'),
 		array('check', 'optimus_open_graph'),
 		array('text',  'optimus_og_image'),
@@ -174,7 +167,7 @@ function optimus_extra_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Проверочные мета-теги
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РџСЂРѕРІРµСЂРѕС‡РЅС‹Рµ РјРµС‚Р°-С‚РµРіРё
 function optimus_verification_settings()
 {
 	global $context, $txt, $scripturl;
@@ -209,7 +202,7 @@ function optimus_verification_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Счётчики
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РЎС‡С‘С‚С‡РёРєРё
 function optimus_counters_settings()
 {
 	global $context, $txt, $scripturl;
@@ -222,7 +215,7 @@ function optimus_counters_settings()
     	array('large_text', 'optimus_head_code'),
 		array('large_text', 'optimus_stat_code'),
 		array('large_text', 'optimus_count_code'),
-		array('large_text', 'optimus_count_code_css'),
+		array('large_text', 'optimus_counters_css'),
 		array('text', 'optimus_ignored_actions'),
 	);
 
@@ -239,7 +232,7 @@ function optimus_counters_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Страница настроек - Файл robots.txt
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - Р¤Р°Р№Р» robots.txt
 function optimus_robots_settings()
 {
 	global $context, $txt, $scripturl, $robots_path;
@@ -265,22 +258,27 @@ function optimus_robots_settings()
 	}
 }
 
-// Страница настроек - Карта форума
+// РЎС‚СЂР°РЅРёС†Р° РЅР°СЃС‚СЂРѕРµРє - РљР°СЂС‚Р° С„РѕСЂСѓРјР°
 function optimus_map_settings()
 {
-	global $context, $txt, $scripturl;
+	global $context, $txt, $scripturl, $boarddir, $modSettings;
 
-	$context['sub_template'] = 'map';
 	$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=map;save';
 
-	$config_vars = array(
-		array('check', 'optimus_sitemap_enable'),
-		array('check', 'optimus_sitemap_link'),
-		array('int',   'optimus_sitemap_topic_size'),
-	);
-
 	clearstatcache();
+
+	$config_vars = array(
+		array('title', 'optimus_sitemap_xml_link'),
+		array('check', 'optimus_sitemap_enable'),
+		array('check', 'optimus_sitemap_link', 'disabled' => file_exists($boarddir . '/sitemap.xml') ? false : true),
+		array('check', 'optimus_sitemap_boards', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('int',   'optimus_sitemap_topics', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('check', 'optimus_sitemap_mobile', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('check', 'optimus_sitemap_aeva', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('check', 'optimus_sitemap_gallery', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
+		array('check', 'optimus_sitemap_classifieds', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
+	);
 
 	// Saving?
 	if (isset($_GET['save'])) {
@@ -297,14 +295,14 @@ function optimus_map_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-// Функция создания файла robots.txt
+// Р¤СѓРЅРєС†РёСЏ СЃРѕР·РґР°РЅРёСЏ С„Р°Р№Р»Р° robots.txt
 function optimus_robots_create()
 {
 	global $boardurl, $smcFunc, $boarddir, $modSettings, $context, $sourcedir, $txt, $scripturl;
 
 	$url_path = @parse_url($boardurl, PHP_URL_PATH);
 
-	// Запрашиваем все имеющиеся права доступа для гостей
+	// Р—Р°РїСЂР°С€РёРІР°РµРј РІСЃРµ РёРјРµСЋС‰РёРµСЃСЏ РїСЂР°РІР° РґРѕСЃС‚СѓРїР° РґР»СЏ РіРѕСЃС‚РµР№
 	$yes = array();
 
 	$request = $smcFunc['db_query']('', '
@@ -321,12 +319,12 @@ function optimus_robots_create()
 
 	// SimplePortal
 	$sp = isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1 && function_exists('sportal_init');
-	// Файл, используемый SP при автономном режиме
+	// Р¤Р°Р№Р», РёСЃРїРѕР»СЊР·СѓРµРјС‹Р№ SP РїСЂРё Р°РІС‚РѕРЅРѕРјРЅРѕРј СЂРµР¶РёРјРµ
 	$autosp = !empty($modSettings['sp_standalone_url']) ? substr($modSettings['sp_standalone_url'], strlen($boardurl)) : '';
 
 	// PortaMx
 	$pm = !empty($modSettings['pmx_frontmode']) && function_exists('PortaMx');
-	// Проверяем, не является ли экшен forum алиасом для community (в PortaMx)
+	// РџСЂРѕРІРµСЂСЏРµРј, РЅРµ СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌРєС€РµРЅ forum Р°Р»РёР°СЃРѕРј РґР»СЏ community (РІ PortaMx)
 	$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
 
 	// Aeva Media
@@ -370,7 +368,7 @@ function optimus_robots_create()
 
 	$sef = $pretty || $simplesef;
 
-	// Проверяем существование файла sitemap
+	// РџСЂРѕРІРµСЂСЏРµРј СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ С„Р°Р№Р»Р° sitemap
 	$map = 'sitemap.xml';
 	$path_map = $boardurl . '/' . $map;
 	clearstatcache();
@@ -380,7 +378,7 @@ function optimus_robots_create()
 	else
 		$map = $path_map;
 
-	// Заполняем основной массив
+	// Р—Р°РїРѕР»РЅСЏРµРј РѕСЃРЅРѕРІРЅРѕР№ РјР°СЃСЃРёРІ
 	$robots = array(
 		"User-agent: Googlebot-Image",
 		$aeva ? "Allow: " . $url_path . "/*media*item" : "",
@@ -412,7 +410,7 @@ function optimus_robots_create()
 		"Allow: " . $url_path . "/",
 		"|",
 		substr($txt['lang_locale'], 0, 2) == 'ru' ? "User-agent: Baiduspider\nDisallow: " . $url_path . "/\n|" : "",
-		// Правила для всех остальных пауков
+		// РџСЂР°РІРёР»Р° РґР»СЏ РІСЃРµС… РѕСЃС‚Р°Р»СЊРЅС‹С… РїР°СѓРєРѕРІ
 		"User-agent: *",
 		// Main
 		"Allow: " . $url_path . "/$",
@@ -485,17 +483,28 @@ Disallow: /*all" : "",
 		!empty($modSettings['queryless_urls'])
 			? ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$")
 			: ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic"),
-		// Все остальные страницы
+		// Р’СЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹
 		$sef ? "" : "Disallow: " . $url_path . "/",
 		// Sitemap XML
 		!empty($map) ? "Sitemap: " . $map : "",
 		file_exists($sourcedir . '/Sitemap.php') ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "",
 		// Delay for spiders
-		"Crawl-delay: 5",
-		// for Yandex only
-		substr($txt['lang_locale'], 0, 2) == 'ru' ? "Clean-param: PHPSESSID " . $url_path . "/index.php" : "",
-		substr($txt['lang_locale'], 0, 2) == 'ru' && !empty($_SERVER['HTTP_HOST']) ? "Host: " . $_SERVER['HTTP_HOST'] : ""
+		"Crawl-delay: 5"
 	);
+
+	// for Yandex only
+	if (substr($txt['lang_locale'], 0, 2) == 'ru') {
+		$robots[] = "Clean-param: PHPSESSID " . $url_path . "/index.php";
+		
+		if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME'])) {
+			$prefix = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 'https://' : '';
+
+			if (empty($_SERVER['HTTP_HOST']))
+				$robots[] = "Host: " . $prefix . $_SERVER['SERVER_NAME'];
+			else
+				$robots[] = "Host: " . $prefix . $_SERVER['HTTP_HOST'];
+		}
+	}
 
 	$new_robots = array();
 	foreach ($robots as $line) {
@@ -503,7 +512,6 @@ Disallow: /*all" : "",
 	}
 
 	$new_robots = implode("<br />", str_replace("|", "", $new_robots));
-
 	$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
 }
 
