@@ -4,12 +4,12 @@
  * Optimus.template.php
  *
  * @package Optimus
- * @link http://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo http://dragomano.ru/mods/optimus
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2017 Bugo
- * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.2
+ * @version 1.9.4
  */
 
 function template_common()
@@ -74,7 +74,7 @@ function template_common()
 							</span>
 						</dt>
 						<dd>
-							<textarea id="optimus_description" name="optimus_description" cols="60" rows="2">', !empty($modSettings['optimus_description']) ? $modSettings['optimus_description'] : '', '</textarea> ', !empty($modSettings['optimus_description']) ? $smcFunc['strlen']($modSettings['optimus_description']) : '' ,'
+							<textarea id="optimus_description" name="optimus_description" rows="2" style="width: 80%">', !empty($modSettings['optimus_description']) ? $modSettings['optimus_description'] : '', '</textarea> ', !empty($modSettings['optimus_description']) ? $smcFunc['strlen']($modSettings['optimus_description']) : '' ,'
 						</dd>
 					</dl>
 				</div>
@@ -219,7 +219,7 @@ function template_extra()
 	<br class="clear" />';
 }
 
-function template_verification()
+function template_verify()
 {
 	global $context, $txt, $modSettings;
 
@@ -272,7 +272,7 @@ function template_verification()
 
 function template_counters()
 {
-	global $context, $txt, $modSettings, $settings;
+	global $context, $txt, $modSettings;
 
 	echo '
 	<div id="optimus">
@@ -314,7 +314,7 @@ function template_counters()
 
 function template_robots()
 {
-	global $context, $txt, $modSettings, $robots_path, $settings;
+	global $context, $txt, $boardurl;
 
 	echo '
 	<div id="optimus">
@@ -328,7 +328,7 @@ function template_robots()
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
 				<div class="content">
-					<div class="min">
+					<div id="stats_left">
 						<div class="content">
 							<h4>', $txt['optimus_rules'], '</h4>
 							<span class="smalltext">', $txt['optimus_rules_hint'], '</span>
@@ -336,14 +336,14 @@ function template_robots()
 							<span class="smalltext">', $txt['optimus_useful'], '</span>
 						</div>
 					</div>
-					<div class="min">
+					<div id="stats_right">
 						<div class="content">
-							<h4>', file_exists($robots_path) ? '<a href="/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
+							<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
 							<textarea cols="70" rows="22" name="robots">', $context['robots_content'], '</textarea>
 						</div>
 					</div>
-					<hr class="hrcolor clear" />
-					<div class="min">
+					<hr class="clear" />
+					<div id="top_posters">
 						<div class="content floatleft">
 							<h4>', $txt['optimus_links_title'], '</h4>
 							<ul>';
@@ -356,9 +356,9 @@ function template_robots()
 	echo '
 							</ul>
 						</div>
-						', $txt['lang_dictionary'] == 'ru' ? '<img class="floatright" src="http://1ps.ru/identic/bonusfiles/course-seo-5.jpg" alt="" />' : '', '
+						', $txt['lang_dictionary'] == 'ru' ? '<a href="//go.1ps.ru/promo/?p=383933&fm_promocode=949796R252" target="_blank"><img class="floatright" src="http://1ps.ru/identic/bonusfiles/course-seo-5.jpg" alt="" /></a>' : '', '
 					</div>
-					<div class="min">
+					<div id="top_boards">
 						<div class="content">
 							', $txt['lang_dictionary'] == 'ru' ? $txt['optimus_1ps_ads'] : '', '
 						</div>
@@ -367,9 +367,11 @@ function template_robots()
 					<div class="clear"></div>
 					<span class="botslice"><span></span></span>
 
-					<hr class="hrcolor clear" />
+					<hr class="clear" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
+					<div class="righttext">
+						<input type="submit" class="button_submit" value="', $txt['save'], '" />
+					</div>
 				</div>
 				<span class="botslice"><span></span></span>
 			</div>

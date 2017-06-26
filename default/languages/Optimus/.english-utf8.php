@@ -4,12 +4,12 @@
  * english-utf8 language file
  *
  * @package Optimus
- * @link http://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo http://dragomano.ru/mods/optimus
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2017 Bugo
- * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.3
+ * @version 1.9.4
  */
 
 $txt['optimus_main']  = 'Optimus';
@@ -62,19 +62,17 @@ $txt['optimus_name']           = 'Name';
 $txt['optimus_content']        = 'Content';
 $txt['optimus_meta_info']      = 'Please use only the values from <strong>content</strong> parameter of the meta tags.<br />Example: <span class="smalltext">&lt;meta name="<strong>NAME</strong>" content="<strong>VALUE</strong>" /&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="http://www.google.com/webmasters/tools" target="_blank">Webmasters tools</a>'),
-	'Yandex' => array('yandex-verification','<a href="http://webmaster.yandex.com/"                target="_blank">Yandex.Webmaster</a>'),
-	'MSN'    => array('msvalidate.01','<a href="http://www.bing.com/webmaster"                     target="_blank">MSN Webmaster Tools</a>'),
-	'Yahoo'  => array('y_key','<a href="https://siteexplorer.search.yahoo.com/"                    target="_blank">Yahoo Site Explorer</a>'),
-	'Alexa'  => array('alexaVerifyID','<a href="http://www.alexa.com/siteowners"                   target="_blank">Alexa Site Tools</a>')
+	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Webmasters tools</a>'),
+	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.com/" target="_blank">Yandex.Webmaster</a>'),
+	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing Webmaster</a>')
 );
 
 $txt['optimus_counters']      = 'Counters';
 $txt['optimus_counters_desc'] = 'You can add and change any counters in this section to log visits of your forum.';
 
-$txt['optimus_head_code']       = 'Invisible counters loading on <strong>head</strong> section (<a href="http://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
-$txt['optimus_stat_code']       = 'Other invisible counters (<a href="http://piwik.org/" target="_blank">Piwik</a> etc)';
-$txt['optimus_count_code']      = 'Visible counters (<a href="http://www.freestats.com/" target="_blank">FreeStats</a>, <a href="http://www.superstats.com/" target="_blank">SuperStats</a>, <a href="http://www.prtracker.com/FreeCounter.html" target="_blank">PRTracker</a> etc)';
+$txt['optimus_head_code']       = 'Invisible counters loading on <strong>head</strong> section (<a href="//www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
+$txt['optimus_stat_code']       = 'Other invisible counters (<a href="//piwik.org/" target="_blank">Piwik</a> etc)';
+$txt['optimus_count_code']      = 'Visible counters (<a href="//www.freestats.com/" target="_blank">FreeStats</a> etc)';
 $txt['optimus_counters_css']    = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 $txt['optimus_ga_note']         = '';
@@ -90,9 +88,9 @@ $txt['optimus_useful']      = '';
 $txt['optimus_robots_old']  = 'The contents of the old (before to installation) robots.txt you can see on <a href="/old_robots.txt" target="_blank">this link</a>.';
 $txt['optimus_links_title'] = 'Useful links';
 $txt['optimus_links']       = array(
-	'Using robots.txt'         => 'http://help.yandex.com/webmaster/?id=1113851',
-	'Create a robots.txt file' => 'https://support.google.com/webmasters/answer/6062596?hl=en',
-	'Changing of .htaccess'    => 'http://httpd.apache.org/docs/trunk/howto/htaccess.html'
+	'Using robots.txt'         => '//help.yandex.com/webmaster/?id=1113851',
+	'Create a robots.txt file' => '//support.google.com/webmasters/answer/6062596?hl=en',
+	'Changing of .htaccess'    => '//httpd.apache.org/docs/trunk/howto/htaccess.html'
 );
 
 $txt['optimus_sitemap_title'] = 'Optimus Sitemap';
@@ -114,5 +112,3 @@ $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 // Ads
 $txt['optimus_1ps_ads'] = '';
-
-?>
