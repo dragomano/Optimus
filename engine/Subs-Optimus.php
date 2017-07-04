@@ -137,6 +137,8 @@ function get_optimus_page_templates()
 {
 	global $modSettings, $txt, $context, $board_info, $smcFunc;
 
+    if (SMF == 'SSI') return; // We don't need templates for SSI mode
+
 	if (!empty($modSettings['optimus_templates']) && strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
 		$templates = @unserialize($modSettings['optimus_templates']);
 
