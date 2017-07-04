@@ -4,23 +4,19 @@
  * Subs-Optimus.php
  *
  * @package Optimus
- * @link http://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo http://dragomano.ru/mods/optimus
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2017 Bugo
- * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.3
+ * @version 1.9.4
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-define('OB_VER', '1.9.3');
-define('OB_LINK', '//dragomano.ru/mods/optimus');
-define('OB_AUTHOR', 'Bugo');
-
 // Подключаем используемые хуки
-function load_optimus_hooks()
+function optimus_hooks()
 {
 	add_integration_function('integrate_load_theme', 'optimus_home', false);
 	add_integration_function('integrate_admin_include', '$sourcedir/Admin-Optimus.php', false);
@@ -115,13 +111,17 @@ function optimus_operations()
 			$context['canonical_url'] = $boardurl . '/';
 		}
 
-		if (in_array($context['current_action'], array('forum', 'community')) && (!empty($modSettings['pmx_frontmode']) || !empty($modSettings['sp_portal_mode'])))
-			$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
+		if (in_array($context['current_action'], array('forum', 'community'))) {
+			if (!empty($modSettings['pmx_frontmode']) || !empty($modSettings['sp_portal_mode']))
+				$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
+		}
 	}
 
 	// Description
-	if (empty($context['current_action']))
-		$context['optimus_description'] = !empty($modSettings['optimus_description']) ? $smcFunc['htmlspecialchars']($modSettings['optimus_description']) : '';
+	if (empty($context['current_action']) && !empty($modSettings['optimus_description'])) {
+		if (empty($_REQUEST['topic']) && empty($_REQUEST['board']))
+			$context['optimus_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
+	}
 
 	get_optimus_page_templates();
 	get_optimus_aeva_media();
@@ -129,7 +129,7 @@ function optimus_operations()
 
 	// Copyright Info
 	if ($context['current_action'] == 'credits')
-		$context['copyrights']['mods'][] = '<a href="' . OB_LINK . '" target="_blank">Optimus</a> &copy; 2010&ndash;' . date('Y') . ', ' . OB_AUTHOR;
+		$context['copyrights']['mods'][] = '<a href="//dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;' . date('Y') . ', Bugo';
 }
 
 // Обрабатываем шаблоны заголовков страниц
@@ -153,8 +153,7 @@ function get_optimus_page_templates()
 				$topic_site_tpl = $data['site'];
 			}
 		}
-	}
-	else {
+	} else {
 		foreach ($txt['optimus_templates'] as $name => $data) {
 			if ($name == 'board') {
 				$board_name_tpl = $data[0];
@@ -319,7 +318,7 @@ function get_optimus_http_status()
 		loadTemplate('Optimus');
 
 		$context['sub_template'] = '404';
-		$context['page_title'] = $txt['optimus_404_page_title'];
+		$context['page_title']   = $txt['optimus_404_page_title'];
 	}
 
 	// Нет доступа?
@@ -329,16 +328,11 @@ function get_optimus_http_status()
 		loadTemplate('Optimus');
 
 		$context['sub_template'] = '403';
-		$context['page_title'] = $txt['optimus_403_page_title'];
+		$context['page_title']   = $txt['optimus_403_page_title'];
 	}
 }
 
-/**
- * This called via integrate_buffer hook
- *
- * @param  array $buffer [принимаем текущее содержимое буфера страницы]
- * @return array $buffer [возвращаем новое содержимое буфера, с произведенными модом заменами]
- */
+// integrate_buffer hook
 function optimus_buffer($buffer)
 {
 	global $context, $modSettings, $mbname, $scripturl, $boardurl, $forum_copyright, $boarddir, $txt;
@@ -394,8 +388,7 @@ function optimus_buffer($buffer)
 					$replacements[$prev] = $new_prev;
 					$replacements[$next] = $new_next;
 				}
-			}
-			else
+			} else
 				$replacements[$prev] = $replacements[$next] = '';
 		}
 	}
@@ -417,8 +410,7 @@ function optimus_buffer($buffer)
 				$open_graph .= '
 	<meta property="' . $type . ':' . $t_key . '" content="' . $t_value . '" />';
 			}
-		}
-		else
+		} else
 			$open_graph .= '
 	<meta property="og:type" content="website" />';
 
@@ -501,12 +493,7 @@ function optimus_buffer($buffer)
 	return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 }
 
-/**
- * Обработка дат
- *
- * @param  string $timestamp [принимаем отметку времени страницы]
- * @return string $result    [возвращаем отметку времени в новом формате, для карты сайта]
- */
+// Обработка дат
 function get_optimus_sitemap_date($timestamp = '')
 {
 	$timestamp = empty($timestamp) ? time() : $timestamp;
@@ -516,13 +503,7 @@ function get_optimus_sitemap_date($timestamp = '')
 	return $result;
 }
 
-/**
- * Создаем файл карты
- *
- * @param  string $path [путь к файлу]
- * @param  string $data [текст для вставки в файл]
- * @return bool         [true при успешном создании, false в противном случае]
- */
+// Создаем файл карты
 function create_optimus_file($path, $data)
 {
 	if (!$fp = @fopen($path, 'w'))
@@ -536,11 +517,7 @@ function create_optimus_file($path, $data)
 	return true;
 }
 
-/**
- * Если размер файла превышает 10 МБ (ограничение Яндекса), отправляем запись в Журнал ошибок
- *
- * @param  string $file [принимаем ссылку на файл]
- */
+// Если размер файла превышает 10 МБ (ограничение Яндекса), отправляем запись в Журнал ошибок
 function check_optimus_filesize($file)
 {
 	global $txt;
@@ -553,32 +530,22 @@ function check_optimus_filesize($file)
 	return;
 }
 
-/**
- * Определяем приоритет индексирования (не влияет на позиции страниц в поисковой выдаче!)
- *
- * @param  string $time [принимаем время изменения страницы]
- * @return string       [возвращаем одно из предустановленных значений, для установки приоритета сканирования]
- */
+// Определяем приоритет индексирования
 function get_optimus_sitemap_priority($time)
 {
 	$diff = floor((time() - $time)/60/60/24);
 	
 	if ($diff <= 30)
 		return '0.8';
-	else if ($diff <= 60)
+	elseif ($diff <= 60)
 		return '0.6';
-	else if ($diff <= 90)
+	elseif ($diff <= 90)
 		return '0.4';
 	else
 		return '0.2';
 }
 
-/**
- * Определяем периодичность обновлений
- *
- * @param  string $time [принимаем время изменения страницы]
- * @return string       [возвращаем одно из предустановленных значений, для установки периодичности проверки]
- */
+// Определяем периодичность обновлений
 function get_optimus_sitemap_frequency($time)
 {
 	$frequency = time() - $time;
@@ -595,11 +562,7 @@ function get_optimus_sitemap_frequency($time)
 	return 'yearly';
 }
 
-/**
- * Генерация карты форума
- *
- * @return bool [true для заполнения отчета в журнале Диспетчера задач]
- */
+// Генерация карты форума
 function optimus_sitemap()
 {
 	global $modSettings, $sourcedir, $smcFunc, $boardurl, $scripturl, $context, $boarddir;
@@ -662,7 +625,7 @@ function optimus_sitemap()
 		$first[] = $url[] = array(
 			'loc'      => $boardurl . '/',
 			'wap'      => $scripturl . '/?' . $mobile_type,
-			'priority' => '1.0',
+			'priority' => '1.0'
 		);
 	}
 
@@ -676,7 +639,7 @@ function optimus_sitemap()
 			ORDER BY b.id_board',
 			array(
 				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-				'posts'         => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0,
+				'posts'         => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
 			)
 		);
 
@@ -704,8 +667,7 @@ function optimus_sitemap()
 							'priority'   => get_optimus_sitemap_priority($last_edit)
 						);
 					}
-				}
-				else {
+				} else {
 					$first[] = $url[] = array(
 						'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
 						'wap'        => $scripturl . '?board=' . $entry['id_board'] . '.0;' . $mobile_type,
@@ -769,7 +731,7 @@ function optimus_sitemap()
 		ORDER BY t.id_topic',
 		array(
 			'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-			'replies'       => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0,
+			'replies'       => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
 		)
 	);
 	
@@ -797,8 +759,7 @@ function optimus_sitemap()
 						'priority'   => get_optimus_sitemap_priority($last_edit)
 					);
 				}
-			}
-			else {
+			} else {
 				$sec[$year][] = $url[] = array(
 					'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $scripturl . '?topic=' . $entry['id_topic'] . '.0',
 					'wap'        => $scripturl . '?topic=' . $entry['id_topic'] . '.0;' . $mobile_type,
@@ -1093,8 +1054,7 @@ function optimus_sitemap()
 		$index_data = $header . '<sitemapindex ' . $xmlns . '>' . $n . $maps . '</sitemapindex>';
 		$index_file = $boarddir . '/sitemap.xml';	
 		create_optimus_file($index_file, $index_data);
-	}
-	else {
+	} else {
 		$one_file = $header . '<urlset ' . $xmlns . '>' . $n . $one_file . '</urlset>';
 		$sitemap = $boarddir . '/sitemap.xml';
 		create_optimus_file($sitemap, $one_file);
@@ -1121,5 +1081,3 @@ function optimus_sitemap()
 
 	return true;
 }
-
-?>

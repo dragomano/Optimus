@@ -8,13 +8,10 @@ else if(!defined('SMF'))
 if ((SMF == 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
 
-// Removing settings
-//$smcFunc['db_query']('', "DELETE FROM {db_prefix}settings WHERE variable LIKE 'optimus_%'");
-
 // Hooks
 $hooks = array(
 	'integrate_pre_include' => '$sourcedir/Subs-Optimus.php',
-	'integrate_pre_load'    => 'load_optimus_hooks'
+	'integrate_pre_load'    => 'optimus_hooks'
 );
 
 $call = 'remove_integration_function';

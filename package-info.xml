@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>1.9.3</version>
+	<version>1.9.4</version>
 	<type>modification</type>
 	
 	<install for="2.0 - 2.0.99">
@@ -14,7 +14,6 @@
 		<require-file name="engine/Subs-Optimus.php" destination="$sourcedir">Core file</require-file>		
 		<require-file name="default/Optimus.template.php" destination="$themedir">Template file</require-file>
 		<require-dir name="default/languages" destination="$themedir">Language files</require-dir>
-		<require-dir name="default/css" destination="$themedir">CSS files</require-dir>
 		<database>install.php</database>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
@@ -22,7 +21,6 @@
 	<uninstall for="2.0 - 2.0.99">
 		<code>uninstall.php</code>
 		<remove-dir name="$languagedir/Optimus" />
-		<remove-file name="$themedir/css/optimus.css" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$sourcedir/Admin-Optimus.php" />
 		<remove-file name="$sourcedir/Subs-Optimus.php" />

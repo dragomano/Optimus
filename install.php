@@ -11,7 +11,7 @@ if ((SMF == 'SSI') && !$user_info['is_admin'])
 // Hooks
 $hooks = array(
 	'integrate_pre_include' => '$sourcedir/Subs-Optimus.php',
-	'integrate_pre_load'    => 'load_optimus_hooks'
+	'integrate_pre_load'    => 'optimus_hooks'
 );
 
 $call = 'add_integration_function';
