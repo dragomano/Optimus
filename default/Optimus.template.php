@@ -9,7 +9,7 @@
  * @copyright 2010-2017 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.4
+ * @version 1.9.5
  */
 
 function template_common()

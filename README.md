@@ -1,6 +1,6 @@
 # SMF Optimus mod
-* **Author:** Bugo [dragomano.ru](http://dragomano.ru)
-* **License:** [Artistic License 2.0](http://opensource.org/licenses/artistic-license-2.0)
+* **Author:** Bugo [dragomano.ru](https://dragomano.ru)
+* **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0
 * **Hooks only:** Yes
 * **Languages:** English, Russian
@@ -20,7 +20,7 @@ This mod might help you solve some problems associated with indexing of your for
 * Simple Sitemap XML.
 * Other small changes to improve the indexing of your forum.
 
-P.S. See develop branch for Optimus 2.0 beta (works with SMF 2.1 beta).
+P.S. See develop branch for Optimus 2.0 beta (works with SMF 2.1 beta 3).
 
 ## Описание
 Модификация упрощает оптимизацию страниц форума SMF для индексации в поисковиках.
@@ -38,7 +38,7 @@ P.S. See develop branch for Optimus 2.0 beta (works with SMF 2.1 beta).
 * Редактирование robots.txt из админки.
 * Создание карты форума (sitemap.xml).
 
-P.S. Бранч develop содержит версию Optimus 2.0 beta (для SMF 2.1 beta).
+P.S. Ветка develop содержит версию Optimus 2.0 beta (для SMF 2.1 beta 3).
 
 ![optimus1](https://cloud.githubusercontent.com/assets/1187218/23969000/59367228-09de-11e7-8995-6ff5be2a604c.png)
 
