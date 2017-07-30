@@ -9,7 +9,7 @@
  * @copyright 2010-2017 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.4
+ * @version 1.9.5
  */
 
 if (!defined('SMF'))
@@ -22,7 +22,6 @@ function optimus_hooks()
 	add_integration_function('integrate_admin_include', '$sourcedir/Admin-Optimus.php', false);
 	add_integration_function('integrate_admin_areas', 'optimus_admin_areas', false);
 	add_integration_function('integrate_menu_buttons', 'optimus_operations', false);
-	add_integration_function('integrate_create_topic', 'optimus_sitemap', false);
 	add_integration_function('integrate_buffer', 'optimus_buffer', false);
 }
 
@@ -37,9 +36,9 @@ function optimus_home()
 	if (!isset($modSettings['optimus_portal_compat']))
 		$modSettings['optimus_portal_compat'] = 0;
 
-	if (!empty($modSettings['optimus_portal_compat'])) {
+	if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
 		if (!empty($modSettings['pmx_frontmode']) || (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1)) {
-			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']) && !empty($modSettings['optimus_portal_index']))	{
+			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))	{
 				$context['forum_name'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
 			}
 		}
@@ -80,9 +79,9 @@ function optimus_home()
 		if (empty($_REQUEST['action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic'])) {
 			// Для режима "Без главной страницы, направлять сразу на форум"
 			if (!empty($modSettings['optimus_meta']) && empty($modSettings['pmx_frontmode'])) {
-				$meta = '';
 				$test = @unserialize($modSettings['optimus_meta']);
 
+				$meta = '';
 				foreach ($test as $var) {
 					$meta .= "\n\t" . '<meta name="' . $var['name'] . '" content="' . $var['content'] . '" />';
 				}
@@ -99,7 +98,7 @@ function optimus_operations()
 	global $modSettings, $context, $mbname, $boardurl, $scripturl, $smcFunc;
 
 	// Последний пункт в хлебных крошках не будем делать ссылкой
-	if (!empty($modSettings['optimus_remove_last_bc_item']) && !defined('WIRELESS')) {
+	if (!empty($modSettings['optimus_remove_last_bc_item']) && !WIRELESS) {
 		$linktree = count($context['linktree']);
 		unset($context['linktree'][$linktree - 1]['url']);
 	}
@@ -117,6 +116,12 @@ function optimus_operations()
 		}
 	}
 
+	// TinyPortal compat mode
+	if (!empty($modSettings['optimus_portal_compat'])) {
+		if ($modSettings['optimus_portal_compat'] == 3 && !empty($context['TPortal']['is_front']))
+			$context['page_title'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
+	}
+
 	// Description
 	if (empty($context['current_action']) && !empty($modSettings['optimus_description'])) {
 		if (empty($_REQUEST['topic']) && empty($_REQUEST['board']))
@@ -129,7 +134,7 @@ function optimus_operations()
 
 	// Copyright Info
 	if ($context['current_action'] == 'credits')
-		$context['copyrights']['mods'][] = '<a href="//dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;' . date('Y') . ', Bugo';
+		$context['copyrights']['mods'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;' . date('Y') . ', Bugo';
 }
 
 // Обрабатываем шаблоны заголовков страниц
@@ -137,9 +142,9 @@ function get_optimus_page_templates()
 {
 	global $modSettings, $txt, $context, $board_info, $smcFunc;
 
-    if (SMF == 'SSI') return; // We don't need templates for SSI mode
+	if (SMF == 'SSI' || empty($modSettings['optimus_templates'])) return;
 
-	if (!empty($modSettings['optimus_templates']) && strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
+	if (strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
 		$templates = @unserialize($modSettings['optimus_templates']);
 
 		foreach ($templates as $name => $data) {
@@ -244,8 +249,8 @@ function get_optimus_description()
 		censorText($row['body']);
 
 		$row['body'] = strip_tags(strtr(parse_bbc($row['body'], $row['smileys_enabled'], $row['id_msg']), array('<br />' => '&#10;')));
-		if ($smcFunc['strlen']($row['body']) > 160)
-			$row['body'] = $smcFunc['substr']($row['body'], 0, 157) . '...';
+		if ($smcFunc['strlen']($row['body']) > 130)
+			$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
 
 		$context['optimus_description'] = $row['body'];
 	}
@@ -584,19 +589,6 @@ function optimus_sitemap()
 	$xmlns_mobile = $tab . 'xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"';
 	$xmlns_image  = $tab . 'xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
 	$xmlns_video  = $tab . 'xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"';
-
-/*	http://makarou.com/sozdanie-xml-dokumenta-sredstvami-php5
-	$xml = new DomDocument('1.0','utf-8');	
-	$xml->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-
-	$urlset = $xml->appendChild($xml->createElement('urlset'));
-	$url    = $urlset->appendChild($xml->createElement('url'));
-	$loc    = $url->appendChild($xml->createElement('loc'));
-
-	$loc->appendChild($xml->createTextNode($scripturl . '?action=bbs'));
-
-	$xml->formatOutput = true;
-	$xml->save('sitemap-test.xml');*/
 
 	clearstatcache();
 
@@ -990,7 +982,8 @@ function optimus_sitemap()
 	// Pretty URLs installed?
 	$pretty = $sourcedir . '/PrettyUrls-Filters.php';
 	if (file_exists($pretty) && !empty($modSettings['pretty_enable_filters'])) {
-		require_once($pretty);
+		if (!function_exists('pretty_rewrite_buffer'))
+			require_once($pretty);
 		
 		$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
 		$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';

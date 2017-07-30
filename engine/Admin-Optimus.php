@@ -9,7 +9,7 @@
  * @copyright 2010-2017 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.4
+ * @version 1.9.5
  */
 
 if (!defined('SMF'))
@@ -37,7 +37,7 @@ function optimus_admin_areas(&$admin_areas)
 
 function optimus_area_settings()
 {
-	global $sourcedir, $context, $txt;
+	global $sourcedir, $context, $txt, $scripturl;
 
 	require_once($sourcedir . '/ManageSettings.php');
 
@@ -83,7 +83,7 @@ function optimus_area_settings()
 				'description' => $txt['optimus_robots_desc'],
 			),
 			'map' => array(
-				'description' => $txt['optimus_sitemap_desc'],
+				'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
 			),
 		),
 	);
@@ -264,6 +264,23 @@ function optimus_map_settings()
 		array('check', 'optimus_sitemap_mobile', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
 	);
 
+	// Обновляем запись в Диспетчере задач
+	$smcFunc['db_query']('', '
+		UPDATE {db_prefix}scheduled_tasks
+		SET disabled = {int:disabled}
+		WHERE task = {string:task}',
+		array(
+			'disabled' => !empty($modSettings['optimus_sitemap_enable']) ? 0 : 1,
+			'task'     => 'optimus_sitemap',
+		)
+	);
+
+	if (!empty($modSettings['optimus_sitemap_enable'])) {
+		require_once($sourcedir . '/ScheduledTasks.php');
+		CalculateNextTrigger('optimus_sitemap');
+	}
+
+	// Проверяем права доступа
 	$request = $smcFunc['db_query']('', '
 		SELECT ps.permission
 		FROM {db_prefix}permissions AS ps
@@ -459,13 +476,14 @@ function optimus_robots_create()
 		// SMF Links
 		$sl ? "Allow: " . $url_path . "/*links" : "",
 
-		// Special rules for Pretty URLs
+		// Special rules for Pretty URLs or SimpleSEF
 		$sef ? "Disallow: /attachments/
 Disallow: /avatars/
 Disallow: /Packages/
 Disallow: /Smileys/
 Disallow: /Sources/
 Disallow: /Themes/
+Disallow: /login/
 Disallow: /*msg
 Disallow: /*profile
 Disallow: /*help
