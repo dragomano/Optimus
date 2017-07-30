@@ -476,13 +476,14 @@ function optimus_robots_create()
 		// SMF Links
 		$sl ? "Allow: " . $url_path . "/*links" : "",
 
-		// Special rules for Pretty URLs
+		// Special rules for Pretty URLs or SimpleSEF
 		$sef ? "Disallow: /attachments/
 Disallow: /avatars/
 Disallow: /Packages/
 Disallow: /Smileys/
 Disallow: /Sources/
 Disallow: /Themes/
+Disallow: /login/
 Disallow: /*msg
 Disallow: /*profile
 Disallow: /*help

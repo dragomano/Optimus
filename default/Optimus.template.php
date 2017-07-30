@@ -356,7 +356,7 @@ function template_robots()
 	echo '
 							</ul>
 						</div>
-						', $txt['lang_dictionary'] == 'ru' ? '<a href="//go.1ps.ru/promo/?p=383933&fm_promocode=949796R252" target="_blank"><img class="floatright" src="http://1ps.ru/identic/bonusfiles/course-seo-5.jpg" alt="" /></a>' : '', '
+						', $txt['lang_dictionary'] == 'ru' ? '<a href="https://go.1ps.ru/promo/?p=383933&fm_promocode=949796R252" target="_blank"><img class="floatright" src="https://1ps.ru/identic/bonusfiles/course-seo-5.jpg" alt="" /></a>' : '', '
 					</div>
 					<div id="top_boards">
 						<div class="content">
