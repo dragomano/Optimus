@@ -10,11 +10,10 @@
 		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<readme parsebbc="true">readme/readme.txt</readme>
-		<require-file name="engine/Admin-Optimus.php" destination="$sourcedir">Core file</require-file>
-		<require-file name="engine/Subs-Optimus.php" destination="$sourcedir">Core file</require-file>		
-		<require-file name="default/Optimus.template.php" destination="$themedir">Template file</require-file>
-		<require-dir name="default/languages" destination="$themedir">Language files</require-dir>
-		<database>hooks.php</database>
+		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
+		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
+		<code>hooks.php</code>
+        <database>settings.php</database>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 	

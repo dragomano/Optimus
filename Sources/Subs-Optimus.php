@@ -142,7 +142,8 @@ function get_optimus_page_templates()
 {
 	global $modSettings, $txt, $context, $board_info, $smcFunc;
 
-	if (SMF == 'SSI' || empty($modSettings['optimus_templates'])) return;
+	if (SMF == 'SSI' || empty($modSettings['optimus_templates']))
+		return;
 
 	if (strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
 		$templates = @unserialize($modSettings['optimus_templates']);
@@ -1075,4 +1076,12 @@ function optimus_sitemap()
 	}
 
 	return true;
+}
+
+// Вызов генерации карты через Диспетчер задач
+function scheduled_optimus_sitemap()
+{
+	$result = optimus_sitemap();
+
+	return $result;
 }
