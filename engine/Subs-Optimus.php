@@ -4,10 +4,10 @@
  * Subs-Optimus.php
  *
  * @package Optimus
- * @link http://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo http://dragomano.ru/mods/optimus
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2017 Bugo
- * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @version 2.0 beta
  */
@@ -17,7 +17,7 @@ if (!defined('SMF'))
 
 define('OB_MOD', 'Optimus');
 define('OB_VER', '2.0 beta');
-define('OB_LINK', '//dragomano.ru/mods/optimus');
+define('OB_LINK', 'https://dragomano.ru/mods/optimus');
 define('OB_AUTHOR', 'Bugo');
 
 function loadOptimusHooks()
@@ -463,7 +463,6 @@ function getOptimusSitemap()
 	if (empty($modSettings['optimus_sitemap_boards'])) {
 		$first[] = $url[] = array(
 			'loc'      => $boardurl . '/',
-			'wap'      => $scripturl . '/?' . $mobile_type,
 			'priority' => '1.0',
 		);
 	}
@@ -812,5 +811,3 @@ function getOptimusSitemap()
 
 	return true;
 }
-
-?>

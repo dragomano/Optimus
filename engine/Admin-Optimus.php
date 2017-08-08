@@ -4,10 +4,10 @@
  * Admin-Optimus.php
  *
  * @package Optimus
- * @link http://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo http://dragomano.ru/mods/optimus
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2017 Bugo
- * @license http://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @version 2.0 beta
  */
@@ -449,6 +449,7 @@ Disallow: /Packages/
 Disallow: /Smileys/
 Disallow: /Sources/
 Disallow: /Themes/
+Disallow: /login/
 Disallow: /*msg
 Disallow: /*profile
 Disallow: /*help
@@ -494,5 +495,3 @@ Disallow: /*all" : "",
 
 	$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
 }
-
-?>
