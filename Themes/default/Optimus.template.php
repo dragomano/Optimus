@@ -9,7 +9,7 @@
  * @copyright 2010-2017 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.5
+ * @version 1.9.6
  */
 
 function template_common()
@@ -152,73 +152,6 @@ function template_common()
 	<br class="clear" />';
 }
 
-function template_extra()
-{
-	global $context, $txt, $smcFunc, $modSettings;
-
-	echo '
-	<div id="optimus">
-		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
-
-			<div class="cat_bar">
-				<h3 class="catbg">', $txt['optimus_extra_title'], '</h3>
-			</div>
-
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
-				<div class="content">
-					<dl class="settings">
-						<dt>
-							<span>
-								<label for="optimus_remove_last_bc_item">', $txt['optimus_remove_last_bc_item'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_remove_last_bc_item" id="optimus_remove_last_bc_item"', !empty($modSettings['optimus_remove_last_bc_item']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_correct_prevnext">', $txt['optimus_correct_prevnext'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_correct_prevnext" id="optimus_correct_prevnext"', !empty($modSettings['optimus_correct_prevnext']) ? ' checked="checked"' : '', ' />
-						</dd>
-						<dt>
-							<span>
-								<label for="optimus_open_graph">', $txt['optimus_open_graph'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="checkbox" name="optimus_open_graph" id="optimus_open_graph"', !empty($modSettings['optimus_open_graph']) ? ' checked="checked"' : '', ' />
-						</dd>';
-
-	if (!empty($modSettings['optimus_open_graph'])) {
-		echo '
-						<dt>
-							<span>
-								<label for="optimus_og_image">', $txt['optimus_og_image'], '</label>
-							</span>
-						</dt>
-						<dd>
-							<input type="text" class="input_text" value="', !empty($modSettings['optimus_og_image']) ? $modSettings['optimus_og_image'] : '', '" id="optimus_og_image" name="optimus_og_image" size="60" />
-						</dd>';
-	}
-
-	echo '
-					</dl>
-					<hr class="hrcolor clear" />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
-				</div>
-				<span class="botslice"><span></span></span>
-			</div>
-
-		</form>
-	</div>
-	<br class="clear" />';
-}
-
 function template_verify()
 {
 	global $context, $txt, $modSettings;
@@ -296,7 +229,7 @@ function template_counters()
 					<textarea id="optimus_count_code" name="optimus_count_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_count_code']) ? $modSettings['optimus_count_code'] : '', '</textarea>
 					<br /><br />
 					<label for="optimus_counters_css">', $txt['optimus_counters_css'], '</label><br />
-					<textarea id="optimus_counters_css" name="optimus_count_code_css" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_counters_css']) ? $modSettings['optimus_counters_css'] : '', '</textarea>
+					<textarea id="optimus_counters_css" name="optimus_counters_css" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_counters_css']) ? $modSettings['optimus_counters_css'] : '', '</textarea>
 					<br /><br />
 					<label for="optimus_ignored_actions">', $txt['optimus_ignored_actions'], '</label><br/>
 					<input type="text" class="input_text" value="', !empty($modSettings['optimus_ignored_actions']) ? $modSettings['optimus_ignored_actions'] : '', '" id="optimus_ignored_actions" name="optimus_ignored_actions" style="width: 99%" />

@@ -44,9 +44,12 @@ $txt['optimus_extra_title'] = 'Extra';
 $txt['optimus_extra_desc']  = 'Here you can find some fixes for your forum. Additionally you can enable Open Graph support. Enjoy!';
 
 $txt['optimus_remove_last_bc_item'] = 'The correct breadcrumbs (the last item will not be a link)';
-$txt['optimus_correct_prevnext']    = 'The correct rel="next" and rel="prev" (pagination for topics)';
-$txt['optimus_open_graph']          = 'Enable Open Graph support (your theme\'s code will not be valid!)';
+$txt['optimus_correct_prevnext']    = '<a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">The correct rel="next" and rel="prev"</a> (pagination for topics)';
+$txt['optimus_open_graph']          = '<a href="http://ogp.me/" target="_blank">Open Graph</a> meta tags for forum pages';
 $txt['optimus_og_image']            = 'Link to your default Open Graph image<br /><span class="smalltext">It will be replaced by the attachment of the first message in topics (if exists).</span>';
+$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
+$txt['optimus_tw_cards']            = '<a href="https://twitter.com/" target="_blank">Twitter</a> account name (specify to enable <a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';
+$txt['optimus_json_ld']             = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">breadcrumbs</a>"';
 
 $txt['optimus_verification_title'] = 'Verification meta tags';
 $txt['optimus_verification_desc']  = 'On this page you can add any common or verification code(s) from list below.';
@@ -72,7 +75,7 @@ $txt['optimus_counters_css']    = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 $txt['optimus_ga_note']         = '';
 
-$txt['optimus_robots_title'] = 'File robots.txt';
+$txt['optimus_robots_title'] = 'Editor robots.txt';
 $txt['optimus_robots_desc']  = 'On this page you can change some options of forum map\'s creating, as well as modify a robots.txt file by using special generator.';
 
 $txt['optimus_manage']      = 'Manage robots.txt';
@@ -88,16 +91,12 @@ $txt['optimus_links']       = array(
 );
 
 $txt['optimus_sitemap_title'] = 'Optimus Sitemap';
-$txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated depending on settings in the <a href="%1$s">Task Manager</a> (or <em>when you saving</em> settings on this page).';
+$txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated depending on settings in the <a href="%1$s">Task Manager</a>.';
 
 $txt['optimus_sitemap_enable']      = 'Create and periodically update Sitemap XML file';
 $txt['optimus_sitemap_link']        = 'Show Sitemap XML-link on the footer';
 $txt['optimus_sitemap_boards']      = 'Add links to boards to the sitemap<br /><span class="smalltext error">Boards that closed to guests will NOT be added.</span>';
 $txt['optimus_sitemap_topics']      = 'Add to the sitemap only those topics that have the number of replies is more than';
-$txt['optimus_sitemap_mobile']      = 'Create and periodically update Sitemap XML file for mobile devices';
-$txt['optimus_sitemap_aeva']        = 'Create and periodically update Sitemap XML file for <a href="http://media.noisen.com/item/2765/" target="_blank">Aeva Media</a> images and videos';
-$txt['optimus_sitemap_gallery']     = 'Create and periodically update Sitemap XML file for <a href="https://custom.simplemachines.org/mods/index.php?mod=473" target="_blank">SMF Gallery</a> images';
-$txt['optimus_sitemap_classifieds'] = 'Create and periodically update Sitemap XML file for <a href="https://dragomano.ru/mods/simple-classifieds" target="_blank">Simple Classifieds</a> items';
 
 $txt['optimus_sitemap_rec']        = ' Optimus is not able to split files into several parts.';
 $txt['optimus_sitemap_url_limit']  = 'Sitemap file must have no more than 50,000 URLs!';

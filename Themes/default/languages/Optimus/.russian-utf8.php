@@ -44,12 +44,15 @@ $txt['optimus_extra_title'] = 'Дополнительно';
 $txt['optimus_extra_desc']  = 'Некоторые экспериментальные фиксы, а также активация поддержки Open Graph. Наслаждайтесь!';
 
 $txt['optimus_remove_last_bc_item'] = 'Правильные «хлебные крошки» (последний пункт не будет ссылкой)';
-$txt['optimus_correct_prevnext']    = 'Корректные rel="next" и rel="prev" (постраничная навигация в темах)';
-$txt['optimus_open_graph']          = 'Включить поддержку Open Graph (и забыть про валидность шаблона в SMF 2.0.x)';
+$txt['optimus_correct_prevnext']    = '<a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">Корректные rel="next" и rel="prev"</a> (постраничная навигация в темах)';
+$txt['optimus_open_graph']          = 'Мета-теги <a href="http://ruogp.me/" target="_blank">Open Graph</a> для страниц форума';
 $txt['optimus_og_image']            = 'Ссылка на изображение по умолчанию для Open Graph<br /><span class="smalltext">В темах будет использоваться вложение из первого сообщения (если есть).</span>';
+$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID приложения) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
+$txt['optimus_tw_cards']            = 'Имя аккаунта в <a href="https://twitter.com/" target="_blank">Twitter</a> (укажите, чтобы включить поддержку <a href="https://dev.twitter.com/cards/overview" target="_blank">карточек</a>)';
+$txt['optimus_json_ld']             = 'Разметка <a href="https://json-ld.org/" target="_blank">JSON-LD</a> для «<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">хлебных крошек</a>»';
 
 $txt['optimus_verification_title'] = 'Проверочные мета-теги';
-$txt['optimus_verification_desc'] = 'Добавление в код страниц форума специальных проверочных кодов, для подтверждения права собственности на сайт.';
+$txt['optimus_verification_desc']  = 'Добавление в код страниц форума специальных проверочных кодов, для подтверждения права собственности на сайт.';
 
 $txt['optimus_codes']          = 'Проверочные мета-теги';
 $txt['optimus_titles']         = 'Поисковик (Сервис)';
@@ -68,12 +71,12 @@ $txt['optimus_counters_desc'] = 'Добавляйте и изменяйте вс
 
 $txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://google.ru/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
 $txt['optimus_stat_code']       = 'Другие невидимые счётчики (например, <a href="https://metrika.yandex.ru/" target="_blank">Яндекс.Метрика</a> без информера)';
-$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank">LiveInternet</a>, <a href="https://top100.rambler.ru/top100/rules.shtml.ru" target="_blank">Rambler\'s Top100</a>, <a href="https://www.spylog.ru/" target="_blank">SpyLOG</a>, <a href="https://top.mail.ru/add" target="_blank">Mail.ru</a>, <a href="https://hotlog.ru/newreg" target="_blank">HotLog</a> и т. п.)';
+$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank">LiveInternet</a>, <a href="https://top100.rambler.ru/top100/rules.shtml.ru" target="_blank">Rambler\'s Top100</a> и т. п.)';
 $txt['optimus_counters_css']    = 'Оформление блока со счётчиками (CSS)';
 $txt['optimus_ignored_actions'] = 'Игнорируемые области (actions) &mdash; на этих страницах счетчики подгружаться не будут!';
 $txt['optimus_ga_note']         = 'На заметку: <a href="https://www.simplemachines.ru/index.php?topic=12304.0" target="_blank">Реальный показатель отказов в Google Analytics</a>';
 
-$txt['optimus_robots_title'] = 'Файл robots.txt';
+$txt['optimus_robots_title'] = 'Редактор robots.txt';
 $txt['optimus_robots_desc']  = 'К вашим услугам генератор правил для создания robots.txt.';
 
 $txt['optimus_manage']      = 'Настройка robots.txt';
@@ -93,16 +96,12 @@ $txt['optimus_links']       = array(
 );
 
 $txt['optimus_sitemap_title'] = 'Карта форума';
-$txt['optimus_sitemap_desc']  = 'Optimus предоставляет возможность создать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a> (а ещё <em>при сохранении</em> настроек на данной странице).';
+$txt['optimus_sitemap_desc']  = 'Optimus предоставляет возможность создать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a>.';
 
 $txt['optimus_sitemap_enable']      = 'Создать и периодически обновлять xml-карту форума';
 $txt['optimus_sitemap_link']        = 'Показывать ссылку на xml-карту в подвале форума';
 $txt['optimus_sitemap_boards']      = 'Добавлять в карту ссылки на разделы форума<br /><span class="smalltext error">Разделы, закрытые для гостей, добавлены НЕ будут.</span>';
 $txt['optimus_sitemap_topics']      = 'Добавлять в карту темы с количеством сообщений больше';
-$txt['optimus_sitemap_mobile']      = 'Создать и периодически обновлять xml-карту для мобильных устройств';
-$txt['optimus_sitemap_aeva']        = 'Создать и периодически обновлять xml-карты для изображений и видеороликов <a href="https://dragomano.ru/translations/aeva-media" target="_blank">Aeva Media</a>';
-$txt['optimus_sitemap_gallery']     = 'Создать и периодически обновлять xml-карту для изображений <a href="https://dragomano.ru/translations/smf-gallery" target="_blank">SMF Gallery</a>';
-$txt['optimus_sitemap_classifieds'] = 'Создать и периодически обновлять xml-карту для объявлений <a href="https://dragomano.ru/mods/simple-classifieds" target="_blank">Simple Classifieds</a>';
 
 $txt['optimus_sitemap_rec']        = ' Optimus пока не умеет разбивать файлы на несколько частей.';
 $txt['optimus_sitemap_url_limit']  = 'В файле sitemap должно быть не более 50 тысяч ссылок!';

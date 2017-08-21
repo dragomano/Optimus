@@ -9,7 +9,7 @@
  * @copyright 2010-2017 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.5
+ * @version 1.9.6
  */
 
 if (!defined('SMF'))
@@ -43,15 +43,7 @@ function optimus_area_settings()
 
 	$context['page_title'] = $txt['optimus_main'];
 
-	loadTemplate('Optimus');
-
-	$context['html_headers'] .= "\n\t" . '<style type="text/css">
-		#optimus p.description{text-align:center;margin:2px;border-radius:6px}#optimus .clear{margin-bottom:5px}
-		dl.settings {margin:0 !important}dl.settings dt, dl.settings dd {width:50% !important}
-		.windowbg2{margin-bottom:6px}.centertext table{width:100%}.block_code {width: 90%}
-		.content {padding: 1em 2em}.content textarea[name*="robots"]{width:90%;font-size:.9em}
-		.content ul {margin:0;padding-left:30px;text-align:left}.content p {padding-left:10px}		
-	</style>';
+	loadTemplate('Optimus', 'optimus');
 
 	$subActions = array(
 		'common'   => 'optimus_common_settings',
@@ -121,7 +113,6 @@ function optimus_common_settings()
 
 	if (isset($_GET['save'])) {
 		checkSession();
-
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
 		updateSettings(array('optimus_templates' => serialize($templates)));
@@ -135,7 +126,7 @@ function optimus_extra_settings()
 {
 	global $context, $txt, $scripturl, $modSettings, $settings;
 
-	$context['sub_template'] = 'extra';
+	//$context['sub_template'] = 'extra';
 	$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
 
@@ -144,10 +135,14 @@ function optimus_extra_settings()
 	}
 
 	$config_vars = array(
+		array('title', 'optimus_extra_title'),
 		array('check', 'optimus_remove_last_bc_item'),
 		array('check', 'optimus_correct_prevnext'),
 		array('check', 'optimus_open_graph'),
-		array('text',  'optimus_og_image')
+		array('text',  'optimus_og_image', 60, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
+		array('text', 'optimus_fb_appid', 40, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
+		array('text', 'optimus_tw_cards', 40, 'preinput' => '@'),
+		array('check', 'optimus_json_ld')
 	);
 
 	if (isset($_GET['save'])) {
@@ -225,12 +220,12 @@ function optimus_robots_settings()
 	$context['page_title']  .= ' - ' . $txt['optimus_robots_title'];
 	$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-	$robots_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
+	$common_rules_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
 
 	clearstatcache();
 	
-	$context['robots_txt_exists'] = file_exists($robots_path);
-	$context['robots_content']    = $context['robots_txt_exists'] ? @file_get_contents($robots_path) : '';
+	$context['robots_txt_exists'] = file_exists($common_rules_path);
+	$context['robots_content']    = $context['robots_txt_exists'] ? @file_get_contents($common_rules_path) : '';
 
 	optimus_robots_create();
 
@@ -238,8 +233,8 @@ function optimus_robots_settings()
 		checkSession();
 
 		if (isset($_POST['robots'])) {
-			$robots = stripslashes($_POST['robots']);
-			file_put_contents($robots_path, $robots);
+			$common_rules = stripslashes($_POST['robots']);
+			file_put_contents($common_rules_path, $common_rules);
 		}
 
 		redirectexit('action=admin;area=optimus;sa=robots');
@@ -260,8 +255,7 @@ function optimus_map_settings()
 		array('check', 'optimus_sitemap_enable'),
 		array('check', 'optimus_sitemap_link',   'disabled' => file_exists($boarddir . '/sitemap.xml') ? false : true),
 		array('check', 'optimus_sitemap_boards', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
-		array('int',   'optimus_sitemap_topics', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
-		array('check', 'optimus_sitemap_mobile', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
+		array('int',   'optimus_sitemap_topics', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
 	);
 
 	// Обновляем запись в Диспетчере задач
@@ -280,41 +274,8 @@ function optimus_map_settings()
 		CalculateNextTrigger('optimus_sitemap');
 	}
 
-	// Проверяем права доступа
-	$request = $smcFunc['db_query']('', '
-		SELECT ps.permission
-		FROM {db_prefix}permissions AS ps
-		WHERE ps.id_group = -1',
-		array()
-	);
-
-	$yes = array();
-	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$yes[$row['permission']] = true;
-
-	$smcFunc['db_free_result']($request);
-
-	// Aeva Media
-	$aeva = file_exists($sourcedir . '/Aeva-Subs.php') && isset($yes['aeva_access']);
-	if ($aeva) {
-		$config_vars[] = array('check', 'optimus_sitemap_aeva', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false);
-	}
-
-	// SMF Gallery
-	$gal = file_exists($sourcedir . '/Gallery2.php') && isset($yes['smfgallery_view']);
-	if ($gal) {
-		$config_vars[] = array('check', 'optimus_sitemap_gallery', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false);
-	}
-
-	// Simple Classifieds
-	$sc = file_exists($sourcedir . '/Classifieds/Classifieds-Subs.php') && isset($yes['view_classifieds']);
-	if ($sc) {
-		$config_vars[] = array('check', 'optimus_sitemap_classifieds', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false);
-	}
-
 	if (isset($_GET['save'])) {
 		checkSession();
-		optimus_sitemap();
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
 		redirectexit('action=admin;area=optimus;sa=map');
@@ -342,12 +303,12 @@ function optimus_robots_create()
 
 	// SimplePortal
 	$sp = isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1 && function_exists('sportal_init');
-	// Файл, используемый SP при автономном режиме
+	// Standalone mode (SimplePortal)
 	$autosp = !empty($modSettings['sp_standalone_url']) ? substr($modSettings['sp_standalone_url'], strlen($boardurl)) : '';
 
 	// PortaMx
 	$pm = !empty($modSettings['pmx_frontmode']) && function_exists('PortaMx');
-	// Проверяем, не является ли экшен forum алиасом для community (в PortaMx)
+	// forum = community? (PortaMx)
 	$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
 
 	// Aeva Media
@@ -391,54 +352,25 @@ function optimus_robots_create()
 
 	$sef = $pretty || $simplesef;
 
-	// Проверяем существование файла sitemap
-	$map = 'sitemap.xml';
+	// Sitemap file exists?
+	$map      = 'sitemap.xml';
 	$path_map = $boardurl . '/' . $map;
 
 	clearstatcache();
 
 	$temp_map = file_exists($boarddir . '/' . $map);
-	if (!$temp_map)
-		$map = '';
-	else
-		$map = $path_map;
-
+	$map      = !$temp_map ? '' : $path_map;
 	$url_path = @parse_url($boardurl, PHP_URL_PATH);
 
-	// Заполняем основной массив
-	$robots = array(
-		"User-agent: Googlebot-Image",
-		$aeva ? "Allow: " . $url_path . "/*media*item" : "",
-		$aeva ? "Allow: " . $url_path . "/MGalleryItem.php" : "",
-		$gal ? "Allow: " . $url_path . "/*gallery*view" : "",
-		"Disallow: " . $url_path . "/",
-		"|",
-		"User-agent: YandexImages",
-		$aeva ? "Allow: " . $url_path . "/*media*item" : "",
-		$aeva ? "Allow: " . $url_path . "/MGalleryItem.php" : "",
-		$gal ? "Allow: " . $url_path . "/*gallery*view" : "",
-		"Disallow: " . $url_path . "/",
-		"|",
-		"User-agent: msnbot-MM",
-		$aeva ? "Allow: " . $url_path . "/*media*item" : "",
-		$aeva ? "Allow: " . $url_path . "/MGalleryItem.php" : "",
-		$gal ? "Allow: " . $url_path . "/*gallery*view" : "",
-		"Disallow: " . $url_path . "/",
-		"|",
-		"User-agent: Googlebot-Mobile",
-		"Allow: " . $url_path . "/*wap",
-		"Disallow: " . $url_path . "/",
-		"|",
-		"User-agent: YandexImageResizer",
-		"Allow: " . $url_path . "/*wap",
-		"Disallow: " . $url_path . "/",
-		"|",
+	$first_rules = array(
 		"User-agent: MediaPartners-Google",
 		"Allow: " . $url_path . "/",
 		"|",
 		substr($txt['lang_locale'], 0, 2) == 'ru' ? "User-agent: Baiduspider\nDisallow: " . $url_path . "/\n|" : "",
-		// Правила для всех остальных пауков
-		"User-agent: *",
+		"User-agent: *"
+	);
+
+	$common_rules = array(
 		// Main
 		"Allow: " . $url_path . "/$",
 		// action=forum
@@ -475,32 +407,34 @@ function optimus_robots_create()
 		$ds ? "Allow: " . $url_path . "/*downloads" : "",
 		// SMF Links
 		$sl ? "Allow: " . $url_path . "/*links" : "",
+		// We have nothing to hide ;)
+		"Allow: /*.css\nAllow: /*.js\nAllow: /*.png\nAllow: /*.jpg\nAllow: /*.gif",
 
 		// Special rules for Pretty URLs or SimpleSEF
-		$sef ? "Disallow: /attachments/
-Disallow: /avatars/
-Disallow: /Packages/
-Disallow: /Smileys/
-Disallow: /Sources/
-Disallow: /Themes/
-Disallow: /login/
-Disallow: /*msg
-Disallow: /*profile
-Disallow: /*help
-Disallow: /*search
-Disallow: /*mlist
-Disallow: /*sort
-Disallow: /*recent
-Disallow: /*register
-Disallow: /*groups
-Disallow: /*stats
-Disallow: /*unread
-Disallow: /*topicseen
-Disallow: /*showtopic
-Disallow: /*prev_next
-Disallow: /*imode
-Disallow: /*wap
-Disallow: /*all" : "",
+		$sef ? "Disallow: " . $url_path . "/attachments/
+Disallow: " . $url_path . "/avatars/
+Disallow: " . $url_path . "/Packages/
+Disallow: " . $url_path . "/Smileys/
+Disallow: " . $url_path . "/Sources/
+Disallow: " . $url_path . "/Themes/
+Disallow: " . $url_path . "/login/
+Disallow: " . $url_path . "/*msg
+Disallow: " . $url_path . "/*profile
+Disallow: " . $url_path . "/*help
+Disallow: " . $url_path . "/*search
+Disallow: " . $url_path . "/*mlist
+Disallow: " . $url_path . "/*sort
+Disallow: " . $url_path . "/*recent
+Disallow: " . $url_path . "/*register
+Disallow: " . $url_path . "/*groups
+Disallow: " . $url_path . "/*stats
+Disallow: " . $url_path . "/*unread
+Disallow: " . $url_path . "/*topicseen
+Disallow: " . $url_path . "/*showtopic
+Disallow: " . $url_path . "/*prev_next
+Disallow: " . $url_path . "/*imode
+Disallow: " . $url_path . "/*wap
+Disallow: " . $url_path . "/*all" : "",
 
 		"Disallow: " . $url_path . "/*action",
 		$sef ? "" : "Disallow: " . $url_path . "/*board=*wap\nDisallow: " . $url_path . "/*board=*imode\nDisallow: " . $url_path . "/*topic=*wap\nDisallow: " . $url_path . "/*topic=*imode",
@@ -511,32 +445,41 @@ Disallow: /*all" : "",
 		!empty($modSettings['queryless_urls'])
 			? ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$")
 			: ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic"),
-		// Все остальные страницы
-		$sef ? "" : "Disallow: " . $url_path . "/",
-		// Sitemap XML
-		!empty($map) ? "Sitemap: " . $map : "",
-		file_exists($sourcedir . '/Sitemap.php') ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "",
-		// Delay for spiders
-		"Crawl-delay: 5"
+		// Other pages are not needing
+		$sef ? "" : "Disallow: " . $url_path . "/"
 	);
 
-	// for Yandex only
-	if (substr($txt['lang_locale'], 0, 2) == 'ru') {
-		$robots[] = "Clean-param: PHPSESSID " . $url_path . "/index.php";
+	// Yandex only
+	if (isset($txt['lang_dictionary']) && in_array($txt['lang_dictionary'], array('ru', 'uk'))) {
+		$temp_rules = $common_rules;
+		$common_rules[] = "|";
+		$common_rules[] = "User-agent: Yandex";
+
+		foreach ($temp_rules as $line) {
+			if (!empty($line))
+				$common_rules[] = $line;
+		}
+
+		$common_rules[] = "Clean-param: PHPSESSID";
 		
 		if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME'])) {
 			$prefix = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 'https://' : '';
-
-			if (empty($_SERVER['HTTP_HOST']))
-				$robots[] = "Host: " . $prefix . $_SERVER['SERVER_NAME'];
-			else
-				$robots[] = "Host: " . $prefix . $_SERVER['HTTP_HOST'];
+			$common_rules[] = "Host: " . $prefix . (empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST']);
 		}
 	}
 
-	$new_robots = array();
-	foreach ($robots as $line) {
-		if (!empty($line)) $new_robots[] = $line;
+	// Sitemap XML
+	$sitemap = file_exists($sourcedir . '/Sitemap.php');
+	$common_rules[] = !empty($map) || $sitemap ? "|" : "";
+	$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
+	$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
+
+	$common_rules = $first_rules + $common_rules;
+	$new_robots   = array();
+	
+	foreach ($common_rules as $line) {
+		if (!empty($line))
+			$new_robots[] = $line;
 	}
 
 	$new_robots = implode("<br />", str_replace("|", "", $new_robots));
