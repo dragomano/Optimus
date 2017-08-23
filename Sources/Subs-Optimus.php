@@ -433,11 +433,11 @@ function optimus_buffer($buffer)
 		$replacements[$xmlns] = $new_xmlns;
 
 		$xmlns1 = '<html lang';
-		$new_xmlns1 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#"' : '') . ' lang';
+		$new_xmlns1 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang';
 		$replacements[$xmlns1] = $new_xmlns1;
 
 		$xmlns2 = '<html>';
-		$new_xmlns2 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#"' : '') . ' lang="' . $txt['lang_dictionary'] . '">';
+		$new_xmlns2 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang="' . $txt['lang_dictionary'] . '">';
 		$replacements[$xmlns2] = $new_xmlns2;
 
 		$open_graph = '<meta property="og:title" content="' . (!empty($context['subject']) ? $context['subject'] : $context['page_title_html_safe']) . '" />';
