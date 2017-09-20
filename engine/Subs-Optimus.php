@@ -562,7 +562,7 @@ function getOptimusSitemap()
 	
 	$topics = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$row['date'] = date('Y', $row['date']])
+		$row['date'] = date('Y', $row['date']);
 		$topics[$row['date']][$row['id_topic']] = $row;
 
 	$smcFunc['db_free_result']($request);
