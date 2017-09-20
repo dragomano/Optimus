@@ -269,7 +269,7 @@ function getOptimusOgImage()
 	// Кэшируем запрос
 	if (($settings['og_image'] = cache_get_data('og_image_' . $context['current_topic'], 3600)) == null) {
 		$request = $smcFunc['db_query']('', '
-			SELECT IFNULL(id_attach, 0) AS id
+			SELECT COALESCE(id_attach, 0) AS id
 			FROM {db_prefix}attachments
 			WHERE id_msg = {int:msg}
 			GROUP BY id
@@ -421,7 +421,7 @@ function getOptimusSitemapFrequency($time)
  */
 function getOptimusSitemap()
 {
-	global $modSettings, $sourcedir, $boardurl, $smcFunc, $scripturl, $context, $boarddir;
+	global $modSettings, $sourcedir, $boardurl, $smcFunc, $scripturl, $context, $boarddir, $db_prefix;
 
 	// Прежде всего проверяем, активировано ли создание карты форума (в настройках)
 	if (empty($modSettings['optimus_sitemap_enable']))
@@ -548,7 +548,7 @@ function getOptimusSitemap()
 
 	// Topics
 	$request = $smcFunc['db_query']('', '
-		SELECT date_format(FROM_UNIXTIME(m.poster_time), "%Y") AS date, t.id_topic, m.poster_time, m.modified_time
+		SELECT m.poster_time AS date, t.id_topic, m.poster_time, m.modified_time
 		FROM {db_prefix}topics AS t
 			INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
 			INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
@@ -562,6 +562,7 @@ function getOptimusSitemap()
 	
 	$topics = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
+		$row['date'] = date('Y', $row['date']])
 		$topics[$row['date']][$row['id_topic']] = $row;
 
 	$smcFunc['db_free_result']($request);
@@ -666,8 +667,22 @@ function getOptimusSitemap()
 
 	// SMF Gallery mod
 	if (!empty($modSettings['optimus_sitemap_gallery']) && file_exists($sourcedir . '/Gallery2.php')) {
-		$query_one = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}gallery_cat'", array());
-		$query_two = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}gallery_pic'", array());
+		$query_one = $smcFunc['db_query']('', '
+			SELECT 1
+			FROM   information_schema.tables 
+			WHERE  table_name = {string:table}',
+			array(
+				'table' => $db_prefix.'gallery_cat',
+			)
+		);
+		$query_two = $smcFunc['db_query']('', '
+			SELECT 1
+			FROM   information_schema.tables 
+			WHERE  table_name = {db_prefix}gallery_pic',
+			array(
+				'table' => $db_prefix.'gallery_pic',
+			)
+		);
 		$result    = $smcFunc['db_num_rows']($query_one) != 0 && $smcFunc['db_num_rows']($query_two) != 0;
 
 		if ($result) {
@@ -677,9 +692,11 @@ function getOptimusSitemap()
 				SELECT gp.id_picture, gp.title, gp.filename
 				FROM {db_prefix}gallery_pic AS gp
 					INNER JOIN {db_prefix}permissions AS ps ON (ps.id_group = -1)
-				WHERE ps.permission LIKE "smfgallery_view"
+				WHERE ps.permission = {string:smfgallery_view}
 				ORDER BY gp.id_picture',
-				array()
+				array(
+				'smfgallery_view' => 'smfgallery_view',
+				)
 			);
 
 			while ($row = $smcFunc['db_fetch_assoc']($request))
