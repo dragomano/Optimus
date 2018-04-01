@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2017 Bugo
+ * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.6
+ * @version 1.9.7
  */
 
 if (!defined('SMF'))
@@ -22,15 +22,17 @@ function optimus_admin_areas(&$admin_areas)
 	$admin_areas['config']['areas']['optimus'] =
 		array(
 			'label'    => $txt['optimus_title'],
-			'function' => create_function(null, 'optimus_area_settings();'),
+			'function' => 'optimus_area_settings',
 			'icon'     => 'maintain.gif',
 			'subsections' => array(
-				'common'   => array($txt['optimus_common_title']),
+				'base'     => array($txt['optimus_base_title']),
 				'extra'    => array($txt['optimus_extra_title']),
-				'verify'   => array($txt['optimus_verification_title']),
+				'favicon'  => array($txt['optimus_favicon_title']),
+				'meta'     => array($txt['optimus_meta_title']),
 				'counters' => array($txt['optimus_counters']),
 				'robots'   => array($txt['optimus_robots_title']),
-				'map'      => array($txt['optimus_sitemap_title'])
+				'map'      => array($txt['optimus_sitemap_title']),
+				'donate'   => array($txt['optimus_donate_title'])
 			)
 		);
 }
@@ -46,27 +48,32 @@ function optimus_area_settings()
 	loadTemplate('Optimus', 'optimus');
 
 	$subActions = array(
-		'common'   => 'optimus_common_settings',
+		'base'     => 'optimus_base_settings',
 		'extra'    => 'optimus_extra_settings',
-		'verify'   => 'optimus_verify_settings',
+		'favicon'  => 'optimus_favicon_settings',
+		'meta'     => 'optimus_meta_settings',
 		'counters' => 'optimus_counters_settings',
 		'robots'   => 'optimus_robots_settings',
-		'map'      => 'optimus_map_settings'
+		'map'      => 'optimus_map_settings',
+		'donate'   => 'optimus_donate_settings'
 	);
 
-	loadGeneralSettingParameters($subActions, 'common');
+	loadGeneralSettingParameters($subActions, 'base');
 
 	$context[$context['admin_menu_name']]['tab_data'] = array(
 		'title' => $txt['optimus_title'],
 		'tabs' => array(
-			'common' => array(
-				'description' => $txt['optimus_common_desc'],
+			'base' => array(
+				'description' => $txt['optimus_base_desc'],
 			),
 			'extra' => array(
 				'description' => $txt['optimus_extra_desc'],
 			),
-			'verify' => array(
-				'description' => $txt['optimus_verification_desc'],
+			'favicon' => array(
+				'description' => $txt['optimus_favicon_desc'],
+			),
+			'meta' => array(
+				'description' => $txt['optimus_meta_desc'],
 			),
 			'counters' => array(
 				'description' => $txt['optimus_counters_desc'],
@@ -77,19 +84,22 @@ function optimus_area_settings()
 			'map' => array(
 				'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
 			),
+			'donate' => array(
+				'description' => $txt['optimus_donate_desc'],
+			),
 		),
 	);
 
 	call_user_func($subActions[$_REQUEST['sa']]);
 }
 
-function optimus_common_settings()
+function optimus_base_settings()
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'common';
-	$context['page_title'] .= ' - ' . $txt['optimus_common_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=common;save';
+	$context['sub_template'] = 'base';
+	$context['page_title'] .= ' - ' . $txt['optimus_base_title'];
+	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
 
 	$config_vars = array(
 		array('int', 'optimus_portal_compat'),
@@ -113,10 +123,12 @@ function optimus_common_settings()
 
 	if (isset($_GET['save'])) {
 		checkSession();
+
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
+
 		updateSettings(array('optimus_templates' => serialize($templates)));
-		redirectexit('action=admin;area=optimus;sa=common');
+		redirectexit('action=admin;area=optimus;sa=base');
 	}
 
 	prepareDBSettingContext($config_vars);
@@ -126,7 +138,6 @@ function optimus_extra_settings()
 {
 	global $context, $txt, $scripturl, $modSettings, $settings;
 
-	//$context['sub_template'] = 'extra';
 	$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
 
@@ -139,48 +150,80 @@ function optimus_extra_settings()
 		array('check', 'optimus_remove_last_bc_item'),
 		array('check', 'optimus_correct_prevnext'),
 		array('check', 'optimus_open_graph'),
-		array('text',  'optimus_og_image', 60, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
+		array('text',  'optimus_og_image', 50, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
 		array('text', 'optimus_fb_appid', 40, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
 		array('text', 'optimus_tw_cards', 40, 'preinput' => '@'),
 		array('check', 'optimus_json_ld')
 	);
 
 	if (isset($_GET['save'])) {
+		$_POST['optimus_tw_cards'] = str_replace('@', '', $_POST['optimus_tw_cards']);
+
 		checkSession();
+
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
+
 		redirectexit('action=admin;area=optimus;sa=extra');
 	}
 
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_verify_settings()
+function optimus_favicon_settings()
+{
+	global $context, $txt, $scripturl, $modSettings, $settings;
+
+	$context['sub_template'] = 'favicon';
+	$context['page_title'] .= ' - ' . $txt['optimus_favicon_title'];
+	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=favicon;save';
+
+	$config_vars = array(
+		array('text', 'optimus_favicon_api_key'),
+		array('large_text', 'optimus_favicon_text')
+	);
+
+	if (isset($_GET['save'])) {
+		checkSession();
+
+		$save_vars = $config_vars;
+		saveDBSettings($save_vars);
+
+		redirectexit('action=admin;area=optimus;sa=favicon');
+	}
+
+	prepareDBSettingContext($config_vars);
+}
+
+function optimus_meta_settings()
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'verify';
-	$context['page_title'] .= ' - ' . $txt['optimus_verification_title'];
-	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=verify;save';
+	$context['sub_template'] = 'meta';
+	$context['page_title'] .= ' - ' . $txt['optimus_meta_title'];
+	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=meta;save';
 
 	$config_vars = array();
 
 	$meta = array();
-	foreach ($txt['optimus_search_engines'] as $engine => $data) {
-		if (!empty($_POST['' . $engine . '_content'])) {
-			$meta[$engine] = array(
-				'name'    => isset($_POST['' . $engine . '_name']) ? $_POST['' . $engine . '_name'] : $data[0],
-				'content' => $_POST['' . $engine . '_content']
-			);
+	if (isset($_POST['custom_tag_name'])) {
+		foreach ($_POST['custom_tag_name'] as $key => $value) {
+			if (empty($value)) {
+				unset($_POST['custom_tag_name'][$key], $_POST['custom_tag_value'][$key]);
+			}
+			else
+				$meta[$_POST['custom_tag_name'][$key]] = $_POST['custom_tag_value'][$key];
 		}
 	}
 
 	if (isset($_GET['save'])) {
 		checkSession();
+
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
+
 		updateSettings(array('optimus_meta' => serialize($meta)));
-		redirectexit('action=admin;area=optimus;sa=verify');
+		redirectexit('action=admin;area=optimus;sa=meta');
 	}
 
 	prepareDBSettingContext($config_vars);
@@ -204,8 +247,10 @@ function optimus_counters_settings()
 
 	if (isset($_GET['save'])) {
 		checkSession();
+
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
+
 		redirectexit('action=admin;area=optimus;sa=counters');
 	}
 
@@ -225,7 +270,7 @@ function optimus_robots_settings()
 	clearstatcache();
 	
 	$context['robots_txt_exists'] = file_exists($common_rules_path);
-	$context['robots_content']    = $context['robots_txt_exists'] ? @file_get_contents($common_rules_path) : '';
+	$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
 
 	optimus_robots_create();
 
@@ -243,17 +288,15 @@ function optimus_robots_settings()
 
 function optimus_map_settings()
 {
-	global $context, $txt, $scripturl, $boarddir, $modSettings, $smcFunc, $sourcedir;
+	global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
 
 	$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 	$context['post_url']    = $scripturl . '?action=admin;area=optimus;sa=map;save';
 
-	clearstatcache();
-
 	$config_vars = array(
 		array('title', 'optimus_sitemap_xml_link'),
 		array('check', 'optimus_sitemap_enable'),
-		array('check', 'optimus_sitemap_link',   'disabled' => file_exists($boarddir . '/sitemap.xml') ? false : true),
+		array('check', 'optimus_sitemap_link'),
 		array('check', 'optimus_sitemap_boards', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
 		array('int',   'optimus_sitemap_topics', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
 	);
@@ -265,7 +308,7 @@ function optimus_map_settings()
 		WHERE task = {string:task}',
 		array(
 			'disabled' => !empty($modSettings['optimus_sitemap_enable']) ? 0 : 1,
-			'task'     => 'optimus_sitemap',
+			'task'     => 'optimus_sitemap'
 		)
 	);
 
@@ -276,28 +319,38 @@ function optimus_map_settings()
 
 	if (isset($_GET['save'])) {
 		checkSession();
+
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
+
 		redirectexit('action=admin;area=optimus;sa=map');
 	}
 
 	prepareDBSettingContext($config_vars);
 }
 
+function optimus_donate_settings()
+{
+	global $context, $txt;
+
+	$context['sub_template'] = 'donate';
+	$context['page_title']  .= ' - ' . $txt['optimus_donate_title'];
+}
+
 function optimus_robots_create()
 {
-	global $smcFunc, $modSettings, $boardurl, $sourcedir, $boarddir, $context, $txt, $scripturl;
+	global $smcFunc, $modSettings, $boardurl, $sourcedir, $boarddir, $context, $scripturl;
 
 	$request = $smcFunc['db_query']('', '
-		SELECT ps.permission
-		FROM {db_prefix}permissions AS ps
-		WHERE ps.id_group = -1',
+		SELECT permission
+		FROM {db_prefix}permissions
+		WHERE id_group = -1',
 		array()
 	);
 
-	$yes = array();
+	$guest_access = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
-		$yes[$row['permission']] = true;
+		$guest_access[$row['permission']] = true;
 
 	$smcFunc['db_free_result']($request);
 
@@ -312,25 +365,25 @@ function optimus_robots_create()
 	$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
 
 	// Aeva Media
-	$aeva = file_exists($sourcedir . '/Aeva-Subs.php') && isset($yes['aeva_access']);
+	$aeva = file_exists($sourcedir . '/Aeva-Subs.php') && isset($guest_access['aeva_access']);
 
 	// SMF Gallery
-	$gal = file_exists($sourcedir . '/Gallery2.php') && isset($yes['smfgallery_view']);
+	$gal = file_exists($sourcedir . '/Gallery2.php') && isset($guest_access['smfgallery_view']);
 
 	// SMF Arcade
-	$arc = file_exists($sourcedir . '/Subs-Arcade.php') && isset($yes['arcade_view']);
+	$arc = file_exists($sourcedir . '/Subs-Arcade.php') && isset($guest_access['arcade_view']);
 
 	// FAQ mod
-	$faq = file_exists($sourcedir . '/Subs-Faq.php') && isset($yes['faqperview']);
+	$faq = file_exists($sourcedir . '/Subs-Faq.php') && isset($guest_access['faqperview']);
 
 	// PMXBlog
 	$blog = file_exists($sourcedir . '/PmxBlog.php') && !empty($modSettings['pmxblog_enabled']);
 
 	// SMF Project Tools
-	$pj = file_exists($sourcedir . '/Project.php') && in_array('pj', $context['admin_features']) && isset($yes['project_access']);
+	$pj = file_exists($sourcedir . '/Project.php') && in_array('pj', $context['admin_features']) && isset($guest_access['project_access']);
 
 	// Simple Classifieds
-	$sc = file_exists($sourcedir . '/Classifieds/Classifieds-Subs.php') && isset($yes['view_classifieds']);
+	$sc = file_exists($sourcedir . '/Classifieds/Classifieds-Subs.php') && isset($guest_access['view_classifieds']);
 
 	// SC Light
 	$scl = file_exists($sourcedir . '/Subs-SCL.php') && !empty($modSettings['scl_mode']);
@@ -339,10 +392,7 @@ function optimus_robots_create()
 	$trb = file_exists($sourcedir . '/Subs-TopicRating.php');
 
 	// Downloads System
-	$ds = file_exists($sourcedir . '/Downloads2.php') && isset($yes['downloads_view']);
-
-	// SMF Links
-	$sl = isset($txt['smflinks_menu']) && isset($yes['view_smflinks']);
+	$ds = file_exists($sourcedir . '/Downloads2.php') && isset($guest_access['downloads_view']);
 
 	// Pretty URLs enabled?
 	$pretty = file_exists($sourcedir . '/PrettyUrls-Filters.php') && !empty($modSettings['pretty_enable_filters']);
@@ -359,20 +409,49 @@ function optimus_robots_create()
 	clearstatcache();
 
 	$temp_map = file_exists($boarddir . '/' . $map);
-	$map      = !$temp_map ? '' : $path_map;
-	$url_path = @parse_url($boardurl, PHP_URL_PATH);
-
-	$first_rules = array(
-		"User-agent: MediaPartners-Google",
-		"Allow: " . $url_path . "/",
-		"|",
-		substr($txt['lang_locale'], 0, 2) == 'ru' ? "User-agent: Baiduspider\nDisallow: " . $url_path . "/\n|" : "",
-		"User-agent: *"
-	);
+	$map      = $temp_map ? $path_map : '';
+	$url_path = parse_url($boardurl, PHP_URL_PATH);
 
 	$common_rules = array(
-		// Main
+		"User-agent: *",
+
+		// Special rules for Pretty URLs or SimpleSEF
+		$sef ? "Disallow: " . $url_path . "/attachments/
+Disallow: " . $url_path . "/avatars/
+Disallow: " . $url_path . "/Packages/
+Disallow: " . $url_path . "/Smileys/
+Disallow: " . $url_path . "/Sources/
+Disallow: " . $url_path . "/Themes/
+Disallow: " . $url_path . "/login/
+Disallow: " . $url_path . "/*msg
+Disallow: " . $url_path . "/*profile
+Disallow: " . $url_path . "/*help
+Disallow: " . $url_path . "/*search
+Disallow: " . $url_path . "/*mlist
+Disallow: " . $url_path . "/*sort
+Disallow: " . $url_path . "/*recent
+Disallow: " . $url_path . "/*register
+Disallow: " . $url_path . "/*groups
+Disallow: " . $url_path . "/*stats
+Disallow: " . $url_path . "/*unread
+Disallow: " . $url_path . "/*topicseen
+Disallow: " . $url_path . "/*showtopic
+Disallow: " . $url_path . "/*prev_next
+Disallow: " . $url_path . "/*imode
+Disallow: " . $url_path . "/*wap
+Disallow: " . $url_path . "/*all" : "",
+
+		"Disallow: " . $url_path . "/*action",
+		$sef ? "" : "Disallow: " . $url_path . "/*board=*wap\nDisallow: " . $url_path . "/*board=*imode\nDisallow: " . $url_path . "/*topic=*wap\nDisallow: " . $url_path . "/*topic=*imode",
+		!empty($modSettings['queryless_urls']) || $sef ? "" : "Disallow: " . $url_path . "/*topic=*.msg\nDisallow: " . $url_path . "/*topic=*.new",
+		"Disallow: " . $url_path . "/*PHPSESSID",
+		$sef ? "" : "Disallow: " . $url_path . "/*;",
+		// Front page
 		"Allow: " . $url_path . "/$",
+		// Content
+		!empty($modSettings['queryless_urls'])
+		? ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$")
+		: ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic"),
 		// action=forum
 		$sp ? "Allow: " . $url_path . "/*forum$" : "",
 		// SimplePortal
@@ -405,68 +484,9 @@ function optimus_robots_create()
 		$trb ? "Allow: " . $url_path . "/*rating" : "",
 		// Downloads System
 		$ds ? "Allow: " . $url_path . "/*downloads" : "",
-		// SMF Links
-		$sl ? "Allow: " . $url_path . "/*links" : "",
 		// We have nothing to hide ;)
-		"Allow: /*.css\nAllow: /*.js\nAllow: /*.png\nAllow: /*.jpg\nAllow: /*.gif",
-
-		// Special rules for Pretty URLs or SimpleSEF
-		$sef ? "Disallow: " . $url_path . "/attachments/
-Disallow: " . $url_path . "/avatars/
-Disallow: " . $url_path . "/Packages/
-Disallow: " . $url_path . "/Smileys/
-Disallow: " . $url_path . "/Sources/
-Disallow: " . $url_path . "/Themes/
-Disallow: " . $url_path . "/login/
-Disallow: " . $url_path . "/*msg
-Disallow: " . $url_path . "/*profile
-Disallow: " . $url_path . "/*help
-Disallow: " . $url_path . "/*search
-Disallow: " . $url_path . "/*mlist
-Disallow: " . $url_path . "/*sort
-Disallow: " . $url_path . "/*recent
-Disallow: " . $url_path . "/*register
-Disallow: " . $url_path . "/*groups
-Disallow: " . $url_path . "/*stats
-Disallow: " . $url_path . "/*unread
-Disallow: " . $url_path . "/*topicseen
-Disallow: " . $url_path . "/*showtopic
-Disallow: " . $url_path . "/*prev_next
-Disallow: " . $url_path . "/*imode
-Disallow: " . $url_path . "/*wap
-Disallow: " . $url_path . "/*all" : "",
-
-		"Disallow: " . $url_path . "/*action",
-		$sef ? "" : "Disallow: " . $url_path . "/*board=*wap\nDisallow: " . $url_path . "/*board=*imode\nDisallow: " . $url_path . "/*topic=*wap\nDisallow: " . $url_path . "/*topic=*imode",
-		!empty($modSettings['queryless_urls']) || $sef ? "" : "Disallow: " . $url_path . "/*topic=*.msg\nDisallow: " . $url_path . "/*topic=*.new",
-		$sef ? "" : "Disallow: " . $url_path . "/*;",
-		"Disallow: " . $url_path . "/*PHPSESSID",
-		// Content
-		!empty($modSettings['queryless_urls'])
-			? ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$")
-			: ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic"),
-		// Other pages are not needing
-		$sef ? "" : "Disallow: " . $url_path . "/"
+		"Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$"
 	);
-
-	// Yandex only
-	if (isset($txt['lang_dictionary']) && in_array($txt['lang_dictionary'], array('ru', 'uk'))) {
-		$temp_rules = $common_rules;
-		$common_rules[] = "|";
-		$common_rules[] = "User-agent: Yandex";
-
-		foreach ($temp_rules as $line) {
-			if (!empty($line))
-				$common_rules[] = $line;
-		}
-
-		$common_rules[] = "Clean-param: PHPSESSID";
-		
-		if (isset($_SERVER['HTTP_HOST']) || isset($_SERVER['SERVER_NAME'])) {
-			$prefix = isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? 'https://' : '';
-			$common_rules[] = "Host: " . $prefix . (empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST']);
-		}
-	}
 
 	// Sitemap XML
 	$sitemap = file_exists($sourcedir . '/Sitemap.php');
@@ -474,8 +494,7 @@ Disallow: " . $url_path . "/*all" : "",
 	$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
 	$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
 
-	$common_rules = $first_rules + $common_rules;
-	$new_robots   = array();
+	$new_robots = array();
 	
 	foreach ($common_rules as $line) {
 		if (!empty($line))

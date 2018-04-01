@@ -1,4 +1,4 @@
-#optimus p.description {
+#optimus .description {
 	text-align: center;
 	margin: 2px;
 	border-radius: 6px
@@ -46,4 +46,8 @@ dl.settings dd {
 
 .content p {
 	padding-left: 10px
+}
+
+#paypal_donate input[type=image] {
+	border: none;
 }

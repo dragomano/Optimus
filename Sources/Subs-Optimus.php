@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2017 Bugo
+ * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.6
+ * @version 1.9.7
  */
 
 if (!defined('SMF'))
@@ -18,15 +18,14 @@ if (!defined('SMF'))
 // Подключаем используемые хуки
 function optimus_hooks()
 {
-	add_integration_function('integrate_load_theme', 'optimus_home', false);
-	add_integration_function('integrate_admin_include', '$sourcedir/Admin-Optimus.php', false);
-	add_integration_function('integrate_admin_areas', 'optimus_admin_areas', false);
+	add_integration_function('integrate_load_theme', 'optimus_load_theme', false);
 	add_integration_function('integrate_menu_buttons', 'optimus_operations', false);
 	add_integration_function('integrate_buffer', 'optimus_buffer', false);
+	add_integration_function('integrate_admin_include', '$sourcedir/Admin-Optimus.php', false);
+	add_integration_function('integrate_admin_areas', 'optimus_admin_areas', false);
 }
 
-// integrate_load_theme hook
-function optimus_home()
+function optimus_load_theme()
 {
 	global $modSettings, $scripturl, $context, $boardurl, $mbname, $txt;
 
@@ -48,6 +47,14 @@ function optimus_home()
 	$txt['forum_index'] = '%1$s';
 	if (!empty($modSettings['optimus_forum_index']))
 		$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
+
+	// Favicon
+	if (!empty($modSettings['optimus_favicon_text'])) {
+		$favicon = explode("\n", trim($modSettings['optimus_favicon_text']));
+		foreach ($favicon as $fav_line) {
+			$context['html_headers'] .= "\n\t" . $fav_line;
+		}
+	}
 
 	// Counters
 	$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
@@ -79,14 +86,12 @@ function optimus_home()
 		if (empty($_REQUEST['action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic'])) {
 			// Для режима "Без главной страницы, направлять сразу на форум"
 			if (!empty($modSettings['optimus_meta']) && empty($modSettings['pmx_frontmode'])) {
-				$test = @unserialize($modSettings['optimus_meta']);
+				$test = unserialize($modSettings['optimus_meta']);
 
-				$meta = '';
-				foreach ($test as $var) {
-					$meta .= "\n\t" . '<meta name="' . $var['name'] . '" content="' . $var['content'] . '" />';
+				foreach ($test as $n => $val) {
+					if (!empty($val))
+						$context['html_headers'] .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
 				}
-
-				$context['html_headers'] .= $meta;
 			}
 		}
 	}
@@ -173,7 +178,7 @@ function get_optimus_page_templates()
 		return;
 
 	if (strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
-		$templates = @unserialize($modSettings['optimus_templates']);
+		$templates = unserialize($modSettings['optimus_templates']);
 
 		foreach ($templates as $name => $data) {
 			if ($name == 'board') {
@@ -378,13 +383,14 @@ function optimus_buffer($buffer)
 			$replacements[$desc_old] = $desc_new;
 		}
 
-		// Verification tags
+		// Metatags
 		if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 1) {
 			$meta = '';
-			$test = @unserialize($modSettings['optimus_meta']);
+			$test = unserialize($modSettings['optimus_meta']);
 
-			foreach ($test as $var) {
-				$meta .= "\n\t" . '<meta name="' . $var['name'] . '" content="' . $var['content'] . '" />';
+			foreach ($test as $n => $val) {
+				if (!empty($val))
+					$meta .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
 			}
 
 			$charset_meta = '<meta http-equiv="Content-Type" content="text/html; charset=' . $context['character_set'] . '" />';
@@ -531,7 +537,7 @@ function get_optimus_sitemap_date($timestamp = '')
 // Создаем файл карты
 function create_optimus_file($path, $data)
 {
-	if (!$fp = @fopen($path, 'w'))
+	if (!$fp = fopen($path, 'w'))
 		return false;
 
 	flock($fp, LOCK_EX);
@@ -549,8 +555,8 @@ function check_optimus_filesize($file)
 
 	clearstatcache();
 
-	if (filesize($file) > (10*1024*1024))
-		log_error(sprintf($txt['optimus_sitemap_size_limit'], @pathinfo($file, PATHINFO_BASENAME)) . $txt['optimus_sitemap_rec'], 'general');
+	if (filesize($file) > (10 * 1024 * 1024))
+		log_error(sprintf($txt['optimus_sitemap_size_limit'], pathinfo($file, PATHINFO_BASENAME)) . $txt['optimus_sitemap_rec'], 'general');
 
 	return;
 }
@@ -558,7 +564,7 @@ function check_optimus_filesize($file)
 // Определяем приоритет индексирования
 function get_optimus_sitemap_priority($time)
 {
-	$diff = floor((time() - $time)/60/60/24);
+	$diff = floor((time() - $time) / 60 / 60 / 24);
 	
 	if ($diff <= 30)
 		return '0.8';
@@ -575,13 +581,13 @@ function get_optimus_sitemap_frequency($time)
 {
 	$frequency = time() - $time;
 
-	if ($frequency < (24*60*60))
+	if ($frequency < (24 * 60 * 60))
 		return 'hourly';
-	elseif ($frequency < (24*60*60*7))
+	elseif ($frequency < (24 * 60 * 60 * 7))
 		return 'daily';
-	elseif ($frequency < (24*60*60*7*(52/12)))
+	elseif ($frequency < (24 * 60 * 60 * 7 * (52 / 12)))
 		return 'weekly';
-	elseif ($frequency < (24*60*60*365))
+	elseif ($frequency < (24 * 60 * 60 * 365))
 		return 'monthly';
 
 	return 'yearly';
@@ -664,7 +670,7 @@ function optimus_sitemap()
 
 				// Поддержка мода BoardNoIndex
 				if (!empty($modSettings['BoardNoIndex_enabled'])) {
-					if (!in_array($entry['id_board'], @unserialize($modSettings['BoardNoIndex_select_boards']))) {
+					if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
 						$first[] = $url[] = array(
 							'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
 							'lastmod'    => get_optimus_sitemap_date($last_edit),
@@ -743,7 +749,7 @@ function optimus_sitemap()
 
 			// Поддержка мода BoardNoIndex
 			if (!empty($modSettings['BoardNoIndex_enabled'])) {
-				if (!in_array($entry['id_board'], @unserialize($modSettings['BoardNoIndex_select_boards']))) {
+				if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
 					$sec[$year][] = $url[] = array(
 						'loc'        => $url_topic,
 						'lastmod'    => get_optimus_sitemap_date($last_edit),
@@ -817,7 +823,7 @@ function optimus_sitemap()
 		$one_file = pretty_rewrite_buffer($one_file);
 	}
 
-	// Создаем карту сайта (если ссылок больше 10к, то сделаем файл индекса)
+	// Создаем карту сайта (если ссылок больше 10к, то делаем файл индекса)
 	if (count($url) > 10000) {
 		$main    = $header . '<urlset ' . $xmlns . '>' . $n . $main . '</urlset>';
 		$sitemap = $boarddir . '/sitemap_main.xml';

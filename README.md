@@ -6,43 +6,47 @@
 * **Languages:** English, Russian
 
 ## Description
-This mod might help you solve some problems associated with indexing of your forum by search engines.
+This mod might help you solve some problems related with indexing of your forum by search engines.
 
 ### Features:
-* Managing of description (meta-tag) & title of your forum's homepage, board and topic pages.
+* Managing of description & title metatags for your forum's frontpage, board and topic pages.
 * Smart descriptions for board/topic pages.
 * Templates for titles of topic/board pages.
-* Remove "index.php" from URLs.
 * Open Graph meta-tags support.
+* Twitter Cards and JSON-LD markup support.
 * Ability to specify the verification codes when adding sites to Google, Yandex and Bing (Webmaster Tools).
-* Changing the robots.txt from Modification Settings page.
-* Rule Generator for robots.txt file.
+* Adding of custom metatags (new).
+* Changing the robots.txt from Settings page.
+* Generator for robots.txt file.
 * Simple Sitemap XML.
+* Favicon Support (new).
 * Other small changes to improve the indexing of your forum.
 
-P.S. See develop branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) — not recommended for production forum!
+P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) — not recommended for production forum!
 
 ## Описание
 Модификация упрощает оптимизацию страниц форума SMF для индексации в поисковиках.
 
 ### Особенности:
 * Изменение описания и заголовка главной страницы форума.
-* Отдельные заголовки главных страниц и тег canonical при использовании порталов SimplePortal или PortaMx.
+* Отдельные заголовки главных страниц и тег canonical при использовании модов порталов (SimplePortal, PortaMx и некоторых других).
 * Управление заголовками страниц тем и разделов (с помощью шаблонов).
-* Мета-тег description для страниц разделов и тем (рекомендуется Topic Descriptions).
-* Отключение «index.php» в адресах страниц.
-* Поддержка тегов Open Graph для страниц форума.
+* Мета-тег description для страниц разделов и тем.
+* Поддержка тегов Open Graph, карточек Twitter и разметки JSON-LD для страниц форума.
 * Проверочные мета-теги при добавлении сайтов в Google, Яндекс, Mail, Bing (Инструменты вебмастера).
-* Добавление счетчиков для подсчета посещения, без редактирования файлов.
-* Подсказки при создании правил для robots.txt.
+* Пользовательские мета-теги.
+* Добавление счетчиков без редактирования файлов шаблонов.
 * Редактирование robots.txt из админки.
+* Генератор правил для robots.txt.
 * Создание карты форума (sitemap.xml).
+* Поддержка favicon (иконка сайта).
 
-P.S. Ветка develop содержит версию Optimus 2.0 beta (для SMF 2.1 beta 3) — используете на свой страх и риск!
+P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 3) — используете на свой страх и риск!
 
-![optimus1](https://cloud.githubusercontent.com/assets/1187218/23969000/59367228-09de-11e7-8995-6ff5be2a604c.png)
-![optimus2](https://cloud.githubusercontent.com/assets/1187218/23969002/59386dee-09de-11e7-8ed6-0b7eaddb1654.png)
-![optimus3](https://cloud.githubusercontent.com/assets/1187218/23969003/59395e02-09de-11e7-84ff-711e7352209e.png)
-![optimus4](https://cloud.githubusercontent.com/assets/1187218/23968999/59362250-09de-11e7-8efc-c70feb845165.png)
-![optimus5](https://cloud.githubusercontent.com/assets/1187218/23968998/5936264c-09de-11e7-8620-c99dfe158d69.png)
-![optimus6](https://cloud.githubusercontent.com/assets/1187218/23969001/5936a194-09de-11e7-8ce9-049e8cf70c32.png)
+![ptimus_1-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_1-min.png)
+![ptimus_2-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_2-min.png)
+![ptimus_3-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_3-min.png)
+![ptimus_4-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_4-min.png)
+![ptimus_5-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_5-min.png)
+![ptimus_6-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_6-min.png)
+![ptimus_7-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_7-min.png)

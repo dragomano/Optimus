@@ -6,13 +6,13 @@
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2017 Bugo
+ * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.6
+ * @version 1.9.7
  */
 
-function template_common()
+function template_base()
 {
 	global $context, $txt, $smcFunc, $modSettings;
 
@@ -23,7 +23,7 @@ function template_common()
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['optimus_main_page'], '</h3>
 			</div>
-			<p class="description">', $txt['optimus_common_info'], '</p>
+			<p class="description">', $txt['optimus_base_info'], '</p>
 
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
@@ -152,7 +152,88 @@ function template_common()
 	<br class="clear" />';
 }
 
-function template_verify()
+function template_favicon()
+{
+	global $txt, $webmaster_email, $modSettings, $context, $boardurl;
+
+	echo '
+	<div id="optimus">		
+		<div class="cat_bar">
+			<h3 class="catbg">', $txt['optimus_favicon_title'], '</h3>
+		</div>';
+
+	if (!empty($modSettings['optimus_favicon_api_key']))
+		echo '
+		<div class="description">
+			<form id="favicon_form" method="post" action="https://realfavicongenerator.net/api/favicon_generator" id="favicon_form" target="_blank">
+				<input type="hidden" name="json_params" id="json_params"/>
+				<button type="submit" id="form_button" class="button_submit">', $txt['optimus_favicon_create'], '</button>
+			</form>
+		</div>';
+
+	echo '
+		<div class="windowbg2">
+			<span class="topslice"><span></span></span>
+			<div class="content">
+				<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
+					<dl class="settings">
+						<dt>
+							<span><label for="optimus_favicon_api_key">', $txt['optimus_favicon_api_key'], '</label></span>
+						</dt>
+						<dd>
+							<input name="optimus_favicon_api_key" id="optimus_favicon_api_key" value="', !empty($modSettings['optimus_favicon_api_key']) ? $modSettings['optimus_favicon_api_key'] : '', '" class="input_text" type="text" size="50">
+						</dd>
+						<dt>
+							<span>
+								<label for="optimus_favicon_text">Код для вставки favicon</label><br />
+								<span class="smalltext">', $txt['optimus_favicon_help'], '</span>
+							</span>
+						</dt>
+						<dd>
+							<textarea rows="5" style="width:90%" name="optimus_favicon_text" id="optimus_favicon_text">', !empty($modSettings['optimus_favicon_text']) ? $modSettings['optimus_favicon_text'] : '', '</textarea>
+						</dd>
+					</dl>
+					<hr class="hrcolor clear" />
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
+				</form>
+			</div>
+			<span class="botslice"><span></span></span>
+		</div>';
+
+	// https://realfavicongenerator.net/api/interactive_api
+	if (!empty($modSettings['optimus_favicon_api_key']))
+		echo '
+		<script type="text/javascript">window.jQuery || document.write(unescape(\'%3Cscript src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"%3E%3C/script%3E\'))</script>
+		<script type="text/javascript">
+			function computeJson() {
+				var params = { favicon_generation: { 
+					callback: {},
+					master_picture: {},
+					files_location: {},
+					api_key: $("#optimus_favicon_api_key").val()
+				}};
+
+				params.favicon_generation.master_picture.type = "no_picture";
+				params.favicon_generation.files_location.type = "path";
+				params.favicon_generation.files_location.path = "' . parse_url($boardurl, PHP_URL_PATH) . '/";
+				params.favicon_generation.callback.type = "none";
+				return params;
+			}
+
+			jQuery(document).ready(function($) {
+				$("#favicon_form").submit(function(e) {
+					$("#json_params").val(JSON.stringify(computeJson()));
+				});
+			});
+		</script>';
+
+	echo '
+	</div>
+	<br class="clear" />';
+}
+
+function template_meta()
 {
 	global $context, $txt, $modSettings;
 
@@ -161,7 +242,7 @@ function template_verify()
 		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
 
 			<div class="cat_bar">
-				<h3 class="catbg">', $txt['optimus_codes'], '</h3>
+				<h3 class="catbg">', $txt['optimus_meta_title'], '</h3>
 			</div>
 			<p class="description">', $txt['optimus_meta_info'], '</p>
 
@@ -170,27 +251,59 @@ function template_verify()
 				<div class="content centertext">
 					<table>
 						<tr>
-							<th>', $txt['optimus_titles'], '</th>
-							<th>', $txt['optimus_name'], '</th>
-							<th>', $txt['optimus_content'], '</th>
+							<th>', $txt['optimus_meta_tools'], '</th>
+							<th>', $txt['optimus_meta_name'], '</th>
+							<th>', $txt['optimus_meta_content'], '</th>
 						</tr>';
 
 	$meta = !empty($modSettings['optimus_meta']) ? unserialize($modSettings['optimus_meta']) : '';
+	$engines = array();
+
 	foreach ($txt['optimus_search_engines'] as $engine => $data) {
+		$engines[] = $data[0];
+
 		echo '
 						<tr>
 							<td>', $engine, ' (<strong>', $data[1], '</strong>)</td>
 							<td>
-								<input type="text" name="', $engine, '_name" size="24" value="', isset($meta[$engine]['name']) ? $meta[$engine]['name'] : $data[0], '" />
+								<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '" />
 							</td>
 							<td>
-								<input type="text" name="', $engine, '_content" size="40" value="', isset($meta[$engine]['content']) ? $meta[$engine]['content'] : '', '" />
+								<input type="text" name="custom_tag_value[]" size="40" value="', isset($meta[$data[0]]) ? $meta[$data[0]] : '', '" />
 							</td>
 						</tr>';
 	}
 
+	foreach ($meta as $name => $value) {
+		if (!in_array($name, $engines)) {
+			echo '
+						<tr>
+							<td>', $txt['optimus_meta_customtag'], '</td>
+							<td>
+								<input type="text" name="custom_tag_name[]" size="24" value="', $name, '" />
+							</td>
+							<td>
+								<input type="text" name="custom_tag_value[]" size="40" value="', $value, '" />
+							</td>
+						</tr>';
+		}
+	}
+
 	echo '
 					</table>
+					<noscript>
+						<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /></div>
+					</noscript>
+					<div id="moreTags"></div>
+					<div style="margin-top: 1ex; display: none;" id="newtag_link">
+						<a href="#" onclick="addNewTag(); return false;">', $txt['optimus_meta_addtag'], '</a>
+					</div>
+					<script type="text/javascript"><!-- // --><![CDATA[
+						document.getElementById("newtag_link").style.display = "";
+						function addNewTag() {
+							setOuterHTML(document.getElementById("moreTags"), \'<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /><\' + \'/div><div id="moreTags"><\' + \'/div>\');
+						}
+					// ]]></script>
 					<hr class="hrcolor clear" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
@@ -220,8 +333,7 @@ function template_counters()
 				<div class="content">
 					<label for="optimus_head_code">', $txt['optimus_head_code'], '</label><br />
 					<textarea id="optimus_head_code" name="optimus_head_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_head_code']) ? $modSettings['optimus_head_code'] : '', '</textarea>
-					<div class="smalltext">', $txt['optimus_ga_note'], '</div>
-					<br />
+					<br /><br />
 					<label for="optimus_stat_code">', $txt['optimus_stat_code'], '</label><br />
 					<textarea id="optimus_stat_code" name="optimus_stat_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_stat_code']) ? $modSettings['optimus_stat_code'] : '', '</textarea>
 					<br /><br />
@@ -252,12 +364,9 @@ function template_robots()
 	echo '
 	<div id="optimus">
 		<form action="', $context['post_url'], '" method="post">
-
 			<div class="cat_bar">
 				<h3 class="catbg">', $txt['optimus_manage'], '</h3>
-			</div>';
-
-	echo '
+			</div>
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
 				<div class="content">
@@ -289,29 +398,38 @@ function template_robots()
 	echo '
 							</ul>
 						</div>
-						', $txt['lang_dictionary'] == 'ru' ? '<a href="https://go.1ps.ru/promo/?p=383933&fm_promocode=949796R252" target="_blank"><img class="floatright" src="https://1ps.ru/identic/bonusfiles/course-seo-5.jpg" alt="" /></a>' : '', '
 					</div>
-					<div id="top_boards">
-						<div class="content">
-							', $txt['lang_dictionary'] == 'ru' ? $txt['optimus_1ps_ads'] : '', '
-						</div>
-					</div>
-
-					<div class="clear"></div>
-					<span class="botslice"><span></span></span>
-
 					<hr class="clear" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<div class="righttext">
-						<input type="submit" class="button_submit" value="', $txt['save'], '" />
-					</div>
+					<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
 				</div>
 				<span class="botslice"><span></span></span>
 			</div>
-
 		</form>
 	</div>
 	<br class="clear" />';
+}
+
+function template_donate()
+{
+	global $txt, $scripturl;
+
+	if (in_array($txt['lang_dictionary'], array('ru', 'uk')))
+		echo '
+	<div class="centertext">
+		<iframe src="https://money.yandex.ru/embed/donate.xml?account=410011113366680&quickpay=donate&payment-type-choice=on&mobile-payment-type-choice=on&default-sum=100&targets=%D0%9D%D0%B0+%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D0%B5+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0&target-visibility=on&project-name=%D0%9B%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE+%D0%BC%D0%B5%D0%B4%D0%B2%D0%B5%D0%B4%D1%8F&project-site=https%3A%2F%2Fdragomano.ru&button-text=05&successURL=" width="508" height="117" style="border:none;"></iframe>
+	</div>';
+	else
+		echo '
+	<div id="paypal_donate" class="centertext">
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="K2AVLACFRVJN6">
+			<input type="hidden" name="return" value="', $scripturl, '?action=admin;area=optimus;sa=donate">
+			<input type="hidden" name="cancel_return" value="', $scripturl, '">
+			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
+		</form>
+	</div>';
 }
 
 function template_404()
@@ -347,5 +465,3 @@ function template_403()
 			</div>
 		</div>';
 }
-
-?>

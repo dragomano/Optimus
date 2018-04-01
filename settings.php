@@ -30,6 +30,8 @@ foreach ($newSettings as $setting => $value) {
 if (empty($context['uninstalling']))
 	updateSettings($base);
 
+updateSettings(array('optimus_meta' => 'a:0:{}'));
+
 // Scheduled Tasks
 $rows = array();
 $rows[] = array(
