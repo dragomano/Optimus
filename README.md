@@ -3,7 +3,7 @@
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.x
 * **Hooks only:** Yes
-* **Languages:** English, Russian
+* **Languages:** English, Russian, Dutch, Spanish
 
 ## Description
 This mod might help you solve some problems related with indexing of your forum by search engines.
@@ -15,11 +15,11 @@ This mod might help you solve some problems related with indexing of your forum 
 * Open Graph meta-tags support.
 * Twitter Cards and JSON-LD markup support.
 * Ability to specify the verification codes when adding sites to Google, Yandex and Bing (Webmaster Tools).
-* Adding of custom metatags (new).
+* Adding of custom metatags.
 * Changing the robots.txt from Settings page.
 * Generator for robots.txt file.
 * Simple Sitemap XML.
-* Favicon Support (new).
+* Favicon Support.
 * Other small changes to improve the indexing of your forum.
 
 P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) — not recommended for production forum!

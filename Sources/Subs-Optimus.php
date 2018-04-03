@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.7
+ * @version 1.9.7.1
  */
 
 if (!defined('SMF'))
@@ -336,6 +336,9 @@ function get_optimus_description()
 function get_optimus_og_image()
 {
 	global $context, $smcFunc, $scripturl;
+
+	if (!allowedTo('view_attachments'))
+		return;
 
 	// Кэшируем запрос
 	if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
