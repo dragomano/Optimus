@@ -43,10 +43,10 @@ P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) —
 
 P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 3) — используете на свой страх и риск!
 
-![ptimus_1-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_1-min.png)
-![ptimus_2-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_2-min.png)
-![ptimus_3-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_3-min.png)
-![ptimus_4-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_4-min.png)
-![ptimus_5-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_5-min.png)
-![ptimus_6-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_6-min.png)
-![ptimus_7-mi](D:\HAWK\Documents\GitHub\Optimus\optimus_7-min.png)
+![ptimus_1-mi](optimus_1-min.png)
+![ptimus_2-mi](optimus_2-min.png)
+![ptimus_3-mi](optimus_3-min.png)
+![ptimus_4-mi](optimus_4-min.png)
+![ptimus_5-mi](optimus_5-min.png)
+![ptimus_6-mi](optimus_6-min.png)
+![ptimus_7-mi](optimus_7-min.png)
