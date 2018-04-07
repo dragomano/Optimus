@@ -1,11 +1,10 @@
 <?php
 
 /**
- * dutch-utf8 language file
+ * dutch language file
  *
  * @package Optimus
  * @author Bugo https://dragomano.ru/mods/optimus
- * @version 1.9.7
  */
 
 $txt['optimus_main'] = 'Optimus';
@@ -30,7 +29,7 @@ $txt['optimus_templates'] = array(
 	'board' => array('{board_name}', ' - pagina {#} - ', '{forum_name}'),
 	'topic' => array('{topic_name}', ' - pagina {#} - ', '{board_name} - {forum_name}')
 );
-$txt['optimus_no_first_number']   = 'Toon geen nummer voor een eerste bladzijde';																		  
+$txt['optimus_no_first_number']   = 'Toon geen nummer voor een eerste bladzijde';
 $txt['optimus_board_description'] = 'Gebruik de board omschrijving voor meta-tag <strong>description</strong>';
 $txt['optimus_topic_description'] = 'Gebruik de topic omschrijving voor meta-tag <strong>description</strong><br /><span class="smalltext">Gebruik <a href="http://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank">Topic Descriptions mod</a> om een korte beschrijving voor topics aan te leggen.</span>';
 $txt['optimus_404_status'] = 'Geef <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">403/404 code</a> afhankelijk van de status van de opgevraagde pagina';
@@ -79,7 +78,7 @@ $txt['optimus_counters'] = 'Counters';
 $txt['optimus_counters_desc'] = 'Voor het bijhouden van bezoeken aan je forum is het mogelijk een varieteit aan counters in te voeren.';
 
 $txt['optimus_head_code'] = 'Onzichtbare counters die geladen worden in de <strong>head</strong> sectie (<a href="http://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
-$txt['optimus_stat_code'] = 'Andere onzichtbare counters (<a href="http://piwik.org/" target="_blank">Piwik</a> etc)';
+$txt['optimus_stat_code'] = 'Andere onzichtbare counters (<a href="https://matomo.org/" target="_blank">Matomo</a> etc)';
 $txt['optimus_count_code'] = 'Zichtbare counters (<a href="http://www.freestats.com/" target="_blank">FreeStats</a>, <a href="http://www.superstats.com/" target="_blank">SuperStats</a>, <a href="http://www.prtracker.com/FreeCounter.html" target="_blank">PRTracker</a> etc)';
 $txt['optimus_counters_css'] = 'Weergave van zichtbare counters (CSS code)';
 $txt['optimus_ignored_actions'] = 'Acties die genegeerd worden';
@@ -118,5 +117,3 @@ $txt['optimus_donate_desc']  = 'Vanaf hier kun je een donatie aan de mod auteur 
 // Task Manager
 $txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Genereren';
 $txt['scheduled_task_desc_optimus_sitemap'] = 'Je kunt hier de frequentie van het genereren van de sitemap instellen.';
-
-?>

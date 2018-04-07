@@ -78,8 +78,8 @@ $txt['optimus_counters']      = 'Contadores';
 $txt['optimus_counters_desc'] = 'Puede agregar y cambiar los contadores en esta secci&oacute;n para registrar las visitas de su foro.';
 
 $txt['optimus_head_code']       = 'Contadores invisibles cargando en la secci&oacute;n de <strong>cabecera</strong> (<a href="https://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
-$txt['optimus_stat_code']       = 'Otros contadores invisibles (<a href="https://piwik.org/" target="_blank">Piwik</a> etc)';
-$txt['optimus_count_code']      = 'Contadores visibles (<a href="https://www.freestats.com/" target="_blank">FreeStats</a> etc)';
+$txt['optimus_stat_code']       = 'Otros contadores invisibles (<a href="https://matomo.org/" target="_blank">Matomo</a> etc)';
+$txt['optimus_count_code']      = 'Contadores visibles (<a href="http://www.freestats.com/" target="_blank">FreeStats</a>, <a href="http://www.superstats.com/" target="_blank">SuperStats</a>, <a href="http://www.prtracker.com/FreeCounter.html" target="_blank">PRTracker</a> etc)';
 $txt['optimus_counters_css']    = 'Apariencia para contadores visibles (CSS)';
 $txt['optimus_ignored_actions'] = 'Acciones ignoradas';
 
@@ -117,4 +117,3 @@ $txt['optimus_donate_desc']  = 'Desde aqu&iacute; puedes enviar donaciones al au
 // Task Manager
 $txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Gereration';
 $txt['scheduled_task_desc_optimus_sitemap'] = 'Puede establecer la frecuencia de la creaci&oacute;n del mapa del sitio.';
-?>

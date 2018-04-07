@@ -123,8 +123,8 @@ function optimus_operations()
 			}';
 
 		if (!empty($list_item))
-			$context['insert_after_template'] .= implode($list_item, ',');			
-		
+			$context['insert_after_template'] .= implode($list_item, ',');
+
 		$context['insert_after_template'] .= ']
 		}
 		</script>';
@@ -231,7 +231,7 @@ function get_optimus_page_templates()
 		$topic_page_number = !empty($topic_page_number) ? $topic_page_number : (!empty($topic_site_tpl) ? ' - ' : '');
 
 		$context['page_title'] = strtr($topic_name_tpl . $topic_page_number . $topic_site_tpl, $trans);
-		
+
 		if (!empty($modSettings['optimus_topic_description'])) {
 			if (!empty($context['topic_description']))
 				$context['optimus_description'] = $context['topic_description'];
@@ -467,12 +467,13 @@ function optimus_buffer($buffer)
 
 		if (!empty($modSettings['optimus_og_image'])) {
 			$img_link = !empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image'];
-			$img_attr = getimagesize(str_replace(' ','%20', $img_link));
+			$img_attr = !empty($context['optimus_og_image']) ? loadAttachmentContext($context['topic_first_message'])[0] : url_image_size($img_link);
+
 			$open_graph .= '
-	<meta property="og:image" content="' . $img_link . '" />
-	<meta property="og:image:type" content="' . image_type_to_mime_type($img_attr[2]) . '" />
-	<meta property="og:image:width" content="' . $img_attr[0] . '" />
-	<meta property="og:image:height" content="' . $img_attr[1] . '" />';
+	<meta property="og:image" content="' . $img_link . '" />' . (empty($context['optimus_og_image']) ? '
+	<meta property="og:image:type" content="' . $img_attr['mime'] . '" />' : '') . '
+	<meta property="og:image:width" content="' . (!empty($context['optimus_og_image']) ? $img_attr['width'] : $img_attr[0]) . '" />
+	<meta property="og:image:height" content="' . (!empty($context['optimus_og_image']) ? $img_attr['height'] : $img_attr[1]) . '" />';
 		}
 
 		$open_graph .= '
@@ -568,7 +569,7 @@ function check_optimus_filesize($file)
 function get_optimus_sitemap_priority($time)
 {
 	$diff = floor((time() - $time) / 60 / 60 / 24);
-	
+
 	if ($diff <= 30)
 		return '0.8';
 	elseif ($diff <= 60)
@@ -699,13 +700,13 @@ function optimus_sitemap()
 				'lastmod'    => get_optimus_sitemap_date($home_last_edit),
 				'changefreq' => get_optimus_sitemap_frequency($home_last_edit),
 				'priority'   => '1.0'
-			);			
+			);
 			array_unshift($url, $home);
 			array_unshift($first, $home);
 		}
 	}
 
-	$main = '';		
+	$main = '';
 	foreach ($first as $entry) {
 		$main .= $t . '<url>' . $n;
 		$main .= $t . $t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $n;
@@ -718,7 +719,7 @@ function optimus_sitemap()
 
 		if (!empty($entry['priority']))
 			$main .= $t . $t . '<priority>' . $entry['priority'] . '</priority>' . $n;
-		
+
 		$main .= $t . '</url>' . $n;
 	}
 
@@ -735,7 +736,7 @@ function optimus_sitemap()
 			'replies'       => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
 		)
 	);
-	
+
 	$topics = array();
 	while ($row = $smcFunc['db_fetch_assoc']($request))
 		$topics[$row['date']][$row['id_topic']] = $row;
@@ -771,7 +772,7 @@ function optimus_sitemap()
 		}
 
 		$files[]    = $year;
-		$out[$year] = '';		
+		$out[$year] = '';
 		foreach ($sec[$year] as $entry) {
 			$out[$year] .= $t . '<url>' . $n;
 			$out[$year] .= $t . $t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $n;
@@ -784,7 +785,7 @@ function optimus_sitemap()
 
 			if (!empty($entry['priority']))
 				$out[$year] .= $t . $t . '<priority>' . $entry['priority'] . '</priority>' . $n;
-			
+
 			$out[$year] .= $t . '</url>' . $n;
 		}
 	}
@@ -803,7 +804,7 @@ function optimus_sitemap()
 
 		if (!empty($entry['priority']))
 			$one_file .= $t . $t . '<priority>' . $entry['priority'] . '</priority>' . $n;
-		
+
 		$one_file .= $t . '</url>' . $n;
 	}
 
@@ -812,14 +813,14 @@ function optimus_sitemap()
 	if (file_exists($pretty) && !empty($modSettings['pretty_enable_filters'])) {
 		if (!function_exists('pretty_rewrite_buffer'))
 			require_once($pretty);
-		
+
 		$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
 		$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';
 		$context['pretty']['search_patterns'][]  = '~(">)([^#<]+)~';
 		$context['pretty']['replace_patterns'][] = '~(">)([^<]+)~';
 
 		$main = pretty_rewrite_buffer($main);
-		
+
 		foreach ($files as $year)
 			$out[$year] = pretty_rewrite_buffer($out[$year]);
 
@@ -852,9 +853,9 @@ function optimus_sitemap()
 			$maps .= $t . $t . '<lastmod>' . get_optimus_sitemap_date() . '</lastmod>' . $n;
 			$maps .= $t . '</sitemap>' . $n;
 		}
-		
+
 		$index_data = $header . '<sitemapindex ' . $xmlns . '>' . $n . $maps . '</sitemapindex>';
-		$index_file = $boarddir . '/sitemap.xml';	
+		$index_file = $boarddir . '/sitemap.xml';
 		create_optimus_file($index_file, $index_data);
 	} else {
 		$one_file = $header . '<urlset ' . $xmlns . '>' . $n . $one_file . '</urlset>';

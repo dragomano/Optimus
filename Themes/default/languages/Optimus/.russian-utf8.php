@@ -80,7 +80,7 @@ $txt['optimus_counters_desc'] = 'Добавляйте и изменяйте вс
 
 $txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://google.ru/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
 $txt['optimus_stat_code']       = 'Другие невидимые счётчики (например, <a href="https://metrika.yandex.ru/" target="_blank">Яндекс.Метрика</a> без информера)';
-$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank">LiveInternet</a>, <a href="https://top100.rambler.ru/top100/rules.shtml.ru" target="_blank">Rambler\'s Top100</a> и т. п.)';
+$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank">LiveInternet</a>, <a href="https://top100.rambler.ru/" target="_blank">Rambler\'s Top100</a> и т. п.)';
 $txt['optimus_counters_css']    = 'Оформление блока со счётчиками (CSS)';
 $txt['optimus_ignored_actions'] = 'Игнорируемые области (actions) &mdash; на этих страницах счетчики подгружаться не будут!';
 

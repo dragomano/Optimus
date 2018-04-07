@@ -78,8 +78,8 @@ $txt['optimus_counters']      = 'Counters';
 $txt['optimus_counters_desc'] = 'You can add and change any counters in this section to log visits of your forum.';
 
 $txt['optimus_head_code']       = 'Invisible counters loading on <strong>head</strong> section (<a href="https://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
-$txt['optimus_stat_code']       = 'Other invisible counters (<a href="https://piwik.org/" target="_blank">Piwik</a> etc)';
-$txt['optimus_count_code']      = 'Visible counters (<a href="https://www.freestats.com/" target="_blank">FreeStats</a> etc)';
+$txt['optimus_stat_code']       = 'Other invisible counters (<a href="https://matomo.org/" target="_blank">Matomo</a> etc)';
+$txt['optimus_count_code']      = 'Visible counters (<a href="http://www.freestats.com/" target="_blank">FreeStats</a>, <a href="http://www.superstats.com/" target="_blank">SuperStats</a>, <a href="http://www.prtracker.com/FreeCounter.html" target="_blank">PRTracker</a> etc)';
 $txt['optimus_counters_css']    = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 
