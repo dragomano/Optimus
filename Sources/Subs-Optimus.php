@@ -467,13 +467,8 @@ function optimus_buffer($buffer)
 
 		if (!empty($modSettings['optimus_og_image'])) {
 			$img_link = !empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image'];
-			$img_attr = !empty($context['optimus_og_image']) ? loadAttachmentContext($context['topic_first_message'])[0] : url_image_size($img_link);
-
 			$open_graph .= '
-	<meta property="og:image" content="' . $img_link . '" />' . (empty($context['optimus_og_image']) ? '
-	<meta property="og:image:type" content="' . $img_attr['mime'] . '" />' : '') . '
-	<meta property="og:image:width" content="' . (!empty($context['optimus_og_image']) ? $img_attr['width'] : $img_attr[0]) . '" />
-	<meta property="og:image:height" content="' . (!empty($context['optimus_og_image']) ? $img_attr['height'] : $img_attr[1]) . '" />';
+	<meta property="og:image" content="' . $img_link . '" />';
 		}
 
 		$open_graph .= '
