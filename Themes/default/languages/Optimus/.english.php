@@ -51,13 +51,11 @@ $txt['optimus_favicon_help']    = 'Generate your own favicon <a href="http://www
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc']  = 'Here you can find some fixes for your forum. Additionally you can enable Open Graph and JSON-LD support. Enjoy!';
 
-$txt['optimus_remove_last_bc_item'] = 'The correct breadcrumbs (the last item will not be a link)';
-$txt['optimus_correct_prevnext']    = '<a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">The correct rel="next" and rel="prev"</a> (pagination for topics)';
-$txt['optimus_open_graph']          = '<a href="http://ogp.me/" target="_blank">Open Graph</a> meta tags for forum pages';
-$txt['optimus_og_image']            = 'Link to your default Open Graph image<br /><span class="smalltext">It will be replaced by the attachment of the first message in topics (if exists).</span>';
-$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
-$txt['optimus_tw_cards']            = '<a href="https://twitter.com/" target="_blank">Twitter</a> account name (specify to enable <a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';
-$txt['optimus_json_ld']             = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">breadcrumbs</a>"';
+$txt['optimus_open_graph'] = '<a href="http://ogp.me/" target="_blank">Open Graph</a> meta tags for forum pages';
+$txt['optimus_og_image']   = 'Link to your default Open Graph image<br /><span class="smalltext">It will be replaced by the attachment of the first message in topics (if exists).</span>';
+$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
+$txt['optimus_tw_cards']   = '<a href="https://twitter.com/" target="_blank">Twitter</a> account name (specify to enable <a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';
+$txt['optimus_json_ld']    = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">breadcrumbs</a>"';
 
 $txt['optimus_meta_title'] = 'Meta tags';
 $txt['optimus_meta_desc']  = 'On this page you can add any regular/verification code(s) from list below.';

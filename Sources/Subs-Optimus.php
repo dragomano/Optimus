@@ -130,12 +130,6 @@ function optimus_operations()
 		</script>';
 	}
 
-	// Последний пункт в хлебных крошках не будем делать ссылкой
-	if (!empty($modSettings['optimus_remove_last_bc_item']) && !WIRELESS) {
-		$linktree = count($context['linktree']);
-		unset($context['linktree'][$linktree - 1]['url']);
-	}
-
 	// Canonical url fix for portal mods
 	if (!empty($modSettings['optimus_portal_compat'])) {
 		if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action'])) {
@@ -376,62 +370,35 @@ function optimus_buffer($buffer)
 	if (isset($_REQUEST['xml']) || $context['current_action'] == 'printpage')
 		return $buffer;
 
+	if (!empty($context['robot_no_index']) || empty($context['canonical_url']))
+		return $buffer;
+
 	$replacements = array();
 
-	if (isset($context['canonical_url'])) {
-		// Description
-		if (!empty($context['optimus_description'])) {
-			$desc_old = '<meta name="description" content="' . $context['page_title_html_safe'] . '" />';
-			$desc_new = '<meta name="description" content="' . $context['optimus_description'] . '" />';
-			$replacements[$desc_old] = $desc_new;
-		}
-
-		// Metatags
-		if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 1) {
-			$meta = '';
-			$test = unserialize($modSettings['optimus_meta']);
-
-			foreach ($test as $n => $val) {
-				if (!empty($val))
-					$meta .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
-			}
-
-			$charset_meta = '<meta http-equiv="Content-Type" content="text/html; charset=' . $context['character_set'] . '" />';
-			$check_meta = $charset_meta . $meta;
-			$replacements[$charset_meta] = $check_meta;
-		}
+	// Description
+	if (!empty($context['optimus_description'])) {
+		$desc_old = '<meta name="description" content="' . $context['page_title_html_safe'] . '" />';
+		$desc_new = '<meta name="description" content="' . $context['optimus_description'] . '" />';
+		$replacements[$desc_old] = $desc_new;
 	}
 
-	// Correct prev/next links
-	if (!empty($modSettings['optimus_correct_prevnext'])) {
-		if (!empty($_REQUEST['topic']) && isset($context['start']) && !empty($context['page_info']['num_pages'])) {
-			$prev = '<link rel="prev" href="' . $scripturl . '?topic=' . $context['current_topic'] . '.0;prev_next=prev" />' . "\n\t";
-			$next = '<link rel="next" href="' . $scripturl . '?topic=' . $context['current_topic'] . '.0;prev_next=next" />' . "\n\t";
-			$new_prev = '<link rel="prev" href="' . $scripturl . '?topic=' . $context['current_topic'] . '.' . ($context['start'] - $modSettings['defaultMaxMessages']) . '" />' . "\n\t";
-			$new_next = '<link rel="next" href="' . $scripturl . '?topic=' . $context['current_topic'] . '.' . ($context['start'] + $modSettings['defaultMaxMessages']) . '" />' . "\n\t";
+	// Metatags
+	if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 1) {
+		$meta = '';
+		$test = unserialize($modSettings['optimus_meta']);
 
-			if ($context['page_info']['num_pages'] > 1)	{
-				if ($context['page_info']['current_page'] == 1) {
-					$replacements[$prev] = '';
-					$replacements[$next] = $new_next;
-				}
-
-				if ($context['page_info']['current_page'] == $context['page_info']['num_pages']) {
-					$replacements[$prev] = $new_prev;
-					$replacements[$next] = '';
-				}
-
-				if ($context['page_info']['current_page'] < $context['page_info']['num_pages'] && $context['page_info']['current_page'] > 1) {
-					$replacements[$prev] = $new_prev;
-					$replacements[$next] = $new_next;
-				}
-			} else
-				$replacements[$prev] = $replacements[$next] = '';
+		foreach ($test as $n => $val) {
+			if (!empty($val))
+				$meta .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
 		}
+
+		$charset_meta = '<meta http-equiv="Content-Type" content="text/html; charset=' . $context['character_set'] . '" />';
+		$check_meta = $charset_meta . $meta;
+		$replacements[$charset_meta] = $check_meta;
 	}
 
 	// Open Graph
-	if (!empty($modSettings['optimus_open_graph']) && isset($context['canonical_url'])) {
+	if (!empty($modSettings['optimus_open_graph'])) {
 		$doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
 		$new_doctype = '<!DOCTYPE html>';
 		$replacements[$doctype] = $new_doctype;

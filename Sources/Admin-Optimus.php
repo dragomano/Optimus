@@ -18,7 +18,7 @@ if (!defined('SMF'))
 function optimus_admin_areas(&$admin_areas)
 {
 	global $txt;
-	
+
 	$admin_areas['config']['areas']['optimus'] =
 		array(
 			'label'    => $txt['optimus_title'],
@@ -147,8 +147,6 @@ function optimus_extra_settings()
 
 	$config_vars = array(
 		array('title', 'optimus_extra_title'),
-		array('check', 'optimus_remove_last_bc_item'),
-		array('check', 'optimus_correct_prevnext'),
 		array('check', 'optimus_open_graph'),
 		array('text',  'optimus_og_image', 50, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
 		array('text', 'optimus_fb_appid', 40, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
@@ -268,7 +266,7 @@ function optimus_robots_settings()
 	$common_rules_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
 
 	clearstatcache();
-	
+
 	$context['robots_txt_exists'] = file_exists($common_rules_path);
 	$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
 
@@ -495,7 +493,7 @@ Disallow: " . $url_path . "/*all" : "",
 	$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
 
 	$new_robots = array();
-	
+
 	foreach ($common_rules as $line) {
 		if (!empty($line))
 			$new_robots[] = $line;

@@ -51,13 +51,11 @@ $txt['optimus_favicon_help']    = 'Genera tu propio favicon <a href="http://www.
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc']  = 'Aqu&iacute; puedes encontrar algunas soluciones para tu foro. Adem&aacute;s, puede habilitar la compatibilidad con Open Graph y JSON-LD. &iexcl;Disfrutar!';
 
-$txt['optimus_remove_last_bc_item'] = 'Las migas de pan correctas (el &uacute;ltimo elemento no ser&aacute; un enlace)'; // No encontr&eacute; otro significado - I did not find another meaning
-$txt['optimus_correct_prevnext']    = '<a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">Lo correcto es rel=&quot;siguiente&quot; y rel=&quot;anterior&quot;</a> (paginaci&oacute;n por temas)';
-$txt['optimus_open_graph']          = '<a href="http://ogp.me/" target="_blank">Open Graph</a> meta etiquetas para p&aacute;ginas del foro';
-$txt['optimus_og_image']            = 'Enlace a su imagen predeterminada de Open Graph<br /><span class="smalltext">Ser&aacute; reemplazado por la inserci&oacute;n del primer mensaje en los temas (si existe).</span>';
-$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID de aplicaci&oacute;n) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (si hay)';
-$txt['optimus_tw_cards']            = '<a href="https://twitter.com/" target="_blank">Twitter</a> nombre de cuenta (especifique para habilitar <a href="https://dev.twitter.com/cards/overview" target="_blank">Tarjetas de Twitter</a>)';
-$txt['optimus_json_ld']             = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> marcado para "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">Migas de pan</a>"'; // No encontr&eacute; otro significado - I did not find another meaning
+$txt['optimus_open_graph'] = '<a href="http://ogp.me/" target="_blank">Open Graph</a> meta etiquetas para p&aacute;ginas del foro';
+$txt['optimus_og_image']   = 'Enlace a su imagen predeterminada de Open Graph<br /><span class="smalltext">Ser&aacute; reemplazado por la inserci&oacute;n del primer mensaje en los temas (si existe).</span>';
+$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID de aplicaci&oacute;n) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (si hay)';
+$txt['optimus_tw_cards']   = '<a href="https://twitter.com/" target="_blank">Twitter</a> nombre de cuenta (especifique para habilitar <a href="https://dev.twitter.com/cards/overview" target="_blank">Tarjetas de Twitter</a>)';
+$txt['optimus_json_ld']    = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> marcado para "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">Migas de pan</a>"'; // No encontr&eacute; otro significado - I did not find another meaning
 
 $txt['optimus_meta_title'] = 'Meta-etiquetas';
 $txt['optimus_meta_desc']  = 'En esta p&aacute;gina puede agregar cualquier c&oacute;digo regular/de verificaci&oacute;n de la lista a continuaci&oacute;n.';

@@ -43,13 +43,11 @@ $txt['optimus_403_h3']            = 'Извините, но у вас нет д�
 $txt['optimus_extra_title'] = 'Микроразметка';
 $txt['optimus_extra_desc']  = 'Некоторые экспериментальные фиксы, а также активация поддержки Open Graph. Наслаждайтесь!';
 
-$txt['optimus_remove_last_bc_item'] = 'Правильные «хлебные крошки» (последний пункт не будет ссылкой)';
-$txt['optimus_correct_prevnext']    = '<a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">Корректные rel="next" и rel="prev"</a> (постраничная навигация в темах)';
-$txt['optimus_open_graph']          = 'Мета-теги <a href="http://ruogp.me/" target="_blank">Open Graph</a> для страниц форума';
-$txt['optimus_og_image']            = 'Ссылка на изображение по умолчанию для Open Graph<br /><span class="smalltext">В темах будет использоваться вложение из первого сообщения (если есть).</span>';
-$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID приложения) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
-$txt['optimus_tw_cards']            = 'Имя аккаунта в <a href="https://twitter.com/" target="_blank">Twitter</a> (укажите, чтобы включить поддержку <a href="https://dev.twitter.com/cards/overview" target="_blank">карточек</a>)';
-$txt['optimus_json_ld']             = 'Разметка <a href="https://json-ld.org/" target="_blank">JSON-LD</a> для «<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">хлебных крошек</a>»';
+$txt['optimus_open_graph'] = 'Мета-теги <a href="http://ruogp.me/" target="_blank">Open Graph</a> для страниц форума';
+$txt['optimus_og_image']   = 'Ссылка на изображение по умолчанию для Open Graph<br /><span class="smalltext">В темах будет использоваться вложение из первого сообщения (если есть).</span>';
+$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID приложения) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
+$txt['optimus_tw_cards']   = 'Имя аккаунта в <a href="https://twitter.com/" target="_blank">Twitter</a> (укажите, чтобы включить поддержку <a href="https://dev.twitter.com/cards/overview" target="_blank">карточек</a>)';
+$txt['optimus_json_ld']    = 'Разметка <a href="https://json-ld.org/" target="_blank">JSON-LD</a> для «<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">хлебных крошек</a>»';
 
 $txt['optimus_favicon_title'] = 'Иконка сайта';
 $txt['optimus_favicon_desc']  = 'Создайте свой значок для форума. Он будет отображаться браузером во вкладке перед названием страниц, а также в качестве картинки рядом с закладкой, во вкладках и в других элементах интерфейса.';

@@ -51,13 +51,12 @@ $txt['optimus_favicon_help']    = 'Genereer je eigen favicon <a href="http://www
 
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc']  = 'Hier kun je wat aanpassingen voor je forum vinden. Verder is het mogelijk Open Graph en JSON-LD ondersteuning in te schakelen. Enjoy!';
-$txt['optimus_remove_last_bc_item'] = 'Het juiste kruimelpad tonen (Laatste item is geen link)';
-$txt['optimus_correct_prevnext'] = '<a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">De juiste rel="volgende" en rel="vorige"</a>  (pagina indeling voor topics)';
+
 $txt['optimus_open_graph'] = 'Activeer Open Graph ondersteuning';
-$txt['optimus_og_image'] = 'Link naar je standaard Open Graph afbeelding<br /><span class="smalltext">Deze wordt vervangen door de eerste afbeeldings bijlage uit het eerste bericht van het topic (indien aanwezig).</span>';
-$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (indien aanwezig)';
-$txt['optimus_tw_cards']            = '<a href="https://twitter.com/" target="_blank">Twitter</a> account naam (geef deze op voor <a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';
-$txt['optimus_json_ld']             = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> markering voor "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">breadcrumbs</a>"';
+$txt['optimus_og_image']   = 'Link naar je standaard Open Graph afbeelding<br /><span class="smalltext">Deze wordt vervangen door de eerste afbeeldings bijlage uit het eerste bericht van het topic (indien aanwezig).</span>';
+$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (indien aanwezig)';
+$txt['optimus_tw_cards']   = '<a href="https://twitter.com/" target="_blank">Twitter</a> account naam (geef deze op voor <a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';
+$txt['optimus_json_ld']    = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> markering voor "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">breadcrumbs</a>"';
 
 $txt['optimus_meta_title'] = 'Meta tags';
 $txt['optimus_meta_desc'] = 'Op deze pagina kun je algemene/verificatie code(s) van ondersteende lijst onderhouden.';
@@ -65,9 +64,9 @@ $txt['optimus_meta_desc'] = 'Op deze pagina kun je algemene/verificatie code(s) 
 $txt['optimus_meta_addtag']    = 'Klik hier om een nieuwe tag toe te voegen';
 $txt['optimus_meta_customtag'] = 'Aangepaste meta tag';
 $txt['optimus_meta_tools']     = 'Zoek machine (Tools)';
-$txt['optimus_name'] = 'Naam';
-$txt['optimus_content'] = 'Inhoud';
-$txt['optimus_meta_info'] = 'Gebruik alleen de waarden van de <strong>inhoud</strong> parameter van de meta tags.<br />Bijvoorbeeld: <span class="smalltext">&lt;meta naam="google-site-verification" inhoud="<strong>WAARDE DIE IN DE RECHTER KOLOM MOET STAAN</strong>" /&gt;</span>';
+$txt['optimus_name']           = 'Naam';
+$txt['optimus_content']        = 'Inhoud';
+$txt['optimus_meta_info']      = 'Gebruik alleen de waarden van de <strong>inhoud</strong> parameter van de meta tags.<br />Bijvoorbeeld: <span class="smalltext">&lt;meta naam="google-site-verification" inhoud="<strong>WAARDE DIE IN DE RECHTER KOLOM MOET STAAN</strong>" /&gt;</span>';
 $txt['optimus_search_engines'] = array(
 	'Google' => array('google-site-verification','<a href="http://www.google.com/webmasters/tools" target="_blank">Webmasters tools</a>'),
 	'Yandex' => array('yandex-verification','<a href="http://webmaster.yandex.com/"                target="_blank">Yandex.Webmaster</a>'),
