@@ -68,7 +68,7 @@ $txt['optimus_name']           = 'Naam';
 $txt['optimus_content']        = 'Inhoud';
 $txt['optimus_meta_info']      = 'Gebruik alleen de waarden van de <strong>inhoud</strong> parameter van de meta tags.<br />Bijvoorbeeld: <span class="smalltext">&lt;meta naam="google-site-verification" inhoud="<strong>WAARDE DIE IN DE RECHTER KOLOM MOET STAAN</strong>" /&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="http://www.google.com/webmasters/tools" target="_blank">Webmasters tools</a>'),
+	'Google' => array('google-site-verification','<a href="http://www.google.com/webmasters/tools" target="_blank">Google Search Console</a>'),
 	'Yandex' => array('yandex-verification','<a href="http://webmaster.yandex.com/"                target="_blank">Yandex.Webmaster</a>'),
 	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing Webmaster</a>')
 );

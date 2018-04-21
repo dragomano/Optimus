@@ -67,7 +67,7 @@ $txt['optimus_meta_name']      = 'Nombre';
 $txt['optimus_meta_content']   = 'Contenido';
 $txt['optimus_meta_info']      = 'Por favor, use s&oacute;lo los valores de <strong>contenido</strong> en los par&aacute;metro de las etiquetas meta.<br />Ejemplo: <span class="smalltext">&lt;meta name=&quot;<strong>NOMBRE</strong>&quot; content=&quot;<strong>VALOR</strong>&quot; /&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Webmasters tools</a>'),
+	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>'),
 	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.com/" target="_blank">Yandex.Webmaster</a>'),
 	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing Webmaster</a>')
 );

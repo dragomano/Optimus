@@ -67,10 +67,10 @@ $txt['optimus_meta_name']      = 'Имя тега';
 $txt['optimus_meta_content']   = 'Значение';
 $txt['optimus_meta_info']      = 'Пожалуйста, указывайте только значения, содержащиеся в добавляемых мета-тегах (а не теги целиком).<br />Например: <span class="smalltext">&lt;meta name="<strong>ИМЯ ТЕГА</strong>" content="<strong>ЗНАЧЕНИЕ</strong>" /&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Инструменты веб-мастера</a>'),
+	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>'),
 	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.ru/" target="_blank">Яндекс.Вебмастер</a>'),
 	'Mail'   => array('wmail-verification', '<a href="https://webmaster.mail.ru" target="_blank">Поиск Mail.Ru - Кабинет вебмастера</a>'),
-	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing веб-мастер</a>')
+	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing - Средства веб-мастера</a>')
 );
 
 $txt['optimus_counters']      = 'Счётчики';

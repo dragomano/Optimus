@@ -155,8 +155,8 @@ function optimus_operations()
 			$context['optimus_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
 	}
 
-	get_optimus_page_templates();
-	get_optimus_http_status();
+	process_optimus_page_templates();
+	process_optimus_error_codes();
 
 	// Copyright Info
 	if ($context['current_action'] == 'credits')
@@ -164,7 +164,7 @@ function optimus_operations()
 }
 
 // Обрабатываем шаблоны заголовков страниц
-function get_optimus_page_templates()
+function process_optimus_page_templates()
 {
 	global $modSettings, $txt, $context, $board_info, $smcFunc;
 
@@ -255,14 +255,14 @@ function get_optimus_page_templates()
 }
 
 // Возвращаемые коды состояния, в зависимости от ситуации
-function get_optimus_http_status()
+function process_optimus_error_codes()
 {
 	global $modSettings, $board_info, $context, $txt;
 
 	if (empty($modSettings['optimus_404_status']) || empty($board_info['error']))
 		return;
 
-	// Страница не существует?
+	// Страница не существует? Does not exist?
 	if ($board_info['error'] == 'exist') {
 		header('HTTP/1.1 404 Not Found');
 
@@ -272,7 +272,7 @@ function get_optimus_http_status()
 		$context['page_title']   = $txt['optimus_404_page_title'];
 	}
 
-	// Нет доступа?
+	// Нет доступа? No access?
 	if ($board_info['error'] == 'access') {
 		header('HTTP/1.1 403 Forbidden');
 
