@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.7
+ * @version 1.9.7.3
  */
 
 if (!defined('SMF'))
@@ -28,10 +28,10 @@ function optimus_admin_areas(&$admin_areas)
 				'base'     => array($txt['optimus_base_title']),
 				'extra'    => array($txt['optimus_extra_title']),
 				'favicon'  => array($txt['optimus_favicon_title']),
-				'meta'     => array($txt['optimus_meta_title']),
+				'metatags' => array($txt['optimus_meta_title']),
 				'counters' => array($txt['optimus_counters']),
 				'robots'   => array($txt['optimus_robots_title']),
-				'map'      => array($txt['optimus_sitemap_title']),
+				'sitemap'  => array($txt['optimus_sitemap_title']),
 				'donate'   => array($txt['optimus_donate_title'])
 			)
 		);
@@ -51,10 +51,10 @@ function optimus_area_settings()
 		'base'     => 'optimus_base_settings',
 		'extra'    => 'optimus_extra_settings',
 		'favicon'  => 'optimus_favicon_settings',
-		'meta'     => 'optimus_meta_settings',
+		'metatags' => 'optimus_meta_settings',
 		'counters' => 'optimus_counters_settings',
 		'robots'   => 'optimus_robots_settings',
-		'map'      => 'optimus_map_settings',
+		'sitemap'  => 'optimus_sitemap_settings',
 		'donate'   => 'optimus_donate_settings'
 	);
 
@@ -72,7 +72,7 @@ function optimus_area_settings()
 			'favicon' => array(
 				'description' => $txt['optimus_favicon_desc'],
 			),
-			'meta' => array(
+			'metatags' => array(
 				'description' => $txt['optimus_meta_desc'],
 			),
 			'counters' => array(
@@ -81,7 +81,7 @@ function optimus_area_settings()
 			'robots' => array(
 				'description' => $txt['optimus_robots_desc'],
 			),
-			'map' => array(
+			'sitemap' => array(
 				'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
 			),
 			'donate' => array(
@@ -284,12 +284,12 @@ function optimus_robots_settings()
 	}
 }
 
-function optimus_map_settings()
+function optimus_sitemap_settings()
 {
 	global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
 
 	$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
-	$context['post_url']    = $scripturl . '?action=admin;area=optimus;sa=map;save';
+	$context['post_url']    = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
 	$config_vars = array(
 		array('title', 'optimus_sitemap_xml_link'),
@@ -321,7 +321,7 @@ function optimus_map_settings()
 		$save_vars = $config_vars;
 		saveDBSettings($save_vars);
 
-		redirectexit('action=admin;area=optimus;sa=map');
+		redirectexit('action=admin;area=optimus;sa=sitemap');
 	}
 
 	prepareDBSettingContext($config_vars);
