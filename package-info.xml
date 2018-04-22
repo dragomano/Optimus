@@ -18,7 +18,7 @@
 	</install>
 	
 	<uninstall for="2.0 - 2.0.99">
-        <database>uninstall-optional.php</database>
+        <code>uninstall-optional.php</code>
 		<code>hooks.php</code>
 		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/Optimus.template.php" />
