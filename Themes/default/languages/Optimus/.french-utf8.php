@@ -85,7 +85,7 @@ $txt['optimus_counters_css']    = 'Apparence des compteurs visibles (CSS)';
 $txt['optimus_ignored_actions'] = 'Actions ignorées';
 
 $txt['optimus_robots_title'] = 'Editeur robots.txt';
-$txt['optimus_robots_desc']  = 'On this page you can change some options of forum map\'s creating, as well as modify a robots.txt file by using special generator.';
+$txt['optimus_robots_desc']  = 'Sur cette page, vous pouvez modifier certaines options dans la création du map de votre forum, ainsi que modifier le fichier robots.txt en utilisant un générateur spécial.';
 
 $txt['optimus_manage']      = 'Gestion de robots.txt';
 $txt['optimus_rules']       = 'Générateur de robots.txt';
