@@ -53,7 +53,7 @@ $txt['optimus_extra_desc']  = 'Here you can find some fixes for your forum. Addi
 
 $txt['optimus_open_graph'] = '<a href="http://ogp.me/" target="_blank">Open Graph</a> meta tags for forum pages';
 $txt['optimus_og_image']   = 'Link to your default Open Graph image<br /><span class="smalltext">It will be replaced by the attachment of the first message in topics (if exists).</span>';
-$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
+$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank">Facebook</a>';
 $txt['optimus_tw_cards']   = '<a href="https://twitter.com/" target="_blank">Twitter</a> account name (specify to enable <a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';
 $txt['optimus_json_ld']    = '<a href="https://json-ld.org/" target="_blank">JSON-LD</a> markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">breadcrumbs</a>"';
 
