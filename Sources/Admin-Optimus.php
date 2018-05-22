@@ -419,7 +419,6 @@ Disallow: " . $url_path . "/avatars/
 Disallow: " . $url_path . "/Packages/
 Disallow: " . $url_path . "/Smileys/
 Disallow: " . $url_path . "/Sources/
-Disallow: " . $url_path . "/Themes/
 Disallow: " . $url_path . "/login/
 Disallow: " . $url_path . "/*msg
 Disallow: " . $url_path . "/*profile
