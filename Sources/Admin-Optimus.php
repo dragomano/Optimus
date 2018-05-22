@@ -9,20 +9,26 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.7.3
+ * @version 1.9.8
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-function optimus_admin_areas(&$admin_areas)
+/**
+ * Прописываем менюшку с настройками мода в админке
+ *
+ * @param array $admin_areas
+ * @return void
+ */
+function optimusAdminAreas(&$admin_areas)
 {
 	global $txt;
 
 	$admin_areas['config']['areas']['optimus'] =
 		array(
 			'label'    => $txt['optimus_title'],
-			'function' => 'optimus_area_settings',
+			'function' => 'optimusAreaSettings',
 			'icon'     => 'maintain.gif',
 			'subsections' => array(
 				'base'     => array($txt['optimus_base_title']),
@@ -37,27 +43,32 @@ function optimus_admin_areas(&$admin_areas)
 		);
 }
 
-function optimus_area_settings()
+/**
+ * Ключевая функция, подключающая все остальные при их вызове
+ *
+ * @return void
+ */
+function optimusAreaSettings()
 {
-	global $sourcedir, $context, $txt, $scripturl;
-
-	require_once($sourcedir . '/ManageSettings.php');
+	global $context, $txt, $sourcedir, $scripturl;
 
 	$context['page_title'] = $txt['optimus_main'];
 
+	// Подключаем файл шаблона вместе с таблицей стилей
 	loadTemplate('Optimus', 'optimus');
 
 	$subActions = array(
-		'base'     => 'optimus_base_settings',
-		'extra'    => 'optimus_extra_settings',
-		'favicon'  => 'optimus_favicon_settings',
-		'metatags' => 'optimus_meta_settings',
-		'counters' => 'optimus_counters_settings',
-		'robots'   => 'optimus_robots_settings',
-		'sitemap'  => 'optimus_sitemap_settings',
-		'donate'   => 'optimus_donate_settings'
+		'base'     => 'optimusBaseSettings',
+		'extra'    => 'optimusExtraSettings',
+		'favicon'  => 'optimusFaviconSettings',
+		'metatags' => 'optimusMetaSettings',
+		'counters' => 'optimusCounterSettings',
+		'robots'   => 'optimusRobotsSettings',
+		'sitemap'  => 'optimusSitemapSettings',
+		'donate'   => 'optimusDonateSettings'
 	);
 
+	require_once($sourcedir . '/ManageSettings.php');
 	loadGeneralSettingParameters($subActions, 'base');
 
 	$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -93,11 +104,16 @@ function optimus_area_settings()
 	call_user_func($subActions[$_REQUEST['sa']]);
 }
 
-function optimus_base_settings()
+/**
+ * Основные настройки мода
+ *
+ * @return void
+ */
+function optimusBaseSettings()
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'base';
+	$context['sub_template'] = 'optimusBase';
 	$context['page_title'] .= ' - ' . $txt['optimus_base_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
 
@@ -134,16 +150,20 @@ function optimus_base_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_extra_settings()
+/**
+ * Страница с настройками микроразметки
+ *
+ * @return void
+ */
+function optimusExtraSettings()
 {
 	global $context, $txt, $scripturl, $modSettings, $settings;
 
 	$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
 
-	if (empty($modSettings['optimus_og_image'])) {
+	if (empty($modSettings['optimus_og_image']))
 		updateSettings(array('optimus_og_image' => $settings['images_url'] . '/thumbnail.gif'));
-	}
 
 	$config_vars = array(
 		array('title', 'optimus_extra_title'),
@@ -168,11 +188,16 @@ function optimus_extra_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_favicon_settings()
+/**
+ * Управление фавиконкой форума
+ *
+ * @return void
+ */
+function optimusFaviconSettings()
 {
-	global $context, $txt, $scripturl, $modSettings, $settings;
+	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'favicon';
+	$context['sub_template'] = 'optimusFavicon';
 	$context['page_title'] .= ' - ' . $txt['optimus_favicon_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=favicon;save';
 
@@ -193,11 +218,16 @@ function optimus_favicon_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_meta_settings()
+/**
+ * Управление мета-тегами
+ *
+ * @return void
+ */
+function optimusMetaSettings()
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'meta';
+	$context['sub_template'] = 'optimusMeta';
 	$context['page_title'] .= ' - ' . $txt['optimus_meta_title'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=meta;save';
 
@@ -206,9 +236,8 @@ function optimus_meta_settings()
 	$meta = array();
 	if (isset($_POST['custom_tag_name'])) {
 		foreach ($_POST['custom_tag_name'] as $key => $value) {
-			if (empty($value)) {
+			if (empty($value))
 				unset($_POST['custom_tag_name'][$key], $_POST['custom_tag_value'][$key]);
-			}
 			else
 				$meta[$_POST['custom_tag_name'][$key]] = $_POST['custom_tag_value'][$key];
 		}
@@ -227,11 +256,16 @@ function optimus_meta_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_counters_settings()
+/**
+ * Управление счетчиками
+ *
+ * @return void
+ */
+function optimusCounterSettings()
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'counters';
+	$context['sub_template'] = 'optimusCounters';
 	$context['page_title'] .= ' - ' . $txt['optimus_counters'];
 	$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=counters;save';
 
@@ -255,11 +289,16 @@ function optimus_counters_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_robots_settings()
+/**
+ * Страница для изменения robots.txt
+ *
+ * @return void
+ */
+function optimusRobotsSettings()
 {
 	global $context, $txt, $scripturl;
 
-	$context['sub_template'] = 'robots';
+	$context['sub_template'] = 'optimusRobots';
 	$context['page_title']  .= ' - ' . $txt['optimus_robots_title'];
 	$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
@@ -270,7 +309,7 @@ function optimus_robots_settings()
 	$context['robots_txt_exists'] = file_exists($common_rules_path);
 	$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
 
-	optimus_robots_create();
+	optimusRobotsCreate();
 
 	if (isset($_GET['save'])) {
 		checkSession();
@@ -284,7 +323,12 @@ function optimus_robots_settings()
 	}
 }
 
-function optimus_sitemap_settings()
+/**
+ * Страница с настройками карты форума
+ *
+ * @return void
+ */
+function optimusSitemapSettings()
 {
 	global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
 
@@ -327,15 +371,25 @@ function optimus_sitemap_settings()
 	prepareDBSettingContext($config_vars);
 }
 
-function optimus_donate_settings()
+/**
+ * Страница пожертвований
+ *
+ * @return void
+ */
+function optimusDonateSettings()
 {
 	global $context, $txt;
 
-	$context['sub_template'] = 'donate';
+	$context['sub_template'] = 'optimusDonate';
 	$context['page_title']  .= ' - ' . $txt['optimus_donate_title'];
 }
 
-function optimus_robots_create()
+/**
+ * Подготовка к созданию файла robots.txt
+ *
+ * @return void
+ */
+function optimusRobotsCreate()
 {
 	global $smcFunc, $modSettings, $boardurl, $sourcedir, $boarddir, $context, $scripturl;
 
