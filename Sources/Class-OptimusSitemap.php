@@ -1,0 +1,396 @@
+<?php
+
+/**
+ * Class-OptimusSitemap.php
+ *
+ * @package Optimus
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2018 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @version 1.9.9
+ */
+
+if (!defined('SMF'))
+	die('Hacking attempt...');
+
+class OptimusSitemap
+{
+	private $t      = "\t";
+	private $n      = "\n";
+	private $xmlns  = 'https://www.sitemaps.org/schemas/sitemap/0.9';
+
+	/**
+	 * Генерация карты форума
+	 *
+	 * @return bool
+	 */
+	public function create()
+	{
+		global $modSettings, $sourcedir, $boardurl, $smcFunc, $scripturl, $context, $boarddir;
+
+		// Master option
+		if (empty($modSettings['optimus_sitemap_enable']))
+			return;
+
+		clearstatcache();
+
+		// SimpleSEF enabled?
+		$sef = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
+		if ($sef) {
+			function create_sefurl($new_url)
+			{
+				global $sourcedir;
+
+				require_once($sourcedir . '/SimpleSEF.php');
+				$simple = new SimpleSEF;
+
+				return $simple->create_sef_url($new_url);
+			}
+		}
+
+		// PortaMx SEF enabled?
+		if (file_exists($sourcedir . '/PortaMx/PortaMxSEF.php') && function_exists('create_sefurl'))
+			$sef = true;
+
+		$url   = array();
+		$first = array();
+		$sec   = array();
+
+		// Добавляем главную страницу
+		if (empty($modSettings['optimus_sitemap_boards'])) {
+			$first[] = $url[] = array(
+				'loc'      => $boardurl . '/',
+				'priority' => '1.0'
+			);
+		}
+
+		// Boards
+		if (!empty($modSettings['optimus_sitemap_boards'])) {
+			$request = $smcFunc['db_query']('', '
+				SELECT b.id_board, m.poster_time, m.modified_time
+				FROM {db_prefix}boards AS b
+					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
+				WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND b.num_posts > {int:posts}' : '') . '
+				ORDER BY b.id_board',
+				array(
+					'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
+					'posts'         => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
+				)
+			);
+
+			$boards = array();
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$boards[] = $row;
+
+			$smcFunc['db_free_result']($request);
+
+			$last = array(0);
+
+			// А вот насчет разделов можно и подумать...
+			if (!empty($boards)) {
+				foreach ($boards as $entry)	{
+					$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
+
+					// Поддержка мода BoardNoIndex
+					if (!empty($modSettings['BoardNoIndex_enabled'])) {
+						if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
+							$first[] = $url[] = array(
+								'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
+								'lastmod'    => self::getSitemapDate($last_edit),
+								'changefreq' => self::getSitemapFrequency($last_edit),
+								'priority'   => self::getSitemapPriority($last_edit)
+							);
+						}
+					} else {
+						$first[] = $url[] = array(
+							'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
+							'lastmod'    => self::getSitemapDate($last_edit),
+							'changefreq' => self::getSitemapFrequency($last_edit),
+							'priority'   => self::getSitemapPriority($last_edit)
+						);
+					}
+
+					$last[] = empty($entry['modified_time']) ? (empty($entry['poster_time']) ? '' : $entry['poster_time']) : $entry['modified_time'];
+				}
+
+				$home_last_edit = max($last);
+				$home = array(
+					'loc'        => $boardurl . '/',
+					'lastmod'    => self::getSitemapDate($home_last_edit),
+					'changefreq' => self::getSitemapFrequency($home_last_edit),
+					'priority'   => '1.0'
+				);
+				array_unshift($url, $home);
+				array_unshift($first, $home);
+			}
+		}
+
+		$main = '';
+		foreach ($first as $entry) {
+			$main .= $this->t . '<url>' . $this->n;
+			$main .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
+
+			if (!empty($entry['lastmod']))
+				$main .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
+
+			if (!empty($entry['changefreq']))
+				$main .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
+
+			if (!empty($entry['priority']))
+				$main .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
+
+			$main .= $this->t . '</url>' . $this->n;
+		}
+
+		// Topics
+		$request = $smcFunc['db_query']('', '
+			SELECT date_format(FROM_UNIXTIME(m.poster_time), "%Y") AS date, t.id_topic, m.poster_time, m.modified_time
+			FROM {db_prefix}topics AS t
+				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
+				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
+			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND t.num_replies > {int:replies}' : '') . ' AND t.approved = 1
+			ORDER BY t.id_topic',
+			array(
+				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
+				'replies'       => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
+			)
+		);
+
+		$topics = array();
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$topics[$row['date']][$row['id_topic']] = $row;
+
+		$smcFunc['db_free_result']($request);
+
+		$years = $files = array();
+		foreach ($topics as $year => $data) {
+			foreach ($data as $topic => $entry) {
+				$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
+				$url_topic = $scripturl . '?topic=' . $entry['id_topic'] . '.0';
+				$url_topic = !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $url_topic;
+				$years[count($topics[$year])] = $year;
+
+				// Поддержка мода BoardNoIndex
+				if (!empty($modSettings['BoardNoIndex_enabled'])) {
+					if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
+						$sec[$year][] = $url[] = array(
+							'loc'        => $url_topic,
+							'lastmod'    => self::getSitemapDate($last_edit),
+							'changefreq' => self::getSitemapFrequency($last_edit),
+							'priority'   => self::getSitemapPriority($last_edit)
+						);
+					}
+				} else {
+					$sec[$year][] = $url[] = array(
+						'loc'        => $url_topic,
+						'lastmod'    => self::getSitemapDate($last_edit),
+						'changefreq' => self::getSitemapFrequency($last_edit),
+						'priority'   => self::getSitemapPriority($last_edit)
+					);
+				}
+			}
+
+			$files[]    = $year;
+			$out[$year] = '';
+			foreach ($sec[$year] as $entry) {
+				$out[$year] .= $this->t . '<url>' . $this->n;
+				$out[$year] .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
+
+				if (!empty($entry['lastmod']))
+					$out[$year] .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
+
+				if (!empty($entry['changefreq']))
+					$out[$year] .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
+
+				if (!empty($entry['priority']))
+					$out[$year] .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
+
+				$out[$year] .= $this->t . '</url>' . $this->n;
+			}
+		}
+
+		// Обработаем все ссылки
+		$one_file = '';
+		foreach ($url as $entry) {
+			$one_file .= $this->t . '<url>' . $this->n;
+			$one_file .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
+
+			if (!empty($entry['lastmod']))
+				$one_file .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
+
+			if (!empty($entry['changefreq']))
+				$one_file .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
+
+			if (!empty($entry['priority']))
+				$one_file .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
+
+			$one_file .= $this->t . '</url>' . $this->n;
+		}
+
+		// Pretty URLs installed?
+		$pretty = $sourcedir . '/PrettyUrls-Filters.php';
+		if (file_exists($pretty) && !empty($modSettings['pretty_enable_filters'])) {
+			if (!function_exists('pretty_rewrite_buffer'))
+				require_once($pretty);
+
+			$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
+			$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';
+			$context['pretty']['search_patterns'][]  = '~(">)([^#<]+)~';
+			$context['pretty']['replace_patterns'][] = '~(">)([^<]+)~';
+
+			$main = pretty_rewrite_buffer($main);
+
+			foreach ($files as $year)
+				$out[$year] = pretty_rewrite_buffer($out[$year]);
+
+			$one_file = pretty_rewrite_buffer($one_file);
+		}
+
+		// Создаем карту сайта (если ссылок больше 10к, то делаем файл индекса)
+		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . "\n";
+		if (count($url) > 10000) {
+			$main    = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $main . '</urlset>';
+			$sitemap = $boarddir . '/sitemap_main.xml';
+			self::createFile($sitemap, $main);
+
+			foreach ($files as $year) {
+				$out[$year] = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $out[$year] . '</urlset>';
+				$sitemap    = $boarddir . '/sitemap_' . $year . '.xml';
+				self::createFile($sitemap, $out[$year]);
+				self::checkFilesize($sitemap);
+			}
+
+			// Создаем файл индекса Sitemap
+			$maps = '';
+			$maps .= $this->t . '<sitemap>' . $this->n;
+			$maps .= $this->t . $this->t . '<loc>' . $boardurl . '/sitemap_main.xml</loc>' . $this->n;
+			$maps .= $this->t . $this->t . '<lastmod>' . self::getSitemapDate() . '</lastmod>' . $this->n;
+			$maps .= $t . '</sitemap>' . $this->n;
+
+			foreach ($files as $year) {
+				$maps .= $t . '<sitemap>' . $this->n;
+				$maps .= $this->t . $this->t . '<loc>' . $boardurl . '/sitemap_' . $year . '.xml</loc>' . $this->n;
+				$maps .= $this->t . $this->t . '<lastmod>' . self::getSitemapDate() . '</lastmod>' . $this->n;
+				$maps .= $this->t . '</sitemap>' . $this->n;
+			}
+
+			$index_data = $header . '<sitemapindex xmlns="' . $this->xmlns . '">' . $this->n . $maps . '</sitemapindex>';
+			$index_file = $boarddir . '/sitemap.xml';
+			self::createFile($index_file, $index_data);
+		} else {
+			$one_file = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $one_file . '</urlset>';
+			$sitemap  = $boarddir . '/sitemap.xml';
+			self::createFile($sitemap, $one_file);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Создаем файл карты
+	 *
+	 * @param string $path — путь к файлу
+	 * @param string $data — содержимое
+	 * @return bool
+	 */
+	private static function createFile($path, $data)
+	{
+		if (!$fp = fopen($path, 'w'))
+			return false;
+
+		flock($fp, LOCK_EX);
+		fwrite($fp, $data);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+
+		return true;
+	}
+
+	/**
+	 * Если размер файла превышает 10 МБ (ограничение Яндекса), отправляем запись в Журнал ошибок
+	 *
+	 * @param string $file
+	 * @return bool
+	 */
+	private static function checkFilesize($file)
+	{
+		global $txt;
+
+		clearstatcache();
+
+		if (filesize($file) > (10 * 1024 * 1024))
+			log_error(sprintf($txt['optimus_sitemap_size_limit'], pathinfo($file, PATHINFO_BASENAME)) . $txt['optimus_sitemap_rec'], 'general');
+
+		return;
+	}
+
+	/**
+	 * Обработка дат
+	 *
+	 * @param int $timestamp
+	 * @return string
+	 */
+	private static function getSitemapDate($timestamp)
+	{
+		$timestamp = empty($timestamp) ? time() : $timestamp;
+		$gmt       = substr(date("O", $timestamp), 0, 3) . ':00';
+		$result    = date('Y-m-d\TH:i:s', $timestamp) . $gmt;
+
+		return $result;
+	}
+
+	/**
+	 * Определяем приоритет индексирования
+	 *
+	 * @param int $time
+	 * @return float
+	 */
+	private static function getSitemapPriority($time)
+	{
+		$diff = floor((time() - $time) / 60 / 60 / 24);
+
+		if ($diff <= 30)
+			return '0.8';
+		elseif ($diff <= 60)
+			return '0.6';
+		elseif ($diff <= 90)
+			return '0.4';
+		else
+			return '0.2';
+	}
+
+	/**
+	 * Определяем периодичность обновлений
+	 *
+	 * @param int $time
+	 * @return string
+	 */
+	private static function getSitemapFrequency($time)
+	{
+		$frequency = time() - $time;
+
+		if ($frequency < (24 * 60 * 60))
+			return 'hourly';
+		elseif ($frequency < (24 * 60 * 60 * 7))
+			return 'daily';
+		elseif ($frequency < (24 * 60 * 60 * 7 * (52 / 12)))
+			return 'weekly';
+		elseif ($frequency < (24 * 60 * 60 * 365))
+			return 'monthly';
+
+		return 'yearly';
+	}
+}
+
+/**
+ * Вызов генерации карты через Диспетчер задач
+ *
+ * @return void
+ */
+function scheduled_optimus_sitemap()
+{
+	$sitemap = new OptimusSitemap;
+	return $sitemap->create();
+}

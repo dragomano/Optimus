@@ -9,10 +9,10 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.8
+ * @version 1.9.9
  */
 
-function template_optimusBase()
+function template_base()
 {
 	global $context, $txt, $smcFunc, $modSettings;
 
@@ -145,7 +145,7 @@ function template_optimusBase()
 	<br class="clear" />';
 }
 
-function template_optimusFavicon()
+function template_favicon()
 {
 	global $txt, $modSettings, $context, $boardurl;
 
@@ -222,7 +222,7 @@ function template_optimusFavicon()
 	<br class="clear" />';
 }
 
-function template_optimusMeta()
+function template_metatags()
 {
 	global $context, $txt, $modSettings;
 
@@ -300,7 +300,7 @@ function template_optimusMeta()
 	<br class="clear" />';
 }
 
-function template_optimusCounters()
+function template_counters()
 {
 	global $context, $txt, $modSettings;
 
@@ -336,7 +336,7 @@ function template_optimusCounters()
 	<br class="clear" />';
 }
 
-function template_optimusRobots()
+function template_robots()
 {
 	global $context, $txt, $boardurl;
 
@@ -382,7 +382,7 @@ function template_optimusRobots()
 	<br class="clear" />';
 }
 
-function template_optimusDonate()
+function template_donate()
 {
 	global $txt, $scripturl;
 
@@ -404,7 +404,7 @@ function template_optimusDonate()
 	</div>';
 }
 
-function template_optimus404()
+function template_404()
 {
 	global $txt;
 
@@ -421,7 +421,7 @@ function template_optimus404()
 	</div>';
 }
 
-function template_optimus403()
+function template_403()
 {
 	global $txt;
 
