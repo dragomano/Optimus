@@ -17,9 +17,20 @@ if (!defined('SMF'))
 
 class OptimusSitemap
 {
-	private $t      = "\t";
-	private $n      = "\n";
-	private $xmlns  = 'https://www.sitemaps.org/schemas/sitemap/0.9';
+	private $t     = "\t";
+	private $n     = "\n";
+	private $xmlns = 'https://www.sitemaps.org/schemas/sitemap/0.9';
+
+	private $custom_links = array();
+
+	public function __construct($xmlns = '', $urls = [])
+	{
+		if (!empty($xmlns))
+			$this->xmlns = (string) $xmlns;
+
+		if (!empty($urls) && is_array($urls))
+			$this->custom_links = $urls;
+	}
 
 	/**
 	 * Генерация карты форума
@@ -54,13 +65,13 @@ class OptimusSitemap
 		if (file_exists($sourcedir . '/PortaMx/PortaMxSEF.php') && function_exists('create_sefurl'))
 			$sef = true;
 
-		$url   = array();
-		$first = array();
-		$sec   = array();
+		$url_list    = array();
+		$base_links  = array();
+		$topic_links = array();
 
 		// Добавляем главную страницу
 		if (empty($modSettings['optimus_sitemap_boards'])) {
-			$first[] = $url[] = array(
+			$base_links[] = $url_list[] = array(
 				'loc'      => $boardurl . '/',
 				'priority' => '1.0'
 			);
@@ -96,7 +107,7 @@ class OptimusSitemap
 					// Поддержка мода BoardNoIndex
 					if (!empty($modSettings['BoardNoIndex_enabled'])) {
 						if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
-							$first[] = $url[] = array(
+							$base_links[] = $url_list[] = array(
 								'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
 								'lastmod'    => self::getSitemapDate($last_edit),
 								'changefreq' => self::getSitemapFrequency($last_edit),
@@ -104,7 +115,7 @@ class OptimusSitemap
 							);
 						}
 					} else {
-						$first[] = $url[] = array(
+						$base_links[] = $url_list[] = array(
 							'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
 							'lastmod'    => self::getSitemapDate($last_edit),
 							'changefreq' => self::getSitemapFrequency($last_edit),
@@ -122,26 +133,26 @@ class OptimusSitemap
 					'changefreq' => self::getSitemapFrequency($home_last_edit),
 					'priority'   => '1.0'
 				);
-				array_unshift($url, $home);
-				array_unshift($first, $home);
+				array_unshift($url_list, $home);
+				array_unshift($base_links, $home);
 			}
 		}
 
-		$main = '';
-		foreach ($first as $entry) {
-			$main .= $this->t . '<url>' . $this->n;
-			$main .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
+		$base_entries = '';
+		foreach ($base_links as $entry) {
+			$base_entries .= $this->t . '<url>' . $this->n;
+			$base_entries .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
 
 			if (!empty($entry['lastmod']))
-				$main .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
+				$base_entries .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
 
 			if (!empty($entry['changefreq']))
-				$main .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
+				$base_entries .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
 
 			if (!empty($entry['priority']))
-				$main .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
+				$base_entries .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
 
-			$main .= $this->t . '</url>' . $this->n;
+			$base_entries .= $this->t . '</url>' . $this->n;
 		}
 
 		// Topics
@@ -166,25 +177,27 @@ class OptimusSitemap
 
 		$years = $files = array();
 		foreach ($topics as $year => $data) {
+			$files[] = $year;
+
 			foreach ($data as $topic => $entry) {
 				$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
-				$url_topic = $scripturl . '?topic=' . $entry['id_topic'] . '.0';
-				$url_topic = !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $url_topic;
+				$url_list_topic = $scripturl . '?topic=' . $entry['id_topic'] . '.0';
+				$url_list_topic = !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $url_list_topic;
 				$years[count($topics[$year])] = $year;
 
 				// Поддержка мода BoardNoIndex
 				if (!empty($modSettings['BoardNoIndex_enabled'])) {
 					if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
-						$sec[$year][] = $url[] = array(
-							'loc'        => $url_topic,
+						$topic_links[$year][] = $url_list[] = array(
+							'loc'        => $url_list_topic,
 							'lastmod'    => self::getSitemapDate($last_edit),
 							'changefreq' => self::getSitemapFrequency($last_edit),
 							'priority'   => self::getSitemapPriority($last_edit)
 						);
 					}
 				} else {
-					$sec[$year][] = $url[] = array(
-						'loc'        => $url_topic,
+					$topic_links[$year][] = $url_list[] = array(
+						'loc'        => $url_list_topic,
 						'lastmod'    => self::getSitemapDate($last_edit),
 						'changefreq' => self::getSitemapFrequency($last_edit),
 						'priority'   => self::getSitemapPriority($last_edit)
@@ -192,28 +205,32 @@ class OptimusSitemap
 				}
 			}
 
-			$files[]    = $year;
-			$out[$year] = '';
-			foreach ($sec[$year] as $entry) {
-				$out[$year] .= $this->t . '<url>' . $this->n;
-				$out[$year] .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
+			$topic_entries[$year] = '';
+			foreach ($topic_links[$year] as $entry) {
+				$topic_entries[$year] .= $this->t . '<url>' . $this->n;
+				$topic_entries[$year] .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
 
 				if (!empty($entry['lastmod']))
-					$out[$year] .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
+					$topic_entries[$year] .= $this->t . $this->t . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . $this->n;
 
 				if (!empty($entry['changefreq']))
-					$out[$year] .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
+					$topic_entries[$year] .= $this->t . $this->t . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . $this->n;
 
 				if (!empty($entry['priority']))
-					$out[$year] .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
+					$topic_entries[$year] .= $this->t . $this->t . '<priority>' . $entry['priority'] . '</priority>' . $this->n;
 
-				$out[$year] .= $this->t . '</url>' . $this->n;
+				$topic_entries[$year] .= $this->t . '</url>' . $this->n;
 			}
+		}
+
+		// Есть массив с дополнительными ссылками?
+		if (!empty($this->custom_links)) {
+			$url_list = array_merge($url_list, $this->custom_links);
 		}
 
 		// Обработаем все ссылки
 		$one_file = '';
-		foreach ($url as $entry) {
+		foreach ($url_list as $entry) {
 			$one_file .= $this->t . '<url>' . $this->n;
 			$one_file .= $this->t . $this->t . '<loc>' . ($sef ? create_sefurl($entry['loc']) : $entry['loc']) . '</loc>' . $this->n;
 
@@ -240,25 +257,25 @@ class OptimusSitemap
 			$context['pretty']['search_patterns'][]  = '~(">)([^#<]+)~';
 			$context['pretty']['replace_patterns'][] = '~(">)([^<]+)~';
 
-			$main = pretty_rewrite_buffer($main);
+			$base_entries  = pretty_rewrite_buffer($base_entries);
 
 			foreach ($files as $year)
-				$out[$year] = pretty_rewrite_buffer($out[$year]);
+				$topic_entries[$year] = pretty_rewrite_buffer($topic_entries[$year]);
 
 			$one_file = pretty_rewrite_buffer($one_file);
 		}
 
 		// Создаем карту сайта (если ссылок больше 10к, то делаем файл индекса)
 		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . "\n";
-		if (count($url) > 10000) {
-			$main    = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $main . '</urlset>';
-			$sitemap = $boarddir . '/sitemap_main.xml';
-			self::createFile($sitemap, $main);
+		if (count($url_list) > 10000) {
+			$base_entries = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $base_entries . '</urlset>';
+			$sitemap      = $boarddir . '/sitemap_main.xml';
+			self::createFile($sitemap, $base_entries);
 
 			foreach ($files as $year) {
-				$out[$year] = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $out[$year] . '</urlset>';
+				$topic_entries[$year] = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $topic_entries[$year] . '</urlset>';
 				$sitemap    = $boarddir . '/sitemap_' . $year . '.xml';
-				self::createFile($sitemap, $out[$year]);
+				self::createFile($sitemap, $topic_entries[$year]);
 				self::checkFilesize($sitemap);
 			}
 
@@ -342,26 +359,6 @@ class OptimusSitemap
 	}
 
 	/**
-	 * Определяем приоритет индексирования
-	 *
-	 * @param int $time
-	 * @return float
-	 */
-	private static function getSitemapPriority($time)
-	{
-		$diff = floor((time() - $time) / 60 / 60 / 24);
-
-		if ($diff <= 30)
-			return '0.8';
-		elseif ($diff <= 60)
-			return '0.6';
-		elseif ($diff <= 90)
-			return '0.4';
-		else
-			return '0.2';
-	}
-
-	/**
 	 * Определяем периодичность обновлений
 	 *
 	 * @param int $time
@@ -382,6 +379,26 @@ class OptimusSitemap
 
 		return 'yearly';
 	}
+
+	/**
+	 * Определяем приоритет индексирования
+	 *
+	 * @param int $time
+	 * @return float
+	 */
+	private static function getSitemapPriority($time)
+	{
+		$diff = floor((time() - $time) / 60 / 60 / 24);
+
+		if ($diff <= 30)
+			return '0.8';
+		elseif ($diff <= 60)
+			return '0.6';
+		elseif ($diff <= 90)
+			return '0.4';
+		else
+			return '0.2';
+	}
 }
 
 /**
@@ -391,6 +408,17 @@ class OptimusSitemap
  */
 function scheduled_optimus_sitemap()
 {
-	$sitemap = new OptimusSitemap;
+	// Additional links for Sitemap
+	$urls = array(
+		array(
+			'loc'          => 'https://www.example.com',
+			//'lastmod'    => time(),
+			//'changefreq' => weekly,
+			//'priority'   => 0.8
+		)
+	);
+
+	//$sitemap = new OptimusSitemap(false, $urls);
+	$sitemap = new OptimusSitemap();
 	return $sitemap->create();
 }
