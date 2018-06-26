@@ -427,15 +427,13 @@ class OptimusAdmin
 
 		// Special rules for Pretty URLs or SimpleSEF
 		if ($sef) {
-			foreach ($folders as $folder) {
+			foreach ($folders as $folder)
 				$common_rules[] = "Disallow: " . $url_path . "/" . $folder . "/";
-			}
 
 			$common_rules[] = "Disallow: " . $url_path . "/login/";
 
-			foreach ($actions as $action) {
+			foreach ($actions as $action)
 				$common_rules[] = "Disallow: " . $url_path . "/*" . $action;
-			}
 		}
 
 		$common_rules[] = "Disallow: " . $url_path . "/*action";

@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>1.9.8</version>
+	<version>1.9.9</version>
 	<type>modification</type>
 
 	<install for="2.0 - 2.0.99">
@@ -23,8 +23,9 @@
 		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$themedir/css/optimus.css" />
-		<remove-file name="$sourcedir/Admin-Optimus.php" />
-		<remove-file name="$sourcedir/Subs-Optimus.php" />
+		<remove-file name="$sourcedir/Class-Optimus.php" />
+		<remove-file name="$sourcedir/Class-OptimusAdmin.php" />
+		<remove-file name="$sourcedir/Class-OptimusSitemap.php" />
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 

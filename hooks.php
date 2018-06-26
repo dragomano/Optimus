@@ -24,5 +24,3 @@ foreach ($hooks as $hook => $function)
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';
-
-?>

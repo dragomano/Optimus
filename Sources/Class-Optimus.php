@@ -262,7 +262,7 @@ class Optimus
 			return;
 
 		$request = $smcFunc['db_query']('substring', '
-			SELECT SUBSTRING(body, 1, 200) AS body, poster_time, modified_time
+			SELECT body, poster_time, modified_time
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
 			LIMIT 1',
@@ -275,6 +275,11 @@ class Optimus
 			censorText($row['body']);
 
 			$row['body'] = parse_bbc($row['body'], false);
+
+			// Ищем изображение в тексте сообщения
+			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
+			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
+
 			$row['body'] = explode("<br />", $row['body'])[0];
 			$row['body'] = explode("<hr />", $row['body'])[0];
 			$row['body'] = strip_tags($row['body']);
@@ -305,10 +310,10 @@ class Optimus
 	{
 		global $context, $smcFunc, $scripturl;
 
-		if (!allowedTo('view_attachments'))
+		if (!allowedTo('view_attachments') || !empty($context['optimus_og_image']))
 			return;
 
-		// Кэшируем запрос
+		$context['optimus_og_image'] = '';
 		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
 			$request = $smcFunc['db_query']('', '
 				SELECT IFNULL(id_attach, 0) AS id
@@ -316,21 +321,17 @@ class Optimus
 				WHERE id_msg = {int:msg}
 					AND width > 0
 					AND height > 0
-				GROUP BY id
 				LIMIT 1',
 				array(
 					'msg' => $context['topic_first_message']
 				)
 			);
 
-			$context['optimus_og_image'] = '';
-			while ($row = $smcFunc['db_fetch_assoc']($request))	{
-				if ($row['id'] != 0) {
-					$context['optimus_og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $row['id'] . ';image';
-				}
-			}
-
+			list ($image_id) = $smcFunc['db_fetch_row']($request);
 			$smcFunc['db_free_result']($request);
+
+			if (!empty($image_id))
+				$context['optimus_og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $image_id . ';image';
 
 			cache_put_data('og_image_' . $context['current_topic'], $context['optimus_og_image'], 360);
 		}

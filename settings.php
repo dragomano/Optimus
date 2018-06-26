@@ -53,5 +53,3 @@ if (!empty($rows) && empty($context['uninstalling']))
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';
-
-?>

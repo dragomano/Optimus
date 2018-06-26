@@ -15,5 +15,3 @@ $smcFunc['db_query']('', '
 		'setting' => 'optimus_%',
 	)
 );
-
-?>

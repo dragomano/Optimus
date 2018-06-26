@@ -1,5 +1,5 @@
 # SMF Optimus mod
-* **Author:** Bugo [dragomano.ru](https://dragomano.ru)
+* **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.x
 * **Hooks only:** Yes
@@ -20,9 +20,8 @@ This mod might help you solve some problems related with indexing of your forum 
 * Generator for robots.txt file.
 * Simple Sitemap XML.
 * Favicon Support.
-* Other small changes to improve the indexing of your forum.
 
-P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) — not recommended for production forum!
+P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 4) — not recommended for production forum!
 
 ## Описание
 Модификация упрощает оптимизацию страниц форума SMF для индексации в поисковиках.
@@ -41,7 +40,7 @@ P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) —
 * Создание карты форума (sitemap.xml).
 * Поддержка favicon (иконка сайта).
 
-P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 3) — используете на свой страх и риск!
+P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 4) — используете на свой страх и риск!
 
 ![ptimus_1-mi](optimus_1-min.png)
 ![ptimus_2-mi](optimus_2-min.png)
