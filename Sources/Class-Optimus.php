@@ -9,10 +9,10 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.0 beta
+ * @version 0.1 beta
  */
 
-if (!defined('SMF'))
+if (!defined('PMX'))
 	die('Hacking attempt...');
 
 class Optimus
@@ -100,7 +100,7 @@ class Optimus
 	{
 		global $board_info, $modSettings, $context;
 
-		if (SMF == 'SSI')
+		if (PMX == 'SSI')
 			return;
 
 		// Boards
@@ -160,12 +160,12 @@ class Optimus
 	 */
 	public static function getDescription()
 	{
-		global $context, $smcFunc, $settings, $txt, $board_info;
+		global $context, $pmxcFunc, $settings, $txt, $board_info;
 
 		if (empty($context['first_message']))
 			return;
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $pmxcFunc['db_query']('substring', '
 			SELECT body, poster_time, modified_time
 			FROM {db_prefix}messages
 			WHERE id_msg = {int:id_msg}
@@ -175,7 +175,7 @@ class Optimus
 			)
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))	{
+		while ($row = $pmxcFunc['db_fetch_assoc']($request))	{
 			censorText($row['body']);
 
 			$row['body'] = parse_bbc($row['body'], false);
@@ -189,8 +189,8 @@ class Optimus
 			$row['body'] = strip_tags($row['body']);
 			$row['body'] = str_replace($txt['quote'], '', $row['body']);
 
-			if ($smcFunc['strlen']($row['body']) > 130)
-				$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
+			if ($pmxcFunc['strlen']($row['body']) > 130)
+				$row['body'] = $pmxcFunc['substr']($row['body'], 0, 127) . '...';
 
 			$context['meta_description'] = $row['body'];
 
@@ -201,7 +201,7 @@ class Optimus
 			);
 		}
 
-		$smcFunc['db_free_result']($request);
+		$pmxcFunc['db_free_result']($request);
 	}
 
 	/**
@@ -211,15 +211,15 @@ class Optimus
 	 */
 	public static function getOgImage()
 	{
-		global $settings, $context, $smcFunc, $scripturl;
+		global $settings, $pmxCacheFunc, $context, $pmxcFunc, $scripturl;
 
 		if (!allowedTo('view_attachments'))
 			return;
 
 		$temp_image = $settings['og_image'];
 
-		if (($settings['og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
-			$request = $smcFunc['db_query']('', '
+		if (($settings['og_image'] = $pmxCacheFunc['get']('og_image_' . $context['current_topic'])) == null) {
+			$request = $pmxcFunc['db_query']('', '
 				SELECT IFNULL(id_attach, 0) AS id
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:msg}
@@ -231,15 +231,15 @@ class Optimus
 				)
 			);
 
-			list ($image_id) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			list ($image_id) = $pmxcFunc['db_fetch_row']($request);
+			$pmxcFunc['db_free_result']($request);
 
 			if (!empty($image_id))
 				$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $image_id . ';image';
 			else
 				$settings['og_image'] = $temp_image;
 
-			cache_put_data('og_image_' . $context['current_topic'], $settings['og_image'], 360);
+			$pmxCacheFunc['put']('og_image_' . $context['current_topic'], $settings['og_image'], 360);
 		}
 	}
 
@@ -250,7 +250,7 @@ class Optimus
 	 */
 	public static function menuButtons()
 	{
-		global $modSettings, $context, $smcFunc, $boarddir, $forum_copyright, $boardurl, $txt;
+		global $modSettings, $context, $pmxcFunc, $boarddir, $forum_copyright, $boardurl, $txt;
 
 		// JSON-LD
 		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
@@ -283,7 +283,7 @@ class Optimus
 		// Front page description
 		if (empty($context['current_action']) || in_array($context['current_action'], array('forum', 'community'))) {
 			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']) && !empty($modSettings['optimus_description']))
-				$context['meta_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
+				$context['meta_description'] = $pmxcFunc['htmlspecialchars']($modSettings['optimus_description']);
 		}
 
 		self::processExtendTitles();
@@ -318,6 +318,10 @@ class Optimus
 	public static function themeContext()
 	{
 		global $context, $modSettings, $settings;
+
+		// og:image
+		if (!empty($settings['og_image']))
+			$context['meta_tags'][] = array('property' => 'og:image', 'content' => $settings['og_image']);
 
 		// Article type for topics
 		if (!empty($context['optimus_og_article'])) {

@@ -9,10 +9,10 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.0 beta
+ * @version 0.1 beta
  */
 
-if (!defined('SMF'))
+if (!defined('PMX'))
 	die('Hacking attempt...');
 
 class OptimusAdmin
@@ -326,7 +326,7 @@ class OptimusAdmin
 	 */
 	public static function sitemapSettings()
 	{
-		global $context, $txt, $scripturl, $smcFunc, $modSettings, $sourcedir;
+		global $context, $txt, $scripturl, $pmxcFunc, $modSettings, $sourcedir;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 		$context['post_url']    = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
@@ -340,7 +340,7 @@ class OptimusAdmin
 		);
 
 		// Обновляем запись в Диспетчере задач
-		$smcFunc['db_query']('', '
+		$pmxcFunc['db_query']('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = {int:disabled}
 			WHERE task = {string:task}',

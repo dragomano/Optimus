@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
-<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+<!DOCTYPE package-info SYSTEM "https://www.portamx.com/xml/package-info">
+<package-info xmlns="https://www.portamxcom/xml/package-info" xmlns:smf="https://www.portamx.com/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>2.0 beta</version>
+	<version>0.1 beta</version>
 	<type>modification</type>
 
-	<install for="SMF 2.1 Beta 4, 2.1 - 2.1.99">
+	<install for="pmx 1.4">
 		<readme parsebbc="true">readme/readme.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" />
@@ -16,7 +16,7 @@
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 
-	<uninstall for="SMF 2.1 Beta 4, 2.1 - 2.1.99">
+	<uninstall for="pmx 1.4">
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" reverse="true" />
 		<code>uninstall.php</code>
 		<remove-dir name="$languagedir/Optimus" />

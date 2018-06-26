@@ -9,10 +9,10 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.0 beta
+ * @version 0.1 beta
  */
 
-if (!defined('SMF'))
+if (!defined('PMX'))
 	die('Hacking attempt...');
 
 class OptimusSitemap
@@ -39,7 +39,7 @@ class OptimusSitemap
 	 */
 	public function create()
 	{
-		global $modSettings, $sourcedir, $boardurl, $smcFunc, $scripturl, $context, $boarddir;
+		global $modSettings, $sourcedir, $boardurl, $pmxcFunc, $scripturl, $context, $boarddir;
 
 		// Master option
 		if (empty($modSettings['optimus_sitemap_enable']))
@@ -79,7 +79,7 @@ class OptimusSitemap
 
 		// Boards
 		if (!empty($modSettings['optimus_sitemap_boards'])) {
-			$request = $smcFunc['db_query']('', '
+			$request = $pmxcFunc['db_query']('', '
 				SELECT b.id_board, m.poster_time, m.modified_time
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
@@ -92,10 +92,10 @@ class OptimusSitemap
 			);
 
 			$boards = array();
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = $pmxcFunc['db_fetch_assoc']($request))
 				$boards[] = $row;
 
-			$smcFunc['db_free_result']($request);
+			$pmxcFunc['db_free_result']($request);
 
 			$last = array(0);
 
@@ -156,7 +156,7 @@ class OptimusSitemap
 		}
 
 		// Topics
-		$request = $smcFunc['db_query']('', '
+		$request = $pmxcFunc['db_query']('', '
 			SELECT date_format(FROM_UNIXTIME(m.poster_time), "%Y") AS date, t.id_topic, m.poster_time, m.modified_time
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
@@ -170,10 +170,10 @@ class OptimusSitemap
 		);
 
 		$topics = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $pmxcFunc['db_fetch_assoc']($request))
 			$topics[$row['date']][$row['id_topic']] = $row;
 
-		$smcFunc['db_free_result']($request);
+		$pmxcFunc['db_free_result']($request);
 
 		$years = $files = array();
 		foreach ($topics as $year => $data) {

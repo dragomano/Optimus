@@ -22,7 +22,7 @@ $txt['optimus_board_extend_title']     = 'Add forum name to board titles';
 $txt['optimus_board_extend_title_set'] = array('None', 'Before board title', 'After board title');
 $txt['optimus_topic_extend_title']     = 'Add title of section and forum to topic titles';
 $txt['optimus_topic_extend_title_set'] = array('None', 'Before topic title', 'After topic title');
-$txt['optimus_topic_description']      = 'Display the topic first message snippet as the meta-tag <strong>description</strong><br><span class="smalltext">Use <a href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank" rel="noopener">Topic Descriptions mod</a> to create short descriptions for topics.</span>';
+$txt['optimus_topic_description']      = 'Display the topic first message snippet as the meta-tag <strong>description</strong>';
 $txt['optimus_404_status']             = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener">403/404 code</a> depending on the requested page\'s status';
 $txt['optimus_404_page_title']         = '404 - Page not found';
 $txt['optimus_404_h2']                 = 'Error 404';
