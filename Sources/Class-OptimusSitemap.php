@@ -224,9 +224,8 @@ class OptimusSitemap
 		}
 
 		// Есть массив с дополнительными ссылками?
-		if (!empty($this->custom_links)) {
+		if (!empty($this->custom_links))
 			$url_list = array_merge($url_list, $this->custom_links);
-		}
 
 		// Обработаем все ссылки
 		$one_file = '';

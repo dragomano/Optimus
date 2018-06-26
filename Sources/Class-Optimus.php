@@ -50,9 +50,8 @@ class Optimus
 		// Меняем заголовок главной страницы в зависимости от режима совместимости и установленного портала
 		if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
 			if (!empty($modSettings['pmx_frontmode']) || (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1)) {
-				if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))	{
+				if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))
 					$context['forum_name'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
-				}
 			}
 		}
 
@@ -64,9 +63,8 @@ class Optimus
 		// Favicon
 		if (!empty($modSettings['optimus_favicon_text'])) {
 			$favicon = explode("\n", trim($modSettings['optimus_favicon_text']));
-			foreach ($favicon as $fav_line) {
+			foreach ($favicon as $fav_line)
 				$context['html_headers'] .= "\n\t" . $fav_line;
-			}
 		}
 
 		self::addCounters();
@@ -102,17 +100,15 @@ class Optimus
 			// Invisible counters like Google Analytics
 			if (!empty($modSettings['optimus_head_code'])) {
 				$head = explode("\n", trim($modSettings['optimus_head_code']));
-				foreach ($head as $part) {
+				foreach ($head as $part)
 					$context['html_headers'] .= "\n\t" . $part;
-				}
 			}
 
 			// Other invisible counters
 			if (!empty($modSettings['optimus_stat_code'])) {
 				$stat = explode("\n", trim($modSettings['optimus_stat_code']));
-				foreach ($stat as $part) {
+				foreach ($stat as $part)
 					$context['insert_after_template'] .= "\n\t" . $part;
-				}
 			}
 
 			// Styles for visible counters
@@ -347,7 +343,7 @@ class Optimus
 		global $modSettings, $context, $mbname, $boardurl, $scripturl, $smcFunc;
 
 		// JSON-LD
-		if (!empty($modSettings['optimus_json_ld']) && isset($context['canonical_url'])) {
+		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
 			$context['insert_after_template'] .= '
 		<script type="application/ld+json">
 		{
@@ -417,10 +413,7 @@ class Optimus
 	{
 		global $context, $modSettings, $mbname, $scripturl, $boardurl, $forum_copyright, $boarddir, $txt;
 
-		if (isset($_REQUEST['xml']) || $context['current_action'] == 'printpage')
-			return $buffer;
-
-		if (!empty($context['robot_no_index']) || empty($context['canonical_url']))
+		if (isset($_REQUEST['xml']) || !empty($context['robot_no_index']))
 			return $buffer;
 
 		$replacements = array();
