@@ -216,6 +216,8 @@ class Optimus
 		if (!allowedTo('view_attachments'))
 			return;
 
+		$temp_image = $settings['og_image'];
+
 		if (($settings['og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
 			$request = $smcFunc['db_query']('', '
 				SELECT IFNULL(id_attach, 0) AS id
@@ -234,6 +236,8 @@ class Optimus
 
 			if (!empty($image_id))
 				$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $image_id . ';image';
+			else
+				$settings['og_image'] = $temp_image;
 
 			cache_put_data('og_image_' . $context['current_topic'], $settings['og_image'], 360);
 		}
