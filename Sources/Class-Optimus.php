@@ -194,7 +194,7 @@ class Optimus
 
 			$context['meta_description'] = $row['body'];
 
-			$context['optimus_og_article'] = array(
+			$context['optimus_og_type']['article'] = array(
 				'published_time' => date('Y-m-d\TH:i:s', $row['poster_time']),
 				'modified_time'  => !empty($row['modified_time']) ? date('Y-m-d\TH:i:s', $row['modified_time']) : null,
 				'section'        => $board_info['name']
@@ -319,12 +319,15 @@ class Optimus
 	{
 		global $context, $modSettings, $settings;
 
-		// Article type for topics
-		if (!empty($context['optimus_og_article'])) {
-			$context['meta_tags'][] = array('property' => 'og:type', 'content' => 'article');
+		// Various types
+		if (!empty($context['optimus_og_type'])) {
+			$type = key($context['optimus_og_type']);
+			$context['meta_tags'][] = array('property' => 'og:type', 'content' => $type);
 
-			foreach ($context['optimus_og_article'] as $property => $content)
-				$context['meta_tags'][] = array('property' => 'article:' . $property, 'content' => $content);
+			$og_type = $context['optimus_og_type'][$type];
+			foreach ($og_type as $property => $content)
+				if (!empty($content))
+					$context['meta_tags'][] = array('property' => $type . ':' . $property, 'content' => $content);
 		}
 
 		// Twitter cards
