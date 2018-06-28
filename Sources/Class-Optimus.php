@@ -472,7 +472,8 @@ class Optimus
 				}
 			}
 
-			$open_graph .= '
+			if (!empty($context['canonical_url']))
+				$open_graph .= '
 	<meta property="og:url" content="' . $context['canonical_url'] . '" />';
 
 			if (!empty($modSettings['optimus_og_image'])) {
@@ -494,7 +495,7 @@ class Optimus
 			$replacements[$head_op] = $op_head;
 		}
 
-		if (!empty($modSettings['optimus_tw_cards']) && isset($context['canonical_url'])) {
+		if (!empty($modSettings['optimus_tw_cards'])) {
 			$twitter = '<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="@' . $modSettings['optimus_tw_cards'] . '" />';
 
