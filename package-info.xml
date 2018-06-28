@@ -1,30 +1,38 @@
 <?xml version="1.0"?>
-<!DOCTYPE package-info SYSTEM "https://www.portamx.com/xml/package-info">
-<package-info xmlns="https://www.portamxcom/xml/package-info" xmlns:smf="https://www.portamx.com/">
+<!DOCTYPE package-info SYSTEM "http://www.elkarte.net/site/package-info">
+<package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:smf="http://www.elkarte.net/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.1 beta</version>
-	<type>modification</type>
+	<version>0.1</version>
+	<type>addon</type>
 
-	<install for="pmx 1.4">
-		<readme parsebbc="true">readme/readme.txt</readme>
+	<install for="1.1 - 1.1.99">
+		<readme parsebbc="true" lang="english">readme/readme.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
-		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" />
-		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
-		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
+		<hook hook="integrate_pre_load" function="Optimus::hooks" file="SUBSDIR/Optimus.class.php" />
+		<require-file name="sources/admin/ManageOptimus.controller.php" destination="ADMINDIR" />
+		<require-file name="sources/subs/Optimus.class.php" destination="SUBSDIR" />
+		<require-file name="sources/subs/ScheduledTask/OptimusSitemap.php" destination="SUBSDIR/ScheduledTask" />
+		<require-dir name="default" destination="BOARDDIR/themes">Template &amp; Language files</require-dir>
 		<database>settings.php</database>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 
-	<uninstall for="pmx 1.4">
-		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" reverse="true" />
+	<uninstall for="1.1 - 1.1.99">
+		<hook hook="integrate_pre_load" function="Optimus::hooks" file="SUBSDIR/Optimus.class.php" reverse="true" />
+		<hook hook="integrate_admin_areas" function="Optimus::adminAreas" reverse="true" />
+		<hook hook="integrate_buffer" function="Optimus::buffer" reverse="true" />
+		<hook hook="integrate_credits" function="Optimus::credits" reverse="true" />
+		<hook hook="integrate_load_theme" function="Optimus::loadTheme" reverse="true" />
+		<hook hook="integrate_menu_buttons" function="Optimus::menuButtons" reverse="true" />
 		<code>uninstall.php</code>
-		<remove-dir name="$languagedir/Optimus" />
-		<remove-file name="$themedir/Optimus.template.php" />
-		<remove-file name="$sourcedir/Class-Optimus.php" />
-		<remove-file name="$sourcedir/Class-OptimusAdmin.php" />
-		<remove-file name="$sourcedir/Class-OptimusSitemap.php" />
-		<remove-file name="$themedir/css/optimus.css" />
+		<remove-file name="THEMEDIR/Optimus.template.php" />
+		<remove-file name="THEMEDIR/css/optimus.css" />
+		<remove-file name="ADMINDIR/ManageOptimus.controller.php" />
+		<remove-file name="SUBSDIR/Optimus.class.php" />
+		<remove-file name="SUBSDIR/ScheduledTask/OptimusSitemap.php" />
+		<remove-file name="LANGUAGEDIR/english/Optimus.english.php" />
+		<remove-file name="LANGUAGEDIR/russian/Optimus.russian.php" />
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 

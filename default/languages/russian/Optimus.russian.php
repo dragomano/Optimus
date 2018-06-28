@@ -1,7 +1,7 @@
 <?php
 
 /**
- * .russian-utf8 language file
+ * Optimus.russian-utf8 language file
  *
  * @package Optimus
  * @author Bugo https://dragomano.ru/mods/optimus

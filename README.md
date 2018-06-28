@@ -1,12 +1,12 @@
-# Optimus for PortaMx Forum
+# Optimus for ElkArte
 * **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
-* **Compatible with:** PortaMx Forum 1.x
+* **Compatible with:** ElkArte 1.x
 * **Hooks only:** Yes
 * **Languages:** Russian, English
 
 ## Описание
-Модификация может помочь подготовить страницы PortaMx Forum для индексации в поисковиках.
+Модификация может помочь подготовить страницы ElkArte для индексации в поисковиках.
 
 ### Особенности:
 * Изменение описания и заголовка главной страницы форума.

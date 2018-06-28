@@ -1,7 +1,7 @@
 <?php
 
 /**
- * .english language file
+ * Optimus.english language file
  *
  * @package Optimus
  * @author Bugo https://dragomano.ru/mods/optimus
@@ -71,7 +71,7 @@ $txt['optimus_count_code']      = 'Visible counters (<a href="http://www.freesta
 $txt['optimus_counters_css']    = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 
-$txt['optimus_robots_title'] = 'Editor robots.txt';
+$txt['optimus_robots_title'] = 'robots.txt';
 $txt['optimus_robots_desc']  = 'On this page you can change some options of forum map\'s creating, as well as modify a robots.txt file by using special generator.';
 
 $txt['optimus_manage']      = 'Manage robots.txt';
@@ -86,7 +86,7 @@ $txt['optimus_links']       = array(
 	'Technical audit of the entire website' => 'https://netpeaksoftware.com/ucp?invite=94cdaf6a'
 );
 
-$txt['optimus_sitemap_title'] = 'Optimus Sitemap';
+$txt['optimus_sitemap_title'] = 'Sitemap';
 $txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated depending on settings in the <a href="%1$s">Task Manager</a>.';
 
 $txt['optimus_sitemap_enable']      = 'Create and periodically update Sitemap XML file';

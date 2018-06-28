@@ -1,11 +1,11 @@
 <?php
 
-if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('PMX'))
+if (file_exists(dirname(__FILE__) . '/SSI.php') && !defined('ELK'))
 	require_once(dirname(__FILE__) . '/SSI.php');
-elseif(!defined('PMX'))
+elseif(!defined('ELK'))
 	die('<b>Error:</b> Cannot install - please verify that you put this file in the same place as PortaMx Forum\'s index.php and SSI.php files.');
 
-if ((PMX == 'SSI') && !$user_info['is_admin'])
+if ((ELK == 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
 
 // Scheduled Tasks
@@ -26,8 +26,10 @@ $rows = array(
 	)
 );
 
-foreach ($rows as $row)
-	$pmxcFunc['db_insert']($row['method'], $row['table_name'], $row['columns'], $row['data'], $row['keys']);
+$db = database();
 
-if (PMX == 'SSI')
+foreach ($rows as $row)
+	$db->insert($row['method'], $row['table_name'], $row['columns'], $row['data'], $row['keys']);
+
+if (ELK == 'SSI')
 	echo 'Database changes are complete! Please wait...';
