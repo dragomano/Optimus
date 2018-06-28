@@ -22,7 +22,7 @@
 * Поддержка favicon (иконка сайта).
 
 ## Description
-This mod might help you solve some problems related with indexing of your PortaMx Forum by search engines.
+This mod might help you solve some problems related with indexing of your ElkArte by search engines.
 
 ### Features:
 * Managing of description & title metatags for your forum's frontpage, board and topic pages.
@@ -35,3 +35,8 @@ This mod might help you solve some problems related with indexing of your PortaM
 * Generator for robots.txt file.
 * Simple Sitemap XML.
 * Favicon Support.
+
+![Base settings](screenshots/base_settings.png)
+![Open Graph, etc](screenshots/metadata.png)
+![Metatags](screenshots/metatags.png)
+![robots.txt](screenshots/manage_robots.png)
