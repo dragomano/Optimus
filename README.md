@@ -41,11 +41,12 @@ P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 4) —
 * Поддержка favicon (иконка сайта).
 
 P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 4) — используете на свой страх и риск!
+В ветках **portamx** и **elkarte** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
 
-![ptimus_1-mi](optimus_1-min.png)
-![ptimus_2-mi](optimus_2-min.png)
-![ptimus_3-mi](optimus_3-min.png)
-![ptimus_4-mi](optimus_4-min.png)
-![ptimus_5-mi](optimus_5-min.png)
-![ptimus_6-mi](optimus_6-min.png)
-![ptimus_7-mi](optimus_7-min.png)
+![Base settings](screenshots/optimus_1-min.png)
+![Metadata](screenshots/optimus_2-min.png)
+![Favicon](screenshots/optimus_3-min.png)
+![Metatags](screenshots/optimus_4-min.png)
+![Counters](screenshots/optimus_5-min.png)
+![robots](screenshots/optimus_6-min.png)
+![Sitemap](screenshots/optimus_7-min.png)
