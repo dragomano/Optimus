@@ -124,16 +124,16 @@ class OptimusAdmin
 		global $context, $txt, $scripturl, $modSettings;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_base_title'];
+		$context['settings_title'] = $txt['optimus_base_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
 
 		if (empty($modSettings['optimus_forum_index']))
 			updateSettings(array('optimus_forum_index' => sprintf($txt['forum_index'], $context['forum_name'])));
 
 		$config_vars = array(
-			array('title', 'optimus_main_page'),
 			array('text', 'optimus_forum_index', 40),
 			array('large_text', 'optimus_description', '4" style="width:80%'),
-			array('title', 'optimus_all_pages'),
+			'',
 			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
 			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
 			array('check', 'optimus_topic_description'),

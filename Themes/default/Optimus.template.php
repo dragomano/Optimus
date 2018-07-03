@@ -28,8 +28,7 @@ function template_favicon()
 	</form>';
 
 	echo '
-	<div class="windowbg2 noup">
-		<span class="topslice"><span></span></span>
+	<div class="windowbg2 addtopspace">
 		<div class="content">
 			<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
 				<dl class="settings">
@@ -61,7 +60,6 @@ function template_favicon()
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</form>
 		</div>
-		<span class="botslice"><span></span></span>
 	</div>';
 
 	// https://realfavicongenerator.net/api/interactive_api
@@ -102,8 +100,7 @@ function template_metatags()
 			<h3 class="catbg">', $txt['optimus_meta_title'], '</h3>
 		</div>
 		<p class="information centertext">', $txt['optimus_meta_info'], '</p>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
+		<div class="windowbg2 add_top_border">
 			<div class="content centertext">
 				<table>
 					<tr>
@@ -167,7 +164,6 @@ function template_metatags()
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</form>
 	<br class="clear">';
@@ -183,7 +179,6 @@ function template_counters()
 			<h3 class="catbg">', $txt['optimus_counters'], '</h3>
 		</div>
 		<div class="windowbg2 noup">
-			<span class="topslice"><span></span></span>
 			<div class="content">
 				<label for="optimus_head_code">', $txt['optimus_head_code'], '</label><br>
 				<textarea id="optimus_head_code" name="optimus_head_code" cols="60" rows="4" style="width: 99%">', !empty($modSettings['optimus_head_code']) ? $modSettings['optimus_head_code'] : '', '</textarea>
@@ -204,7 +199,6 @@ function template_counters()
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</form>
 	<br class="clear">';
@@ -220,7 +214,6 @@ function template_robots()
 			<h3 class="catbg">', $txt['optimus_manage'], '</h3>
 		</div>
 		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
 			<div class="content">
 				<div class="min">
 					<div class="content">
@@ -254,7 +247,6 @@ function template_robots()
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</form>
 	<br class="clear">';
@@ -268,8 +260,7 @@ function template_donate()
 	<div class="cat_bar">
 		<h3 class="catbg">', $txt['optimus_donate_title'], '</h3>
 	</div>
-	<div class="information">', $txt['optimus_donate_info'], '</div>
-	<div class="windowbg2 centertext">';
+	<div class="information centertext">', $txt['optimus_donate_info'], '<br><br>';
 
 	if (in_array($txt['lang_dictionary'], array('ru', 'uk')))
 		echo '
@@ -302,9 +293,7 @@ function template_404()
 			<h3 class="catbg">', $txt['optimus_404_h2'], '</h3>
 		</div>
 		<div class="windowbg">
-			<span class="topslice"><span></span></span>
 			<div class="content">', $txt['optimus_404_h3'], '</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>';
 }
@@ -319,9 +308,7 @@ function template_403()
 			<h3 class="catbg">', $txt['optimus_403_h2'], '</h3>
 		</div>
 		<div class="windowbg">
-			<span class="topslice"><span></span></span>
 			<div class="content">', $txt['optimus_403_h3'], '</div>
-			<span class="botslice"><span></span></span>
 		</div>
 	</div>';
 }
