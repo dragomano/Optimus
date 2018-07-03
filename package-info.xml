@@ -3,10 +3,10 @@
 <package-info xmlns="https://www.portamxcom/xml/package-info" xmlns:smf="https://www.portamx.com/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.1 beta</version>
+	<version>0.1</version>
 	<type>modification</type>
 
-	<install for="pmx 1.4">
+	<install for="pmx 1.4 - pmx 1.9">
 		<readme parsebbc="true">readme/readme.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" />
@@ -16,15 +16,16 @@
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 
-	<uninstall for="pmx 1.4">
+	<uninstall for="pmx 1.4 - pmx 1.9">
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" reverse="true" />
 		<code>uninstall.php</code>
-		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$sourcedir/Class-Optimus.php" />
 		<remove-file name="$sourcedir/Class-OptimusAdmin.php" />
 		<remove-file name="$sourcedir/Class-OptimusSitemap.php" />
+		<remove-file name="$themedir/images/optimus.png" />
 		<remove-file name="$themedir/css/optimus.css" />
+		<remove-dir name="$languagedir/Optimus" />
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 

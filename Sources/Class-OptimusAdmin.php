@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.1 beta
+ * @version 0.1
  */
 
 if (!defined('PMX'))
@@ -27,22 +27,30 @@ class OptimusAdmin
 	{
 		global $txt;
 
-		loadCSSFile('optimus.css');
+		loadCSSFile('optimus.css', array('minimize' => true), 'pmx_admin');
 
-		$admin_areas['config']['areas']['optimus'] = array(
-			'label'    => $txt['optimus_title'],
-			'function' => function(){self::settingActions();},
-			'icon'     => 'optimus',
-			'subsections' => array(
-				'base'     => array($txt['optimus_base_title']),
-				'extra'    => array($txt['optimus_extra_title']),
-				'favicon'  => array($txt['optimus_favicon_title']),
-				'metatags' => array($txt['optimus_meta_title']),
-				'counters' => array($txt['optimus_counters']),
-				'robots'   => array($txt['optimus_robots_title']),
-				'sitemap'  => array($txt['optimus_sitemap_title']),
-				'donate'   => array($txt['optimus_donate_title'])
-			)
+		$counter = array_search('modsettings', array_keys($admin_areas['config']['areas']));
+
+		$admin_areas['config']['areas'] = array_merge(
+			array_slice($admin_areas['config']['areas'], 0, $counter, true),
+			array(
+				'optimus' => array(
+					'label'    => $txt['optimus_title'],
+					'function' => function(){self::settingActions();},
+					'icon'     => 'optimus',
+					'subsections' => array(
+						'base'     => array($txt['optimus_base_title']),
+						'extra'    => array($txt['optimus_extra_title']),
+						'favicon'  => array($txt['optimus_favicon_title']),
+						'metatags' => array($txt['optimus_meta_title']),
+						'counters' => array($txt['optimus_counters']),
+						'robots'   => array($txt['optimus_robots_title']),
+						'sitemap'  => array($txt['optimus_sitemap_title']),
+						'donate'   => array($txt['optimus_donate_title'])
+					)
+				)
+			),
+			array_slice($admin_areas['config']['areas'], $counter, count($admin_areas['config']['areas']), true)
 		);
 	}
 
@@ -57,8 +65,7 @@ class OptimusAdmin
 
 		$context['page_title'] = $txt['optimus_main'];
 
-		// Подключаем файл шаблона вместе с таблицей стилей
-		loadTemplate('Optimus', 'optimus');
+		loadTemplate('Optimus');
 
 		$subActions = array(
 			'base'     => array('OptimusAdmin', 'baseSettings'),
@@ -130,7 +137,7 @@ class OptimusAdmin
 			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
 			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
 			array('check', 'optimus_topic_description'),
-			array('check', 'optimus_404_status')
+			array('check', 'optimus_404_status', 'help' => 'optimus_404_status_help')
 		);
 
 		if (isset($_GET['save'])) {
@@ -159,10 +166,10 @@ class OptimusAdmin
 
 		$config_vars = array(
 			array('title', 'optimus_extra_title'),
-			array('check',  'optimus_og_image', 50),
-			array('text', 'optimus_fb_appid', 40),
-			array('text', 'optimus_tw_cards', 40, 'preinput' => '@'),
-			array('check', 'optimus_json_ld')
+			array('check',  'optimus_og_image', 50, 'help' => 'optimus_og_image_help'),
+			array('text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'),
+			array('text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'),
+			array('check', 'optimus_json_ld', 'help' => 'optimus_json_ld_help')
 		);
 
 		if (isset($_GET['save'])) {

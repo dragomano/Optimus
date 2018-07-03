@@ -23,7 +23,8 @@ $txt['optimus_board_extend_title_set'] = array('None', 'Before board title', 'Af
 $txt['optimus_topic_extend_title']     = 'Add title of section and forum to topic titles';
 $txt['optimus_topic_extend_title_set'] = array('None', 'Before topic title', 'After topic title');
 $txt['optimus_topic_description']      = 'Display the topic first message snippet as the meta-tag <strong>description</strong>';
-$txt['optimus_404_status']             = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener">403/404 code</a> depending on the requested page\'s status';
+$txt['optimus_404_status']             = 'Return 403/404 code depending on the requested page\'s status';
+$txt['optimus_404_status_help']        = 'If this option is enabled, the corresponding error code (404 or 403) will be returned when requesting a page that does not exist or that is not allowed). See details <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener">here</a>.';
 $txt['optimus_404_page_title']         = '404 - Page not found';
 $txt['optimus_404_h2']                 = 'Error 404';
 $txt['optimus_404_h3']                 = 'Sorry, but the requested page does not exist.';
@@ -34,10 +35,14 @@ $txt['optimus_403_h3']                 = 'Sorry, but you have no access to this 
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc']  = 'Here you can add an additional <a href="http://ogp.me/" target="_blank" rel="noopener">markup</a> for forum pages.';
 
-$txt['optimus_og_image'] = 'Use the image from the first topic message in the meta tag <strong>og:image</strong>';
-$txt['optimus_fb_appid'] = '<a href="https://developers.facebook.com/apps" target="_blank" rel="noopener">APP ID</a> (Application ID) <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>';
-$txt['optimus_tw_cards'] = '<a href="https://twitter.com/" target="_blank" rel="noopener">Twitter</a> account name (specify to enable <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener">Twitter Cards</a>)';
-$txt['optimus_json_ld']  = '<a href="https://json-ld.org/" target="_blank" rel="noopener">JSON-LD</a> markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank" rel="noopener">breadcrumbs</a>"';
+$txt['optimus_og_image']      = 'Use the image from the first topic message in the meta tag <strong>og:image</strong>';
+$txt['optimus_og_image_help'] = 'If enabled, the <strong>og:image</strong> meta tag will include a link to the first image attached to the first topic message. If there is no attachment, and the image inside the <strong>img</strong> tag is found in the message text, it is used.';
+$txt['optimus_fb_appid']      = 'Facebook Application ID (if you have)';
+$txt['optimus_fb_appid_help'] = 'Create an application <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener">here</a>, copy its ID and fill this field.';
+$txt['optimus_tw_cards']      = 'Twitter account name (if you have)';
+$txt['optimus_tw_cards_help'] = 'Read more about Twitter cards <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener">here</a>.';
+$txt['optimus_json_ld']       = 'JSON-LD markup for "breadcrumbs"';
+$txt['optimus_json_ld_help']  = 'JSON-LD is a lightweight Linked Data format. It is easy for humans to read and write. It is based on the already successful JSON format and provides a way to help JSON data interoperate at Web-scale. JSON-LD is an ideal data format for programming environments, REST Web services, and unstructured databases such as CouchDB and MongoDB.<br><br>Enable this option to generate JSON-LD markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank" rel="noopener">breadcrumbs</a>".';
 
 $txt['optimus_favicon_title'] = 'Favicon';
 $txt['optimus_favicon_desc']  = 'Create your own forum icon. It will be displayed by the browser in the tab before the page name, as well as an image next to the open tab and other interface elements.';
@@ -45,7 +50,7 @@ $txt['optimus_favicon_desc']  = 'Create your own forum icon. It will be displaye
 $txt['optimus_favicon_create']  = 'Create the favicon';
 $txt['optimus_favicon_api_key'] = 'API key to work with Favicon Generator (<a href="https://realfavicongenerator.net/api/#register_key" target="_blank" rel="noopener">Get API key</a>)';
 $txt['optimus_favicon_text']    = 'The favicon code';
-$txt['optimus_favicon_help']    = 'Generate your own favicon <a href="http://www.favicomatic.com/" target="_blank" rel="noopener">here</a>, or use a special generator (it needs to enter the API key on the field above).<br>Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br>This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
+$txt['optimus_favicon_help']    = 'Generate your own favicon <a href="http://www.favicomatic.com/" target="_blank" rel="noopener">here</a>, or use a special generator (it needs to enter the API key on the field above).<br>Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right. This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
 
 $txt['optimus_meta_title'] = 'Meta tags';
 $txt['optimus_meta_desc']  = 'On this page you can add any regular/verification code(s) from list below.';
@@ -101,6 +106,7 @@ $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Donations';
 $txt['optimus_donate_desc']  = 'From here you can send donations to the mod author.';
+$txt['optimus_donate_info']  = 'Here you can support the developer with your donation ;)';
 
 // Task Manager
 $txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Gereration';
