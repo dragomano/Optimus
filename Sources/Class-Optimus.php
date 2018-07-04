@@ -28,7 +28,7 @@ class Optimus
 		add_integration_function('integrate_menu_buttons', 'Optimus::menuButtons', false);
 		add_integration_function('integrate_theme_context', 'Optimus::themeContext', false);
 		add_integration_function('integrate_buffer', 'Optimus::buffer', false);
-		add_integration_function('integrate_admin_include', '$sourcedir/Class-OptimusSitemap.php', false);
+		add_integration_function('integrate_pre_include', '$sourcedir/Class-OptimusSitemap.php', false);
 		add_integration_function('integrate_admin_include', '$sourcedir/Class-OptimusAdmin.php', false);
 		add_integration_function('integrate_admin_areas', 'OptimusAdmin::adminAreas', false);
 	}
@@ -216,7 +216,7 @@ class Optimus
 		if (!allowedTo('view_attachments'))
 			return;
 
-		$temp_image = $settings['og_image'];
+		$temp_image = isset($settings['og_image']) ? $settings['og_image'] : '';
 
 		if (($settings['og_image'] = $pmxCacheFunc['get']('og_image_' . $context['current_topic'])) == null) {
 			$request = $pmxcFunc['db_query']('', '
