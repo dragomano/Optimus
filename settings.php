@@ -20,9 +20,9 @@ $rows = array(
 			'time_unit'       => 'string',
 			'disabled'        => 'int',
 			'task'            => 'string',
-			'callable'        => 'Optimus::scheduledTask'
+			'callable'        => 'string'
 		),
-		'data' => array(0, 0, 1, 'd', 1, 'optimus_sitemap'),
+		'data' => array(0, 0, 1, 'd', 1, 'optimus_sitemap', 'Optimus::scheduledTask'),
 		'keys' => array('id_task')
 	)
 );
