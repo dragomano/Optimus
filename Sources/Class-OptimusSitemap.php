@@ -342,25 +342,3 @@ class OptimusSitemap
 			return '0.2';
 	}
 }
-
-/**
- * Вызов генерации карты через Диспетчер задач
- *
- * @return void
- */
-function scheduled_optimus_sitemap()
-{
-	// Additional links for Sitemap
-	$urls = array(
-		array(
-			'loc'          => 'https://www.example.com',
-			//'lastmod'    => time(),
-			//'changefreq' => weekly,
-			//'priority'   => 0.8
-		)
-	);
-
-	//$sitemap = new OptimusSitemap(false, $urls);
-	$sitemap = new OptimusSitemap();
-	return $sitemap->create();
-}

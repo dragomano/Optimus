@@ -19,7 +19,8 @@ $rows = array(
 			'time_regularity' => 'int',
 			'time_unit'       => 'string',
 			'disabled'        => 'int',
-			'task'            => 'string'
+			'task'            => 'string',
+			'callable'        => 'Optimus::scheduledTask'
 		),
 		'data' => array(0, 0, 1, 'd', 1, 'optimus_sitemap'),
 		'keys' => array('id_task')

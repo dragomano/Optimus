@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE package-info SYSTEM "https://www.portamx.com/xml/package-info">
-<package-info xmlns="https://www.portamxcom/xml/package-info" xmlns:smf="https://www.portamx.com/">
+<package-info xmlns="https://www.portamx.com/xml/package-info" xmlns:smf="https://www.portamx.com/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
 	<version>0.1</version>
