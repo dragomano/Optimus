@@ -104,24 +104,12 @@ class OptimusSitemap
 				foreach ($boards as $entry)	{
 					$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
 
-					// Поддержка мода BoardNoIndex
-					if (!empty($modSettings['BoardNoIndex_enabled'])) {
-						if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
-							$base_links[] = $url_list[] = array(
-								'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
-								'lastmod'    => self::getSitemapDate($last_edit),
-								'changefreq' => self::getSitemapFrequency($last_edit),
-								'priority'   => self::getSitemapPriority($last_edit)
-							);
-						}
-					} else {
-						$base_links[] = $url_list[] = array(
-							'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
-							'lastmod'    => self::getSitemapDate($last_edit),
-							'changefreq' => self::getSitemapFrequency($last_edit),
-							'priority'   => self::getSitemapPriority($last_edit)
-						);
-					}
+					$base_links[] = $url_list[] = array(
+						'loc'        => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
+						'lastmod'    => self::getSitemapDate($last_edit),
+						'changefreq' => self::getSitemapFrequency($last_edit),
+						'priority'   => self::getSitemapPriority($last_edit)
+					);
 
 					$last[] = empty($entry['modified_time']) ? (empty($entry['poster_time']) ? '' : $entry['poster_time']) : $entry['modified_time'];
 				}
@@ -185,24 +173,12 @@ class OptimusSitemap
 				$url_list_topic = !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $entry['id_topic'] . '.0.html' : $url_list_topic;
 				$years[count($topics[$year])] = $year;
 
-				// Поддержка мода BoardNoIndex
-				if (!empty($modSettings['BoardNoIndex_enabled'])) {
-					if (!in_array($entry['id_board'], unserialize($modSettings['BoardNoIndex_select_boards']))) {
-						$topic_links[$year][] = $url_list[] = array(
-							'loc'        => $url_list_topic,
-							'lastmod'    => self::getSitemapDate($last_edit),
-							'changefreq' => self::getSitemapFrequency($last_edit),
-							'priority'   => self::getSitemapPriority($last_edit)
-						);
-					}
-				} else {
-					$topic_links[$year][] = $url_list[] = array(
-						'loc'        => $url_list_topic,
-						'lastmod'    => self::getSitemapDate($last_edit),
-						'changefreq' => self::getSitemapFrequency($last_edit),
-						'priority'   => self::getSitemapPriority($last_edit)
-					);
-				}
+				$topic_links[$year][] = $url_list[] = array(
+					'loc'        => $url_list_topic,
+					'lastmod'    => self::getSitemapDate($last_edit),
+					'changefreq' => self::getSitemapFrequency($last_edit),
+					'priority'   => self::getSitemapPriority($last_edit)
+				);
 			}
 
 			$topic_entries[$year] = '';
@@ -399,26 +375,4 @@ class OptimusSitemap
 		else
 			return '0.2';
 	}
-}
-
-/**
- * Вызов генерации карты через Диспетчер задач
- *
- * @return void
- */
-function scheduled_optimus_sitemap()
-{
-	// Additional links for Sitemap
-	$urls = array(
-		array(
-			'loc'          => 'https://www.example.com',
-			//'lastmod'    => time(),
-			//'changefreq' => weekly,
-			//'priority'   => 0.8
-		)
-	);
-
-	//$sitemap = new OptimusSitemap(false, $urls);
-	$sitemap = new OptimusSitemap();
-	return $sitemap->create();
 }

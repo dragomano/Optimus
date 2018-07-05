@@ -28,7 +28,6 @@ class Optimus
 		add_integration_function('integrate_menu_buttons', 'Optimus::menuButtons', false);
 		add_integration_function('integrate_theme_context', 'Optimus::themeContext', false);
 		add_integration_function('integrate_buffer', 'Optimus::buffer', false);
-		add_integration_function('integrate_admin_include', '$sourcedir/Class-OptimusSitemap.php', false);
 		add_integration_function('integrate_admin_include', '$sourcedir/Class-OptimusAdmin.php', false);
 		add_integration_function('integrate_admin_areas', 'OptimusAdmin::adminAreas', false);
 	}
@@ -216,7 +215,7 @@ class Optimus
 		if (!allowedTo('view_attachments'))
 			return;
 
-		$temp_image = $settings['og_image'];
+		$temp_image = isset($settings['og_image']) ? $settings['og_image'] : '';
 
 		if (($settings['og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
 			$request = $smcFunc['db_query']('', '
@@ -381,5 +380,31 @@ class Optimus
 			$replacements[$footer_area] = '<div class="counters">' . $modSettings['optimus_count_code'] . '</div>' . $footer_area;
 
 		return str_replace(array_keys($replacements), array_values($replacements), $buffer);
+	}
+
+	/**
+	 * Вызов генерации карты через Диспетчер задач
+	 *
+	 * @return void
+	 */
+	public static function scheduledTask()
+	{
+		global $sourcedir;
+
+		require_once($sourcedir . '/Class-OptimusSitemap.php');
+
+		// Additional links for Sitemap
+		$urls = array(
+			array(
+				'loc'          => 'https://www.example.com',
+				//'lastmod'    => time(),
+				//'changefreq' => weekly,
+				//'priority'   => 0.8
+			)
+		);
+
+		//$sitemap = new OptimusSitemap(false, $urls);
+		$sitemap = new OptimusSitemap();
+		return $sitemap->create();
 	}
 }
