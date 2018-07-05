@@ -1,1 +1,24 @@
-.centertext table{width:100%}div[class=min]{float:left;width:50%}.content{padding:1em}.content textarea[name*="robots"]{width:100%;font-size:.9em}.content ul {margin:0;padding-left:10px;text-align:left}dl.settings{margin:0 !important}dl.settings dt,dl.settings dd{width:50% !important}.generic_icons.optimus{background:url(../images/optimus.png) no-repeat 0 0}.bbc_code{max-height:34em}@media screen and (max-width:720px){th,td:first-child{display:none}td input{display:block;width:100%}input[name^=custom_tag_]{width:100%}div[class=min]{float:none;width:100%}}.large_admin_menu_icon.optimus{background:url(../images/optimus_large.png) no-repeat 0 0}
+/* css for optimus */
+div[class=min] {
+	float:left;
+	width:50%;
+}
+.content {
+	padding:1em;
+}
+.content textarea[name*="robots"] {
+	width:100%;
+	font-size:.9em;
+}
+.generic_icons.optimus{
+	background:url(../images/optimus.png) no-repeat 0 0
+}
+.large_admin_menu_icon.optimus {
+	background:url(../images/optimus_large.png) no-repeat 0 0;
+}
+@media screen and (max-width:720px){
+	th,td:first-child{display:none}
+	td input{display:block;width:100%}
+	input[name^=custom_tag_]{width:100%}
+	div[class=min]{float:none;width:100%}
+}

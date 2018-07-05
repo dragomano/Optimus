@@ -3,11 +3,12 @@
 <package-info xmlns="https://www.portamx.com/xml/package-info" xmlns:smf="https://www.portamx.com/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.1</version>
+	<version>0.2</version>
 	<type>modification</type>
 
 	<install for="pmx 1.41">
 		<readme parsebbc="true">readme/readme.txt</readme>
+		<readme parsebbc="true" lang="german">readme/german.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" />
 		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>

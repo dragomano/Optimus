@@ -1,0 +1,4 @@
+[center][b]Optimus By Bugo[/b][/center]
+[center]Dieser Modifikation kann Ihnen helfen einige Probleme zu lösen, die mit der Indexierung Ihres Forums durch Suchmaschinen zusammenhängen.[/center]
+[hr]
+[center]Diese Modifikation ist lizensiert unter [url=https://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url][/center]

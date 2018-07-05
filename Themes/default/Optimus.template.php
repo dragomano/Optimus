@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.1
+ * @version 0.2
  */
 
 function template_favicon()
@@ -85,9 +85,6 @@ function template_favicon()
 			});
 		});
 	</script>';
-
-	echo '
-	<br class="clear">';
 }
 
 function template_metatags()
@@ -102,8 +99,8 @@ function template_metatags()
 		<p class="information centertext">', $txt['optimus_meta_info'], '</p>
 		<div class="windowbg2 add_top_border">
 			<div class="content centertext">
-				<table>
-					<tr>
+				<table class="table_grid">
+					<tr class="title_bar">
 						<th>', $txt['optimus_meta_tools'], '</th>
 						<th>', $txt['optimus_meta_name'], '</th>
 						<th>', $txt['optimus_meta_content'], '</th>
@@ -116,13 +113,13 @@ function template_metatags()
 		$engines[] = $data[0];
 
 		echo '
-					<tr>
+					<tr class="windowbg">
 						<td>', $engine, ' (<strong>', $data[1], '</strong>)</td>
 						<td>
-							<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '">
+							<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '" style="width: 100%">
 						</td>
 						<td>
-							<input type="text" name="custom_tag_value[]" size="40" value="', isset($metatags[$data[0]]) ? $metatags[$data[0]] : '', '">
+							<input type="text" name="custom_tag_value[]" size="40" value="', isset($metatags[$data[0]]) ? $metatags[$data[0]] : '', '" style="width: 100%">
 						</td>
 					</tr>';
 	}
@@ -165,8 +162,7 @@ function template_metatags()
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
 		</div>
-	</form>
-	<br class="clear">';
+	</form>';
 }
 
 function template_counters()
@@ -200,8 +196,7 @@ function template_counters()
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
 		</div>
-	</form>
-	<br class="clear">';
+	</form>';
 }
 
 function template_robots()
@@ -248,8 +243,7 @@ function template_robots()
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
 		</div>
-	</form>
-	<br class="clear">';
+	</form>';
 }
 
 function template_donate()
