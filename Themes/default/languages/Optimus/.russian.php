@@ -26,7 +26,7 @@ $txt['optimus_topic_extend_title']     = 'Добавлять название р
 $txt['optimus_topic_extend_title_set'] = array('Нет', 'Перед названием темы', 'После названия темы');
 $txt['optimus_topic_description']      = 'Выводить отрывок первого сообщения на странице темы в мета-теге <strong>description</strong>';
 $txt['optimus_404_status']             = 'Возвращать код 403/404, в зависимости от статуса запрашиваемой страницы';
-$txt['optimus_404_status_help']        = 'Если эта опция включена, при запросе несуществующей или запрещённой страницы будет возвращаться соответствующий код ошибки (404 или 403). Подробнее см. <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.9A.D0.BE.D0.B4.D1.8B_.D1.81.D0.BE.D1.81.D1.82.D0.BE.D1.8F.D0.BD.D0.B8.D1.8F" target="_blank" rel="noopener">здесь</a>.';
+$txt['optimus_404_status_help']        = 'Если эта опция включена, при запросе несуществующей или запрещённой страницы будет возвращаться соответствующий код ошибки (404 или 403). Подробнее см. <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.9A.D0.BE.D0.B4.D1.8B_.D1.81.D0.BE.D1.81.D1.82.D0.BE.D1.8F.D0.BD.D0.B8.D1.8F" target="_blank" rel="noopener"><strong>здесь</strong></a>.';
 $txt['optimus_404_page_title']         = '404 - Страница не найдена';
 $txt['optimus_404_h2']                 = 'Ошибка 404';
 $txt['optimus_404_h3']                 = 'Извините, но такой страницы здесь нет.';
@@ -35,24 +35,24 @@ $txt['optimus_403_h2']                 = 'Ошибка 403';
 $txt['optimus_403_h3']                 = 'Извините, но у вас нет доступа к этой странице.';
 
 $txt['optimus_extra_title'] = 'Микроразметка';
-$txt['optimus_extra_desc']  = 'Добавление дополнительной <a href="http://ruogp.me/" target="_blank" rel="noopener">разметки</a> для страниц форума.';
+$txt['optimus_extra_desc']  = 'Добавление дополнительной <a href="http://ruogp.me/" target="_blank" rel="noopener"><strong>разметки</strong></a> для страниц форума.';
 
 $txt['optimus_og_image']      = 'Использовать изображение из первого сообщения темы в мета-теге <strong>og:image</strong>';
 $txt['optimus_og_image_help'] = 'Если включено, в мета-тег <strong>og:image</strong> подставляется ссылка на первое изображение, приложенное к первому сообщению темы. Если вложения нет, а в тексте сообщения будет найдено изображение внутри тега <strong>img</strong>, используется оно.';
 $txt['optimus_fb_appid']      = 'ID приложения Facebook (если есть)';
-$txt['optimus_fb_appid_help'] = 'Создайте приложение <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener">здесь</a>, скопируйте его ID и укажите в этом поле.';
+$txt['optimus_fb_appid_help'] = 'Создайте приложение <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener"><strong>здесь</strong></a>, скопируйте его ID и укажите в этом поле.';
 $txt['optimus_tw_cards']      = 'Имя аккаунта в Twitter (если есть)';
-$txt['optimus_tw_cards_help'] = 'Подробнее о карточках Twitter можно почитать <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener">здесь</a>.';
+$txt['optimus_tw_cards_help'] = 'Подробнее о карточках Twitter можно почитать <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener"><strong>здесь</strong></a>.';
 $txt['optimus_json_ld']       = 'Разметка JSON-LD для «хлебных крошек»';
-$txt['optimus_json_ld_help']  = 'JSON-LD — это способ передачи связанных данных (Linked Data, LD) с помощью текстового формата JSON (JavaScript Object Notation). Формат JSON-LD разработал Консорциум Всемирной паутины (W3C). Использование текстового формата JSON позволяет людям легко читать и писать документы, размеченные с помощью JSON-LD. Страницы с разметкой JSON-LD облегчают структурирование данных машинами и распознавание понятий, что для владельцев сайтов важно в контексте поискового продвижения.<br><br>На практике использование формата JSON-LD улучшает представленность сайта в поисковой выдаче. Вы получаете расширенные сниппеты, которые привлекают внимание пользователей и повышают кликабельность ссылок. В частности, с помощью JSON-LD можно размечать данные для графа знаний, отображать в SERP поиск по сайту и делать разметку событий.<br><br>Включите эту опцию, чтобы генерировать разметку <a href="https://json-ld.org/" target="_blank" rel="noopener">JSON-LD</a> для «<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank" rel="noopener">хлебных крошек</a>».';
+$txt['optimus_json_ld_help']  = 'JSON-LD — это способ передачи связанных данных (Linked Data, LD) с помощью текстового формата JSON (JavaScript Object Notation). Формат JSON-LD разработал Консорциум Всемирной паутины (W3C). Использование текстового формата JSON позволяет людям легко читать и писать документы, размеченные с помощью JSON-LD. Страницы с разметкой JSON-LD облегчают структурирование данных машинами и распознавание понятий, что для владельцев сайтов важно в контексте поискового продвижения.<br><br>На практике использование формата JSON-LD улучшает представленность сайта в поисковой выдаче. Вы получаете расширенные сниппеты, которые привлекают внимание пользователей и повышают кликабельность ссылок. В частности, с помощью JSON-LD можно размечать данные для графа знаний, отображать в SERP поиск по сайту и делать разметку событий.<br><br>Включите эту опцию, чтобы генерировать разметку <a href="https://json-ld.org/" target="_blank" rel="noopener"><strong>JSON-LD</strong></a> для «<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank" rel="noopener"><strong>хлебных крошек</strong></a>.';
 
 $txt['optimus_favicon_title'] = 'Иконка сайта';
 $txt['optimus_favicon_desc']  = 'Создайте свой значок для форума. Он будет отображаться браузером во вкладке перед названием страниц, а также в качестве картинки рядом с закладкой, во вкладках и в других элементах интерфейса.';
 
 $txt['optimus_favicon_create']  = 'Создать иконку для сайта';
-$txt['optimus_favicon_api_key'] = 'Ключ API для работы с генератором иконки (<a href="https://realfavicongenerator.net/api/#register_key" target="_blank" rel="noopener">Получить</a>)';
+$txt['optimus_favicon_api_key'] = 'Ключ API для работы с генератором иконки (<a href="https://realfavicongenerator.net/api/#register_key" target="_blank" rel="noopener"><strong>Получить</strong></a>)';
 $txt['optimus_favicon_text']    = 'Код для вставки favicon';
-$txt['optimus_favicon_help']    = 'Сгенерируйте свою уникальную иконку, например, <a href="http://www.favicomatic.com/" target="_blank" rel="noopener">здесь</a>, или воспользуйтесь генератором, указав ключ API в поле выше.<br>Затем загрузите файлы иконки в корень форума, а предложенный на сайте код сохраните в поле справа. Этот код будет загружаться в верхней части страниц, между тегами &lt;<strong>head</strong>&gt;&lt;/<strong>head</strong>&gt;.';
+$txt['optimus_favicon_help']    = 'Сгенерируйте свою уникальную иконку, например, <a href="http://www.favicomatic.com/" target="_blank" rel="noopener"><strong>здесь</strong></a>, или воспользуйтесь генератором, указав ключ API в поле выше.<br>Затем загрузите файлы иконки в корень форума, а предложенный на сайте код сохраните в поле справа. Этот код будет загружаться в верхней части страниц, между тегами &lt;<strong>head</strong>&gt;&lt;/<strong>head</strong>&gt;.';
 
 $txt['optimus_meta_title'] = 'Мета-теги';
 $txt['optimus_meta_desc']  = 'Добавление в код страниц форума дополнительных мета-тегов, например, для подтверждения права собственности на сайт.';
@@ -64,18 +64,18 @@ $txt['optimus_meta_name']      = 'Имя тега';
 $txt['optimus_meta_content']   = 'Значение';
 $txt['optimus_meta_info']      = 'Пожалуйста, указывайте только значения, содержащиеся в добавляемых мета-тегах (а не теги целиком).<br>Например: <span class="smalltext">&lt;meta name="<strong>ИМЯ ТЕГА</strong>" content="<strong>ЗНАЧЕНИЕ</strong>"&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank" rel="noopener">Google Search Console</a>'),
-	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.ru/" target="_blank" rel="noopener">Яндекс.Вебмастер</a>'),
-	'Mail'   => array('wmail-verification', '<a href="https://webmaster.mail.ru" target="_blank" rel="noopener">Поиск Mail.Ru - Кабинет вебмастера</a>'),
-	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank" rel="noopener">Bing - Средства веб-мастера</a>')
+	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank" rel="noopener"><strong>Google Search Console</strong></a>'),
+	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.ru/" target="_blank" rel="noopener"><strong>Яндекс.Вебмастер</strong></a>'),
+	'Mail'   => array('wmail-verification', '<a href="https://webmaster.mail.ru" target="_blank" rel="noopener"><strong>Поиск Mail.Ru - Кабинет вебмастера</strong></a>'),
+	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank" rel="noopener"><strong>Bing - Средства веб-мастера</strong></a>')
 );
 
 $txt['optimus_counters']      = 'Счётчики';
 $txt['optimus_counters_desc'] = 'Добавляйте и изменяйте всевозможные счетчики для подсчета посещений форума.';
 
-$txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://www.google.ru/analytics/" target="_blank" rel="noopener">Google Analytics</a>)';
-$txt['optimus_stat_code']       = 'Другие невидимые счётчики (например, <a href="https://metrika.yandex.ru/" target="_blank" rel="noopener">Яндекс.Метрика</a> без информера)';
-$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank" rel="noopener">LiveInternet</a>, <a href="https://top100.rambler.ru/" target="_blank" rel="noopener">Rambler\'s Top100</a> и т. п.)';
+$txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://www.google.ru/analytics/" target="_blank" rel="noopener"><strong>Google Analytics</strong></a>)';
+$txt['optimus_stat_code']       = 'Другие невидимые счётчики (например, <a href="https://metrika.yandex.ru/" target="_blank" rel="noopener"><strong>Яндекс.Метрика</strong></a> без информера)';
+$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank" rel="noopener"><strong>LiveInternet</strong></a>, <a href="https://top100.rambler.ru/" target="_blank" rel="noopener"><strong>Rambler\'s Top100</strong></a> и т. п.)';
 $txt['optimus_counters_css']    = 'Оформление блока со счётчиками (CSS)';
 $txt['optimus_ignored_actions'] = 'Игнорируемые области (actions) &mdash; на этих страницах счетчики подгружаться не будут!';
 
@@ -97,7 +97,7 @@ $txt['optimus_links']       = array(
 );
 
 $txt['optimus_sitemap_title'] = 'Карта форума';
-$txt['optimus_sitemap_desc']  = 'Optimus предоставляет возможность создать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a>.';
+$txt['optimus_sitemap_desc']  = 'Optimus предоставляет возможность создать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s"><strong>Диспетчере задач</strong></a>.';
 
 $txt['optimus_sitemap_enable']      = 'Создать и периодически обновлять xml-карту форума';
 $txt['optimus_sitemap_link']        = 'Показывать ссылку на xml-карту в подвале форума';

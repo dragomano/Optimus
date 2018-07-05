@@ -3,7 +3,7 @@
 <package-info xmlns="https://www.portamx.com/xml/package-info" xmlns:smf="https://www.portamx.com/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.1</version>
+	<version>0.2</version>
 	<type>modification</type>
 
 	<install for="pmx 1.41">
