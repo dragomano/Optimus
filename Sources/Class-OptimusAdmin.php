@@ -398,20 +398,8 @@ class OptimusAdmin
 
 		clearstatcache();
 
-		// SimplePortal
-		$sp = isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1 && function_exists('sportal_init');
-		// Standalone mode
-		$autosp = !empty($modSettings['sp_standalone_url']) ? substr($modSettings['sp_standalone_url'], strlen($boardurl)) : '';
-
-		// PortaMx
-		$pm = !empty($modSettings['pmx_frontmode']) && function_exists('PortaMx');
-		// if (forum == community)
-		$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
-
-		// Is any SEF mod enabled?
-		$pretty    = file_exists($sourcedir . '/PrettyUrls-Filters.php') && !empty($modSettings['pretty_enable_filters']);
-		$simplesef = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
-		$sef       = $pretty || $simplesef;
+		// SEF enabled?
+		$sef = !empty($modSettings['sef_enabled']) && function_exists('pmxsef_fixurl');
 
 		// Sitemap file exists?
 		$map      = 'sitemap.xml';
@@ -421,24 +409,20 @@ class OptimusAdmin
 		$map      = $temp_map ? $path_map : '';
 		$url_path = parse_url($boardurl, PHP_URL_PATH);
 
-		$folders = array('attachments','avatars','Packages','Smileys','Sources');
-		$actions = array('msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all');
-
 		$common_rules = [];
 		$common_rules[] = "User-agent: *";
 
-		// Special rules for Pretty URLs or SimpleSEF
+		$folders = array('ckeditor','Sources');
+		$actions = array('msg','profile','help','search','mlist','sort','recent','unread','login','signup','groups','stats','prev_next','all');
+
 		if ($sef) {
 			foreach ($folders as $folder)
-				$common_rules[] = "Disallow: " . $url_path . "/" . $folder . "/";
-
-			$common_rules[] = "Disallow: " . $url_path . "/login/";
+				$common_rules[] = "Disallow: " . $url_path . '/' . $folder . '/';
 
 			foreach ($actions as $action)
-				$common_rules[] = "Disallow: " . $url_path . "/*" . $action;
-		}
-
-		$common_rules[] = "Disallow: " . $url_path . "/*action";
+				$common_rules[] = "Disallow: " . $url_path . '/' . $action . '/';
+		} else
+			$common_rules[] = "Disallow: " . $url_path . "/*action";
 
 		if (!empty($modSettings['queryless_urls']) || $sef)
 			$common_rules[] = "";
@@ -457,26 +441,13 @@ class OptimusAdmin
 		else
 			$common_rules[] = ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic");
 
-		// action=forum
-		$common_rules[] = $sp ? "Allow: " . $url_path . "/*forum$" : "";
-
-		// SimplePortal
-		if (isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 3 && file_exists($boarddir . $autosp))
-			$common_rules[] = "Allow: " . $url_path . $autosp;
-
-		$common_rules[] = $sp ? "Allow: " . $url_path . "/*page*page" : "";
-
-		// PortaMx
-		$common_rules[] = $pm && $alias ? "Allow: " . $url_path . "/*forum$" : "";
-		$common_rules[] = $pm && !$alias ? "Allow: " . $url_path . "/*community$" : "";
+		// Sitemap
+		$common_rules[] = !empty($map) || file_exists($sourcedir . '/Sitemap.php') ? "Allow: " . $url_path . "/*sitemap" : "";
 
 		// RSS
 		$common_rules[] = !empty($modSettings['xmlnews_enable']) ? "Allow: " . $url_path . "/*.xml" : "";
 
-		// Sitemap
-		$common_rules[] = !empty($map) || file_exists($sourcedir . '/Sitemap.php') ? "Allow: " . $url_path . "/*sitemap" : "";
-
-		// We have nothing to hide ;)
+		// Spiders like css/js and images
 		$common_rules[] = "Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$";
 
 		// Sitemap XML
