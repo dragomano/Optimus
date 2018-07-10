@@ -252,7 +252,6 @@ class OptimusSitemap
 				$topic_entries[$year] = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $topic_entries[$year] . '</urlset>';
 				$sitemap    = $boarddir . '/sitemap_' . $year . '.xml';
 				self::createFile($sitemap, $topic_entries[$year]);
-				self::checkFilesize($sitemap);
 			}
 
 			// Создаем файл индекса Sitemap
@@ -298,25 +297,16 @@ class OptimusSitemap
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
+		// Если размер файла превышает 10 МБ, создадим и упакованную gz-версию
+		if (filesize($path) > (10 * 1024 * 1024)) {
+			$data = implode('', file($path));
+			$gzdata = gzencode($data, 9);
+			$fp = fopen($path . '.gz', 'w');
+			fwrite($fp, $gzdata);
+			fclose($fp);
+		}
+
 		return true;
-	}
-
-	/**
-	 * Если размер файла превышает 10 МБ (ограничение Яндекса), отправляем запись в Журнал ошибок
-	 *
-	 * @param string $file
-	 * @return bool
-	 */
-	private static function checkFilesize($file)
-	{
-		global $txt;
-
-		clearstatcache();
-
-		if (filesize($file) > (10 * 1024 * 1024))
-			log_error(sprintf($txt['optimus_sitemap_size_limit'], pathinfo($file, PATHINFO_BASENAME)) . $txt['optimus_sitemap_rec'], 'general');
-
-		return;
 	}
 
 	/**

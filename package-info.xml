@@ -6,7 +6,7 @@
 	<version>2.0 beta</version>
 	<type>modification</type>
 
-	<install for="SMF 2.1 Beta 4, 2.1 - 2.1.99">
+	<install for="SMF 2.1 Beta 3, SMF 2.1 Beta 4, 2.1 - 2.1.99">
 		<readme parsebbc="true">readme/readme.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" />
@@ -16,15 +16,17 @@
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 
-	<uninstall for="SMF 2.1 Beta 4, 2.1 - 2.1.99">
+	<uninstall for="SMF 2.1 Beta 3, SMF 2.1 Beta 4, 2.1 - 2.1.99">
 		<hook hook="integrate_pre_load" function="Optimus::hooks" file="$sourcedir/Class-Optimus.php" reverse="true" />
 		<code>uninstall.php</code>
-		<remove-dir name="$languagedir/Optimus" />
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$sourcedir/Class-Optimus.php" />
 		<remove-file name="$sourcedir/Class-OptimusAdmin.php" />
 		<remove-file name="$sourcedir/Class-OptimusSitemap.php" />
+		<remove-file name="$themedir/images/optimus.png" />
+		<remove-file name="$themedir/images/optimus_large.png" />
 		<remove-file name="$themedir/css/optimus.css" />
+		<remove-dir name="$languagedir/Optimus" />
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 

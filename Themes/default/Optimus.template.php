@@ -105,8 +105,8 @@ function template_metatags()
 		<div class="windowbg2">
 			<span class="topslice"><span></span></span>
 			<div class="content centertext">
-				<table>
-					<tr>
+				<table class="table_grid">
+					<tr class="title_bar">
 						<th>', $txt['optimus_meta_tools'], '</th>
 						<th>', $txt['optimus_meta_name'], '</th>
 						<th>', $txt['optimus_meta_content'], '</th>
@@ -119,7 +119,7 @@ function template_metatags()
 		$engines[] = $data[0];
 
 		echo '
-					<tr>
+					<tr class="windowbg">
 						<td>', $engine, ' (<strong>', $data[1], '</strong>)</td>
 						<td>
 							<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '">

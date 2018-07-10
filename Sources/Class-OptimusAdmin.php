@@ -410,28 +410,27 @@ class OptimusAdmin
 		$map      = 'sitemap.xml';
 		$path_map = $boardurl . '/' . $map;
 
-		$temp_map = file_exists($boarddir . '/' . $map);
-		$map      = $temp_map ? $path_map : '';
-		$url_path = parse_url($boardurl, PHP_URL_PATH);
-
-		$folders = array('attachments','avatars','Packages','Smileys','Sources');
-		$actions = array('msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all');
+		$temp_map    = file_exists($boarddir . '/' . $map);
+		$temp_map_gz = file_exists($boarddir . '/' . $map . '.gz');
+		$map         = $temp_map ? $path_map : '';
+		$map_gz      = $temp_map_gz ? $path_map . '.gz': '';
+		$url_path    = parse_url($boardurl, PHP_URL_PATH);
 
 		$common_rules = [];
 		$common_rules[] = "User-agent: *";
 
+		$folders = array('Sources');
+		$actions = array('msg','profile','help','search','mlist','sort','recent','unread','login','signup','groups','stats','prev_next','all');
+
 		// Special rules for Pretty URLs or SimpleSEF
 		if ($sef) {
 			foreach ($folders as $folder)
-				$common_rules[] = "Disallow: " . $url_path . "/" . $folder . "/";
-
-			$common_rules[] = "Disallow: " . $url_path . "/login/";
+				$common_rules[] = "Disallow: " . $url_path . '/' . $folder . '/';
 
 			foreach ($actions as $action)
-				$common_rules[] = "Disallow: " . $url_path . "/*" . $action;
-		}
-
-		$common_rules[] = "Disallow: " . $url_path . "/*action";
+				$common_rules[] = "Disallow: " . $url_path . '/' . $action . '/';
+		} else
+			$common_rules[] = "Disallow: " . $url_path . "/*action";
 
 		if (!empty($modSettings['queryless_urls']) || $sef)
 			$common_rules[] = "";
@@ -463,20 +462,21 @@ class OptimusAdmin
 		$common_rules[] = $pm && $alias ? "Allow: " . $url_path . "/*forum$" : "";
 		$common_rules[] = $pm && !$alias ? "Allow: " . $url_path . "/*community$" : "";
 
-		// RSS
-		$common_rules[] = !empty($modSettings['xmlnews_enable']) ? "Allow: " . $url_path . "/*.xml" : "";
-
 		// Sitemap
 		$common_rules[] = !empty($map) || file_exists($sourcedir . '/Sitemap.php') ? "Allow: " . $url_path . "/*sitemap" : "";
+
+		// RSS
+		$common_rules[] = !empty($modSettings['xmlnews_enable']) ? "Allow: " . $url_path . "/*.xml" : "";
 
 		// We have nothing to hide ;)
 		$common_rules[] = "Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$";
 
 		// Sitemap XML
 		$sitemap = file_exists($sourcedir . '/Sitemap.php');
-		$common_rules[] = !empty($map) || $sitemap ? "|" : "";
-		$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
+		$common_rules[] = !empty($map) || !empty($map_gz) || $sitemap ? "|" : "";
 		$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
+		$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
+		$common_rules[] = !empty($map_gz) ? "Sitemap: " . $map_gz : "";
 
 		$new_robots = array();
 
