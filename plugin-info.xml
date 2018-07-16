@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="yes" ?>
+<plugin id="Bugo:Optimus">
+	<name>Optimus</name>
+	<author url="https://dragomano.ru/">Bugo</author>
+	<description>Simple SEO addon</description>
+	<version>0.1 alpha</version>
+
+	<settings>
+		<setting name="optimus_counters_css" default=".counters {margin: 1em 0 -3.3em; text-align: center}" />
+		<setting name="optimus_ignored_actions" default="admin,credits,pm,printpage" />
+	</settings>
+
+	<hooks>
+		<function point="load_theme" function="Optimus::loadTheme" filename="$plugindir/Class-Optimus" />
+		<function point="display_post_done" function="Optimus::displayPostDone" />
+		<function point="buffer" function="Optimus::buffer" />
+		<function point="place_credit" function="Optimus::credits" />
+		<function point="admin_areas" function="OptimusAdmin::adminAreas" filename="$plugindir/Class-OptimusAdmin" />
+		<function point="admin_search" function="OptimusAdmin::adminSearch" />
+	</hooks>
+
+	<scheduledtasks>
+		<task runevery="1" runfreq="day" name="Optimus::scheduledTask" file="Class-Optimus" />
+	</scheduledtasks>
+
+	<readmes>
+		<readme lang="english">$plugindir/readme/readme.english.txt</readme>
+		<readme lang="russian">$plugindir/readme/readme.russian.txt</readme>
+	</readmes>
+
+	<acp-url>action=admin;area=optimus</acp-url>
+</plugin>
