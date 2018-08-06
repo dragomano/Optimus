@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 if (!defined('PMX'))
@@ -19,7 +19,8 @@ class OptimusSitemap
 {
 	private $t     = "\t";
 	private $n     = "\n";
-	private $xmlns = 'https://www.sitemaps.org/schemas/sitemap/0.9';
+	private $count = 50000;
+	private $xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 
 	private $custom_links = array();
 
@@ -39,7 +40,7 @@ class OptimusSitemap
 	 */
 	public function create()
 	{
-		global $modSettings, $sourcedir, $boardurl, $pmxcFunc, $scripturl, $context, $boarddir;
+		global $modSettings, $boardurl, $pmxcFunc, $scripturl, $boarddir;
 
 		// Master option
 		if (empty($modSettings['optimus_sitemap_enable']))
@@ -207,9 +208,9 @@ class OptimusSitemap
 			$one_file .= $this->t . '</url>' . $this->n;
 		}
 
-		// Создаем карту сайта (если ссылок больше 10к, то делаем файл индекса)
+		// Создаем карту сайта (если ссылок больше $this->count, то делаем файл индекса)
 		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . "\n";
-		if (count($url_list) > 10000) {
+		if (count($url_list) > $this->count) {
 			$base_entries = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $base_entries . '</urlset>';
 			$sitemap      = $boarddir . '/sitemap_main.xml';
 			self::createFile($sitemap, $base_entries);
@@ -218,7 +219,6 @@ class OptimusSitemap
 				$topic_entries[$year] = $header . '<urlset xmlns="' . $this->xmlns . '">' . $this->n . $topic_entries[$year] . '</urlset>';
 				$sitemap    = $boarddir . '/sitemap_' . $year . '.xml';
 				self::createFile($sitemap, $topic_entries[$year]);
-				self::checkFilesize($sitemap);
 			}
 
 			// Создаем файл индекса Sitemap
@@ -226,10 +226,10 @@ class OptimusSitemap
 			$maps .= $this->t . '<sitemap>' . $this->n;
 			$maps .= $this->t . $this->t . '<loc>' . $boardurl . '/sitemap_main.xml</loc>' . $this->n;
 			$maps .= $this->t . $this->t . '<lastmod>' . self::getSitemapDate() . '</lastmod>' . $this->n;
-			$maps .= $t . '</sitemap>' . $this->n;
+			$maps .= $this->t . '</sitemap>' . $this->n;
 
 			foreach ($files as $year) {
-				$maps .= $t . '<sitemap>' . $this->n;
+				$maps .= $this->t . '<sitemap>' . $this->n;
 				$maps .= $this->t . $this->t . '<loc>' . $boardurl . '/sitemap_' . $year . '.xml</loc>' . $this->n;
 				$maps .= $this->t . $this->t . '<lastmod>' . self::getSitemapDate() . '</lastmod>' . $this->n;
 				$maps .= $this->t . '</sitemap>' . $this->n;
@@ -264,25 +264,16 @@ class OptimusSitemap
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
+		// Если размер файла превышает 10 МБ, создадим и упакованную gz-версию
+		if (filesize($path) > (10 * 1024 * 1024)) {
+			$data = implode('', file($path));
+			$gzdata = gzencode($data, 9);
+			$fp = fopen($path . '.gz', 'w');
+			fwrite($fp, $gzdata);
+			fclose($fp);
+		}
+
 		return true;
-	}
-
-	/**
-	 * Если размер файла превышает 10 МБ (ограничение Яндекса), отправляем запись в Журнал ошибок
-	 *
-	 * @param string $file
-	 * @return bool
-	 */
-	private static function checkFilesize($file)
-	{
-		global $txt;
-
-		clearstatcache();
-
-		if (filesize($file) > (10 * 1024 * 1024))
-			log_error(sprintf($txt['optimus_sitemap_size_limit'], pathinfo($file, PATHINFO_BASENAME)) . $txt['optimus_sitemap_rec'], 'general');
-
-		return;
 	}
 
 	/**
@@ -291,7 +282,7 @@ class OptimusSitemap
 	 * @param int $timestamp
 	 * @return string
 	 */
-	private static function getSitemapDate($timestamp)
+	private static function getSitemapDate($timestamp = 0)
 	{
 		$timestamp = empty($timestamp) ? time() : $timestamp;
 		$gmt       = substr(date("O", $timestamp), 0, 3) . ':00';

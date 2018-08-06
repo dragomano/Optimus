@@ -84,7 +84,6 @@ $txt['optimus_manage'] = 'Bearbeiten der robots.txt';
 $txt['optimus_rules'] = 'Robots.txt Generator';
 $txt['optimus_rules_hint'] = 'Sie können diese Regeln in das Feld rechts kopieren:';
 $txt['optimus_robots_hint'] = 'Hier können Sie Ihre eigenen Regeln einfügen oder bestehende ändern';
-$txt['optimus_useful'] = '';
 $txt['optimus_links_title'] = 'Nützliche Links';
 $txt['optimus_links'] = array(
 'Erstellen Sie eine robots.txt Datei' => 'https://support.google.com/webmasters/answer/6062596?hl=de',
@@ -100,9 +99,6 @@ $txt['optimus_sitemap_link'] = 'Sitemap XML-Link in der Fußzeile anzeigen';
 $txt['optimus_sitemap_boards'] = 'Hinzufügen von Board-Links zur Sitemap<br><span class="smalltext error">Boards, die für Gäste geschlossen sind, werden NICHT hinzugefügt.</span>';
 $txt['optimus_sitemap_topics'] = 'Fügen Sie der Sitemap nur die Themen hinzu, bei denen die Anzahl der Beiträge größer ist als';
 
-$txt['optimus_sitemap_rec'] = 'Optimus kann Dateien nicht in mehrere Teile aufteilen.';
-$txt['optimus_sitemap_url_limit'] = 'Die Sitemap-Datei darf nicht mehr als 50.000 URLs haben!';
-$txt['optimus_sitemap_size_limit'] = '%1$s Datei darf nicht größer als 10MB sein!';
 $txt['optimus_sitemap_xml_link'] = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Spenden';

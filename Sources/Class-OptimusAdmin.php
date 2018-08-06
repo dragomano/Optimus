@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 if (!defined('PMX'))
@@ -305,12 +305,12 @@ class OptimusAdmin
 		$context['page_title']  .= ' - ' . $txt['optimus_robots_title'];
 		$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$common_rules_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
+		$robots_file = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
 
 		clearstatcache();
 
-		$context['robots_txt_exists'] = file_exists($common_rules_path);
-		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
+		$context['robots_txt_exists'] = file_exists($robots_file);
+		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($robots_file) : '';
 
 		self::robotsCreate();
 
@@ -319,7 +319,7 @@ class OptimusAdmin
 
 			if (isset($_POST['robots'])) {
 				$common_rules = stripslashes($_POST['robots']);
-				file_put_contents($common_rules_path, $common_rules);
+				file_put_contents($robots_file, $common_rules);
 			}
 
 			redirectexit('action=admin;area=optimus;sa=robots');
@@ -405,9 +405,11 @@ class OptimusAdmin
 		$map      = 'sitemap.xml';
 		$path_map = $boardurl . '/' . $map;
 
-		$temp_map = file_exists($boarddir . '/' . $map);
-		$map      = $temp_map ? $path_map : '';
-		$url_path = parse_url($boardurl, PHP_URL_PATH);
+		$temp_map    = file_exists($boarddir . '/' . $map);
+		$temp_map_gz = file_exists($boarddir . '/' . $map . '.gz');
+		$map         = $temp_map ? $path_map : '';
+		$map_gz      = $temp_map_gz ? $path_map . '.gz': '';
+		$url_path    = parse_url($boardurl, PHP_URL_PATH);
 
 		$common_rules = [];
 		$common_rules[] = "User-agent: *";
@@ -452,9 +454,17 @@ class OptimusAdmin
 
 		// Sitemap XML
 		$sitemap = file_exists($sourcedir . '/Sitemap.php');
-		$common_rules[] = !empty($map) || $sitemap ? "|" : "";
+		$common_rules[] = !empty($map) || !empty($map_gz) || $sitemap ? "|" : "";
 		$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
-		$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
+		$common_rules[] = !empty($map_gz) ? "Sitemap: " . $map_gz : "";
+
+		// Если в настройка мода PortaMx Sitemap задано имя файла карты для сохранения
+		if (!empty($modSettings['sitemap_filename'])) {
+			$temp_pmx_map = $boarddir . '/' . $modSettings['sitemap_filename'];
+			if (file_exists($temp_pmx_map))
+				$common_rules[] = $sitemap ? "Sitemap: " . $boardurl . '/' . $modSettings['sitemap_filename'] : "";
+		} else
+			$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
 
 		$new_robots = array();
 

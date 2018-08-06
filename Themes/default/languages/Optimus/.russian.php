@@ -86,7 +86,6 @@ $txt['optimus_manage']      = 'Настройка robots.txt';
 $txt['optimus_rules']       = 'Генератор правил';
 $txt['optimus_rules_hint']  = 'Можете воспользоваться этими заготовками для создания своих правил в области справа:';
 $txt['optimus_robots_hint'] = 'Сюда можно вставить собственные правила или изменить существующие:';
-$txt['optimus_useful']      = '<a href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank" rel="noopener">Правильный robots.txt для SMF</a>';
 $txt['optimus_links_title'] = 'Полезные ссылки';
 $txt['optimus_links']       = array(
 	'Проверка robots.txt'                       => 'https://webmaster.yandex.ru/robots.xml',
@@ -104,9 +103,6 @@ $txt['optimus_sitemap_link']        = 'Показывать ссылку на xm
 $txt['optimus_sitemap_boards']      = 'Добавлять в карту ссылки на разделы форума<br><span class="smalltext error">Разделы, закрытые для гостей, добавлены НЕ будут.</span>';
 $txt['optimus_sitemap_topics']      = 'Добавлять в карту темы с количеством сообщений больше';
 
-$txt['optimus_sitemap_rec']        = ' Optimus пока не умеет разбивать файлы на несколько частей.';
-$txt['optimus_sitemap_url_limit']  = 'В файле sitemap должно быть не более 50 тысяч ссылок!';
-$txt['optimus_sitemap_size_limit'] = 'Размер файла %1$s не должен превышать 10 МБ!';
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Пожертвования';

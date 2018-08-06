@@ -215,7 +215,6 @@ function template_robots()
 						<h4>', $txt['optimus_rules'], '</h4>
 						<span class="smalltext">', $txt['optimus_rules_hint'], '</span>
 						', $context['new_robots_content'], '
-						<span class="smalltext">', $txt['optimus_useful'], '</span>
 					</div>
 				</div>
 				<div class="min">

@@ -83,7 +83,6 @@ $txt['optimus_manage']      = 'Manage robots.txt';
 $txt['optimus_rules']       = 'Robots.txt Generator';
 $txt['optimus_rules_hint']  = 'You can copy these rules into the field on the right:';
 $txt['optimus_robots_hint'] = 'Here you can insert your own rules or modify existing ones:';
-$txt['optimus_useful']      = '';
 $txt['optimus_links_title'] = 'Useful links';
 $txt['optimus_links']       = array(
 	'Create a robots.txt file'              => 'https://support.google.com/webmasters/answer/6062596?hl=en',
@@ -99,9 +98,6 @@ $txt['optimus_sitemap_link']        = 'Show Sitemap XML-link on the footer';
 $txt['optimus_sitemap_boards']      = 'Add links to boards to the sitemap<br><span class="smalltext error">Boards that closed to guests will NOT be added.</span>';
 $txt['optimus_sitemap_topics']      = 'Add to the sitemap only those topics that have the number of replies is more than';
 
-$txt['optimus_sitemap_rec']        = ' Optimus is not able to split files into several parts.';
-$txt['optimus_sitemap_url_limit']  = 'Sitemap file must have no more than 50,000 URLs!';
-$txt['optimus_sitemap_size_limit'] = '%1$s file must be no larger than 10MB!';
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Donations';

@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 if (!defined('PMX'))
@@ -219,7 +219,7 @@ class Optimus
 
 		if (($settings['og_image'] = $pmxCacheFunc['get']('og_image_' . $context['current_topic'])) == null) {
 			$request = $pmxcFunc['db_query']('', '
-				SELECT IFNULL(id_attach, 0) AS id
+				SELECT COALESCE(id_attach, 0) AS id
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:msg}
 					AND width > 0
@@ -316,7 +316,7 @@ class Optimus
 	 */
 	public static function themeContext()
 	{
-		global $context, $modSettings, $settings;
+		global $settings, $context, $modSettings;
 
 		// og:image
 		if (!empty($settings['og_image']))
