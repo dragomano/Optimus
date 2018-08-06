@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.1
+ * @version 0.2
  */
 
 if (!defined('ELK'))
@@ -395,11 +395,13 @@ class ManageOptimus_Controller extends Action_Controller
 
 		clearstatcache();
 
-		$map      = 'sitemap.xml';
-		$path_map = $boardurl . '/' . $map;
-		$temp_map = file_exists($boarddir . '/' . $map);
-		$map      = $temp_map ? $path_map : '';
-		$url_path = parse_url($boardurl, PHP_URL_PATH);
+		$map         = 'sitemap.xml';
+		$path_map    = $boardurl . '/' . $map;
+		$temp_map    = file_exists($boarddir . '/' . $map);
+		$temp_map_gz = file_exists($boarddir . '/' . $map . '.gz');
+		$map         = $temp_map ? $path_map : '';
+		$map_gz      = $temp_map_gz ? $path_map . '.gz': '';
+		$url_path    = parse_url($boardurl, PHP_URL_PATH);
 
 		$folders = array('addons','attachments','avatars','cache','packages','smileys','sources');
 
@@ -437,6 +439,7 @@ class ManageOptimus_Controller extends Action_Controller
 		if (!empty($map)) {
 			$common_rules[] = "|";
 			$common_rules[] = "Sitemap: " . $map;
+			$common_rules[] = !empty($map_gz) ? "Sitemap: " . $map_gz : "";
 		}
 
 		$new_robots = array();

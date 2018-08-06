@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.1
+ * @version 0.2
  */
 
 function template_favicon()
@@ -216,43 +216,41 @@ function template_robots()
 	echo '
 	<form id="admin_form_wrapper" action="', $context['post_url'], '" method="post">
 		<h3 class="category_header">', $txt['optimus_manage'], '</h3>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
-			<div class="content">
-				<div class="min">
-					<div class="content">
-						<h4>', $txt['optimus_rules'], '</h4>
-						<span class="smalltext">', $txt['optimus_rules_hint'], '</span>
-						', $context['new_robots_content'], '
-						<span class="smalltext">', $txt['optimus_useful'], '</span>
-					</div>
+		<span class="topslice"><span></span></span>
+		<div class="content">
+			<div class="min">
+				<div class="content">
+					<h4>', $txt['optimus_rules'], '</h4>
+					<span class="smalltext">', $txt['optimus_rules_hint'], '</span>
+					', $context['new_robots_content'], '
 				</div>
-				<div class="min">
-					<div class="content">
-						<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
-						<textarea rows="22" name="robots">', $context['robots_content'], '</textarea>
-					</div>
+			</div>
+			<div class="min">
+				<div class="content">
+					<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
+					<textarea rows="22" name="robots">', $context['robots_content'], '</textarea>
 				</div>
-				<div class="min">
-					<div class="floatleft">
-						<h4>', $txt['optimus_links_title'], '</h4>
-						<ul class="smalltext">';
+			</div>
+			<hr class="clear">
+			<div class="min">
+				<div class="content">
+					<h4>', $txt['optimus_links_title'], '</h4>
+					<ul class="smalltext">';
 
 	foreach ($txt['optimus_links'] as $ankor => $url) {
 		echo '
-							<li><a href="', $url, '" target="_blank">', $ankor, '</a></li>';
+						<li><a href="', $url, '" target="_blank">', $ankor, '</a></li>';
 	}
 
 	echo '
-						</ul>
-					</div>
+					</ul>
 				</div>
-				<hr class="hrcolor clear">
-				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
-				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
-			<span class="botslice"><span></span></span>
+			<hr class="clear">
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 		</div>
+		<span class="botslice"><span></span></span>
 	</form>
 	<br class="clear">';
 }

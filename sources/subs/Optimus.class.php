@@ -9,7 +9,7 @@
  * @copyright 2010-2018 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.1
+ * @version 0.2
  */
 
 if (!defined('ELK'))
@@ -230,7 +230,7 @@ class Optimus
 
 		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'])) == null) {
 			$request = $db->query('', '
-				SELECT IFNULL(id_attach, 0) AS id
+				SELECT COALESCE(id_attach, 0) AS id
 				FROM {db_prefix}attachments
 				WHERE id_msg = {int:msg}
 					AND width > 0
