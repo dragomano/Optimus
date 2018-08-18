@@ -411,7 +411,7 @@ class Optimus
 	 */
 	public static function buffer($buffer)
 	{
-		global $context, $modSettings, $mbname, $scripturl, $boardurl, $forum_copyright, $boarddir, $txt;
+		global $context, $modSettings, $mbname, $boardurl, $forum_copyright, $boarddir, $txt;
 
 		if (isset($_REQUEST['xml']) || !empty($context['robot_no_index']))
 			return $buffer;
