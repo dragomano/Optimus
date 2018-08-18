@@ -8,5 +8,5 @@ elseif(!defined('SMF'))
 if ((SMF == 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
 
-$smcFunc['db_query']('', "DELETE FROM {db_prefix}settings WHERE variable LIKE 'optimus_%'");
+//$smcFunc['db_query']('', "DELETE FROM {db_prefix}settings WHERE variable LIKE 'optimus_%'");
 $smcFunc['db_query']('', "DELETE FROM {db_prefix}scheduled_tasks WHERE task LIKE 'optimus_sitemap'");
