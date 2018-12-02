@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Spanish translation by Rock Lee (https://www.bombercode.org) Copyright 2014-2018
+ * Spanish translation by Rock Lee (https://www.bombercode.net) Copyright 2014-2018
  *
  * @package Optimus
  * @author Bugo https://dragomano.ru/mods/optimus
