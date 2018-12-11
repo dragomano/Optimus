@@ -3,7 +3,7 @@
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.x
 * **Hooks only:** Yes
-* **Languages:** English, Russian, Dutch, Spanish, French
+* **Languages:** English, Russian, Dutch, Spanish, French, Turkish
 
 ## Description
 This mod might help you solve some problems related with indexing of your forum by search engines.
