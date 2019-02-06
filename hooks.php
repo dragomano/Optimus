@@ -10,7 +10,7 @@ if ((SMF == 'SSI') && !$user_info['is_admin'])
 
 // Hooks
 $hooks = array(
-	'integrate_pre_include' => '$sourcedir/Class-Optimus.php',
+	'integrate_pre_include' => '$sourcedir/Optimus/Class-Optimus.php',
 	'integrate_pre_load'    => 'Optimus::hooks'
 );
 

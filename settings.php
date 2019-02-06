@@ -43,7 +43,7 @@ $rows[] = array(
 		'disabled'        => 'int',
 		'task'            => 'string'
 	),
-	'data' => array(0, 0, 1, 'd', 1, 'optimus_sitemap'),
+	'data' => array(0, 0, 1, 'w', 1, 'optimus_sitemap'),
 	'keys' => array('id_task')
 );
 

@@ -21,7 +21,8 @@ This mod might help you solve some problems related with indexing of your forum 
 * Simple Sitemap XML.
 * Favicon Support.
 
-P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 4) — not recommended for production forum!
+P.S. See **develop** branch for Optimus 2.1 (works with SMF 2.1 RC1+).
+The **portamx**, **elkarte** and **wedge** branches contain the mod versions for corresponding forks. Their functions may differ from those described above.
 
 ## Описание
 Модификация упрощает оптимизацию страниц форума SMF для индексации в поисковиках.
@@ -40,8 +41,8 @@ P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 4) —
 * Создание карты форума (sitemap.xml).
 * Поддержка favicon (иконка сайта).
 
-P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 4) — используете на свой страх и риск!
-В ветках **portamx** и **elkarte** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
+P.S. Ветка **develop** содержит версию Optimus 2.1 (для SMF 2.1 RC1+).
+В ветках **portamx**, **elkarte** и **wedge** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
 
 ![Base settings](screenshots/optimus_1-min.png)
 ![Metadata](screenshots/optimus_2-min.png)
