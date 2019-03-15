@@ -105,9 +105,6 @@ $txt['optimus_sitemap_link'] 		= 'Laat een Sitemap XML-link zien in de footer';
 $txt['optimus_sitemap_boards']      = 'Voeg links naar de boards toe aan de sitemap<br /><span class="smalltext error">Boards die zijn gesloten voor gasten zullen NIET toegevoegd worden.</span>';
 $txt['optimus_sitemap_topics']      = 'Voeg alleen topics aan de sitemap toe die meer dan zoveel reacties hebben';
 
-$txt['optimus_sitemap_rec'] 		= ' Optimus is niet in staat om bestanden in delen te splitsen.';
-$txt['optimus_sitemap_url_limit'] 	= 'Sitemap bestand mag niet meer dan 50,000 URLs bevatten!';
-$txt['optimus_sitemap_size_limit'] 	= '%1$s bestand mag niet groter zijn dan 10MB!';
 $txt['optimus_sitemap_xml_link'] 	= 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Donaties';

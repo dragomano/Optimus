@@ -107,9 +107,6 @@ $txt['optimus_sitemap_link']        = 'Afficher un lien vers le sitemap en pied 
 $txt['optimus_sitemap_boards']      = 'Ajouter les liens vers les sections dans le sitemap<br /><span class="smalltext error">Les sections cach&eacute;es aux invit&eacute;s NE seront PAS ajout&eacute;es.</span>';
 $txt['optimus_sitemap_topics']      = 'Ajoutez uniquement au sitemap les sujets ayant un nombre de r&eacute;ponses sup&eacute;rieur &agrave;';
 
-$txt['optimus_sitemap_rec']        = ' Optimus is not able to split files into several parts.';
-$txt['optimus_sitemap_url_limit']  = 'Sitemap file must have no more than 50,000 URLs!';
-$txt['optimus_sitemap_size_limit'] = '%1$s file must be no larger than 10MB!';
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Don/Participation';

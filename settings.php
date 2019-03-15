@@ -43,7 +43,7 @@ $rows[] = array(
 		'disabled'        => 'int',
 		'task'            => 'string'
 	),
-	'data' => array(0, 0, 1, 'd', 1, 'optimus_sitemap'),
+	'data' => array(0, 0, 1, 'w', 1, 'optimus_sitemap'),
 	'keys' => array('id_task')
 );
 
@@ -53,5 +53,3 @@ if (!empty($rows) && empty($context['uninstalling']))
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';
-
-?>

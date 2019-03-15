@@ -10,8 +10,8 @@ if ((SMF == 'SSI') && !$user_info['is_admin'])
 
 // Hooks
 $hooks = array(
-	'integrate_pre_include' => '$sourcedir/Subs-Optimus.php',
-	'integrate_pre_load'    => 'optimus_hooks'
+	'integrate_pre_include' => '$sourcedir/Optimus/Class-Optimus.php',
+	'integrate_pre_load'    => 'Optimus::hooks'
 );
 
 if (!empty($context['uninstalling']))
@@ -24,5 +24,3 @@ foreach ($hooks as $hook => $function)
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';
-
-?>

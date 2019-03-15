@@ -76,7 +76,7 @@ $txt['optimus_search_engines'] = array(
 $txt['optimus_counters']      = 'Счётчики';
 $txt['optimus_counters_desc'] = 'Добавляйте и изменяйте всевозможные счетчики для подсчета посещений форума.';
 
-$txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://google.ru/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
+$txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://www.google.ru/analytics/" target="_blank">Google Analytics</a>)';
 $txt['optimus_stat_code']       = 'Другие невидимые счётчики (например, <a href="https://metrika.yandex.ru/" target="_blank">Яндекс.Метрика</a> без информера)';
 $txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank">LiveInternet</a>, <a href="https://top100.rambler.ru/" target="_blank">Rambler\'s Top100</a> и т. п.)';
 $txt['optimus_counters_css']    = 'Оформление блока со счётчиками (CSS)';
@@ -107,9 +107,6 @@ $txt['optimus_sitemap_link']        = 'Показывать ссылку на xm
 $txt['optimus_sitemap_boards']      = 'Добавлять в карту ссылки на разделы форума<br /><span class="smalltext error">Разделы, закрытые для гостей, добавлены НЕ будут.</span>';
 $txt['optimus_sitemap_topics']      = 'Добавлять в карту темы с количеством сообщений больше';
 
-$txt['optimus_sitemap_rec']        = ' Optimus пока не умеет разбивать файлы на несколько частей.';
-$txt['optimus_sitemap_url_limit']  = 'В файле sitemap должно быть не более 50 тысяч ссылок!';
-$txt['optimus_sitemap_size_limit'] = 'Размер файла %1$s не должен превышать 10 МБ!';
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Пожертвования';

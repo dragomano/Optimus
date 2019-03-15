@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2018 Bugo
+ * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 1.9.7.3
+ * @version 2.0
  */
 
 function template_base()
@@ -222,7 +222,7 @@ function template_favicon()
 	<br class="clear" />';
 }
 
-function template_meta()
+function template_metatags()
 {
 	global $context, $txt, $modSettings;
 
@@ -386,22 +386,25 @@ function template_donate()
 {
 	global $txt, $scripturl;
 
-	if (in_array($txt['lang_dictionary'], array('ru', 'uk')))
+	$return_url = $scripturl . '?action=admin;area=optimus;sa=donate';
+
+	if (in_array($txt['lang_dictionary'], array('ru', 'uk'))) {
 		echo '
 	<div class="centertext">
-		<iframe src="https://money.yandex.ru/embed/donate.xml?account=410011113366680&quickpay=donate&payment-type-choice=on&mobile-payment-type-choice=on&default-sum=100&targets=%D0%9D%D0%B0+%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D0%B5+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0&target-visibility=on&project-name=%D0%9B%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE+%D0%BC%D0%B5%D0%B4%D0%B2%D0%B5%D0%B4%D1%8F&project-site=https%3A%2F%2Fdragomano.ru&button-text=05&successURL=" width="508" height="117" style="border:none;"></iframe>
+		<iframe src="https://money.yandex.ru/quickpay/shop-widget?writer=seller&targets=%D0%9F%D0%BE%D0%B6%D0%B5%D1%80%D1%82%D0%B2%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%87%D0%B8%D0%BA%D1%83&targets-hint=&default-sum=100&button-text=14&payment-type-choice=on&mobile-payment-type-choice=on&hint=&successURL=', urlencode($return_url), '&quickpay=shop&account=410011113366680" width="100%" height="222" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
 	</div>';
-	else
+	} else {
 		echo '
 	<div id="paypal_donate" class="centertext">
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
 			<input type="hidden" name="cmd" value="_s-xclick">
 			<input type="hidden" name="hosted_button_id" value="K2AVLACFRVJN6">
-			<input type="hidden" name="return" value="', $scripturl, '?action=admin;area=optimus;sa=donate">
+			<input type="hidden" name="return" value="', $return_url, '">
 			<input type="hidden" name="cancel_return" value="', $scripturl, '">
 			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
 		</form>
 	</div>';
+	}
 }
 
 function template_404()

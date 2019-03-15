@@ -104,9 +104,6 @@ $txt['optimus_sitemap_link']        = 'Mostrar enlace XML de Sitemap en el pie d
 $txt['optimus_sitemap_boards']      = 'Agregar enlaces a los foros en el mapa del sitio<br /><span class="smalltext error">No se agregar&aacute;n paneles cerrados a los invitados.</span>';
 $txt['optimus_sitemap_topics']      = 'Agregue al sitemap solo aquellos temas que tienen el n&uacute;mero de respuestas es m&aacute;s que';
 
-$txt['optimus_sitemap_rec']        = ' Optimus no puede dividir archivos en varias partes.';
-$txt['optimus_sitemap_url_limit']  = '&iexcl;El archivo de sitemaps no debe tener m&aacute;s de 50,000 URLs!';
-$txt['optimus_sitemap_size_limit'] = '%1$s &iexcl;el archivo no debe tener m&aacute;s de 10 MB!';
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
 $txt['optimus_donate_title'] = 'Donaciones';

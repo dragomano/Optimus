@@ -1,9 +1,9 @@
 # SMF Optimus mod
-* **Author:** Bugo [dragomano.ru](https://dragomano.ru)
+* **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.x
 * **Hooks only:** Yes
-* **Languages:** English, Russian, Dutch, Spanish, French
+* **Languages:** English, Russian, Dutch, Spanish, French, Turkish
 
 ## Description
 This mod might help you solve some problems related with indexing of your forum by search engines.
@@ -20,9 +20,9 @@ This mod might help you solve some problems related with indexing of your forum 
 * Generator for robots.txt file.
 * Simple Sitemap XML.
 * Favicon Support.
-* Other small changes to improve the indexing of your forum.
 
-P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) — not recommended for production forum!
+P.S. See **develop** branch for Optimus 2.1 (works with SMF 2.1 RC1+).
+The **portamx**, **elkarte** and **wedge** branches contain the mod versions for corresponding forks. Their functions may differ from those described above.
 
 ## Описание
 Модификация упрощает оптимизацию страниц форума SMF для индексации в поисковиках.
@@ -41,12 +41,13 @@ P.S. See **develop** branch for Optimus 2.0 beta (works with SMF 2.1 beta 3) —
 * Создание карты форума (sitemap.xml).
 * Поддержка favicon (иконка сайта).
 
-P.S. Ветка **develop** содержит версию Optimus 2.0 beta (для SMF 2.1 beta 3) — используете на свой страх и риск!
+P.S. Ветка **develop** содержит версию Optimus 2.1 (для SMF 2.1 RC1+).
+В ветках **portamx**, **elkarte** и **wedge** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
 
-![ptimus_1-mi](optimus_1-min.png)
-![ptimus_2-mi](optimus_2-min.png)
-![ptimus_3-mi](optimus_3-min.png)
-![ptimus_4-mi](optimus_4-min.png)
-![ptimus_5-mi](optimus_5-min.png)
-![ptimus_6-mi](optimus_6-min.png)
-![ptimus_7-mi](optimus_7-min.png)
+![Base settings](screenshots/optimus_1-min.png)
+![Metadata](screenshots/optimus_2-min.png)
+![Favicon](screenshots/optimus_3-min.png)
+![Metatags](screenshots/optimus_4-min.png)
+![Counters](screenshots/optimus_5-min.png)
+![robots](screenshots/optimus_6-min.png)
+![Sitemap](screenshots/optimus_7-min.png)
