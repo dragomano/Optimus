@@ -3,7 +3,7 @@
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.x
 * **Hooks only:** Yes
-* **Languages:** English, Russian, Dutch, Spanish, French, Turkish
+* **Languages:** Dutch, English, French, Russian, Spanish, Turkish
 
 ## Description
 This mod might help you solve some problems related with indexing of your forum by search engines.
@@ -21,7 +21,7 @@ This mod might help you solve some problems related with indexing of your forum 
 * Simple Sitemap XML.
 * Favicon Support.
 
-P.S. See **develop** branch for Optimus 2.1 (works with SMF 2.1 RC1+).
+P.S. See **develop** branch for Optimus 2.3 (works with SMF 2.1 RC2+).
 The **portamx**, **elkarte** and **wedge** branches contain the mod versions for corresponding forks. Their functions may differ from those described above.
 
 ## Описание
@@ -41,7 +41,7 @@ The **portamx**, **elkarte** and **wedge** branches contain the mod versions for
 * Создание карты форума (sitemap.xml).
 * Поддержка favicon (иконка сайта).
 
-P.S. Ветка **develop** содержит версию Optimus 2.1 (для SMF 2.1 RC1+).
+P.S. Ветка **develop** содержит версию Optimus 2.3 (для SMF 2.1 RC2+).
 В ветках **portamx**, **elkarte** и **wedge** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
 
 ![Base settings](screenshots/optimus_1-min.png)
