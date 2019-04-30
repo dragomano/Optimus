@@ -32,7 +32,7 @@ $txt['optimus_templates'] = array(
 $txt['optimus_no_first_number']   = 'No mostrar n&uacute;mero para una primera p&aacute;gina';
 $txt['optimus_board_description'] = 'Descripci&oacute;n de la pantalla como la meta-etiqueta <strong>descripci&oacute;n</strong>';
 $txt['optimus_topic_description'] = 'Mostrar la descripci&oacute;n del tema como la meta-etiqueta <strong>descripci&oacute;n</strong><br /><span class="smalltext">Use <a href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank">Descripciones de temas mod</a> para crear descripciones cortas para los temas.</span>';
-$txt['optimus_404_status']        = 'Retorno <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">C&oacute;digo 403/404</a> dependiendo del estado de la p&aacute;gina solicitada';
+$txt['optimus_404_status']        = 'Retorno <a href="https://es.wikipedia.org/wiki/Anexo:C%C3%B3digos_de_estado_HTTP" target="_blank">C&oacute;digo 403/404</a> dependiendo del estado de la p&aacute;gina solicitada';
 $txt['optimus_404_page_title']    = '404 - P&aacute;gina no encontrada';
 $txt['optimus_404_h2']            = 'Error 404';
 $txt['optimus_404_h3']            = 'Lo sentimos, pero la p&aacute;gina solicitada no existe.';
