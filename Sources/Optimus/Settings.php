@@ -1,7 +1,9 @@
 <?php
 
+namespace Bugo\Optimus;
+
 /**
- * Class-OptimusAdmin.php
+ * Settings.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -9,13 +11,13 @@
  * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.0
+ * @version 2.1
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-class OptimusAdmin
+class Settings
 {
 	/**
 	 * Прописываем менюшку с настройками мода в админке
@@ -29,7 +31,9 @@ class OptimusAdmin
 
 		$admin_areas['config']['areas']['optimus'] = array(
 			'label'    => $txt['optimus_title'],
-			'function' => function(){self::settingActions();},
+			'function' => function() {
+				self::settingActions();
+			},
 			'icon'     => 'maintain.gif',
 			'subsections' => array(
 				'base'     => array($txt['optimus_base_title']),
@@ -59,14 +63,14 @@ class OptimusAdmin
 		loadTemplate('Optimus', 'optimus');
 
 		$subActions = array(
-			'base'     => array('OptimusAdmin', 'baseSettings'),
-			'extra'    => array('OptimusAdmin', 'extraSettings'),
-			'favicon'  => array('OptimusAdmin', 'faviconSettings'),
-			'metatags' => array('OptimusAdmin', 'metatagsSettings'),
-			'counters' => array('OptimusAdmin', 'counterSettings'),
-			'robots'   => array('OptimusAdmin', 'robotsSettings'),
-			'sitemap'  => array('OptimusAdmin', 'sitemapSettings'),
-			'donate'   => array('OptimusAdmin', 'donateSettings')
+			'base'     =>'baseSettings',
+			'extra'    => 'extraSettings',
+			'favicon'  => 'faviconSettings',
+			'metatags' => 'metatagsSettings',
+			'counters' => 'counterSettings',
+			'robots'   => 'robotsSettings',
+			'sitemap'  => 'sitemapSettings',
+			'donate'   => 'donateSettings'
 		);
 
 		require_once($sourcedir . '/ManageSettings.php');
@@ -102,7 +106,7 @@ class OptimusAdmin
 			),
 		);
 
-		call_user_func($subActions[$_REQUEST['sa']]);
+		call_user_func(__NAMESPACE__ . '\\Settings::' . $subActions[$_REQUEST['sa']]);
 	}
 
 	/**
@@ -158,12 +162,12 @@ class OptimusAdmin
 	 */
 	public static function extraSettings()
 	{
-		global $context, $txt, $scripturl, $modSettings, $settings;
+		global $context, $txt, $scripturl, $settings, $modSettings;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
 
-		if (empty($modSettings['optimus_og_image']))
+		if (!isset($modSettings['optimus_og_image']))
 			updateSettings(array('optimus_og_image' => $settings['images_url'] . '/thumbnail.gif'));
 
 		$config_vars = array(
@@ -300,8 +304,8 @@ class OptimusAdmin
 		global $context, $txt, $scripturl;
 
 		$context['sub_template'] = 'robots';
-		$context['page_title']  .= ' - ' . $txt['optimus_robots_title'];
-		$context['post_url']     = $scripturl . '?action=admin;area=optimus;sa=robots;save';
+		$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
+		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
 		$common_rules_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
 
@@ -334,7 +338,7 @@ class OptimusAdmin
 		global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
-		$context['post_url']    = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
+		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
 		$config_vars = array(
 			array('title', 'optimus_sitemap_xml_link'),
@@ -382,11 +386,11 @@ class OptimusAdmin
 		global $context, $txt;
 
 		$context['sub_template'] = 'donate';
-		$context['page_title']  .= ' - ' . $txt['optimus_donate_title'];
+		$context['page_title'] .= ' - ' . $txt['optimus_donate_title'];
 	}
 
 	/**
-	 * Подготовка к созданию файла robots.txt
+	 * Генерация правил для файла robots.txt
 	 *
 	 * @return void
 	 */
@@ -416,7 +420,7 @@ class OptimusAdmin
 		$path_map = $boardurl . '/' . $map;
 
 		require_once($sourcedir . '/Optimus/libs/idna_convert.class.php');
-		$idn = new idna_convert(array('idn_version' => 2008));
+		$idn = new \idna_convert(array('idn_version' => 2008));
 		if (stripos($idn->encode($boardurl), 'xn--') !== false)
 			$path_map = $idn->encode($boardurl) . '/' . $map;
 

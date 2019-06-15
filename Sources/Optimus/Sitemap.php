@@ -1,7 +1,9 @@
 <?php
 
+namespace Bugo\Optimus;
+
 /**
- * Class-OptimusSitemap.php
+ * Sitemap.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -9,13 +11,13 @@
  * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.0
+ * @version 2.1
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-class OptimusSitemap
+class Sitemap
 {
 	private $t     = "\t";
 	private $n     = "\n";
@@ -69,7 +71,7 @@ class OptimusSitemap
 		// Конвертация адресов кириллических доменов
 		$idn_convert = false;
 		require_once($sourcedir . '/Optimus/libs/idna_convert.class.php');
-		$idn = new idna_convert(array('idn_version' => 2008));
+		$idn = new \idna_convert(array('idn_version' => 2008));
 		if (stripos($idn->encode($boardurl), 'xn--') !== false)
 			$idn_convert = true;
 
@@ -238,8 +240,14 @@ class OptimusSitemap
 		}
 
 		// Есть массив с дополнительными ссылками?
-		if (!empty($this->custom_links))
-			$url_list = array_merge($url_list, $this->custom_links);
+		if (!empty($this->custom_links)) {
+			foreach ($this->custom_links as $custom_link) {
+				$url_list[] = array(
+					'loc'     => $custom_link['url'],
+					'lastmod' => self::getSitemapDate($custom_link['date'])
+				);
+			}
+		}
 
 		// Обработаем все ссылки
 		$one_file = '';

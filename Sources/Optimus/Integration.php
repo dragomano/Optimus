@@ -1,7 +1,9 @@
 <?php
 
+namespace Bugo\Optimus;
+
 /**
- * Class-Optimus.php
+ * Integration.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -9,13 +11,13 @@
  * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.0
+ * @version 2.1
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-class Optimus
+class Integration
 {
 	/**
 	 * Подключаем используемые хуки
@@ -24,11 +26,11 @@ class Optimus
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_load_theme', 'Optimus::loadTheme', false);
-		add_integration_function('integrate_menu_buttons', 'Optimus::menuButtons', false);
-		add_integration_function('integrate_buffer', 'Optimus::buffer', false);
-		add_integration_function('integrate_admin_include', '$sourcedir/Optimus/Class-OptimusAdmin.php', false);
-		add_integration_function('integrate_admin_areas', 'OptimusAdmin::adminAreas', false);
+		add_integration_function('integrate_load_theme', __NAMESPACE__ . '\Integration::loadTheme', false);
+		add_integration_function('integrate_menu_buttons', __NAMESPACE__ . '\Integration::menuButtons', false);
+		add_integration_function('integrate_buffer', __NAMESPACE__ . '\Integration::buffer', false);
+		add_integration_function('integrate_admin_include', '$sourcedir/Optimus/Settings.php', false);
+		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false);
 	}
 
 	/**
@@ -183,12 +185,8 @@ class Optimus
 
 			$context['page_title'] = strtr($topic_name_tpl . $topic_page_number . $topic_site_tpl, $trans);
 
-			if (!empty($modSettings['optimus_topic_description'])) {
-				if (!empty($context['topic_description']))
-					$context['optimus_description'] = $context['topic_description'];
-				else
-					self::getDescription();
-			}
+			if (!empty($modSettings['optimus_topic_description']))
+				self::getDescription();
 
 			self::getOgImage();
 		}
@@ -198,7 +196,7 @@ class Optimus
 			$trans = array(
 				"{board_name}" => strip_tags($context['name']),
 				"{cat_name}"   => $board_info['cat']['name'],
-				"{forum_name}" => $context['forum_name'],
+				"{forum_name}" => $context['forum_name']
 			);
 
 			$board_page_number = !empty($board_page_number) ? $board_page_number : (!empty($board_site_tpl) ? ' - ' : '');
@@ -209,6 +207,10 @@ class Optimus
 				$context['optimus_description'] = $smcFunc['htmlspecialchars']($context['optimus_description']);
 			}
 		}
+
+		// TP Articles
+		if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 3)
+			self::getTPMeta();
 	}
 
 	/**
@@ -283,7 +285,7 @@ class Optimus
 			if ($smcFunc['strlen']($row['body']) > 130)
 				$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
 
-			$context['optimus_description'] = $row['body'];
+			$context['optimus_description'] = !empty($context['topic_description']) ? $context['topic_description'] : $row['body'];
 
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['poster_time']);
 
@@ -308,7 +310,6 @@ class Optimus
 		if (!allowedTo('view_attachments') || !empty($context['optimus_og_image']))
 			return;
 
-		$context['optimus_og_image'] = '';
 		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
 			$request = $smcFunc['db_query']('', '
 				SELECT COALESCE(id_attach, 0) AS id
@@ -330,6 +331,61 @@ class Optimus
 
 			cache_put_data('og_image_' . $context['current_topic'], $context['optimus_og_image'], 360);
 		}
+	}
+
+	/**
+	 * Формируем описание и og-изображения для страниц TinyPortal
+	 *
+	 * @return void
+	 */
+	public static function getTPMeta()
+	{
+		global $smcFunc, $context, $txt, $scripturl;
+
+		if (!isset($_REQUEST['page']))
+			return;
+
+		$request = $smcFunc['db_query']('substring', '
+			SELECT a.id, a.date, a.body, a.intro, a.shortname, v.value1 AS cat_name
+			FROM {db_prefix}tp_articles AS a
+				INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
+			WHERE a.id = {int:page} OR a.shortname = {string:page}
+			LIMIT 1',
+			array(
+				'page' => $_REQUEST['page']
+			)
+		);
+
+		while ($row = $smcFunc['db_fetch_assoc']($request))	{
+			censorText($row['body']);
+
+			$row['body'] = parse_bbc($row['body'], false);
+
+			// Ищем изображение в тексте страницы
+			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
+			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
+
+			$row['body'] = explode("<br />", $row['body'])[0];
+			$row['body'] = explode("<hr />", $row['body'])[0];
+			$row['body'] = strip_tags($row['body']);
+			$row['body'] = str_replace($txt['quote'], '', $row['body']);
+
+			if ($smcFunc['strlen']($row['body']) > 130)
+				$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
+
+			$row['intro'] = parse_bbc($row['intro'], false);
+
+			// Если есть intro, используем в качестве описания его, иначе — выдержку из текста страницы
+			$context['optimus_description'] = $row['intro'] ?: $row['body'];
+
+			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['date']);
+			$context['optimus_og_type']['article']['section'] = $row['cat_name'];
+
+			// Укажем и canonical url
+			$context['canonical_url'] = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
+		}
+
+		$smcFunc['db_free_result']($request);
 	}
 
 	/**
@@ -383,7 +439,7 @@ class Optimus
 		}
 
 		// TinyPortal compat mode
-		if (!empty($modSettings['optimus_portal_compat'])) {
+		if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
 			if ($modSettings['optimus_portal_compat'] == 3 && !empty($context['TPortal']['is_front']))
 				$context['page_title'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
 		}
@@ -475,7 +531,7 @@ class Optimus
 				$open_graph .= '
 	<meta property="og:url" content="' . $context['canonical_url'] . '" />';
 
-			if (!empty($modSettings['optimus_og_image'])) {
+			if (!empty($context['optimus_og_image']) || !empty($modSettings['optimus_og_image'])) {
 				$img_link = !empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image'];
 				$open_graph .= '
 	<meta property="og:image" content="' . $img_link . '" />';
@@ -503,9 +559,9 @@ class Optimus
 	<meta name="twitter:title" content="' . (!empty($context['subject']) ? $context['subject'] : $context['page_title_html_safe']) . '" />
 	<meta name="twitter:description" content="' . (!empty($context['optimus_description']) ? $context['optimus_description'] : $context['page_title_html_safe']) . '" />';
 
-			if (!empty($context['optimus_og_image']))
+			if (!empty($context['optimus_og_image']) || !empty($modSettings['optimus_og_image']))
 				$twitter .= '
-	<meta name="twitter:image" content="' . $context['optimus_og_image'] . '" />';
+	<meta name="twitter:image" content="' . (!empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image']) . '" />';
 
 			$head_tw = '<title>';
 			$tw_head = $twitter . "\n\t" . $head_tw;
@@ -532,30 +588,4 @@ class Optimus
 
 		return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 	}
-}
-
-/**
- * Вызов генерации карты через Диспетчер задач
- *
- * @return void
- */
-function scheduled_optimus_sitemap()
-{
-	global $sourcedir;
-
-	// Additional links for Sitemap
-	$urls = array(
-		array(
-			'loc'          => 'https://www.example.com',
-			//'lastmod'    => time(),
-			//'changefreq' => weekly,
-			//'priority'   => 0.8
-		)
-	);
-
-	require_once($sourcedir . '/Optimus/Class-OptimusSitemap.php');
-
-	//$sitemap = new OptimusSitemap(false, $urls);
-	$sitemap = new OptimusSitemap();
-	return $sitemap->create();
 }
