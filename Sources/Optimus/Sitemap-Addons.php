@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.1
+ * @version 2.2
  */
 
 if (!defined('SMF'))
@@ -23,7 +23,7 @@ class SitemapAddons
 	{
 		global $smcFunc, $scripturl;
 
-		$tp_articles_exists = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}tp_articles'", array());
+		$tp_articles_exists  = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}tp_articles'", array());
 		$tp_variables_exists = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}tp_variables'", array());
 		$result = $smcFunc['db_num_rows']($tp_articles_exists) != 0 && $smcFunc['db_num_rows']($tp_variables_exists) != 0;
 

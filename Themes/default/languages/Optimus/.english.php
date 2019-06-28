@@ -110,5 +110,5 @@ $txt['optimus_donate_title'] = 'Donations';
 $txt['optimus_donate_desc']  = 'From here you can send donations to the mod author.';
 
 // Task Manager
-$txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Gereration';
+$txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Generation';
 $txt['scheduled_task_desc_optimus_sitemap'] = 'You can set the frequency of the sitemap\'s creation.';

@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.1
+ * @version 2.2
  */
 
 if (!defined('SMF'))
@@ -345,21 +345,34 @@ class Integration
 		if (!isset($_REQUEST['page']))
 			return;
 
-		$request = $smcFunc['db_query']('substring', '
-			SELECT a.id, a.date, a.body, a.intro, a.shortname, v.value1 AS cat_name
-			FROM {db_prefix}tp_articles AS a
-				INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
-			WHERE a.id = {int:page} OR a.shortname = {string:page}
-			LIMIT 1',
-			array(
-				'page' => $_REQUEST['page']
-			)
-		);
+		if (is_numeric($_REQUEST['page'])) {
+			$request = $smcFunc['db_query']('substring', '
+				SELECT a.id, a.date, a.body, a.intro, a.shortname, a.type, v.value1 AS cat_name
+				FROM {db_prefix}tp_articles AS a
+					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
+				WHERE a.id = {int:page}
+				LIMIT 1',
+				array(
+					'page' => (int) $_REQUEST['page']
+				)
+			);
+		} else {
+			$request = $smcFunc['db_query']('substring', '
+				SELECT a.id, a.date, a.body, a.intro, a.shortname, a.type, v.value1 AS cat_name
+				FROM {db_prefix}tp_articles AS a
+					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
+				WHERE a.shortname = {string:page}
+				LIMIT 1',
+				array(
+					'page' => $_REQUEST['page']
+				)
+			);
+		}
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))	{
 			censorText($row['body']);
 
-			$row['body'] = parse_bbc($row['body'], false);
+			$row['body'] = $row['type'] == 'php' ? parse_bbc($row['body'], false) : $row['body'];
 
 			// Ищем изображение в тексте страницы
 			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
@@ -373,7 +386,7 @@ class Integration
 			if ($smcFunc['strlen']($row['body']) > 130)
 				$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
 
-			$row['intro'] = parse_bbc($row['intro'], false);
+			$row['intro'] = trim(strip_tags($row['type'] == 'php' ? parse_bbc($row['intro'], false) : $row['intro']));
 
 			// Если есть intro, используем в качестве описания его, иначе — выдержку из текста страницы
 			$context['optimus_description'] = $row['intro'] ?: $row['body'];
