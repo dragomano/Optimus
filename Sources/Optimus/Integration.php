@@ -277,15 +277,15 @@ class Integration
 			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
 			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
 
-			$row['body'] = explode("<br />", $row['body'])[0];
-			$row['body'] = explode("<hr />", $row['body'])[0];
-			$row['body'] = strip_tags($row['body']);
+			$row['body'] = self::getTeaser($row['body']);
 			$row['body'] = str_replace($txt['quote'], '', $row['body']);
 
-			if ($smcFunc['strlen']($row['body']) > 130)
-				$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
+			$context['optimus_description'] = explode('&nbsp;', $row['body'])[0];
 
-			$context['optimus_description'] = !empty($context['topic_description']) ? $context['topic_description'] : $row['body'];
+			if ($smcFunc['strlen']($context['optimus_description']) > 130)
+				$context['optimus_description'] = $smcFunc['substr']($context['optimus_description'], 0, 127) . '...';
+
+			$context['optimus_description'] = !empty($context['topic_description']) ? $context['topic_description'] : $context['optimus_description'];
 
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['poster_time']);
 
@@ -347,7 +347,7 @@ class Integration
 
 		if (is_numeric($_REQUEST['page'])) {
 			$request = $smcFunc['db_query']('substring', '
-				SELECT a.id, a.date, a.body, a.intro, a.shortname, a.type, v.value1 AS cat_name
+				SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
 				FROM {db_prefix}tp_articles AS a
 					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
 				WHERE a.id = {int:page}
@@ -358,7 +358,7 @@ class Integration
 			);
 		} else {
 			$request = $smcFunc['db_query']('substring', '
-				SELECT a.id, a.date, a.body, a.intro, a.shortname, a.type, v.value1 AS cat_name
+				SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
 				FROM {db_prefix}tp_articles AS a
 					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
 				WHERE a.shortname = {string:page}
@@ -372,24 +372,25 @@ class Integration
 		while ($row = $smcFunc['db_fetch_assoc']($request))	{
 			censorText($row['body']);
 
-			$row['body'] = $row['type'] == 'php' ? parse_bbc($row['body'], false) : $row['body'];
+			$row['body'] = $row['type'] == 'bbc' ? parse_bbc($row['body'], false) : ($row['type'] == 'php' ? '<?php' . $row['body'] : $row['body']);
 
 			// Ищем изображение в тексте страницы
 			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
 			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
 
-			$row['body'] = explode("<br />", $row['body'])[0];
-			$row['body'] = explode("<hr />", $row['body'])[0];
-			$row['body'] = strip_tags($row['body']);
-			$row['body'] = str_replace($txt['quote'], '', $row['body']);
+			if ($row['useintro']) {
+				$row['intro'] = $row['type'] == 'bbc' ? parse_bbc($row['intro'], false) : ($row['type'] == 'php' ? '<?php' . $row['intro'] : $row['intro']);
+				$row['intro'] = self::getTeaser($row['intro']);
 
-			if ($smcFunc['strlen']($row['body']) > 130)
-				$row['body'] = $smcFunc['substr']($row['body'], 0, 127) . '...';
+				$context['optimus_description'] = explode('&nbsp;', $row['intro'])[0];
+			} else {
+				$row['body'] = self::getTeaser($row['body']);
 
-			$row['intro'] = trim(strip_tags($row['type'] == 'php' ? parse_bbc($row['intro'], false) : $row['intro']));
+				$context['optimus_description'] = explode('&nbsp;', $row['body'])[0];
+			}
 
-			// Если есть intro, используем в качестве описания его, иначе — выдержку из текста страницы
-			$context['optimus_description'] = $row['intro'] ?: $row['body'];
+			if ($smcFunc['strlen']($context['optimus_description']) > 130)
+				$context['optimus_description'] = $smcFunc['substr']($context['optimus_description'], 0, 127) . '...';
 
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['date']);
 			$context['optimus_og_type']['article']['section'] = $row['cat_name'];
@@ -399,6 +400,33 @@ class Integration
 		}
 
 		$smcFunc['db_free_result']($request);
+	}
+
+	/**
+	 * Получаем выдержку текста для создания описания страницы
+	 *
+	 * @param string $text — текст для обработки
+	 * @param integer $num_sentences — количество предложений, которые нужно взять из текста
+	 * @return string
+	 */
+	public static function getTeaser($text, $num_sentences = 2)
+	{
+		$body = preg_replace('/\s+/', ' ', strip_tags($text));
+		$sentences = preg_split('/(\.|\?|\!)(\s)/', $body);
+
+		if (count($sentences) <= $num_sentences)
+			return $body;
+
+		$stopAt = 0;
+		foreach ($sentences as $i => $sentence) {
+			$stopAt += strlen($sentence);
+			if ($i >= $num_sentences - 1)
+				break;
+		}
+
+		$stopAt += ($num_sentences * 2);
+
+		return trim(substr($body, 0, $stopAt));
 	}
 
 	/**
