@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2019 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.2
+ * @version 2.2.2
  */
 
 if (!defined('SMF'))
@@ -568,9 +568,10 @@ class Integration
 				}
 			}
 
-			if (!empty($context['canonical_url']))
+			if (!empty($context['canonical_url'])) {
 				$open_graph .= '
 	<meta property="og:url" content="' . $context['canonical_url'] . '" />';
+			}
 
 			if (!empty($context['optimus_og_image']) || !empty($modSettings['optimus_og_image'])) {
 				$img_link = !empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image'];
@@ -582,16 +583,17 @@ class Integration
 	<meta property="og:description" content="' . (!empty($context['optimus_description']) ? $context['optimus_description'] : $context['page_title_html_safe']) . '" />
 	<meta property="og:site_name" content="' . $mbname . '" />';
 
-			if (!empty($modSettings['optimus_fb_appid']))
+			if (!empty($modSettings['optimus_fb_appid'])) {
 				$open_graph .= '
 	<meta property="fb:app_id" name="app_id" content="' . $modSettings['optimus_fb_appid'] . '" />';
+			}
 
 			$head_op = '<title>' . $context['page_title_html_safe'] . '</title>';
 			$op_head = $open_graph . "\n\t" . $head_op;
 			$replacements[$head_op] = $op_head;
 		}
 
-		if (!empty($modSettings['optimus_tw_cards'])) {
+		if (!empty($modSettings['optimus_tw_cards']) && isset($context['canonical_url'])) {
 			$twitter = '<meta name="twitter:card" content="summary" />
 	<meta name="twitter:site" content="@' . $modSettings['optimus_tw_cards'] . '" />';
 
