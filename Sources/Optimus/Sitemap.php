@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2019 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.2
+ * @version 2.3
  */
 
 if (!defined('SMF'))
@@ -281,7 +281,7 @@ class Sitemap
 			$context['pretty']['search_patterns'][]  = '~(">)([^#<]+)~';
 			$context['pretty']['replace_patterns'][] = '~(">)([^<]+)~';
 
-			$base_entries  = pretty_rewrite_buffer($base_entries);
+			$base_entries = pretty_rewrite_buffer($base_entries);
 
 			foreach ($files as $year)
 				$topic_entries[$year] = pretty_rewrite_buffer($topic_entries[$year]);

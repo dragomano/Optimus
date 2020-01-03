@@ -1,17 +1,5 @@
 <?php
 
-/**
- * Optimus.template.php
- *
- * @package Optimus
- * @link https://custom.simplemachines.org/mods/index.php?mod=2659
- * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2019 Bugo
- * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
- *
- * @version 2.1
- */
-
 function template_base()
 {
 	global $context, $txt, $smcFunc, $modSettings;
@@ -234,7 +222,7 @@ function template_metatags()
 		<p class="description centertext">', $txt['optimus_meta_info'], '</p>
 		<div class="windowbg2">
 			<span class="topslice"><span></span></span>
-			<div class="content centertext">
+			<div class="topic_table content centertext">
 				<table>
 					<tr>
 						<th>', $txt['optimus_meta_tools'], '</th>
@@ -348,17 +336,18 @@ function template_robots()
 		<div class="windowbg2">
 			<span class="topslice"><span></span></span>
 			<div class="content">
-				<div id="stats_left">
+				<div class="modblock_left">
 					<h4>', $txt['optimus_rules'], '</h4>
 					<span class="smalltext">', $txt['optimus_rules_hint'], '</span>
 					', $context['new_robots_content'], '
 					<span class="smalltext">', $txt['optimus_useful'], '</span>
 				</div>
-				<div id="stats_right">
+				<div class="modblock_right">
 					<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
 					<textarea cols="70" rows="22" name="robots">', $context['robots_content'], '</textarea>
 				</div>
-				<div id="top_posters">
+				<br class="clear" />
+				<div class="modblock_left">
 					<div class="floatleft">
 						<h4>', $txt['optimus_links_title'], '</h4>
 						<ul>';
@@ -380,31 +369,6 @@ function template_robots()
 		</div>
 	</form>
 	<br class="clear" />';
-}
-
-function template_donate()
-{
-	global $txt, $scripturl;
-
-	$return_url = $scripturl . '?action=admin;area=optimus;sa=donate';
-
-	if (in_array($txt['lang_dictionary'], array('ru', 'uk'))) {
-		echo '
-	<div class="centertext">
-		<iframe src="https://money.yandex.ru/quickpay/shop-widget?writer=seller&targets=%D0%9F%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%BA%D0%B0%20%D1%80%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%87%D0%B8%D0%BA%D0%B0&targets-hint=&default-sum=100&button-text=14&payment-type-choice=on&mobile-payment-type-choice=on&hint=&successURL=', urlencode($return_url), '&quickpay=shop&account=410011113366680" width="100%" height="222" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
-	</div>';
-	} else {
-		echo '
-	<div id="paypal_donate" class="centertext">
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-			<input type="hidden" name="cmd" value="_s-xclick">
-			<input type="hidden" name="hosted_button_id" value="K2AVLACFRVJN6">
-			<input type="hidden" name="return" value="', $return_url, '">
-			<input type="hidden" name="cancel_return" value="', $scripturl, '">
-			<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
-		</form>
-	</div>';
-	}
 }
 
 function template_404()

@@ -110,9 +110,6 @@ $txt['optimus_sitemap_url_limit'] = 'Site Haritası dosyası 50.000\'den fazla U
 $txt['optimus_sitemap_size_limit'] = '%1$s dosyası 10MB\'den büyük olmamalıdır!';
 $txt['optimus_sitemap_xml_link'] = 'Site Haritası XML';
 
-$txt['optimus_donate_title'] = 'Bağışlar';
-$txt['optimus_donate_desc'] = 'Buradan mod yazara bağışta bulunabilirsiniz.';
-
 // Görev Yöneticisi
 $txt['scheduled_task_optimus_sitemap'] = 'Site Haritası XML Gererasyonu';
 $txt['scheduled_task_desc_optimus_sitemap'] = 'Site haritasının sıklığını ayarlayabilirsiniz.';

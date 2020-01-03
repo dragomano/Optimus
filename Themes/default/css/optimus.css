@@ -1,1 +1,45 @@
-dl.settings{margin:0}dl.settings dt,dl.settings dd{width:50%}.windowbg2{margin-bottom:6px}.block_code{width:90%}.content table{width:100%}.content{padding:1em 2em}.content textarea[name*="robots"]{width:90%;font-size:.9em}.content ul{margin:0;padding-left:30px;text-align:left}#top_posters > div{margin:1em 0}#paypal_donate input[type=image]{border:none}@media screen and (max-width:720px){th,td:first-child{display:none}td input{display:block;width:100%}input[name^=custom_tag_]{width:100%}}
+dl.settings {
+	margin: 0;
+}
+
+dl.settings dt, dl.settings dd {
+	width: 50%;
+}
+
+.windowbg2 {
+	margin-bottom: 6px;
+}
+
+.block_code {
+	width: 90%;
+}
+
+.content {
+	padding: 1em 2em;
+}
+
+.content textarea[name*="robots"] {
+	width: 90%;
+	font-size: .9em;
+}
+
+.content ul {
+	margin: 0;
+	padding-left: 30px;
+	text-align: left;
+}
+
+@media screen and (max-width:720px) {
+	th, td:first-child {
+		display: none;
+	}
+
+	td input {
+		display: block;
+		width: 100%;
+	}
+
+	input[name^=custom_tag_] {
+		width: 100%;
+	}
+}

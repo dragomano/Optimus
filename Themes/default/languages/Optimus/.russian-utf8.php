@@ -109,9 +109,6 @@ $txt['optimus_sitemap_topics']      = 'Добавлять в карту темы
 
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
-$txt['optimus_donate_title'] = 'Пожертвования';
-$txt['optimus_donate_desc']  = 'На этой странице расположена форма для отправки пожертвований автору мода.';
-
 // Диспетчер задач
 $txt['scheduled_task_optimus_sitemap']      = 'Генерация XML-карты форума';
 $txt['scheduled_task_desc_optimus_sitemap'] = 'Настройте периодичность создания карты, если хотите.';

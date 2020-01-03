@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2019 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.1
+ * @version 2.3
  */
 
 if (!defined('SMF'))
@@ -42,8 +42,7 @@ class Settings
 				'metatags' => array($txt['optimus_meta_title']),
 				'counters' => array($txt['optimus_counters']),
 				'robots'   => array($txt['optimus_robots_title']),
-				'sitemap'  => array($txt['optimus_sitemap_title']),
-				'donate'   => array($txt['optimus_donate_title'])
+				'sitemap'  => array($txt['optimus_sitemap_title'])
 			)
 		);
 	}
@@ -59,8 +58,8 @@ class Settings
 
 		$context['page_title'] = $txt['optimus_main'];
 
-		// Подключаем файл шаблона вместе с таблицей стилей
-		loadTemplate('Optimus', 'optimus');
+		// Подключаем файл шаблона вместе с таблицами стилей
+		loadTemplate('Optimus', array('admin', 'optimus'));
 
 		$subActions = array(
 			'base'     =>'baseSettings',
@@ -69,8 +68,7 @@ class Settings
 			'metatags' => 'metatagsSettings',
 			'counters' => 'counterSettings',
 			'robots'   => 'robotsSettings',
-			'sitemap'  => 'sitemapSettings',
-			'donate'   => 'donateSettings'
+			'sitemap'  => 'sitemapSettings'
 		);
 
 		require_once($sourcedir . '/ManageSettings.php');
@@ -99,10 +97,7 @@ class Settings
 				),
 				'sitemap' => array(
 					'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
-				),
-				'donate' => array(
-					'description' => $txt['optimus_donate_desc'],
-				),
+				)
 			),
 		);
 
@@ -377,19 +372,6 @@ class Settings
 	}
 
 	/**
-	 * Страница пожертвований
-	 *
-	 * @return void
-	 */
-	public static function donateSettings()
-	{
-		global $context, $txt;
-
-		$context['sub_template'] = 'donate';
-		$context['page_title'] .= ' - ' . $txt['optimus_donate_title'];
-	}
-
-	/**
 	 * Генерация правил для файла robots.txt
 	 *
 	 * @return void
@@ -428,7 +410,6 @@ class Settings
 		$map      = $temp_map ? $path_map : '';
 		$url_path = parse_url($boardurl, PHP_URL_PATH);
 
-		$folders = array('attachments','avatars','Packages','Smileys','Sources');
 		$actions = array('msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all');
 
 		$common_rules = [];
@@ -436,9 +417,6 @@ class Settings
 
 		// Special rules for Pretty URLs or SimpleSEF
 		if ($sef) {
-			foreach ($folders as $folder)
-				$common_rules[] = "Disallow: " . $url_path . "/" . $folder . "/";
-
 			$common_rules[] = "Disallow: " . $url_path . "/login/";
 
 			foreach ($actions as $action)

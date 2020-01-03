@@ -23,9 +23,9 @@ foreach ($hooks as $hook => $function)
 	$call($hook, $function);
 
 if (!empty($context['uninstalling']))
-	remove_integration_function('integrate_pre_include', '$sourcedir/Optimus/Scheduled.php');
+	remove_integration_function('integrate_pre_include', '$sourcedir/Optimus/Task.php');
 else
-	add_integration_function('integrate_pre_include', '$sourcedir/Optimus/Scheduled.php');
+	add_integration_function('integrate_pre_include', '$sourcedir/Optimus/Task.php');
 
 
 if (SMF == 'SSI')

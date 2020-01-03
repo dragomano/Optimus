@@ -106,9 +106,6 @@ $txt['optimus_sitemap_topics']      = 'Agregue al sitemap solo aquellos temas qu
 
 $txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
 
-$txt['optimus_donate_title'] = 'Donaciones';
-$txt['optimus_donate_desc']  = 'Desde aqu&iacute; puedes enviar donaciones al autor del mod.';
-
 // Task Manager
 $txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Gereration';
 $txt['scheduled_task_desc_optimus_sitemap'] = 'Puede establecer la frecuencia de la creaci&oacute;n del mapa del sitio.';
