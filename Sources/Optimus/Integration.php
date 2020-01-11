@@ -8,627 +8,273 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2019 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.2.2
+ * @version 2.5
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * Main class of the Optimus mod
+ */
 class Integration
 {
 	/**
-	 * Подключаем используемые хуки
+	 * Used hooks
 	 *
 	 * @return void
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_load_theme', __NAMESPACE__ . '\Integration::loadTheme', false);
-		add_integration_function('integrate_menu_buttons', __NAMESPACE__ . '\Integration::menuButtons', false);
-		add_integration_function('integrate_buffer', __NAMESPACE__ . '\Integration::buffer', false);
-		add_integration_function('integrate_admin_include', '$sourcedir/Optimus/Settings.php', false);
-		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false);
+		add_integration_function('integrate_autoload', __NAMESPACE__ . '\Integration::autoload', false, __FILE__);
+		add_integration_function('integrate_load_session', __NAMESPACE__ . '\Integration::loadSession', false, __FILE__);
+		add_integration_function('integrate_load_theme', __NAMESPACE__ . '\Integration::loadTheme', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', __NAMESPACE__ . '\Integration::menuButtons', false, __FILE__);
+		add_integration_function('integrate_actions', __NAMESPACE__ . '\Integration::actions', false, __FILE__);
+		add_integration_function('integrate_theme_context', __NAMESPACE__ . '\Integration::themeContext', false, __FILE__);
+		add_integration_function('integrate_display_topic', __NAMESPACE__ . '\Integration::displayTopic', false, __FILE__);
+		add_integration_function('integrate_prepare_display_context', __NAMESPACE__ . '\Integration::prepareDisplayContext', false, __FILE__);
+		add_integration_function('integrate_post_end', __NAMESPACE__ . '\Integration::postEnd', false, __FILE__);
+		add_integration_function('integrate_before_create_topic', __NAMESPACE__ . '\Integration::beforeCreateTopic', false, __FILE__);
+		add_integration_function('integrate_create_topic', __NAMESPACE__ . '\Integration::createTopic', false, __FILE__);
+		add_integration_function('integrate_modify_post', __NAMESPACE__ . '\Integration::modifyPost', false, __FILE__);
+		add_integration_function('integrate_credits', __NAMESPACE__ . '\Integration::credits', false, __FILE__);
+		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false, '$sourcedir/Optimus/Settings.php');
+		add_integration_function('integrate_admin_search', __NAMESPACE__ . '\Settings::adminSearch', false, '$sourcedir/Optimus/Settings.php');
 	}
 
 	/**
-	 * Подключаем языковой файл, проводим различные операции с заголовками и пр.
+	 * Autoloading of used classes
+	 *
+	 * @param array $classMap
+	 * @return void
+	 */
+	public static function autoload(&$classMap)
+	{
+		$classMap['Bugo\\Optimus\\'] = 'Optimus/';
+		$classMap['Bugo\\Optimus\\Addons\\'] = 'Optimus/addons/';
+	}
+
+	/**
+	 * Change some PHP settings
+	 *
+	 * @return void
+	 */
+	public static function loadSession()
+	{
+		global $modSettings;
+
+		@ini_set('session.use_only_cookies', !empty($modSettings['optimus_use_only_cookies']));
+	}
+
+	/**
+	 * Language files and various operations
 	 *
 	 * @return void
 	 */
 	public static function loadTheme()
 	{
-		global $modSettings, $context, $mbname, $txt;
+		global $sourcedir;
 
 		loadLanguage('Optimus/');
 
-		// Set Portal Compat Mode
-		if (!isset($modSettings['optimus_portal_compat']))
-			$modSettings['optimus_portal_compat'] = 0;
+		require_once($sourcedir . '/Optimus/Subs.php');
 
-		// Меняем заголовок главной страницы в зависимости от режима совместимости и установленного портала
-		if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
-			if (!empty($modSettings['pmx_frontmode']) || (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1)) {
-				if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))
-					$context['forum_name'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
-			}
-		}
-
-		// Forum
-		$txt['forum_index'] = '%1$s';
-		if (!empty($modSettings['optimus_forum_index']))
-			$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
-
-		// Favicon
-		if (!empty($modSettings['optimus_favicon_text'])) {
-			$favicon = explode("\n", trim($modSettings['optimus_favicon_text']));
-			foreach ($favicon as $fav_line)
-				$context['html_headers'] .= "\n\t" . $fav_line;
-		}
-
-		self::addCounters();
-
-		// Special fix for PortaMx
-		if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 1) {
-			if (empty($_REQUEST['action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic'])) {
-				// Для режима "Без главной страницы, направлять сразу на форум"
-				if (!empty($modSettings['optimus_meta']) && empty($modSettings['pmx_frontmode'])) {
-					$test = unserialize($modSettings['optimus_meta']);
-
-					foreach ($test as $n => $val) {
-						if (!empty($val))
-							$context['html_headers'] .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
-					}
-				}
-			}
-		}
+		Subs::loadClass('Keywords');
+		Subs::changeFrontPageTitle();
+		Subs::addCounters();
 	}
 
 	/**
-	 * Добавляем коды счётчиков в тело страниц
-	 *
-	 * @return void
-	 */
-	private static function addCounters()
-	{
-		global $modSettings, $context;
-
-		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
-
-		if (!in_array($context['current_action'], $ignored_actions)) {
-			// Invisible counters like Google Analytics
-			if (!empty($modSettings['optimus_head_code'])) {
-				$head = explode("\n", trim($modSettings['optimus_head_code']));
-				foreach ($head as $part)
-					$context['html_headers'] .= "\n\t" . $part;
-			}
-
-			// Other invisible counters
-			if (!empty($modSettings['optimus_stat_code'])) {
-				$stat = explode("\n", trim($modSettings['optimus_stat_code']));
-				foreach ($stat as $part)
-					$context['insert_after_template'] .= "\n\t" . $part;
-			}
-
-			// Styles for visible counters
-			if (!empty($modSettings['optimus_count_code']) && !empty($modSettings['optimus_counters_css']))
-				$context['html_headers'] .= "\n\t" . '<style type="text/css">' . $modSettings['optimus_counters_css'] . '</style>';
-		}
-	}
-
-	/**
-	 * Обрабатываем шаблоны заголовков страниц
-	 *
-	 * @return void
-	 */
-	private static function processPageTemplates()
-	{
-		global $modSettings, $txt, $context, $board_info, $smcFunc;
-
-		if (SMF == 'SSI' || empty($modSettings['optimus_templates']))
-			return;
-
-		if (strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
-			$templates = unserialize($modSettings['optimus_templates']);
-
-			foreach ($templates as $name => $data) {
-				if ($name == 'board') {
-					$board_name_tpl = $data['name'];
-					$board_page_tpl = $data['page'];
-					$board_site_tpl = $data['site'];
-				}
-
-				if ($name == 'topic') {
-					$topic_name_tpl = $data['name'];
-					$topic_page_tpl = $data['page'];
-					$topic_site_tpl = $data['site'];
-				}
-			}
-		} else {
-			foreach ($txt['optimus_templates'] as $name => $data) {
-				if ($name == 'board') {
-					$board_name_tpl = $data[0];
-					$board_page_tpl = $data[1];
-					$board_site_tpl = $data[2];
-				}
-
-				if ($name == 'topic') {
-					$topic_name_tpl = $data[0];
-					$topic_page_tpl = $data[1];
-					$topic_site_tpl = $data[2];
-				}
-			}
-		}
-
-		// Номер текущей страницы в заголовке (при условии, что страниц несколько)
-		$board_page_number = $topic_page_number = '';
-		if ($context['current_action'] != 'wiki') {
-			if (!empty($context['page_info']['current_page']) && $context['page_info']['num_pages'] != 1 && (($context['page_info']['current_page'] == 1 && empty($modSettings['optimus_no_first_number'])) || $context['page_info']['current_page'] != 1)) {
-				$trans = array("{#}" => $context['page_info']['current_page']);
-				$board_page_number = strtr($board_page_tpl, $trans);
-				$topic_page_number = strtr($topic_page_tpl, $trans);
-			}
-		}
-
-		// Topics
-		if (!empty($context['topic_first_message'])) {
-			$trans = array(
-				"{topic_name}" => $context['subject'],
-				"{board_name}" => strip_tags($board_info['name']),
-				"{cat_name}"   => $board_info['cat']['name'],
-				"{forum_name}" => $context['forum_name']
-			);
-
-			$topic_page_number = !empty($topic_page_number) ? $topic_page_number : (!empty($topic_site_tpl) ? ' - ' : '');
-
-			$context['page_title'] = strtr($topic_name_tpl . $topic_page_number . $topic_site_tpl, $trans);
-
-			if (!empty($modSettings['optimus_topic_description']))
-				self::getDescription();
-
-			self::getOgImage();
-		}
-
-		// Boards
-		if (!empty($board_info['total_topics'])) {
-			$trans = array(
-				"{board_name}" => strip_tags($context['name']),
-				"{cat_name}"   => $board_info['cat']['name'],
-				"{forum_name}" => $context['forum_name']
-			);
-
-			$board_page_number = !empty($board_page_number) ? $board_page_number : (!empty($board_site_tpl) ? ' - ' : '');
-			$context['page_title'] = strtr($board_name_tpl . $board_page_number . $board_site_tpl, $trans);
-
-			if (!empty($modSettings['optimus_board_description'])) {
-				$context['optimus_description'] = !empty($context['description']) ? $context['description'] : $context['name'];
-				$context['optimus_description'] = $smcFunc['htmlspecialchars']($context['optimus_description']);
-			}
-		}
-
-		// TP Articles
-		if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 3)
-			self::getTPMeta();
-	}
-
-	/**
-	 * Возвращаемые статусы страниц разделов и тем
-	 *
-	 * @return void
-	 */
-	private static function processErrorCodes()
-	{
-		global $modSettings, $board_info, $context, $txt;
-
-		if (empty($modSettings['optimus_404_status']) || empty($board_info['error']))
-			return;
-
-		// Страница не существует? Does not exist?
-		if ($board_info['error'] == 'exist') {
-			header('HTTP/1.1 404 Not Found');
-
-			loadTemplate('Optimus');
-
-			$context['sub_template'] = '404';
-			$context['page_title']   = $txt['optimus_404_page_title'];
-		}
-
-		// Нет доступа? No access?
-		if ($board_info['error'] == 'access') {
-			header('HTTP/1.1 403 Forbidden');
-
-			loadTemplate('Optimus');
-
-			$context['sub_template'] = '403';
-			$context['page_title']   = $txt['optimus_403_page_title'];
-		}
-	}
-
-	/**
-	 * Создаем описание страницы из первого сообщения
-	 *
-	 * @return void
-	 */
-	public static function getDescription()
-	{
-		global $context, $smcFunc, $txt, $board_info;
-
-		if (empty($context['first_message']))
-			return;
-
-		$request = $smcFunc['db_query']('substring', '
-			SELECT body, poster_time, modified_time
-			FROM {db_prefix}messages
-			WHERE id_msg = {int:id_msg}
-			LIMIT 1',
-			array(
-				'id_msg' => $context['first_message']
-			)
-		);
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))	{
-			censorText($row['body']);
-
-			$row['body'] = parse_bbc($row['body'], false);
-
-			// Ищем изображение в тексте сообщения
-			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
-			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
-
-			$row['body'] = self::getTeaser($row['body']);
-			$row['body'] = str_replace($txt['quote'], '', $row['body']);
-
-			$context['optimus_description'] = explode('&nbsp;', $row['body'])[0];
-
-			if ($smcFunc['strlen']($context['optimus_description']) > 130)
-				$context['optimus_description'] = $smcFunc['substr']($context['optimus_description'], 0, 127) . '...';
-
-			$context['optimus_description'] = !empty($context['topic_description']) ? $context['topic_description'] : $context['optimus_description'];
-
-			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['poster_time']);
-
-			if (!empty($row['modified_time']))
-				$context['optimus_og_type']['article']['modified_time'] = date('Y-m-d\TH:i:s', $row['modified_time']);
-
-			$context['optimus_og_type']['article']['section'] = $board_info['name'];
-		}
-
-		$smcFunc['db_free_result']($request);
-	}
-
-	/**
-	 * Достаем URL вложения из первого сообщения темы
-	 *
-	 * @return void
-	 */
-	public static function getOgImage()
-	{
-		global $context, $smcFunc, $scripturl;
-
-		if (!allowedTo('view_attachments') || !empty($context['optimus_og_image']))
-			return;
-
-		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
-			$request = $smcFunc['db_query']('', '
-				SELECT COALESCE(id_attach, 0) AS id
-				FROM {db_prefix}attachments
-				WHERE id_msg = {int:msg}
-					AND width > 0
-					AND height > 0
-				LIMIT 1',
-				array(
-					'msg' => $context['topic_first_message']
-				)
-			);
-
-			list ($image_id) = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
-
-			if (!empty($image_id))
-				$context['optimus_og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $image_id . ';image';
-
-			cache_put_data('og_image_' . $context['current_topic'], $context['optimus_og_image'], 360);
-		}
-	}
-
-	/**
-	 * Формируем описание и og-изображения для страниц TinyPortal
-	 *
-	 * @return void
-	 */
-	public static function getTPMeta()
-	{
-		global $smcFunc, $context, $txt, $scripturl;
-
-		if (!isset($_REQUEST['page']))
-			return;
-
-		if (is_numeric($_REQUEST['page'])) {
-			$request = $smcFunc['db_query']('substring', '
-				SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
-				FROM {db_prefix}tp_articles AS a
-					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
-				WHERE a.id = {int:page}
-				LIMIT 1',
-				array(
-					'page' => (int) $_REQUEST['page']
-				)
-			);
-		} else {
-			$request = $smcFunc['db_query']('substring', '
-				SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
-				FROM {db_prefix}tp_articles AS a
-					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
-				WHERE a.shortname = {string:page}
-				LIMIT 1',
-				array(
-					'page' => $_REQUEST['page']
-				)
-			);
-		}
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))	{
-			censorText($row['body']);
-
-			$row['body'] = $row['type'] == 'bbc' ? parse_bbc($row['body'], false) : ($row['type'] == 'php' ? '<?php' . $row['body'] : $row['body']);
-
-			// Ищем изображение в тексте страницы
-			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
-			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
-
-			if ($row['useintro']) {
-				$row['intro'] = $row['type'] == 'bbc' ? parse_bbc($row['intro'], false) : ($row['type'] == 'php' ? '<?php' . $row['intro'] : $row['intro']);
-				$row['intro'] = self::getTeaser($row['intro']);
-
-				$context['optimus_description'] = explode('&nbsp;', $row['intro'])[0];
-			} else {
-				$row['body'] = self::getTeaser($row['body']);
-
-				$context['optimus_description'] = explode('&nbsp;', $row['body'])[0];
-			}
-
-			if ($smcFunc['strlen']($context['optimus_description']) > 130)
-				$context['optimus_description'] = $smcFunc['substr']($context['optimus_description'], 0, 127) . '...';
-
-			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['date']);
-			$context['optimus_og_type']['article']['section'] = $row['cat_name'];
-
-			// Укажем и canonical url
-			$context['canonical_url'] = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
-		}
-
-		$smcFunc['db_free_result']($request);
-	}
-
-	/**
-	 * Получаем выдержку текста для создания описания страницы
-	 *
-	 * @param string $text — текст для обработки
-	 * @param integer $num_sentences — количество предложений, которые нужно взять из текста
-	 * @return string
-	 */
-	public static function getTeaser($text, $num_sentences = 2)
-	{
-		$body = preg_replace('/\s+/', ' ', strip_tags($text));
-		$sentences = preg_split('/(\.|\?|\!)(\s)/', $body);
-
-		if (count($sentences) <= $num_sentences)
-			return $body;
-
-		$stopAt = 0;
-		foreach ($sentences as $i => $sentence) {
-			$stopAt += strlen($sentence);
-			if ($i >= $num_sentences - 1)
-				break;
-		}
-
-		$stopAt += ($num_sentences * 2);
-
-		return trim(substr($body, 0, $stopAt));
-	}
-
-	/**
-	 * Добавляем различные скрипты в код страниц, меняем переменные, подключаем копирайт
+	 * Various scripts and variables
 	 *
 	 * @return void
 	 */
 	public static function menuButtons()
 	{
-		global $modSettings, $context, $mbname, $boardurl, $scripturl, $smcFunc;
-
-		// JSON-LD
-		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
-			$context['insert_after_template'] .= '
-		<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "BreadcrumbList",
-			"itemListElement": [';
-
-			$i = 1;
-			foreach ($context['linktree'] as $id => $data)
-				$list_item[$id] = '{
-				"@type": "ListItem",
-				"position": ' . $i++ . ',
-				"item": {
-					"@id": "' . (isset($data['url']) ? $data['url'] : '') . '",
-					"name": "' . $data['name'] . '"
-				}
-			}';
-
-			if (!empty($list_item))
-				$context['insert_after_template'] .= implode($list_item, ',');
-
-			$context['insert_after_template'] .= ']
-		}
-		</script>';
-		}
-
-		// Canonical url fix for portal mods
-		if (!empty($modSettings['optimus_portal_compat'])) {
-			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action'])) {
-				$context['linktree'][0]['name'] = $mbname;
-				$context['canonical_url'] = $boardurl . '/';
-			}
-
-			if (in_array($context['current_action'], array('forum', 'community'))) {
-				if (!empty($modSettings['pmx_frontmode']) || !empty($modSettings['sp_portal_mode']))
-					$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
-			}
-		}
-
-		// TinyPortal compat mode
-		if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
-			if ($modSettings['optimus_portal_compat'] == 3 && !empty($context['TPortal']['is_front']))
-				$context['page_title'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
-		}
-
-		// Description
-		if (empty($context['current_action']) && !empty($modSettings['optimus_description'])) {
-			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']))
-				$context['optimus_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
-		}
-
-		self::processPageTemplates();
-		self::processErrorCodes();
-
-		// Copyright Info
-		if ($context['current_action'] == 'credits')
-			$context['copyrights']['mods'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;2019, Bugo';
+		Subs::addFavicon();
+		Subs::addJsonLd();
+		Subs::addFrontPageDescription();
+		Subs::makeErrorCodes();
+		Subs::makeTopicDescription();
+		Subs::getOgImage();
+		Subs::addSitemapLink();
+		Subs::runAddons();
 	}
 
 	/**
-	 * Различные замены вывода в шаблонах
+	 * Used actions
 	 *
-	 * @param array $buffer
-	 * @return array
+	 * @param array $actionArray - all forum actions
+	 * @return void
 	 */
-	public static function buffer($buffer)
+	public static function actions(&$actionArray)
 	{
-		global $context, $modSettings, $mbname, $boardurl, $forum_copyright, $boarddir, $txt;
+		Keywords::makeAction($actionArray);
+	}
 
-		if (isset($_REQUEST['xml']) || !empty($context['robot_no_index']))
-			return $buffer;
+	/**
+	 * Change various metatags
+	 *
+	 * @return void
+	 */
+	public static function themeContext()
+	{
+		Subs::makeExtendTitles();
+		Subs::prepareMetaTags();
+	}
 
-		$replacements = array();
+	/**
+	 * Additional columns for $context['topicinfo'] array
+	 *
+	 * @param array $topic_selects
+	 * @param array $topic_tables
+	 * @return void
+	 */
+	public static function displayTopic(&$topic_selects, &$topic_tables)
+	{
+		global $modSettings;
 
-		// Description
-		if (!empty($context['optimus_description'])) {
-			$desc_old = '<meta name="description" content="' . $context['page_title_html_safe'] . '" />';
-			$desc_new = '<meta name="description" content="' . $context['optimus_description'] . '" />';
-			$replacements[$desc_old] = $desc_new;
+		if (!empty($modSettings['optimus_show_keywords_block']))
+			Keywords::getAll();
+
+		if (!in_array('ms.modified_time AS topic_modified_time', $topic_selects))
+			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
+
+		if (!empty($modSettings['optimus_topic_description']) && !in_array('ms.body AS topic_first_message', $topic_selects))
+			$topic_selects[] = 'ms.body AS topic_first_message';
+
+		if (!empty($modSettings['optimus_allow_change_desc']))
+			$topic_selects[] = 't.optimus_description';
+
+		if (allowedTo('view_attachments') && !empty($modSettings['optimus_og_image'])) {
+			$topic_selects[] = 'COALESCE(a.id_attach, 0) AS og_image_attach_id';
+			$topic_tables[]  = 'LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg AND a.width > 0 AND a.height > 0)';
 		}
+	}
 
-		// Metatags
-		if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 1) {
-			$meta = '';
-			$test = unserialize($modSettings['optimus_meta']);
+	/**
+	 * Make various changes on Display Context area
+	 *
+	 * @param array $output
+	 * @param array $message
+	 * @param int $counter - the message counter
+	 *
+	 * @return void
+	 */
+	public static function prepareDisplayContext(&$output, &$message, $counter)
+	{
+		Keywords::displayBlock($counter);
+	}
 
-			foreach ($test as $n => $val) {
-				if (!empty($val))
-					$meta .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
-			}
+	/**
+	 * The output of the template creation/editing messages
+	 *
+	 * @return void
+	 */
+	public static function postEnd()
+	{
+		Subs::topicDescriptionField();
+		Subs::topicKeywordsField();
+	}
 
-			$charset_meta = '<meta http-equiv="Content-Type" content="text/html; charset=' . $context['character_set'] . '" />';
-			$check_meta = $charset_meta . $meta;
-			$replacements[$charset_meta] = $check_meta;
-		}
+    /**
+     * Add the necessary data before creating a topic
+     *
+     * @param array $msgOptions
+     * @param array $topicOptions
+     * @param array $posterOptions
+     * @param array $topic_columns    — a set of columns to add to the smf_topics table
+     * @param array $topic_parameters — data set for use in $topic_columns
+     *
+     * @return void
+     */
+	public static function beforeCreateTopic(&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters)
+	{
+		global $modSettings;
 
-		// Open Graph
-		if (!empty($modSettings['optimus_open_graph'])) {
-			$doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-			$new_doctype = '<!DOCTYPE html>';
-			$replacements[$doctype] = $new_doctype;
+		if (empty($modSettings['optimus_allow_change_desc']))
+			return;
 
-			$type = !empty($context['optimus_og_type']) ? key($context['optimus_og_type']) : 'website';
-			$xmlns = 'html xmlns="http://www.w3.org/1999/xhtml"';
-			$new_xmlns = 'html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang="' . $txt['lang_dictionary'] . '"';
-			$replacements[$xmlns] = $new_xmlns;
+		$description = isset($_REQUEST['optimus_description']) ? Subs::xss($_REQUEST['optimus_description']) : '';
 
-			$xmlns1 = '<html lang';
-			$new_xmlns1 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang';
-			$replacements[$xmlns1] = $new_xmlns1;
+		$topic_columns['optimus_description'] = 'string-255';
+		$topic_parameters[] = $description;
+	}
 
-			$xmlns2 = '<html>';
-			$new_xmlns2 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang="' . $txt['lang_dictionary'] . '">';
-			$replacements[$xmlns2] = $new_xmlns2;
+    /**
+     * Creating a topic
+     *
+     * @param array $msgOptions
+     * @param array $topicOptions
+     * @param array $posterOptions
+     *
+     * @return void
+     */
+	public static function createTopic(&$msgOptions, &$topicOptions, &$posterOptions)
+	{
+		global $modSettings;
 
-			$open_graph = '<meta property="og:title" content="' . (!empty($context['subject']) ? $context['subject'] : $context['page_title_html_safe']) . '" />';
+		if (empty($modSettings['optimus_allow_change_keywords']))
+			return;
 
-			$open_graph .= '
-	<meta property="og:type" content="' . $type . '" />';
+		$keywords = isset($_REQUEST['optimus_keywords']) ? Subs::xss($_REQUEST['optimus_keywords']) : '';
 
-			if (!empty($context['optimus_og_type'])) {
-				$og_type = $context['optimus_og_type'][$type];
-				foreach ($og_type as $t_key => $t_value) {
-					$open_graph .= '
-	<meta property="' . $type . ':' . $t_key . '" content="' . $t_value . '" />';
-				}
-			}
+		Keywords::add($keywords, $topicOptions['id'], $posterOptions['id']);
+	}
 
-			if (!empty($context['canonical_url'])) {
-				$open_graph .= '
-	<meta property="og:url" content="' . $context['canonical_url'] . '" />';
-			}
+	/**
+	 * Edit the first post of the topic
+	 *
+	 * @param array $messages_columns — editable columns in the smf_topics table
+	 * @param array $update_parameters — data to update the columns
+	 * @param array $msgOptions — parameters of the message to be modified
+	 * @param array $topicOptions — changeable topic options
+	 * @param array $posterOptions — the parameters of the author of the changes
+	 * @return void
+	 */
+	public static function modifyPost(&$messages_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions)
+	{
+		if (Subs::getTopicFirstMessageId($topicOptions['id']) != $msgOptions['id'])
+			return;
 
-			if (!empty($context['optimus_og_image']) || !empty($modSettings['optimus_og_image'])) {
-				$img_link = !empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image'];
-				$open_graph .= '
-	<meta property="og:image" content="' . $img_link . '" />';
-			}
+		Subs::modifyTopicDescription($topicOptions['id']);
+		Subs::modifyTopicKeywords($topicOptions['id'], $posterOptions['id']);
+	}
 
-			$open_graph .= '
-	<meta property="og:description" content="' . (!empty($context['optimus_description']) ? $context['optimus_description'] : $context['page_title_html_safe']) . '" />
-	<meta property="og:site_name" content="' . $mbname . '" />';
+	/**
+	 * The mod credits for action=credits
+	 *
+	 * @return void
+	 */
+	public static function credits()
+	{
+		global $context;
 
-			if (!empty($modSettings['optimus_fb_appid'])) {
-				$open_graph .= '
-	<meta property="fb:app_id" name="app_id" content="' . $modSettings['optimus_fb_appid'] . '" />';
-			}
+		$context['credits_modifications'][] = Subs::getOptimusLink() . ' &copy; 2010&ndash;2020, Bugo';
+	}
 
-			$head_op = '<title>' . $context['page_title_html_safe'] . '</title>';
-			$op_head = $open_graph . "\n\t" . $head_op;
-			$replacements[$head_op] = $op_head;
-		}
+	/**
+	 * Calling sitemap generation via task manager
+	 *
+	 * @return boolean
+	 */
+	public static function scheduledTask()
+	{
+		global $modSettings, $sourcedir;
 
-		if (!empty($modSettings['optimus_tw_cards']) && isset($context['canonical_url'])) {
-			$twitter = '<meta name="twitter:card" content="summary" />
-	<meta name="twitter:site" content="@' . $modSettings['optimus_tw_cards'] . '" />';
+		if (empty($modSettings['optimus_sitemap_enable']))
+			return false;
 
-			if (empty($modSettings['optimus_open_graph']))
-				$twitter .= '
-	<meta name="twitter:title" content="' . (!empty($context['subject']) ? $context['subject'] : $context['page_title_html_safe']) . '" />
-	<meta name="twitter:description" content="' . (!empty($context['optimus_description']) ? $context['optimus_description'] : $context['page_title_html_safe']) . '" />';
+		require_once($sourcedir . '/Optimus/Subs.php');
+		Subs::loadClass('Sitemap');
 
-			if (!empty($context['optimus_og_image']) || !empty($modSettings['optimus_og_image']))
-				$twitter .= '
-	<meta name="twitter:image" content="' . (!empty($context['optimus_og_image']) ? $context['optimus_og_image'] : $modSettings['optimus_og_image']) . '" />';
+		$links   = Subs::getLinks();
+		$sitemap = new Sitemap($links, '', !empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : '');
 
-			$head_tw = '<title>';
-			$tw_head = $twitter . "\n\t" . $head_tw;
-			$replacements[$head_tw] = $tw_head;
-		}
-
-		// Counters
-		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
-		if (!in_array($context['current_action'], $ignored_actions)) {
-			if (!empty($modSettings['optimus_count_code']))
-				$replacements[$forum_copyright] = $modSettings['optimus_count_code'] . '<br />' . $forum_copyright;
-		}
-
-		// XML sitemap link
-		if (!empty($modSettings['optimus_sitemap_link'])) {
-			clearstatcache();
-
-			if (file_exists($boarddir . '/sitemap.xml')) {
-				$text = '<li class="last"><a id="button_wap2"';
-				$link = '<li><a href="' . $boardurl . '/sitemap.xml" target="_blank">' . $txt['optimus_sitemap_xml_link'] . '</a></li>';
-				$replacements[$text] = $link . $text;
-			}
-		}
-
-		return str_replace(array_keys($replacements), array_values($replacements), $buffer);
+		return $sitemap->generate();
 	}
 }

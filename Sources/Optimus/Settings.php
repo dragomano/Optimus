@@ -8,33 +8,50 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2019 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.1
+ * @version 2.5
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
+/**
+ * Optimus settings
+ */
 class Settings
 {
 	/**
-	 * Прописываем менюшку с настройками мода в админке
+	 * The menu with the settings of the mod in the admin area
 	 *
 	 * @param array $admin_areas
 	 * @return void
 	 */
 	public static function adminAreas(&$admin_areas)
 	{
-		global $txt;
+		global $settings, $txt;
+
+		addInlineCss('
+		.main_icons.optimus::before {
+			background:url(' . $settings['default_images_url'] . '/optimus.png) no-repeat 0 0 !important;
+		}
+		.large_admin_menu_icon.optimus::before {
+			background:url(' . $settings['default_images_url'] . '/optimus_large.png) no-repeat 0 0;
+		}
+		.fa-optimus::before {
+			content: "\f717";
+		}');
+
+		if (isset($_REQUEST['area']) && $_REQUEST['area'] == 'optimus')
+			loadCSSFile('optimus\optimus.css');
 
 		$admin_areas['config']['areas']['optimus'] = array(
-			'label'    => $txt['optimus_title'],
-			'function' => function() {
+			'label' => $txt['optimus_title'],
+			'function' => function () {
 				self::settingActions();
 			},
-			'icon'     => 'maintain.gif',
+			'icon' => 'optimus',
 			'subsections' => array(
 				'base'     => array($txt['optimus_base_title']),
 				'extra'    => array($txt['optimus_extra_title']),
@@ -42,35 +59,49 @@ class Settings
 				'metatags' => array($txt['optimus_meta_title']),
 				'counters' => array($txt['optimus_counters']),
 				'robots'   => array($txt['optimus_robots_title']),
-				'sitemap'  => array($txt['optimus_sitemap_title']),
-				'donate'   => array($txt['optimus_donate_title'])
+				'sitemap'  => array($txt['optimus_sitemap_title'])
 			)
 		);
 	}
 
 	/**
-	 * Ключевая функция, подключающая все остальные при их вызове
+	 * Extend the quick search in the admin panel
+	 *
+	 * @param array $language_files
+	 * @param array $include_files
+	 * @param array $settings_search
+	 * @return void
+	 */
+	public static function adminSearch(&$language_files, &$include_files, &$settings_search)
+	{
+		$settings_search[] = array(__NAMESPACE__ . '\Settings::baseTabSettings', 'area=optimus;sa=base');
+		$settings_search[] = array(__NAMESPACE__ . '\Settings::extraTabSettings', 'area=optimus;sa=extra');
+		$settings_search[] = array(__NAMESPACE__ . '\Settings::faviconTabSettings', 'area=optimus;sa=favicon');
+		$settings_search[] = array(__NAMESPACE__ . '\Settings::countersTabSettings', 'area=optimus;sa=counters');
+		$settings_search[] = array(__NAMESPACE__ . '\Settings::sitemapTabSettings', 'area=optimus;sa=sitemap');
+	}
+
+	/**
+	 * The main function that connects all others when they are called
 	 *
 	 * @return void
 	 */
 	public static function settingActions()
 	{
-		global $context, $txt, $sourcedir, $scripturl;
+		global $context, $txt, $sourcedir;
 
 		$context['page_title'] = $txt['optimus_main'];
 
-		// Подключаем файл шаблона вместе с таблицей стилей
-		loadTemplate('Optimus', 'optimus');
+		loadTemplate('Optimus');
 
 		$subActions = array(
-			'base'     =>'baseSettings',
-			'extra'    => 'extraSettings',
-			'favicon'  => 'faviconSettings',
-			'metatags' => 'metatagsSettings',
-			'counters' => 'counterSettings',
-			'robots'   => 'robotsSettings',
-			'sitemap'  => 'sitemapSettings',
-			'donate'   => 'donateSettings'
+			'base'     => 'baseTabSettings',
+			'extra'    => 'extraTabSettings',
+			'favicon'  => 'faviconTabSettings',
+			'metatags' => 'metatagsTabSettings',
+			'counters' => 'countersTabSettings',
+			'robots'   => 'robotsTabSettings',
+			'sitemap'  => 'sitemapTabSettings'
 		);
 
 		require_once($sourcedir . '/ManageSettings.php');
@@ -80,67 +111,67 @@ class Settings
 			'title' => $txt['optimus_title'],
 			'tabs' => array(
 				'base' => array(
-					'description' => $txt['optimus_base_desc'],
+					'description' => $txt['optimus_base_desc']
 				),
 				'extra' => array(
-					'description' => $txt['optimus_extra_desc'],
+					'description' => $txt['optimus_extra_desc']
 				),
 				'favicon' => array(
-					'description' => $txt['optimus_favicon_desc'],
+					'description' => $txt['optimus_favicon_desc']
 				),
 				'metatags' => array(
-					'description' => $txt['optimus_meta_desc'],
+					'description' => $txt['optimus_meta_desc']
 				),
 				'counters' => array(
-					'description' => $txt['optimus_counters_desc'],
+					'description' => $txt['optimus_counters_desc']
 				),
 				'robots' => array(
-					'description' => $txt['optimus_robots_desc'],
+					'description' => $txt['optimus_robots_desc']
 				),
 				'sitemap' => array(
-					'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
-				),
-				'donate' => array(
-					'description' => $txt['optimus_donate_desc'],
-				),
-			),
+					'description' => $txt['optimus_sitemap_desc']
+				)
+			)
 		);
 
-		call_user_func(__NAMESPACE__ . '\\Settings::' . $subActions[$_REQUEST['sa']]);
+		call_helper(__NAMESPACE__ . '\\Settings::' . $subActions[$_REQUEST['sa']]);
 	}
 
-	/**
-	 * Основные настройки мода
-	 *
-	 * @return void
-	 */
-	public static function baseSettings()
+    /**
+     * Main mod settings
+     *
+     * @param bool $return_config
+     *
+     * @return array|void
+     */
+	public static function baseTabSettings($return_config = false)
 	{
-		global $context, $txt, $scripturl;
+		global $context, $txt, $scripturl, $modSettings;
 
-		$context['sub_template'] = 'base';
 		$context['page_title'] .= ' - ' . $txt['optimus_base_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
 
+		if (empty($modSettings['optimus_forum_index']))
+			updateSettings(array('optimus_forum_index' => sprintf($txt['forum_index'], $context['forum_name'])));
+
 		$config_vars = array(
-			array('int', 'optimus_portal_compat'),
-			array('text', 'optimus_portal_index'),
-			array('text', 'optimus_forum_index'),
-			array('text', 'optimus_description'),
-			array('check', 'optimus_no_first_number'),
-			array('check', 'optimus_board_description'),
+			array('title', 'optimus_main_page'),
+			array('text', 'optimus_forum_index', 40),
+			array('large_text', 'optimus_description', '4" style="width:80%', 'subtext' => $txt['optimus_description_subtext']),
+			array('title', 'optimus_all_pages'),
+			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
+			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
 			array('check', 'optimus_topic_description'),
-			array('check', 'optimus_404_status')
+			array('check', 'optimus_allow_change_desc'),
+			array('check', 'optimus_allow_change_keywords'),
+			array('check', 'optimus_show_keywords_block'),
+			array('check', 'optimus_404_status'),
+			array('title', 'optimus_extra_settings'),
+			array('check', 'optimus_use_only_cookies', 'help' => 'optimus_use_only_cookies_help')
 		);
 
-		$templates = array();
-		foreach ($txt['optimus_templates'] as $name => $template) {
-			$templates[$name] = array(
-				'name' => isset($_POST['' . $name . '_name']) ? $_POST['' . $name . '_name'] : '',
-				'page' => isset($_POST['' . $name . '_page']) ? $_POST['' . $name . '_page'] : '',
-				'site' => isset($_POST['' . $name . '_site']) ? $_POST['' . $name . '_site'] : ''
-			);
-		}
+		if ($return_config)
+			return $config_vars;
 
 		if (isset($_GET['save'])) {
 			checkSession();
@@ -148,7 +179,6 @@ class Settings
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
 
-			updateSettings(array('optimus_templates' => serialize($templates)));
 			redirectexit('action=admin;area=optimus;sa=base');
 		}
 
@@ -156,31 +186,34 @@ class Settings
 	}
 
 	/**
-	 * Страница с настройками микроразметки
+	 * The markup settings
 	 *
-	 * @return void
+	 * @param bool $return_config
+	 *
+	 * @return array|void
 	 */
-	public static function extraSettings()
+	public static function extraTabSettings($return_config = false)
 	{
-		global $context, $txt, $scripturl, $settings, $modSettings;
+		global $context, $txt, $scripturl, $settings;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_extra_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=extra;save';
 
-		if (!isset($modSettings['optimus_og_image']))
-			updateSettings(array('optimus_og_image' => $settings['images_url'] . '/thumbnail.gif'));
+		$og_image_option_link = $scripturl . '?action=admin;area=theme;sa=list;th=' . $settings['theme_id']  . '#options_og_image';
 
 		$config_vars = array(
 			array('title', 'optimus_extra_title'),
-			array('check', 'optimus_open_graph'),
-			array('text',  'optimus_og_image', 50, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
-			array('text', 'optimus_fb_appid', 40, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
-			array('text', 'optimus_tw_cards', 40, 'preinput' => '@'),
-			array('check', 'optimus_json_ld')
+			array('check', 'optimus_og_image', 'help' => 'optimus_og_image_help', 'subtext' => sprintf($txt['optimus_og_image_subtext'], $og_image_option_link)),
+			array('text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'),
+			array('text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'),
+			array('check', 'optimus_json_ld', 'help' => 'optimus_json_ld_help'),
 		);
 
+		if ($return_config)
+			return $config_vars;
+
 		if (isset($_GET['save'])) {
-			$_POST['optimus_tw_cards'] = str_replace('@', '', $_POST['optimus_tw_cards']);
+			$_POST['optimus_tw_cards'] = str_replace('@', '', filter_input(INPUT_POST, 'optimus_tw_cards', FILTER_SANITIZE_STRING));
 
 			checkSession();
 
@@ -193,16 +226,17 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Управление фавиконкой форума
-	 *
-	 * @return void
-	 */
-	public static function faviconSettings()
+    /**
+     * Favicon settings
+     *
+     * @param bool $return_config
+     *
+     * @return array|void
+     */
+	public static function faviconTabSettings($return_config = false)
 	{
 		global $context, $txt, $scripturl;
 
-		$context['sub_template'] = 'favicon';
 		$context['page_title'] .= ' - ' . $txt['optimus_favicon_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=favicon;save';
 
@@ -210,6 +244,11 @@ class Settings
 			array('text', 'optimus_favicon_api_key'),
 			array('large_text', 'optimus_favicon_text')
 		);
+
+		if ($return_config)
+			return $config_vars;
+
+		$context['sub_template'] = 'favicon';
 
 		if (isset($_GET['save'])) {
 			checkSession();
@@ -224,11 +263,11 @@ class Settings
 	}
 
 	/**
-	 * Управление мета-тегами
+	 * Metatags settings
 	 *
 	 * @return void
 	 */
-	public static function metatagsSettings()
+	public static function metatagsTabSettings()
 	{
 		global $context, $txt, $scripturl;
 
@@ -236,23 +275,22 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_meta_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
-		$config_vars = array();
-
-		$meta = array();
-		if (isset($_POST['custom_tag_name'])) {
-			foreach ($_POST['custom_tag_name'] as $key => $value) {
-				if (empty($value))
-					unset($_POST['custom_tag_name'][$key], $_POST['custom_tag_value'][$key]);
-				else
-					$meta[$_POST['custom_tag_name'][$key]] = $_POST['custom_tag_value'][$key];
-			}
-		}
+		$config_vars = [];
 
 		if (isset($_GET['save'])) {
 			checkSession();
 
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
+
+			$meta = [];
+			if (isset($_POST['custom_tag_name']) && isset($_POST['custom_tag_value'])) {
+				$custom_tag = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+				foreach ($custom_tag['custom_tag_name'] as $key => $value) {
+					if (!empty($value))
+						$meta[$value] = $custom_tag['custom_tag_value'][$key];
+				}
+			}
 
 			updateSettings(array('optimus_meta' => serialize($meta)));
 			redirectexit('action=admin;area=optimus;sa=metatags');
@@ -261,18 +299,24 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Управление счетчиками
-	 *
-	 * @return void
-	 */
-	public static function counterSettings()
+    /**
+     * Counters settings
+     *
+     * @param bool $return_config
+     *
+     * @return array|void
+     */
+	public static function countersTabSettings($return_config = false)
 	{
-		global $context, $txt, $scripturl;
+		global $context, $txt, $scripturl, $modSettings;
 
-		$context['sub_template'] = 'counters';
 		$context['page_title'] .= ' - ' . $txt['optimus_counters'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=counters;save';
+
+		if (!isset($modSettings['optimus_counters_css']))
+			updateSettings(array('optimus_counters_css' => '.counters {margin: 1.6em 0 -4.8em; text-align: center}'));
+		if (!isset($modSettings['optimus_ignored_actions']))
+			updateSettings(array('optimus_ignored_actions' => 'admin,bookmarks,credits,helpadmin,pm,printpage'));
 
 		$config_vars = array(
 			array('large_text', 'optimus_head_code'),
@@ -281,6 +325,11 @@ class Settings
 			array('large_text', 'optimus_counters_css'),
 			array('text', 'optimus_ignored_actions')
 		);
+
+		if ($return_config)
+			return $config_vars;
+
+		$context['sub_template'] = 'counters';
 
 		if (isset($_GET['save'])) {
 			checkSession();
@@ -295,11 +344,11 @@ class Settings
 	}
 
 	/**
-	 * Страница для изменения robots.txt
+	 * The robots.txt settings
 	 *
 	 * @return void
 	 */
-	public static function robotsSettings()
+	public static function robotsTabSettings()
 	{
 		global $context, $txt, $scripturl;
 
@@ -307,54 +356,68 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$common_rules_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
+		$common_rules_path = filter_input(INPUT_SERVER, 'DOCUMENT_ROOT') . "/robots.txt";
 
 		clearstatcache();
 
 		$context['robots_txt_exists'] = file_exists($common_rules_path);
 		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
 
-		self::robotsCreate();
+		Subs::loadClass('Robots');
+
+		$robots = new Robots();
+		$robots->generate();
 
 		if (isset($_GET['save'])) {
 			checkSession();
 
-			if (isset($_POST['robots'])) {
-				$common_rules = stripslashes($_POST['robots']);
-				file_put_contents($common_rules_path, $common_rules);
-			}
+			file_put_contents($common_rules_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING));
 
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
 	}
 
-	/**
-	 * Страница с настройками карты форума
-	 *
-	 * @return void
-	 */
-	public static function sitemapSettings()
+    /**
+     * The sitemap settings
+     *
+     * @param bool $return_config
+     *
+     * @return array|void
+     */
+	public static function sitemapTabSettings($return_config = false)
 	{
 		global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
+		if (!isset($modSettings['optimus_sitemap_name']))
+			updateSettings(array('optimus_sitemap_name' => 'sitemap'));
+
 		$config_vars = array(
 			array('title', 'optimus_sitemap_xml_link'),
-			array('check', 'optimus_sitemap_enable'),
+			array(
+				'check',
+				'optimus_sitemap_enable',
+				'subtext' => sprintf($txt['optimus_sitemap_enable_subtext'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id'])
+			),
 			array('check', 'optimus_sitemap_link'),
-			array('check', 'optimus_sitemap_boards', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false),
-			array('int',   'optimus_sitemap_topics', 'disabled' => empty($modSettings['optimus_sitemap_enable']) ? true : false)
+			array('text', 'optimus_sitemap_name', 'postinput' => '.xml'),
+			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
+			array('check', 'optimus_sitemap_boards'),
+			array('int', 'optimus_sitemap_topics')
 		);
 
-		// Обновляем запись в Диспетчере задач
+		if ($return_config)
+			return $config_vars;
+
+		// Update the entry in the task manager
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}scheduled_tasks
 			SET disabled = {int:disabled}
 			WHERE task = {string:task}',
 			array(
-				'disabled' => !empty($modSettings['optimus_sitemap_enable']) ? 0 : 1,
+				'disabled' => (int) empty($modSettings['optimus_sitemap_enable']),
 				'task'     => 'optimus_sitemap'
 			)
 		);
@@ -374,132 +437,5 @@ class Settings
 		}
 
 		prepareDBSettingContext($config_vars);
-	}
-
-	/**
-	 * Страница пожертвований
-	 *
-	 * @return void
-	 */
-	public static function donateSettings()
-	{
-		global $context, $txt;
-
-		$context['sub_template'] = 'donate';
-		$context['page_title'] .= ' - ' . $txt['optimus_donate_title'];
-	}
-
-	/**
-	 * Генерация правил для файла robots.txt
-	 *
-	 * @return void
-	 */
-	private static function robotsCreate()
-	{
-		global $modSettings, $boardurl, $sourcedir, $boarddir, $context, $scripturl;
-
-		clearstatcache();
-
-		// SimplePortal
-		$sp = isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1 && function_exists('sportal_init');
-		// Standalone mode
-		$autosp = !empty($modSettings['sp_standalone_url']) ? substr($modSettings['sp_standalone_url'], strlen($boardurl)) : '';
-
-		// PortaMx
-		$pm = !empty($modSettings['pmx_frontmode']) && function_exists('PortaMx');
-		// if (forum == community)
-		$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
-
-		// Is any SEF mod enabled?
-		$pretty    = file_exists($sourcedir . '/PrettyUrls-Filters.php') && !empty($modSettings['pretty_enable_filters']);
-		$simplesef = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
-		$sef       = $pretty || $simplesef;
-
-		// Sitemap file exists?
-		$map      = 'sitemap.xml';
-		$path_map = $boardurl . '/' . $map;
-
-		require_once($sourcedir . '/Optimus/libs/idna_convert.class.php');
-		$idn = new \idna_convert(array('idn_version' => 2008));
-		if (stripos($idn->encode($boardurl), 'xn--') !== false)
-			$path_map = $idn->encode($boardurl) . '/' . $map;
-
-		$temp_map = file_exists($boarddir . '/' . $map);
-		$map      = $temp_map ? $path_map : '';
-		$url_path = parse_url($boardurl, PHP_URL_PATH);
-
-		$folders = array('attachments','avatars','Packages','Smileys','Sources');
-		$actions = array('msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all');
-
-		$common_rules = [];
-		$common_rules[] = "User-agent: *";
-
-		// Special rules for Pretty URLs or SimpleSEF
-		if ($sef) {
-			foreach ($folders as $folder)
-				$common_rules[] = "Disallow: " . $url_path . "/" . $folder . "/";
-
-			$common_rules[] = "Disallow: " . $url_path . "/login/";
-
-			foreach ($actions as $action)
-				$common_rules[] = "Disallow: " . $url_path . "/*" . $action;
-		}
-
-		$common_rules[] = "Disallow: " . $url_path . "/*action";
-
-		if (!empty($modSettings['queryless_urls']) || $sef)
-			$common_rules[] = "";
-		else
-			$common_rules[] = "Disallow: " . $url_path . "/*topic=*.msg\nDisallow: " . $url_path . "/*topic=*.new";
-
-		$common_rules[] = "Disallow: " . $url_path . "/*PHPSESSID";
-		$common_rules[] = $sef ? "" : "Disallow: " . $url_path . "/*;";
-
-		// Front page
-		$common_rules[] = "Allow: " . $url_path . "/$";
-
-		// Content
-		if (!empty($modSettings['queryless_urls']))
-			$common_rules[] = ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$");
-		else
-			$common_rules[] = ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic");
-
-		// action=forum
-		$common_rules[] = $sp ? "Allow: " . $url_path . "/*forum$" : "";
-
-		// SimplePortal
-		if (isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 3 && file_exists($boarddir . $autosp))
-			$common_rules[] = "Allow: " . $url_path . $autosp;
-
-		$common_rules[] = $sp ? "Allow: " . $url_path . "/*page*page" : "";
-
-		// PortaMx
-		$common_rules[] = $pm && $alias ? "Allow: " . $url_path . "/*forum$" : "";
-		$common_rules[] = $pm && !$alias ? "Allow: " . $url_path . "/*community$" : "";
-
-		// RSS
-		$common_rules[] = !empty($modSettings['xmlnews_enable']) ? "Allow: " . $url_path . "/*.xml" : "";
-
-		// Sitemap
-		$common_rules[] = !empty($map) || file_exists($sourcedir . '/Sitemap.php') ? "Allow: " . $url_path . "/*sitemap" : "";
-
-		// We have nothing to hide ;)
-		$common_rules[] = "Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$";
-
-		// Sitemap XML
-		$sitemap = file_exists($sourcedir . '/Sitemap.php');
-		$common_rules[] = !empty($map) || $sitemap ? "|" : "";
-		$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
-		$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
-
-		$new_robots = array();
-
-		foreach ($common_rules as $line) {
-			if (!empty($line))
-				$new_robots[] = $line;
-		}
-
-		$new_robots = implode("<br />", str_replace("|", "", $new_robots));
-		$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
 	}
 }

@@ -8,110 +8,126 @@
  */
 
 $txt['optimus_main']  = 'Optimus';
-$txt['optimus_title'] = 'Поисковая оптимизация';
+$txt['optimus_title'] = 'РџРѕРёСЃРєРѕРІР°СЏ РѕРїС‚РёРјРёР·Р°С†РёСЏ';
 
-$txt['optimus_base_title'] = 'Общие настройки';
-$txt['optimus_base_desc']  = 'Изменение описания форума, настройка шаблонов заголовков страниц разделов и тем, а также включение/отключение генерации карты сайта.';
+$txt['optimus_base_title'] = 'РћР±С‰РёРµ РЅР°СЃС‚СЂРѕР№РєРё';
+$txt['optimus_base_desc']  = 'РР·РјРµРЅРµРЅРёРµ РѕРїРёСЃР°РЅРёСЏ С„РѕСЂСѓРјР°, РЅР°СЃС‚СЂРѕР№РєР° С€Р°Р±Р»РѕРЅРѕРІ Р·Р°РіРѕР»РѕРІРєРѕРІ СЃС‚СЂР°РЅРёС† СЂР°Р·РґРµР»РѕРІ Рё С‚РµРј, Р° С‚Р°РєР¶Рµ РІРєР»СЋС‡РµРЅРёРµ/РѕС‚РєР»СЋС‡РµРЅРёРµ РіРµРЅРµСЂР°С†РёРё РєР°СЂС‚С‹ СЃР°Р№С‚Р°.';
 
-$txt['optimus_main_page']         = 'Главная страница';
-$txt['optimus_base_info']         = 'Содержание мета-тега description может использоваться в сниппетах на странице результатов поиска.';
-$txt['optimus_portal_compat']     = 'Интеграция с порталом';
-$txt['optimus_portal_compat_set'] = array('Нет', 'PortaMx', 'SimplePortal', 'TinyPortal');
-$txt['optimus_portal_index']      = 'Заголовок главной страницы портала';
-$txt['optimus_forum_index']       = 'Заголовок главной страницы форума';
-$txt['optimus_description']       = 'Описание форума<br /><span class="smalltext">Будет выведено в мета-теге <strong>description</strong>.</span>';
+$txt['optimus_main_page']           = 'Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°';
+$txt['optimus_forum_index']         = 'Р—Р°РіРѕР»РѕРІРѕРє РіР»Р°РІРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹ С„РѕСЂСѓРјР°';
+$txt['optimus_description']         = 'РћРїРёСЃР°РЅРёРµ С„РѕСЂСѓРјР°';
+$txt['optimus_description_subtext'] = 'Р‘СѓРґРµС‚ РІС‹РІРµРґРµРЅРѕ РІ РјРµС‚Р°-С‚РµРіРµ <strong>description</strong> РіР»Р°РІРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹.';
 
-$txt['optimus_all_pages'] = 'Страницы тем и разделов';
-$txt['optimus_tpl_info']  = 'Доступные переменные:<br/><strong>{board_name}</strong> &mdash; название раздела, <strong>{topic_name}</strong> &mdash; название темы,<br/><strong>{#}</strong> &mdash; номер текущей страницы, <strong>{cat_name}</strong> &mdash; название категории, <strong>{forum_name}</strong> &mdash; название форума.';
-$txt['optimus_board_tpl'] = 'Шаблон заголовка страниц разделов';
-$txt['optimus_topic_tpl'] = 'Шаблон заголовка страниц тем';
-$txt['optimus_templates'] = array(
-	'board' => array('{board_name}', ' - стр. {#} - ', '{forum_name}'),
-	'topic' => array('{topic_name}', ' - стр. {#} - ', '{board_name} - {forum_name}')
-);
-$txt['optimus_no_first_number']   = 'Не выводить номер на первой странице';
-$txt['optimus_board_description'] = 'Выводить описание раздела в мета-теге <strong>description</strong>';
-$txt['optimus_topic_description'] = 'Выводить описание темы в мета-теге <strong>description</strong><br /><span class="smalltext">Для создания описаний к темам используйте мод <a href="https://dragomano.ru/translations/topic-descriptions" target="_blank">Topic Descriptions</a>.</span>';
-$txt['optimus_404_status']        = 'Возвращать <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.9A.D0.BE.D0.B4.D1.8B_.D1.81.D0.BE.D1.81.D1.82.D0.BE.D1.8F.D0.BD.D0.B8.D1.8F" target="_blank">код 403/404</a>, в зависимости от статуса запрашиваемой страницы';
-$txt['optimus_404_page_title']    = '404 - Страница не найдена';
-$txt['optimus_404_h2']            = 'Ошибка 404';
-$txt['optimus_404_h3']            = 'Извините, но такой страницы здесь нет.';
-$txt['optimus_403_page_title']    = '403 - Доступ запрещён';
-$txt['optimus_403_h2']            = 'Ошибка 403';
-$txt['optimus_403_h3']            = 'Извините, но у вас нет доступа к этой странице.';
+$txt['optimus_all_pages']              = 'РЎС‚СЂР°РЅРёС†С‹ С‚РµРј Рё СЂР°Р·РґРµР»РѕРІ';
+$txt['optimus_board_extend_title']     = 'Р”РѕР±Р°РІР»СЏС‚СЊ РЅР°Р·РІР°РЅРёРµ С„РѕСЂСѓРјР° Рє Р·Р°РіРѕР»РѕРІРєР°Рј СЂР°Р·РґРµР»РѕРІ';
+$txt['optimus_board_extend_title_set'] = array('РќРµС‚', 'РџРµСЂРµРґ РЅР°Р·РІР°РЅРёРµРј СЂР°Р·РґРµР»Р°', 'РџРѕСЃР»Рµ РЅР°Р·РІР°РЅРёСЏ СЂР°Р·РґРµР»Р°');
+$txt['optimus_topic_extend_title']     = 'Р”РѕР±Р°РІР»СЏС‚СЊ РЅР°Р·РІР°РЅРёРµ СЂР°Р·РґРµР»Р° Рё С„РѕСЂСѓРјР° Рє Р·Р°РіРѕР»РѕРІРєР°Рј С‚РµРј';
+$txt['optimus_topic_extend_title_set'] = array('РќРµС‚', 'РџРµСЂРµРґ РЅР°Р·РІР°РЅРёРµРј С‚РµРјС‹', 'РџРѕСЃР»Рµ РЅР°Р·РІР°РЅРёСЏ С‚РµРјС‹');
+$txt['optimus_topic_description']      = 'РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РѕС‚СЂС‹РІРѕРє РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ С‚РµРјС‹ РІ РєР°С‡РµСЃС‚РІРµ РјРµС‚Р°-С‚РµРіР° <strong>description</strong>';
+$txt['optimus_allow_change_desc']      = 'Р Р°Р·СЂРµС€РёС‚СЊ РѕС‚РґРµР»СЊРЅРѕРµ РїРѕР»Рµ РґР»СЏ РѕРїРёСЃР°РЅРёСЏ С‚РµРјС‹ (РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РїСЂРё СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРё С‚РµРјС‹)';
+$txt['optimus_allow_change_keywords']  = 'Р Р°Р·СЂРµС€РёС‚СЊ РѕС‚РґРµР»СЊРЅРѕРµ РїРѕР»Рµ РґР»СЏ РєР»СЋС‡РµРІС‹С… СЃР»РѕРІ С‚РµРјС‹ (РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ РїСЂРё СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРё С‚РµРјС‹)';
+$txt['optimus_show_keywords_block']    = 'РћС‚РѕР±СЂР°Р¶Р°С‚СЊ Р±Р»РѕРє СЃ РєР»СЋС‡РµРІС‹РјРё СЃР»РѕРІР°РјРё РЅР°Рґ РїРµСЂРІС‹Рј СЃРѕРѕР±С‰РµРЅРёРµРј С‚РµРјС‹';
+$txt['optimus_404_status']             = 'Р’РѕР·РІСЂР°С‰Р°С‚СЊ <a href="https://goo.gl/1UHxeB" target="_blank" rel="noopener" class="bbc_link">РєРѕРґ 403/404</a>, РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЃС‚Р°С‚СѓСЃР° Р·Р°РїСЂР°С€РёРІР°РµРјРѕР№ СЃС‚СЂР°РЅРёС†С‹';
 
-$txt['optimus_extra_title'] = 'Микроразметка';
-$txt['optimus_extra_desc']  = 'Некоторые экспериментальные фиксы, а также активация поддержки Open Graph. Наслаждайтесь!';
+$txt['optimus_extra_settings']        = 'Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ';
+$txt['optimus_use_only_cookies']      = 'РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РєСѓРєРё РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° СЃРµСЃСЃРёРё РЅР° СЃС‚РѕСЂРѕРЅРµ РєР»РёРµРЅС‚Р°';
+$txt['optimus_use_only_cookies_help'] = 'Р’РєР»СЋС‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° <a href="https://www.php.net/manual/ru/session.configuration.php#ini.session.use-only-cookies" target="_blank" rel="noopener" class="bbc_link">session.use_only_cookies</a> РїСЂРµРґРѕС‚РІСЂР°С‰Р°РµС‚ Р°С‚Р°РєРё СЃ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµРј РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° СЃРµСЃСЃРёРё, СЂР°Р·РјРµС‰РµРЅРЅРѕРіРѕ РІ URL.<br>РљСЂРѕРјРµ С‚РѕРіРѕ, РІС‹ СЃРјРѕР¶РµС‚Рµ РёР·Р±Р°РІРёС‚СЊСЃСЏ РѕС‚ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° СЃРµСЃСЃРёРё РІ РєР°РЅРѕРЅРёС‡РµСЃРєРёС… Р°РґСЂРµСЃР°С… СЃС‚СЂР°РЅРёС† С„РѕСЂСѓРјР°.';
 
-$txt['optimus_open_graph'] = 'Мета-теги <a href="http://ruogp.me/" target="_blank">Open Graph</a> для страниц форума';
-$txt['optimus_og_image']   = 'Ссылка на изображение по умолчанию для Open Graph<br /><span class="smalltext">В темах будет использоваться вложение из первого сообщения (если есть).</span>';
-$txt['optimus_fb_appid']   = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID приложения) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
-$txt['optimus_tw_cards']   = 'Имя аккаунта в <a href="https://twitter.com/" target="_blank">Twitter</a> (укажите, чтобы включить поддержку <a href="https://dev.twitter.com/cards/overview" target="_blank">карточек</a>)';
-$txt['optimus_json_ld']    = 'Разметка <a href="https://json-ld.org/" target="_blank">JSON-LD</a> для «<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">хлебных крошек</a>»';
+$txt['optimus_extra_title'] = 'РњРёРєСЂРѕСЂР°Р·РјРµС‚РєР°';
+$txt['optimus_extra_desc']  = 'Р”РѕР±Р°РІР»РµРЅРёРµ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕР№ <a href="https://ruogp.me/" target="_blank" rel="noopener">СЂР°Р·РјРµС‚РєРё</a> РґР»СЏ СЃС‚СЂР°РЅРёС† С„РѕСЂСѓРјР°.';
 
-$txt['optimus_favicon_title'] = 'Иконка сайта';
-$txt['optimus_favicon_desc']  = 'Создайте свой значок для форума. Он будет отображаться браузером во вкладке перед названием страниц, а также в качестве картинки рядом с закладкой, во вкладках и в других элементах интерфейса.';
+$txt['optimus_og_image']         = 'РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РёР·РѕР±СЂР°Р¶РµРЅРёРµ РёР· РїРµСЂРІРѕРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ С‚РµРјС‹ РІ РјРµС‚Р°-С‚РµРіРµ <strong>og:image</strong>';
+$txt['optimus_og_image_subtext'] = 'РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РёР·РѕР±СЂР°Р¶РµРЅРёРµ, Р·Р°РґР°РЅРЅРѕРµ РІ <a href="%s" class="bbc_link">РЅР°СЃС‚СЂРѕР№РєР°С… С‚РµРєСѓС‰РµР№ С‚РµРјС‹ РѕС„РѕСЂРјР»РµРЅРёСЏ</a>.';
+$txt['optimus_og_image_help']    = 'Р•СЃР»Рё РІРєР»СЋС‡РµРЅРѕ, РІ РјРµС‚Р°-С‚РµРі <strong>og:image</strong> РїРѕРґСЃС‚Р°РІР»СЏРµС‚СЃСЏ СЃСЃС‹Р»РєР° РЅР° РїРµСЂРІРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ, РїСЂРёР»РѕР¶РµРЅРЅРѕРµ Рє РїРµСЂРІРѕРјСѓ СЃРѕРѕР±С‰РµРЅРёСЋ С‚РµРјС‹. Р•СЃР»Рё РІР»РѕР¶РµРЅРёСЏ РЅРµС‚, Р° РІ С‚РµРєСЃС‚Рµ СЃРѕРѕР±С‰РµРЅРёСЏ Р±СѓРґРµС‚ РЅР°Р№РґРµРЅРѕ РёР·РѕР±СЂР°Р¶РµРЅРёРµ РІРЅСѓС‚СЂРё С‚РµРіР° <strong>img</strong>, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РѕРЅРѕ.';
+$txt['optimus_fb_appid']         = 'ID РїСЂРёР»РѕР¶РµРЅРёСЏ Facebook (РµСЃР»Рё РµСЃС‚СЊ)';
+$txt['optimus_fb_appid_help']    = 'РЎРѕР·РґР°Р№С‚Рµ РїСЂРёР»РѕР¶РµРЅРёРµ <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener" class="bbc_link"><strong>Р·РґРµСЃСЊ</strong></a>, СЃРєРѕРїРёСЂСѓР№С‚Рµ РµРіРѕ ID Рё СѓРєР°Р¶РёС‚Рµ РІ СЌС‚РѕРј РїРѕР»Рµ.';
+$txt['optimus_tw_cards']         = 'РРјСЏ Р°РєРєР°СѓРЅС‚Р° РІ Twitter (РµСЃР»Рё РµСЃС‚СЊ)';
+$txt['optimus_tw_cards_help']    = 'РџРѕРґСЂРѕР±РЅРµРµ Рѕ РєР°СЂС‚РѕС‡РєР°С… Twitter РјРѕР¶РЅРѕ РїРѕС‡РёС‚Р°С‚СЊ <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener" class="bbc_link"><strong>Р·РґРµСЃСЊ</strong></a>.';
+$txt['optimus_json_ld']          = 'Р Р°Р·РјРµС‚РєР° JSON-LD РґР»СЏ В«С…Р»РµР±РЅС‹С… РєСЂРѕС€РµРєВ»';
+$txt['optimus_json_ld_help']     = 'JSON-LD вЂ” СЌС‚Рѕ СЃРїРѕСЃРѕР± РїРµСЂРµРґР°С‡Рё СЃРІСЏР·Р°РЅРЅС‹С… РґР°РЅРЅС‹С… (Linked Data, LD) СЃ РїРѕРјРѕС‰СЊСЋ С‚РµРєСЃС‚РѕРІРѕРіРѕ С„РѕСЂРјР°С‚Р° JSON (JavaScript Object Notation). Р¤РѕСЂРјР°С‚ JSON-LD СЂР°Р·СЂР°Р±РѕС‚Р°Р» РљРѕРЅСЃРѕСЂС†РёСѓРј Р’СЃРµРјРёСЂРЅРѕР№ РїР°СѓС‚РёРЅС‹ (W3C). РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ С‚РµРєСЃС‚РѕРІРѕРіРѕ С„РѕСЂРјР°С‚Р° JSON РїРѕР·РІРѕР»СЏРµС‚ Р»СЋРґСЏРј Р»РµРіРєРѕ С‡РёС‚Р°С‚СЊ Рё РїРёСЃР°С‚СЊ РґРѕРєСѓРјРµРЅС‚С‹, СЂР°Р·РјРµС‡РµРЅРЅС‹Рµ СЃ РїРѕРјРѕС‰СЊСЋ JSON-LD. РЎС‚СЂР°РЅРёС†С‹ СЃ СЂР°Р·РјРµС‚РєРѕР№ JSON-LD РѕР±Р»РµРіС‡Р°СЋС‚ СЃС‚СЂСѓРєС‚СѓСЂРёСЂРѕРІР°РЅРёРµ РґР°РЅРЅС‹С… РјР°С€РёРЅР°РјРё Рё СЂР°СЃРїРѕР·РЅР°РІР°РЅРёРµ РїРѕРЅСЏС‚РёР№, С‡С‚Рѕ РґР»СЏ РІР»Р°РґРµР»СЊС†РµРІ СЃР°Р№С‚РѕРІ РІР°Р¶РЅРѕ РІ РєРѕРЅС‚РµРєСЃС‚Рµ РїРѕРёСЃРєРѕРІРѕРіРѕ РїСЂРѕРґРІРёР¶РµРЅРёСЏ.<br><br>РќР° РїСЂР°РєС‚РёРєРµ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ С„РѕСЂРјР°С‚Р° JSON-LD СѓР»СѓС‡С€Р°РµС‚ РїСЂРµРґСЃС‚Р°РІР»РµРЅРЅРѕСЃС‚СЊ СЃР°Р№С‚Р° РІ РїРѕРёСЃРєРѕРІРѕР№ РІС‹РґР°С‡Рµ. Р’С‹ РїРѕР»СѓС‡Р°РµС‚Рµ СЂР°СЃС€РёСЂРµРЅРЅС‹Рµ СЃРЅРёРїРїРµС‚С‹, РєРѕС‚РѕСЂС‹Рµ РїСЂРёРІР»РµРєР°СЋС‚ РІРЅРёРјР°РЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Рё РїРѕРІС‹С€Р°СЋС‚ РєР»РёРєР°Р±РµР»СЊРЅРѕСЃС‚СЊ СЃСЃС‹Р»РѕРє. Р’ С‡Р°СЃС‚РЅРѕСЃС‚Рё, СЃ РїРѕРјРѕС‰СЊСЋ JSON-LD РјРѕР¶РЅРѕ СЂР°Р·РјРµС‡Р°С‚СЊ РґР°РЅРЅС‹Рµ РґР»СЏ РіСЂР°С„Р° Р·РЅР°РЅРёР№, РѕС‚РѕР±СЂР°Р¶Р°С‚СЊ РІ SERP РїРѕРёСЃРє РїРѕ СЃР°Р№С‚Сѓ Рё РґРµР»Р°С‚СЊ СЂР°Р·РјРµС‚РєСѓ СЃРѕР±С‹С‚РёР№.<br><br>Р’РєР»СЋС‡РёС‚Рµ СЌС‚Сѓ РѕРїС†РёСЋ, С‡С‚РѕР±С‹ РіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ СЂР°Р·РјРµС‚РєСѓ <a href="https://json-ld.org/" target="_blank" rel="noopener" class="bbc_link"><strong>JSON-LD</strong></a> РґР»СЏ В«<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=ru" target="_blank" rel="noopener" class="bbc_link"><strong>С…Р»РµР±РЅС‹С… РєСЂРѕС€РµРє</strong></a>.';
 
-$txt['optimus_favicon_create']  = 'Создать иконку для сайта';
-$txt['optimus_favicon_api_key'] = 'Ключ API для работы с генератором иконки (<a href="https://realfavicongenerator.net/api/#register_key" target="_blank">Получить</a>)';
-$txt['optimus_favicon_text']    = 'Код для вставки favicon';
-$txt['optimus_favicon_help']    = 'Сгенерируйте свою уникальную иконку, например, <a href="http://www.favicomatic.com/" target="_blank">здесь</a>, или воспользуйтесь генератором, указав ключ API в поле выше.<br />Затем загрузите файлы иконки в корень форума, а предложенный на сайте код сохраните в поле справа.<br />Этот код будет загружаться в верхней части страниц, между тегами &lt;<strong>head</strong>&gt;&lt;/<strong>head</strong>&gt;.';
+$txt['optimus_favicon_title'] = 'РРєРѕРЅРєР° СЃР°Р№С‚Р°';
+$txt['optimus_favicon_desc']  = 'РЎРѕР·РґР°Р№С‚Рµ СЃРІРѕР№ Р·РЅР°С‡РѕРє РґР»СЏ С„РѕСЂСѓРјР°. РћРЅ Р±СѓРґРµС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊСЃСЏ Р±СЂР°СѓР·РµСЂРѕРј РІРѕ РІРєР»Р°РґРєРµ РїРµСЂРµРґ РЅР°Р·РІР°РЅРёРµРј СЃС‚СЂР°РЅРёС†, Р° С‚Р°РєР¶Рµ РІ РєР°С‡РµСЃС‚РІРµ РєР°СЂС‚РёРЅРєРё СЂСЏРґРѕРј СЃ Р·Р°РєР»Р°РґРєРѕР№, РІРѕ РІРєР»Р°РґРєР°С… Рё РІ РґСЂСѓРіРёС… СЌР»РµРјРµРЅС‚Р°С… РёРЅС‚РµСЂС„РµР№СЃР°.';
 
-$txt['optimus_meta_title'] = 'Мета-теги';
-$txt['optimus_meta_desc']  = 'Добавление в код страниц форума дополнительных мета-тегов, например, для подтверждения права собственности на сайт.';
+$txt['optimus_favicon_create']  = 'РЎРѕР·РґР°С‚СЊ РёРєРѕРЅРєСѓ РґР»СЏ СЃР°Р№С‚Р°';
+$txt['optimus_favicon_api_key'] = 'РљР»СЋС‡ API РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РіРµРЅРµСЂР°С‚РѕСЂРѕРј РёРєРѕРЅРєРё (<a href="https://realfavicongenerator.net/api/#register_key" target="_blank" rel="noopener" class="bbc_link">РџРѕР»СѓС‡РёС‚СЊ</a>)';
+$txt['optimus_favicon_text']    = 'РљРѕРґ РґР»СЏ РІСЃС‚Р°РІРєРё favicon';
+$txt['optimus_favicon_help']    = 'РЎРіРµРЅРµСЂРёСЂСѓР№С‚Рµ СЃРІРѕСЋ СѓРЅРёРєР°Р»СЊРЅСѓСЋ РёРєРѕРЅРєСѓ, РЅР°РїСЂРёРјРµСЂ, <a href="https://www.favicomatic.com/" target="_blank" rel="noopener" class="bbc_link">Р·РґРµСЃСЊ</a>, РёР»Рё <a href="https://digitalagencyrankings.com/iconogen/" target="_blank" rel="noopener" class="bbc_link">Р·РґРµСЃСЊ</a>, РёР»Рё РІРѕСЃРїРѕР»СЊР·СѓР№С‚РµСЃСЊ РіРµРЅРµСЂР°С‚РѕСЂРѕРј, СѓРєР°Р·Р°РІ РєР»СЋС‡ API РІ РїРѕР»Рµ РІС‹С€Рµ. Р—Р°С‚РµРј Р·Р°РіСЂСѓР·РёС‚Рµ С„Р°Р№Р»С‹ РёРєРѕРЅРєРё РІ РєРѕСЂРµРЅСЊ С„РѕСЂСѓРјР°, Р° РїСЂРµРґР»РѕР¶РµРЅРЅС‹Р№ РЅР° СЃР°Р№С‚Рµ РєРѕРґ СЃРѕС…СЂР°РЅРёС‚Рµ РІ РїРѕР»Рµ СЃРїСЂР°РІР°. Р­С‚РѕС‚ РєРѕРґ Р±СѓРґРµС‚ Р·Р°РіСЂСѓР¶Р°С‚СЊСЃСЏ РІ РІРµСЂС…РЅРµР№ С‡Р°СЃС‚Рё СЃС‚СЂР°РЅРёС†, РјРµР¶РґСѓ С‚РµРіР°РјРё &lt;<strong>head</strong>&gt;&lt;/<strong>head</strong>&gt;.';
 
-$txt['optimus_meta_addtag']    = 'Нажмите сюда для добавления нового тега';
-$txt['optimus_meta_customtag'] = 'Пользовательский мета-тег';
-$txt['optimus_meta_tools']     = 'Поисковик (Сервис)';
-$txt['optimus_meta_name']      = 'Имя тега';
-$txt['optimus_meta_content']   = 'Значение';
-$txt['optimus_meta_info']      = 'Пожалуйста, указывайте только значения, содержащиеся в добавляемых мета-тегах (а не теги целиком).<br />Например: <span class="smalltext">&lt;meta name="<strong>ИМЯ ТЕГА</strong>" content="<strong>ЗНАЧЕНИЕ</strong>" /&gt;</span>';
+$txt['optimus_meta_title'] = 'РњРµС‚Р°-С‚РµРіРё';
+$txt['optimus_meta_desc']  = 'Р”РѕР±Р°РІР»РµРЅРёРµ РІ РєРѕРґ СЃС‚СЂР°РЅРёС† С„РѕСЂСѓРјР° РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РјРµС‚Р°-С‚РµРіРѕРІ, РЅР°РїСЂРёРјРµСЂ, РґР»СЏ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ РїСЂР°РІР° СЃРѕР±СЃС‚РІРµРЅРЅРѕСЃС‚Рё РЅР° СЃР°Р№С‚.';
+
+$txt['optimus_meta_addtag']    = 'Р”РѕР±Р°РІРёС‚СЊ С‚РµРі';
+$txt['optimus_meta_customtag'] = 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ РјРµС‚Р°-С‚РµРі';
+$txt['optimus_meta_tools']     = 'РџРѕРёСЃРєРѕРІРёРє (РЎРµСЂРІРёСЃ)';
+$txt['optimus_meta_name']      = 'РРјСЏ С‚РµРіР°';
+$txt['optimus_meta_content']   = 'Р—РЅР°С‡РµРЅРёРµ';
+$txt['optimus_meta_info']      = 'РџРѕР¶Р°Р»СѓР№СЃС‚Р°, СѓРєР°Р·С‹РІР°Р№С‚Рµ С‚РѕР»СЊРєРѕ Р·РЅР°С‡РµРЅРёСЏ, СЃРѕРґРµСЂР¶Р°С‰РёРµСЃСЏ РІ РґРѕР±Р°РІР»СЏРµРјС‹С… РјРµС‚Р°-С‚РµРіР°С… (Р° РЅРµ С‚РµРіРё С†РµР»РёРєРѕРј).<br>РќР°РїСЂРёРјРµСЂ: <span class="smalltext">&lt;meta name="<strong>РРњРЇ РўР•Р“Рђ</strong>" content="<strong>Р—РќРђР§Р•РќРР•</strong>"&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>'),
-	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.ru/" target="_blank">Яндекс.Вебмастер</a>'),
-	'Mail'   => array('wmail-verification', '<a href="https://webmaster.mail.ru" target="_blank">Поиск Mail.Ru - Кабинет вебмастера</a>'),
-	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing - Средства веб-мастера</a>')
+	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank" rel="noopener">Google Search Console</a>'),
+	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.ru/" target="_blank" rel="noopener">РЇРЅРґРµРєСЃ.Р’РµР±РјР°СЃС‚РµСЂ</a>'),
+	'Mail'   => array('wmail-verification', '<a href="https://webmaster.mail.ru" target="_blank" rel="noopener">РџРѕРёСЃРє Mail.Ru - РљР°Р±РёРЅРµС‚ РІРµР±РјР°СЃС‚РµСЂР°</a>'),
+	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank" rel="noopener">Bing - РЎСЂРµРґСЃС‚РІР° РІРµР±-РјР°СЃС‚РµСЂР°</a>')
 );
 
-$txt['optimus_counters']      = 'Счётчики';
-$txt['optimus_counters_desc'] = 'Добавляйте и изменяйте всевозможные счетчики для подсчета посещений форума.';
+$txt['optimus_counters']      = 'РЎС‡С‘С‚С‡РёРєРё';
+$txt['optimus_counters_desc'] = 'Р”РѕР±Р°РІР»СЏР№С‚Рµ Рё РёР·РјРµРЅСЏР№С‚Рµ РІСЃРµРІРѕР·РјРѕР¶РЅС‹Рµ СЃС‡РµС‚С‡РёРєРё РґР»СЏ РїРѕРґСЃС‡РµС‚Р° РїРѕСЃРµС‰РµРЅРёР№ С„РѕСЂСѓРјР°.';
 
-$txt['optimus_head_code']       = 'Невидимые счётчики с загрузкой в секции <strong>head</strong> (<a href="https://www.google.ru/analytics/" target="_blank">Google Analytics</a>)';
-$txt['optimus_stat_code']       = 'Другие невидимые счётчики (например, <a href="https://metrika.yandex.ru/" target="_blank">Яндекс.Метрика</a> без информера)';
-$txt['optimus_count_code']      = 'Обычные счётчики (<a href="https://www.liveinternet.ru/add" target="_blank">LiveInternet</a>, <a href="https://top100.rambler.ru/" target="_blank">Rambler\'s Top100</a> и т. п.)';
-$txt['optimus_counters_css']    = 'Оформление блока со счётчиками (CSS)';
-$txt['optimus_ignored_actions'] = 'Игнорируемые области (actions) &mdash; на этих страницах счетчики подгружаться не будут!';
+$txt['optimus_head_code']       = 'РќРµРІРёРґРёРјС‹Рµ СЃС‡С‘С‚С‡РёРєРё СЃ Р·Р°РіСЂСѓР·РєРѕР№ РІ СЃРµРєС†РёРё <strong>head</strong> (<a href="https://www.google.ru/analytics/" target="_blank" rel="noopener" class="bbc_link">Google Analytics</a>)';
+$txt['optimus_stat_code']       = 'Р”СЂСѓРіРёРµ РЅРµРІРёРґРёРјС‹Рµ СЃС‡С‘С‚С‡РёРєРё (РЅР°РїСЂРёРјРµСЂ, <a href="https://metrika.yandex.ru/" target="_blank" rel="noopener" class="bbc_link">РЇРЅРґРµРєСЃ.РњРµС‚СЂРёРєР°</a> Р±РµР· РёРЅС„РѕСЂРјРµСЂР°)';
+$txt['optimus_count_code']      = 'РћР±С‹С‡РЅС‹Рµ СЃС‡С‘С‚С‡РёРєРё (<a href="https://www.liveinternet.ru/add" target="_blank" rel="noopener" class="bbc_link">LiveInternet</a>, <a href="https://top100.rambler.ru/" target="_blank" rel="noopener" class="bbc_link">Rambler\'s Top100</a> Рё С‚. Рї.)';
+$txt['optimus_counters_css']    = 'РћС„РѕСЂРјР»РµРЅРёРµ Р±Р»РѕРєР° СЃРѕ СЃС‡С‘С‚С‡РёРєР°РјРё (CSS)';
+$txt['optimus_ignored_actions'] = 'РРіРЅРѕСЂРёСЂСѓРµРјС‹Рµ РѕР±Р»Р°СЃС‚Рё (actions) &mdash; РЅР° СЌС‚РёС… СЃС‚СЂР°РЅРёС†Р°С… СЃС‡РµС‚С‡РёРєРё РїРѕРґРіСЂСѓР¶Р°С‚СЊСЃСЏ РЅРµ Р±СѓРґСѓС‚!';
 
-$txt['optimus_robots_title'] = 'Редактор robots.txt';
-$txt['optimus_robots_desc']  = 'К вашим услугам генератор правил для создания robots.txt.';
+$txt['optimus_robots_title'] = 'Р РµРґР°РєС‚РѕСЂ robots.txt';
+$txt['optimus_robots_desc']  = 'Рљ РІР°С€РёРј СѓСЃР»СѓРіР°Рј РіРµРЅРµСЂР°С‚РѕСЂ РїСЂР°РІРёР» РґР»СЏ СЃРѕР·РґР°РЅРёСЏ robots.txt.';
 
-$txt['optimus_manage']      = 'Настройка robots.txt';
-$txt['optimus_rules']       = 'Генератор правил';
-$txt['optimus_rules_hint']  = 'Можете воспользоваться этими заготовками для создания своих правил в области справа:';
-$txt['optimus_robots_hint'] = 'Сюда можно вставить собственные правила или изменить существующие:';
-$txt['optimus_useful']      = '<a href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank">Правильный robots.txt для SMF</a>';
-$txt['optimus_links_title'] = 'Полезные ссылки';
+$txt['optimus_manage']      = 'РќР°СЃС‚СЂРѕР№РєР° robots.txt';
+$txt['optimus_rules']       = 'Р“РµРЅРµСЂР°С‚РѕСЂ РїСЂР°РІРёР»';
+$txt['optimus_rules_hint']  = 'РњРѕР¶РµС‚Рµ РІРѕСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ СЌС‚РёРјРё Р·Р°РіРѕС‚РѕРІРєР°РјРё РґР»СЏ СЃРѕР·РґР°РЅРёСЏ СЃРІРѕРёС… РїСЂР°РІРёР» РІ РѕР±Р»Р°СЃС‚Рё СЃРїСЂР°РІР°:';
+$txt['optimus_robots_hint'] = 'РЎСЋРґР° РјРѕР¶РЅРѕ РІСЃС‚Р°РІРёС‚СЊ СЃРѕР±СЃС‚РІРµРЅРЅС‹Рµ РїСЂР°РІРёР»Р° РёР»Рё РёР·РјРµРЅРёС‚СЊ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ:';
+$txt['optimus_useful']      = '<a href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank" rel="noopener" class="bbc_link">РџСЂР°РІРёР»СЊРЅС‹Р№ robots.txt РґР»СЏ SMF</a>';
+$txt['optimus_links_title'] = 'РџРѕР»РµР·РЅС‹Рµ СЃСЃС‹Р»РєРё';
 $txt['optimus_links']       = array(
-	'Проверка robots.txt'                       => 'https://webmaster.yandex.ru/robots.xml',
-	'Как настроить редирект'                    => 'https://beget.com/p1361/ru/articles/htaccess',
-	'Комплексный SEO-аудит всего сайта'         => 'https://netpeaksoftware.com/ru/ucp?invite=94cdaf6a',
-	'Авторегистрация форума в каталогах Рунета' => 'https://1ps.ru/info/?p=383933',
-	'Автоматическое продвижение вашего сайта'   => 'https://www.webeffector.ru/?invitation=f1d58982cd75dbe8e19be3d54a6b25fe'
+	'РџСЂРѕРІРµСЂРєР° robots.txt'                       => 'https://webmaster.yandex.ru/robots.xml',
+	'РљР°Рє РЅР°СЃС‚СЂРѕРёС‚СЊ СЂРµРґРёСЂРµРєС‚'                    => 'https://goo.gl/LVPRpr',
+	'РљРѕРјРїР»РµРєСЃРЅС‹Р№ SEO-Р°СѓРґРёС‚ РІСЃРµРіРѕ СЃР°Р№С‚Р°'         => 'https://goo.gl/TBw79p',
+	'РђРІС‚РѕСЂРµРіРёСЃС‚СЂР°С†РёСЏ С„РѕСЂСѓРјР° РІ РєР°С‚Р°Р»РѕРіР°С… Р СѓРЅРµС‚Р°' => 'https://goo.gl/uAR3CZ',
+	'РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РїСЂРѕРґРІРёР¶РµРЅРёРµ РІР°С€РµРіРѕ СЃР°Р№С‚Р°'   => 'https://goo.gl/RMSDnx'
 );
 
-$txt['optimus_sitemap_title'] = 'Карта форума';
-$txt['optimus_sitemap_desc']  = 'Optimus предоставляет возможность создать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a>.';
+$txt['optimus_sitemap_title'] = 'РљР°СЂС‚Р° С„РѕСЂСѓРјР°';
+$txt['optimus_sitemap_desc']  = 'Optimus РїРѕРјРѕР¶РµС‚ СЃРѕР·РґР°С‚СЊ РїСЂРѕСЃС‚СѓСЋ xml-РєР°СЂС‚Сѓ, РґР»СЏ РЅРµР±РѕР»СЊС€РёС… С„РѕСЂСѓРјРѕРІ (СЃ Р±РѕР»СЊС€РёРјРё РЅРµ С‚РµСЃС‚РёСЂРѕРІР°Р»СЃСЏ).';
 
-$txt['optimus_sitemap_enable']      = 'Создать и периодически обновлять xml-карту форума';
-$txt['optimus_sitemap_link']        = 'Показывать ссылку на xml-карту в подвале форума';
-$txt['optimus_sitemap_boards']      = 'Добавлять в карту ссылки на разделы форума<br /><span class="smalltext error">Разделы, закрытые для гостей, добавлены НЕ будут.</span>';
-$txt['optimus_sitemap_topics']      = 'Добавлять в карту темы с количеством сообщений больше';
+$txt['optimus_sitemap_enable']          = 'РЎРѕР·РґР°С‚СЊ Рё РїРµСЂРёРѕРґРёС‡РµСЃРєРё РѕР±РЅРѕРІР»СЏС‚СЊ xml-РєР°СЂС‚Сѓ С„РѕСЂСѓРјР°';
+$txt['optimus_sitemap_enable_subtext']  = 'РћР±РЅРѕРІР»СЏС‚СЊСЃСЏ С‚Р°РєР°СЏ РєР°СЂС‚Р° Р±СѓРґРµС‚ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РЅР°СЃС‚СЂРѕРµРє РІ <a href="%1$s" class="bbc_link">Р”РёСЃРїРµС‚С‡РµСЂРµ Р·Р°РґР°С‡</a>.';
+$txt['optimus_sitemap_link']            = 'РџРѕРєР°Р·С‹РІР°С‚СЊ СЃСЃС‹Р»РєСѓ РЅР° xml-РєР°СЂС‚Сѓ РІ РїРѕРґРІР°Р»Рµ С„РѕСЂСѓРјР°';
+$txt['optimus_sitemap_name']            = 'РРјСЏ С„Р°Р№Р»Р° xml-РєР°СЂС‚С‹ (Р±РµР· СЂР°СЃС€РёСЂРµРЅРёСЏ!)';
+$txt['optimus_main_page_frequency']     = 'Р§Р°СЃС‚РѕС‚Р° РёР·РјРµРЅРµРЅРёСЏ РіР»Р°РІРЅРѕР№ СЃС‚СЂР°РЅРёС†С‹';
+$txt['optimus_main_page_frequency_set'] = array('РџРѕСЃС‚РѕСЏРЅРЅР°СЏ (always)', 'Р’ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РґР°С‚С‹ РїРѕСЃР»РµРґРЅРµРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ');
+$txt['optimus_sitemap_boards']          = 'Р”РѕР±Р°РІР»СЏС‚СЊ РІ РєР°СЂС‚Сѓ СЃСЃС‹Р»РєРё РЅР° СЂР°Р·РґРµР»С‹ С„РѕСЂСѓРјР°<br><span class="smalltext error">Р Р°Р·РґРµР»С‹, Р·Р°РєСЂС‹С‚С‹Рµ РґР»СЏ РіРѕСЃС‚РµР№, РґРѕР±Р°РІР»РµРЅС‹ РќР• Р±СѓРґСѓС‚.</span>';
+$txt['optimus_sitemap_topics']          = 'Р”РѕР±Р°РІР»СЏС‚СЊ РІ РєР°СЂС‚Сѓ С‚РѕР»СЊРєРѕ С‚РµРјС‹ СЃ РєРѕР»РёС‡РµСЃС‚РІРѕРј РѕС‚РІРµС‚РѕРІ Р±РѕР»РµРµ';
 
-$txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
+$txt['optimus_sitemap_rec']       = ' Optimus РїРѕРєР° РЅРµ СѓРјРµРµС‚ СЂР°Р·Р±РёРІР°С‚СЊ С„Р°Р№Р»С‹ РЅР° РЅРµСЃРєРѕР»СЊРєРѕ С‡Р°СЃС‚РµР№.';
+$txt['optimus_sitemap_url_limit'] = 'Р’ С„Р°Р№Р»Рµ sitemap РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ Р±РѕР»РµРµ 50 С‚С‹СЃСЏС‡ СЃСЃС‹Р»РѕРє!';
+$txt['optimus_sitemap_xml_link']  = 'Sitemap XML';
 
-$txt['optimus_donate_title'] = 'Пожертвования';
-$txt['optimus_donate_desc']  = 'На этой странице расположена форма для отправки пожертвований автору мода.';
+$txt['optimus_404_page_title']       = '404 - РЎС‚СЂР°РЅРёС†Р° РЅРµ РЅР°Р№РґРµРЅР°';
+$txt['optimus_404_h2']               = 'РћС€РёР±РєР° 404';
+$txt['optimus_404_h3']               = 'РР·РІРёРЅРёС‚Рµ, РЅРѕ С‚Р°РєРѕР№ СЃС‚СЂР°РЅРёС†С‹ Р·РґРµСЃСЊ РЅРµС‚.';
+$txt['optimus_403_page_title']       = '403 - Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰С‘РЅ';
+$txt['optimus_403_h2']               = 'РћС€РёР±РєР° 403';
+$txt['optimus_403_h3']               = 'РР·РІРёРЅРёС‚Рµ, РЅРѕ Сѓ РІР°СЃ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє СЌС‚РѕР№ СЃС‚СЂР°РЅРёС†Рµ.';
+$txt['optimus_seo_description']      = 'РћРїРёСЃР°РЅРёРµ С‚РµРјС‹ [SEO]';
+$txt['optimus_seo_keywords']         = 'РљР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° [SEO]';
+$txt['optimus_enter_keywords']       = 'Р’РІРµРґРёС‚Рµ РѕРґРЅРѕ РёР»Рё РЅРµСЃРєРѕР»СЊРєРѕ РєР»СЋС‡РµРІС‹С… СЃР»РѕРІ';
+$txt['optimus_topics_with_keyword']  = 'РўРµРјС‹ С„РѕСЂСѓРјР° СЃ РєР»СЋС‡РµРІС‹Рј СЃР»РѕРІРѕРј В«%sВ»';
+$txt['optimus_keyword_id_not_found'] = 'РЈРєР°Р·Р°РЅРЅС‹Р№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РЅРµ РЅР°Р№РґРµРЅ.';
+$txt['optimus_no_keywords']          = 'РРЅС„РѕСЂРјР°С†РёСЏ РїРѕ РґР°РЅРЅРѕРјСѓ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ РєР»СЋС‡РµРІРѕРіРѕ СЃР»РѕРІР° РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚.';
+$txt['optimus_all_keywords']         = 'Р’СЃРµ РєР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР° РІ С‚РµРјР°С… С„РѕСЂСѓРјР°';
+$txt['optimus_keyword_column']       = 'РљР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ';
+$txt['optimus_frequency_column']     = 'Р§Р°СЃС‚РѕС‚РЅРѕСЃС‚СЊ';
 
-// Диспетчер задач
-$txt['scheduled_task_optimus_sitemap']      = 'Генерация XML-карты форума';
-$txt['scheduled_task_desc_optimus_sitemap'] = 'Настройте периодичность создания карты, если хотите.';
+// Р”РёСЃРїРµС‚С‡РµСЂ Р·Р°РґР°С‡
+$txt['scheduled_task_optimus_sitemap']      = 'Р“РµРЅРµСЂР°С†РёСЏ XML-РєР°СЂС‚С‹ С„РѕСЂСѓРјР°';
+$txt['scheduled_task_desc_optimus_sitemap'] = 'РќР°СЃС‚СЂРѕР№С‚Рµ РїРµСЂРёРѕРґРёС‡РЅРѕСЃС‚СЊ СЃРѕР·РґР°РЅРёСЏ РєР°СЂС‚С‹, РµСЃР»Рё С…РѕС‚РёС‚Рµ.';

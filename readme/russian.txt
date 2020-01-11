@@ -1,4 +1,10 @@
 [center][color=red][size=16pt][b]Optimus[/b][/size][/color]
 [color=blue][b][size=10pt]By Bugo[/size][/b][/color]
 
-[color=green]Перед вами мод, который, возможно, поможет вам решить ряд проблем, связанных с индексацией форума в поисковиках.[/color][/center][hr]Мод распространяется по лицензии [url=https://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url]
+[color=green]РџРµСЂРµРґ РІР°РјРё РјРѕРґ, РєРѕС‚РѕСЂС‹Р№, РІРѕР·РјРѕР¶РЅРѕ, РїРѕРјРѕР¶РµС‚ РІР°Рј СЂРµС€РёС‚СЊ СЂСЏРґ РїСЂРѕР±Р»РµРј, СЃРІСЏР·Р°РЅРЅС‹С… СЃ РёРЅРґРµРєСЃР°С†РёРµР№ С„РѕСЂСѓРјР° РІ РїРѕРёСЃРєРѕРІРёРєР°С….[/color][/center][hr]РњРѕРґ СЂР°СЃРїСЂРѕСЃС‚СЂР°РЅСЏРµС‚СЃСЏ РїРѕ Р»РёС†РµРЅР·РёРё [url=https://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url]
+
+РЎС‚РѕСЂРѕРЅРЅРёРµ РёСЃРїРѕР»СЊР·СѓРµРјС‹Рµ СЃРєСЂРёРїС‚С‹:
+[list]
+[li][url=https://www.phpclasses.org/package/1509-PHP-Convert-from-and-to-IDNA-Punycode-domain-names.html#information]IDNA Convert[/url], РєР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ РєРёСЂРёР»Р»РёС‡РµСЃРєРёРјРё РґРѕРјРµРЅР°РјРё, Р»РёС†РµРЅР·РёСЏ [url=http://www.opensource.org/licenses/lgpl-license.html]LGPL[/url][/li]
+[li][url=https://github.com/select2/select2]Select2[/url], jQuery-РєРѕРјРїРѕРЅРµРЅС‚ РґР»СЏ РїРѕР»РµР№ СЃРїРёСЃРєРѕРІ, Р»РёС†РµРЅР·РёСЏ [url=https://github.com/select2/select2/blob/develop/LICENSE.md]MIT[/url][/li]
+[/list]
