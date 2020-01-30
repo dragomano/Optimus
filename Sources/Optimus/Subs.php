@@ -343,6 +343,7 @@ class Subs
 		$context['optimus_og_type']['article'] = array(
 			'published_time' => date('Y-m-d\TH:i:s', $context['topicinfo']['topic_started_time']),
 			'modified_time'  => !empty($context['topicinfo']['topic_modified_time']) ? date('Y-m-d\TH:i:s', $context['topicinfo']['topic_modified_time']) : null,
+			'author'         => !empty($context['topicinfo']['topic_started_name']) ? $context['topicinfo']['topic_started_name'] : null,
 			'section'        => $board_info['name']
 		);
 	}
@@ -675,10 +676,17 @@ class Subs
 
 			if (!empty($context['optimus']['keywords'])) {
 				foreach ($context['optimus']['keywords'] as $key) {
-					$context['posting_fields']['optimus_keywords']['input']['options'][$key] = array(
-						'value' => $key,
-						'selected' => true
-					);
+					if (!defined('JQUERY_VERSION')) {
+						$context['posting_fields']['optimus_keywords']['input']['options'][$key]['attributes'] = array(
+							'value' => $key,
+							'selected' => true
+						);
+					} else {
+						$context['posting_fields']['optimus_keywords']['input']['options'][$key] = array(
+							'value' => $key,
+							'selected' => true
+						);
+					}
 				}
 			}
 

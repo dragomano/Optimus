@@ -74,11 +74,11 @@ class Settings
 	 */
 	public static function adminSearch(&$language_files, &$include_files, &$settings_search)
 	{
-		$settings_search[] = array(__NAMESPACE__ . '\Settings::baseTabSettings', 'area=optimus;sa=base');
-		$settings_search[] = array(__NAMESPACE__ . '\Settings::extraTabSettings', 'area=optimus;sa=extra');
-		$settings_search[] = array(__NAMESPACE__ . '\Settings::faviconTabSettings', 'area=optimus;sa=favicon');
-		$settings_search[] = array(__NAMESPACE__ . '\Settings::countersTabSettings', 'area=optimus;sa=counters');
-		$settings_search[] = array(__NAMESPACE__ . '\Settings::sitemapTabSettings', 'area=optimus;sa=sitemap');
+		$settings_search[] = array(__CLASS__ . '::baseTabSettings', 'area=optimus;sa=base');
+		$settings_search[] = array(__CLASS__ . '::extraTabSettings', 'area=optimus;sa=extra');
+		$settings_search[] = array(__CLASS__ . '::faviconTabSettings', 'area=optimus;sa=favicon');
+		$settings_search[] = array(__CLASS__ . '::countersTabSettings', 'area=optimus;sa=counters');
+		$settings_search[] = array(__CLASS__ . '::sitemapTabSettings', 'area=optimus;sa=sitemap');
 	}
 
 	/**
@@ -134,7 +134,7 @@ class Settings
 			)
 		);
 
-		call_helper(__NAMESPACE__ . '\\Settings::' . $subActions[$_REQUEST['sa']]);
+		call_helper(__CLASS__ . '::' . $subActions[$_REQUEST['sa']]);
 	}
 
     /**
@@ -165,10 +165,13 @@ class Settings
 			array('check', 'optimus_allow_change_desc'),
 			array('check', 'optimus_allow_change_keywords'),
 			array('check', 'optimus_show_keywords_block'),
-			array('check', 'optimus_404_status'),
-			array('title', 'optimus_extra_settings'),
-			array('check', 'optimus_use_only_cookies', 'help' => 'optimus_use_only_cookies_help')
+			array('check', 'optimus_404_status')
 		);
+
+		if (defined('JQUERY_VERSION')) {
+			$config_vars[] = array('title', 'optimus_extra_settings');
+			$config_vars[] = array('check', 'optimus_use_only_cookies', 'help' => 'optimus_use_only_cookies_help');
+		}
 
 		if ($return_config)
 			return $config_vars;

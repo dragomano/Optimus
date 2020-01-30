@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.5.1
  */
 
 if (!defined('SMF'))
@@ -29,19 +29,20 @@ class Integration
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_autoload', __NAMESPACE__ . '\Integration::autoload', false, __FILE__);
-		add_integration_function('integrate_load_session', __NAMESPACE__ . '\Integration::loadSession', false, __FILE__);
-		add_integration_function('integrate_load_theme', __NAMESPACE__ . '\Integration::loadTheme', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', __NAMESPACE__ . '\Integration::menuButtons', false, __FILE__);
-		add_integration_function('integrate_actions', __NAMESPACE__ . '\Integration::actions', false, __FILE__);
-		add_integration_function('integrate_theme_context', __NAMESPACE__ . '\Integration::themeContext', false, __FILE__);
-		add_integration_function('integrate_display_topic', __NAMESPACE__ . '\Integration::displayTopic', false, __FILE__);
-		add_integration_function('integrate_prepare_display_context', __NAMESPACE__ . '\Integration::prepareDisplayContext', false, __FILE__);
-		add_integration_function('integrate_post_end', __NAMESPACE__ . '\Integration::postEnd', false, __FILE__);
-		add_integration_function('integrate_before_create_topic', __NAMESPACE__ . '\Integration::beforeCreateTopic', false, __FILE__);
-		add_integration_function('integrate_create_topic', __NAMESPACE__ . '\Integration::createTopic', false, __FILE__);
-		add_integration_function('integrate_modify_post', __NAMESPACE__ . '\Integration::modifyPost', false, __FILE__);
-		add_integration_function('integrate_credits', __NAMESPACE__ . '\Integration::credits', false, __FILE__);
+		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false, __FILE__);
+		add_integration_function('integrate_load_session', __CLASS__ . '::loadSession', false, __FILE__);
+		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__);
+		add_integration_function('integrate_actions', __CLASS__ . '::actions', false, __FILE__);
+		add_integration_function('integrate_theme_context', __CLASS__ . '::themeContext', false, __FILE__);
+		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic', false, __FILE__);
+		add_integration_function('integrate_prepare_display_context', __CLASS__ . '::prepareDisplayContext', false, __FILE__);
+		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd', false, __FILE__);
+		add_integration_function('integrate_before_create_topic', __CLASS__ . '::beforeCreateTopic', false, __FILE__);
+		add_integration_function('integrate_create_topic', __CLASS__ . '::createTopic', false, __FILE__);
+		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost', false, __FILE__);
+		add_integration_function('integrate_remove_topics', __CLASS__ . '::removeTopics', false, __FILE__);
+		add_integration_function('integrate_credits', __CLASS__ . '::credits', false, __FILE__);
 		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false, '$sourcedir/Optimus/Settings.php');
 		add_integration_function('integrate_admin_search', __NAMESPACE__ . '\Settings::adminSearch', false, '$sourcedir/Optimus/Settings.php');
 	}
@@ -243,6 +244,28 @@ class Integration
 
 		Subs::modifyTopicDescription($topicOptions['id']);
 		Subs::modifyTopicKeywords($topicOptions['id'], $posterOptions['id']);
+	}
+
+	/**
+	 * Удаляем ключевые слова при удалении темы
+	 *
+	 * @param array $topics
+	 * @return void
+	 */
+	public static function removeTopics($topics)
+	{
+		global $smcFunc;
+
+		if (empty($topics))
+			return;
+
+		$request = $smcFunc['db_query']('', '
+			DELETE FROM {db_prefix}optimus_log_keywords
+			WHERE topic_id IN ({array_int:topics})',
+			array(
+				'topics' => $topics
+			)
+		);
 	}
 
 	/**
