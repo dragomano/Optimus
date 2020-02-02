@@ -31,20 +31,28 @@ class Integration
 	{
 		add_integration_function('integrate_autoload', __CLASS__ . '::autoload', false, __FILE__);
 		add_integration_function('integrate_load_session', __CLASS__ . '::loadSession', false, __FILE__);
+		add_integration_function('integrate_buffer', __CLASS__ . '::buffer', false, __FILE__);
+		add_integration_function('integrate_pre_load_theme', __CLASS__ . '::preLoadTheme', false, __FILE__);
 		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false, __FILE__);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__);
 		add_integration_function('integrate_actions', __CLASS__ . '::actions', false, __FILE__);
 		add_integration_function('integrate_theme_context', __CLASS__ . '::themeContext', false, __FILE__);
-		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic', false, __FILE__);
-		add_integration_function('integrate_prepare_display_context', __CLASS__ . '::prepareDisplayContext', false, __FILE__);
-		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd', false, __FILE__);
-		add_integration_function('integrate_before_create_topic', __CLASS__ . '::beforeCreateTopic', false, __FILE__);
-		add_integration_function('integrate_create_topic', __CLASS__ . '::createTopic', false, __FILE__);
-		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost', false, __FILE__);
-		add_integration_function('integrate_remove_topics', __CLASS__ . '::removeTopics', false, __FILE__);
-		add_integration_function('integrate_credits', __CLASS__ . '::credits', false, __FILE__);
+		add_integration_function('integrate_display_topic', __NAMESPACE__ . '\TopicHooks::displayTopic', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_prepare_display_context', __NAMESPACE__ . '\TopicHooks::prepareDisplayContext', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_post_end', __NAMESPACE__ . '\TopicHooks::postEnd', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_before_create_topic', __NAMESPACE__ . '\TopicHooks::beforeCreateTopic', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_create_topic', __NAMESPACE__ . '\TopicHooks::createTopic', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_modify_post', __NAMESPACE__ . '\TopicHooks::modifyPost', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_remove_topics', __NAMESPACE__ . '\TopicHooks::removeTopics', false, '$sourcedir/Optimus/TopicHooks.php');
+		add_integration_function('integrate_load_board', __NAMESPACE__ . '\BoardHooks::loadBoard', false, '$sourcedir/Optimus/BoardHooks.php');
+		add_integration_function('integrate_board_info', __NAMESPACE__ . '\BoardHooks::boardInfo', false, '$sourcedir/Optimus/BoardHooks.php');
+		add_integration_function('integrate_pre_boardtree', __NAMESPACE__ . '\BoardHooks::preBoardtree', false, '$sourcedir/Optimus/BoardHooks.php');
+		add_integration_function('integrate_boardtree_board', __NAMESPACE__ . '\BoardHooks::boardtreeBoard', false, '$sourcedir/Optimus/BoardHooks.php');
+		add_integration_function('integrate_edit_board', __NAMESPACE__ . '\BoardHooks::editBoard', false, '$sourcedir/Optimus/BoardHooks.php');
+		add_integration_function('integrate_modify_board', __NAMESPACE__ . '\BoardHooks::modifyBoard', false, '$sourcedir/Optimus/BoardHooks.php');
 		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false, '$sourcedir/Optimus/Settings.php');
 		add_integration_function('integrate_admin_search', __NAMESPACE__ . '\Settings::adminSearch', false, '$sourcedir/Optimus/Settings.php');
+		add_integration_function('integrate_credits', __CLASS__ . '::credits', false, __FILE__);
 	}
 
 	/**
@@ -72,19 +80,45 @@ class Integration
 	}
 
 	/**
+	 * Remove index.php from $scripturl
+	 *
+	 * @param string $buffer
+	 * @return void
+	 */
+	public static function buffer($buffer)
+	{
+		global $modSettings, $boardurl;
+
+		if (empty($modSettings['optimus_remove_index_php']))
+			return $buffer;
+
+		return str_replace($boardurl . '/index.php', $boardurl . '/', $buffer);
+	}
+
+	/**
+	 * Remove index.php from $scripturl
+	 *
+	 * @return void
+	 */
+	public static function preLoadTheme()
+	{
+		global $modSettings, $scripturl, $boardurl;
+
+		if (!empty($modSettings['optimus_remove_index_php']))
+			$scripturl = $boardurl . '/';
+	}
+
+	/**
 	 * Language files and various operations
 	 *
 	 * @return void
 	 */
 	public static function loadTheme()
 	{
-		global $sourcedir;
-
 		loadLanguage('Optimus/');
 
-		require_once($sourcedir . '/Optimus/Subs.php');
-
-		Subs::loadClass('Keywords');
+		self::loadClass('Subs');
+		self::loadClass('Keywords');
 		Subs::changeFrontPageTitle();
 		Subs::addCounters();
 	}
@@ -107,14 +141,17 @@ class Integration
 	}
 
 	/**
-	 * Used actions
+	 * Add "keywords" action
 	 *
-	 * @param array $actionArray - all forum actions
+	 * @param array $actionArray
 	 * @return void
 	 */
 	public static function actions(&$actionArray)
 	{
-		Keywords::makeAction($actionArray);
+		global $modSettings;
+
+		if (!empty($modSettings['optimus_allow_change_topic_keywords']) || !empty($modSettings['optimus_show_keywords_block']))
+			$actions['keywords'] = array('Optimus/Keywords.php', array(__NAMESPACE__ . '\Keywords', 'showTableWithTheSameKeyword'));
 	}
 
 	/**
@@ -126,146 +163,6 @@ class Integration
 	{
 		Subs::makeExtendTitles();
 		Subs::prepareMetaTags();
-	}
-
-	/**
-	 * Additional columns for $context['topicinfo'] array
-	 *
-	 * @param array $topic_selects
-	 * @param array $topic_tables
-	 * @return void
-	 */
-	public static function displayTopic(&$topic_selects, &$topic_tables)
-	{
-		global $modSettings;
-
-		if (!empty($modSettings['optimus_show_keywords_block']))
-			Keywords::getAll();
-
-		if (!in_array('ms.modified_time AS topic_modified_time', $topic_selects))
-			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
-
-		if (!empty($modSettings['optimus_topic_description']) && !in_array('ms.body AS topic_first_message', $topic_selects))
-			$topic_selects[] = 'ms.body AS topic_first_message';
-
-		if (!empty($modSettings['optimus_allow_change_desc']))
-			$topic_selects[] = 't.optimus_description';
-
-		if (allowedTo('view_attachments') && !empty($modSettings['optimus_og_image'])) {
-			$topic_selects[] = 'COALESCE(a.id_attach, 0) AS og_image_attach_id';
-			$topic_tables[]  = 'LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg AND a.width > 0 AND a.height > 0)';
-		}
-	}
-
-	/**
-	 * Make various changes on Display Context area
-	 *
-	 * @param array $output
-	 * @param array $message
-	 * @param int $counter - the message counter
-	 *
-	 * @return void
-	 */
-	public static function prepareDisplayContext(&$output, &$message, $counter)
-	{
-		Keywords::displayBlock($counter);
-	}
-
-	/**
-	 * The output of the template creation/editing messages
-	 *
-	 * @return void
-	 */
-	public static function postEnd()
-	{
-		Subs::topicDescriptionField();
-		Subs::topicKeywordsField();
-	}
-
-    /**
-     * Add the necessary data before creating a topic
-     *
-     * @param array $msgOptions
-     * @param array $topicOptions
-     * @param array $posterOptions
-     * @param array $topic_columns    — a set of columns to add to the smf_topics table
-     * @param array $topic_parameters — data set for use in $topic_columns
-     *
-     * @return void
-     */
-	public static function beforeCreateTopic(&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters)
-	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_allow_change_desc']))
-			return;
-
-		$description = isset($_REQUEST['optimus_description']) ? Subs::xss($_REQUEST['optimus_description']) : '';
-
-		$topic_columns['optimus_description'] = 'string-255';
-		$topic_parameters[] = $description;
-	}
-
-    /**
-     * Creating a topic
-     *
-     * @param array $msgOptions
-     * @param array $topicOptions
-     * @param array $posterOptions
-     *
-     * @return void
-     */
-	public static function createTopic(&$msgOptions, &$topicOptions, &$posterOptions)
-	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_allow_change_keywords']))
-			return;
-
-		$keywords = isset($_REQUEST['optimus_keywords']) ? Subs::xss($_REQUEST['optimus_keywords']) : '';
-
-		Keywords::add($keywords, $topicOptions['id'], $posterOptions['id']);
-	}
-
-	/**
-	 * Edit the first post of the topic
-	 *
-	 * @param array $messages_columns — editable columns in the smf_topics table
-	 * @param array $update_parameters — data to update the columns
-	 * @param array $msgOptions — parameters of the message to be modified
-	 * @param array $topicOptions — changeable topic options
-	 * @param array $posterOptions — the parameters of the author of the changes
-	 * @return void
-	 */
-	public static function modifyPost(&$messages_columns, &$update_parameters, &$msgOptions, &$topicOptions, &$posterOptions)
-	{
-		if (Subs::getTopicFirstMessageId($topicOptions['id']) != $msgOptions['id'])
-			return;
-
-		Subs::modifyTopicDescription($topicOptions['id']);
-		Subs::modifyTopicKeywords($topicOptions['id'], $posterOptions['id']);
-	}
-
-	/**
-	 * Удаляем ключевые слова при удалении темы
-	 *
-	 * @param array $topics
-	 * @return void
-	 */
-	public static function removeTopics($topics)
-	{
-		global $smcFunc;
-
-		if (empty($topics))
-			return;
-
-		$request = $smcFunc['db_query']('', '
-			DELETE FROM {db_prefix}optimus_log_keywords
-			WHERE topic_id IN ({array_int:topics})',
-			array(
-				'topics' => $topics
-			)
-		);
 	}
 
 	/**
@@ -287,17 +184,34 @@ class Integration
 	 */
 	public static function scheduledTask()
 	{
-		global $modSettings, $sourcedir;
+		global $modSettings;
 
 		if (empty($modSettings['optimus_sitemap_enable']))
 			return false;
 
-		require_once($sourcedir . '/Optimus/Subs.php');
-		Subs::loadClass('Sitemap');
+		self::loadClass('Subs');
+		self::loadClass('Sitemap');
 
 		$links   = Subs::getLinks();
 		$sitemap = new Sitemap($links, '', !empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : '');
 
 		return $sitemap->generate();
+	}
+
+	/**
+	 * Include $class.php file if it is not loaded previously (for Tapatalk etc)
+	 *
+	 * @param string $className
+	 * @return void
+	 */
+	public static function loadClass($className)
+	{
+		global $sourcedir;
+
+		if (empty($className))
+			return;
+
+		if (!class_exists(__NAMESPACE__ . "\{$className}"))
+			require_once($sourcedir . "/Optimus/{$className}.php");
 	}
 }

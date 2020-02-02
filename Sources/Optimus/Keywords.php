@@ -23,20 +23,6 @@ if (!defined('SMF'))
 class Keywords
 {
 	/**
-	 * Add action=keywords
-	 *
-	 * @param array $actions
-	 * @return void
-	 */
-	public static function makeAction(&$actions)
-	{
-		global $modSettings;
-
-		if (!empty($modSettings['optimus_allow_change_keywords']) || !empty($modSettings['optimus_show_keywords_block']))
-			$actions['keywords'] = array('Optimus/Keywords.php', array(__NAMESPACE__ . '\Keywords', 'showTableWithTheSameKeyword'));
-	}
-
-	/**
 	 * Get all keywords for current topic
 	 *
 	 * @return void
@@ -74,9 +60,9 @@ class Keywords
 	/**
 	 * Add keywords
 	 *
-	 * @param array $keywords — array of words
-	 * @param int $topic — topic id
-	 * @param int $user — user id
+	 * @param array $keywords
+	 * @param int $topic
+	 * @param int $user
 	 * @return void
 	 */
 	public static function add($keywords, $topic, $user)
@@ -179,8 +165,8 @@ class Keywords
 	/**
 	 * Remove keywords
 	 *
-	 * @param array $keywords — array of words
-	 * @param int $topic — topic id
+	 * @param array $keywords
+	 * @param int $topic
 	 * @return void
 	 */
 	public static function remove($keywords, $topic)
@@ -261,9 +247,8 @@ class Keywords
 		$context['canonical_url'] = $scripturl . '?action=keywords;id=' . $context['optimus_keyword_id'];
 
 		if (empty($keyword_name)) {
-			$context['page_title'] = $txt['optimus_404_h2'];
-			header('HTTP/1.1 404 Not Found');
-			fatal_lang_error('optimus_no_keywords', false);
+			$context['page_title'] = $txt['optimus_404_page_title'];
+			fatal_lang_error('optimus_no_keywords', false, null, 404);
 		}
 
 		$context['linktree'][] = array(
@@ -360,9 +345,9 @@ class Keywords
 	/**
 	 * Get a list of topics with a given keyword ID
 	 *
-	 * @param int $start — from which page do we request information
-	 * @param int $items_per_page — number of topics per page
-	 * @param string $sort — sort view
+	 * @param int $start
+	 * @param int $items_per_page
+	 * @param string $sort
 	 * @return array
 	 */
 	public static function getTopicsByKeyId($start, $items_per_page, $sort)
@@ -430,7 +415,7 @@ class Keywords
 	/**
 	 * Get the keyword by its identifier in the smf_optimus_keywords table
 	 *
-	 * @param int $id keyword id
+	 * @param int $id
 	 * @return void
 	 */
 	public static function getNameById($id)
@@ -544,9 +529,9 @@ class Keywords
 	/**
 	 * We get a list of all keywords with their frequency
 	 *
-	 * @param int $start — from which page do we request information
-	 * @param int $items_per_page — number of topics per page
-	 * @param string $sort — sort view
+	 * @param int $start
+	 * @param int $items_per_page
+	 * @param string $sort
 	 * @return array
 	 */
 	public static function getAllTopicsWithKeywords($start, $items_per_page, $sort)
@@ -634,30 +619,5 @@ class Keywords
 		$smcFunc['db_free_result']($request);
 
 		exit(json_encode($data));
-	}
-
-	/**
-	 * Displaying keywords above the first message of the topic
-	 *
-	 * @param int $message_counter
-	 * @return void
-	 */
-	public static function displayBlock($message_counter)
-	{
-		global $context, $modSettings, $txt, $scripturl;
-
-		if (empty($context['optimus_keywords']) || empty($modSettings['optimus_show_keywords_block']))
-			return;
-
-		if ($message_counter == 1) {
-			$keywords = '<fieldset class="roundframe"><legend class="windowbg" style="padding: 0.2em 0.4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
-
-			foreach ($context['optimus_keywords'] as $id => $keyword)
-				$keywords .= '<a class="button" href="' . $scripturl . '?action=keywords;id=' . $id . '">' . $keyword . '</a>';
-
-			$keywords .= '</fieldset>';
-
-			echo $keywords;
-		}
 	}
 }

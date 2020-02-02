@@ -18,20 +18,25 @@ $txt['optimus_forum_index']         = 'Forum Homepage title';
 $txt['optimus_description']         = 'The forum annotation';
 $txt['optimus_description_subtext'] = 'It will be used as content of the meta-tag <strong>description</strong>.';
 
-$txt['optimus_all_pages']              = 'Topic & board pages';
-$txt['optimus_board_extend_title']     = 'Add forum name to board titles';
-$txt['optimus_board_extend_title_set'] = array('None', 'Before board title', 'After board title');
-$txt['optimus_topic_extend_title']     = 'Add title of section and forum to topic titles';
-$txt['optimus_topic_extend_title_set'] = array('None', 'Before topic title', 'After topic title');
-$txt['optimus_topic_description']      = 'Display the topic first message snippet as the meta-tag <strong>description</strong><br><span class="smalltext">Use <a href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank" rel="noopener">Topic Descriptions mod</a> to create short descriptions for topics.</span>';
-$txt['optimus_allow_change_desc']      = 'Allow a separate field for the topic description (displayed when editing a topic)';
-$txt['optimus_allow_change_keywords']  = 'Allow a separate field for the topic keywords (displayed when editing a topic)';
-$txt['optimus_show_keywords_block']    = 'Show a block with keywords above the first post of the topic';
-$txt['optimus_404_status']             = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener" class="bbc_link">403/404 code</a> depending on the requested page\'s status';
+$txt['optimus_all_pages']                           = 'Topic & board pages';
+$txt['optimus_board_extend_title']                  = 'Add forum name to board titles';
+$txt['optimus_board_extend_title_set']              = array('None', 'Before board title', 'After board title');
+$txt['optimus_topic_extend_title']                  = 'Add title of section and forum to topic titles';
+$txt['optimus_topic_extend_title_set']              = array('None', 'Before topic title', 'After topic title');
+$txt['optimus_topic_description']                   = 'Display the topic first message snippet as the meta-tag <strong>description</strong><br><span class="smalltext">Use <a href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank" rel="noopener">Topic Descriptions mod</a> to create short descriptions for topics.</span>';
+$txt['optimus_allow_change_board_og_image']         = 'Allow a separate field for the board <strong>OG Image</strong>';
+$txt['optimus_allow_change_board_og_image_subtext'] = 'It is displayed when editing a board.';
+$txt['optimus_allow_change_topic_desc']             = 'Allow a separate field for the topic description';
+$txt['optimus_allow_change_topic_desc_subtext']     = 'It is displayed when editing a topic.';
+$txt['optimus_allow_change_topic_keywords']         = 'Allow a separate field for the topic keywords';
+$txt['optimus_allow_change_topic_keywords_subtext'] = 'It is displayed when editing a topic.';
+$txt['optimus_show_keywords_block']                 = 'Show a block with keywords above the first post of the topic';
+$txt['optimus_correct_http_status']                 = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener" class="bbc_link">403/404 code</a> depending on the requested page\'s status';
 
 $txt['optimus_extra_settings']        = 'Extra settings';
 $txt['optimus_use_only_cookies']      = 'Use cookies to store the session id on the client side';
 $txt['optimus_use_only_cookies_help'] = 'Enabling the setting <a href="https://www.php.net/manual/en/session.configuration.php#ini.session.use-only-cookies" target="_blank" rel="noopener" class="bbc_link">session.use_only_cookies</a> prevents attacks involved passing session ids in URLs.<br>In addition, you will be able to get rid of the session ids in the canonical addresses of the forum pages.';
+$txt['optimus_remove_index_php']      = 'Remove "index.php" from the forum urls';
 
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc']  = 'Here you can add an additional <a href="https://ogp.me/" target="_blank" rel="noopener">markup</a> for forum pages.';

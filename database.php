@@ -74,14 +74,31 @@ foreach($tables as $table)
 	$smcFunc['db_create_table']('{db_prefix}' . $table['name'], $table['columns'], $table['indexes'], array(), 'ignore');
 
 // Optimus description for topics table
-$smcFunc['db_add_column']("{db_prefix}topics",
+$smcFunc['db_add_column'](
+	'{db_prefix}topics',
 	array(
 		'name'    => 'optimus_description',
 		'type'    => 'varchar',
 		'size'    => 255,
 		'null'    => true,
 		'default' => ''
-	), array(), 'do_nothing', 'fatal'
+	),
+	array(),
+	'do_nothing'
+);
+
+// Optimus og-image for boards table
+$smcFunc['db_add_column'](
+	'{db_prefix}boards',
+	array(
+		'name'    => 'optimus_og_image',
+		'type'    => 'varchar',
+		'size'    => 255,
+		'null'    => true,
+		'default' => ''
+	),
+	array(),
+	'do_nothing'
 );
 
 // Scheduled Tasks

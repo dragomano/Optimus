@@ -241,38 +241,6 @@ function template_robots()
 	<br class="clear">';
 }
 
-function template_404()
-{
-	global $txt;
-
-	echo '
-	<div class="centertext" style="width: 60%">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['optimus_404_h2'], '</h3>
-		</div>
-		<div class="windowbg">
-			<div class="content">', $txt['optimus_404_h3'], '</div>
-		</div>
-	</div>
-	<div class="centertext"><a href="javascript:history.go(-1)">', $txt['back'], '</a></div>';
-}
-
-function template_403()
-{
-	global $txt;
-
-	echo '
-	<div class="centertext" style="width: 60%">
-		<div class="cat_bar">
-			<h3 class="catbg">', $txt['optimus_403_h2'], '</h3>
-		</div>
-		<div class="windowbg">
-			<div class="content">', $txt['optimus_403_h3'], '</div>
-		</div>
-	</div>
-	<div class="centertext"><a href="javascript:history.go(-1)">', $txt['back'], '</a></div>';
-}
-
 function template_footer_counters_above()
 {
 }

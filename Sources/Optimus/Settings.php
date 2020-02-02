@@ -162,15 +162,17 @@ class Settings
 			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
 			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
 			array('check', 'optimus_topic_description'),
-			array('check', 'optimus_allow_change_desc'),
-			array('check', 'optimus_allow_change_keywords'),
+			array('check', 'optimus_allow_change_board_og_image', 'subtext' => $txt['optimus_allow_change_board_og_image_subtext']),
+			array('check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']),
+			array('check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']),
 			array('check', 'optimus_show_keywords_block'),
-			array('check', 'optimus_404_status')
+			array('check', 'optimus_correct_http_status')
 		);
 
 		if (defined('JQUERY_VERSION')) {
 			$config_vars[] = array('title', 'optimus_extra_settings');
 			$config_vars[] = array('check', 'optimus_use_only_cookies', 'help' => 'optimus_use_only_cookies_help');
+			$config_vars[] = array('check', 'optimus_remove_index_php');
 		}
 
 		if ($return_config)
@@ -366,7 +368,7 @@ class Settings
 		$context['robots_txt_exists'] = file_exists($common_rules_path);
 		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
 
-		Subs::loadClass('Robots');
+		Integration::loadClass('Robots');
 
 		$robots = new Robots();
 		$robots->generate();
@@ -380,13 +382,13 @@ class Settings
 		}
 	}
 
-    /**
-     * The sitemap settings
-     *
-     * @param bool $return_config
-     *
-     * @return array|void
-     */
+	/**
+	 * The sitemap settings
+	 *
+	 * @param bool $return_config
+	 *
+	 * @return array|void
+	 */
 	public static function sitemapTabSettings($return_config = false)
 	{
 		global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;

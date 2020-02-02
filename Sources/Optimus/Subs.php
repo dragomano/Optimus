@@ -238,27 +238,23 @@ class Subs
 	{
 		global $modSettings, $board_info, $context, $txt;
 
-		if (empty($modSettings['optimus_404_status']) || empty($board_info['error']))
+		if (empty($modSettings['optimus_correct_http_status']) || empty($board_info['error']))
 			return;
 
 		// Does not page exist?
 		if ($board_info['error'] == 'exist') {
-			header('HTTP/1.1 404 Not Found');
-
-			loadTemplate('Optimus');
-
-			$context['sub_template'] = '404';
-			$context['page_title']   = $txt['optimus_404_page_title'];
+			send_http_status(404);
+			$context['page_title']    = $txt['optimus_404_page_title'];
+			$context['error_title']   = $txt['optimus_404_h2'];
+			$context['error_message'] = $txt['optimus_404_h3'];
 		}
 
 		// No access?
 		if ($board_info['error'] == 'access') {
-			header('HTTP/1.1 403 Forbidden');
-
-			loadTemplate('Optimus');
-
-			$context['sub_template'] = '403';
-			$context['page_title']   = $txt['optimus_403_page_title'];
+			send_http_status(403);
+			$context['page_title']    = $txt['optimus_403_page_title'];
+			$context['error_title']   = $txt['optimus_403_h2'];
+			$context['error_message'] = $txt['optimus_403_h3'];
 		}
 	}
 
@@ -355,12 +351,12 @@ class Subs
 	 */
 	public static function getOgImage()
 	{
-		global $context, $settings, $scripturl;
+		global $board_info, $settings, $context, $scripturl;
 
-		if (empty($context['first_message']))
-			return;
+		if (!empty($board_info['og_image']))
+			$settings['og_image'] = $board_info['og_image'];
 
-		if (!empty($context['topicinfo']['og_image_attach_id']))
+		if (!empty($context['first_message']) && !empty($context['topicinfo']['og_image_attach_id']))
 			$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $context['topicinfo']['og_image_attach_id'] . ';image';
 	}
 
@@ -607,7 +603,7 @@ class Subs
 	{
 		global $modSettings, $context, $smcFunc, $txt;
 
-		if (!empty($modSettings['optimus_allow_change_desc'])) {
+		if (!empty($modSettings['optimus_allow_change_topic_desc'])) {
 			if ($context['is_new_topic']) {
 				$context['optimus']['description'] = isset($_REQUEST['optimus_description']) ? Subs::xss($_REQUEST['optimus_description']) : '';
 			} else {
@@ -648,7 +644,7 @@ class Subs
 	{
 		global $modSettings, $context, $txt;
 
-		if (empty($modSettings['optimus_allow_change_keywords']))
+		if (empty($modSettings['optimus_allow_change_topic_keywords']))
 			return;
 
 		if ($context['is_new_topic']) {
@@ -736,22 +732,20 @@ class Subs
 	{
 		global $modSettings, $smcFunc;
 
-		if (empty($modSettings['optimus_allow_change_desc']))
+		if (empty($modSettings['optimus_allow_change_topic_desc']))
 			return;
 
 		$description = isset($_REQUEST['optimus_description']) ? Subs::xss($_REQUEST['optimus_description']) : '';
 
-		if (isset($description)) {
-			$smcFunc['db_query']('', '
-				UPDATE {db_prefix}topics
-				SET optimus_description = {string:description}
-				WHERE id_topic = {int:current_topic}',
-				array(
-					'description'   => $description,
-					'current_topic' => $topic
-				)
-			);
-		}
+		$smcFunc['db_query']('', '
+			UPDATE {db_prefix}topics
+			SET optimus_description = {string:description}
+			WHERE id_topic = {int:current_topic}',
+			array(
+				'description'   => $description,
+				'current_topic' => $topic
+			)
+		);
 	}
 
 	/**
@@ -765,7 +759,7 @@ class Subs
 	{
 		global $modSettings, $context;
 
-		if (empty($modSettings['optimus_allow_change_keywords']))
+		if (empty($modSettings['optimus_allow_change_topic_keywords']))
 			return;
 
 		$keywords = isset($_REQUEST['optimus_keywords']) ? Subs::xss($_REQUEST['optimus_keywords']) : [];
@@ -808,23 +802,6 @@ class Subs
 		$smcFunc['db_free_result']($request);
 
 		return (int) $first_message_id;
-	}
-
-	/**
-	 * Include $class.php file if it is not loaded previously (for Tapatalk etc)
-	 *
-	 * @param string $className
-	 * @return void
-	 */
-	public static function loadClass($className)
-	{
-		global $sourcedir;
-
-		if (empty($className))
-			return;
-
-		if (!class_exists(__NAMESPACE__ . "\{$className}"))
-			require_once($sourcedir . "/Optimus/{$className}.php");
 	}
 
 	/**
