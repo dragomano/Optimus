@@ -365,7 +365,6 @@ class Keywords
 				LEFT JOIN {db_prefix}membergroups AS mg ON (mg.id_group = m.id_group)
 			WHERE ok.id = {int:keyword_id}
 				AND {query_wanna_see_board}
-				AND {query_see_board}
 			ORDER BY ' . $sort . ', t.id_topic DESC
 			LIMIT ' . $start . ', ' . $items_per_page,
 			array(

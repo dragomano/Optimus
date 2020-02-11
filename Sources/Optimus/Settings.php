@@ -162,7 +162,7 @@ class Settings
 			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
 			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
 			array('check', 'optimus_topic_description'),
-			array('check', 'optimus_allow_change_board_og_image', 'subtext' => $txt['optimus_allow_change_board_og_image_subtext']),
+			array('check', 'optimus_allow_change_board_og_image', 'subtext' => $txt['optimus_allow_change_board_og_image_subtext'], 'disabled' => !defined('JQUERY_VERSION')),
 			array('check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']),
 			array('check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']),
 			array('check', 'optimus_show_keywords_block'),

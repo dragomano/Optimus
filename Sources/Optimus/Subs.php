@@ -256,6 +256,13 @@ class Subs
 			$context['error_title']   = $txt['optimus_403_h2'];
 			$context['error_message'] = $txt['optimus_403_h3'];
 		}
+
+		if ($board_info['error'] == 'exist' || $board_info['error'] == 'access') {
+			addInlineJavaScript('
+			jQuery(document).ready(function ($) {
+				$(\'#fatal_error + .centertext > a.button\').attr("href", "javascript:history.go(-1)");
+			});', true);
+		}
 	}
 
 	/**
@@ -427,7 +434,14 @@ class Subs
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-			WHERE EXISTS (SELECT DISTINCT bpv.id_board FROM {db_prefix}board_permissions_view bpv WHERE (bpv.id_group = -1 AND bpv.deny = 0) AND bpv.id_board = b.id_board)' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . ' AND b.num_posts > {int:posts}
+			WHERE EXISTS (
+					SELECT DISTINCT bpv.id_board
+					FROM {db_prefix}board_permissions_view bpv
+					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
+						AND bpv.id_board = b.id_board
+				)' . (!empty($modSettings['recycle_board']) ? '
+				AND b.id_board <> {int:recycle_board}' : '') . '
+				AND b.num_posts > {int:posts}
 			ORDER BY b.id_board',
 			array(
 				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
@@ -469,7 +483,15 @@ class Subs
 			FROM {db_prefix}messages AS m
 				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-			WHERE EXISTS (SELECT DISTINCT bpv.id_board FROM {db_prefix}board_permissions_view bpv WHERE (bpv.id_group = -1 AND bpv.deny = 0) AND bpv.id_board = b.id_board)' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND t.num_replies > {int:replies}' : '') . ' AND t.approved = 1
+			WHERE EXISTS (
+					SELECT DISTINCT bpv.id_board
+					FROM {db_prefix}board_permissions_view bpv
+					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
+						AND bpv.id_board = b.id_board
+				)' . (!empty($modSettings['recycle_board']) ? '
+				AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? '
+				AND t.num_replies > {int:replies}' : '') . '
+				AND t.approved = 1
 			ORDER BY t.id_topic, m.id_msg',
 			array(
 				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,

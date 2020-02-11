@@ -143,10 +143,10 @@ class Integration
 	/**
 	 * Add "keywords" action
 	 *
-	 * @param array $actionArray
+	 * @param array $actions
 	 * @return void
 	 */
-	public static function actions(&$actionArray)
+	public static function actions(&$actions)
 	{
 		global $modSettings;
 
