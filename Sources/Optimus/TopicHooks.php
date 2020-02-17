@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5.1
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -46,8 +46,8 @@ class TopicHooks
 			$topic_selects[] = 't.optimus_description';
 
 		if (allowedTo('view_attachments') && !empty($modSettings['optimus_og_image'])) {
-			$topic_selects[] = 'COALESCE(a.id_attach, 0) AS og_image_attach_id';
-			$topic_tables[]  = 'LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg AND a.width > 0 AND a.height > 0)';
+			$topic_selects[] = 'COALESCE(optimus_attachments.id_attach, 0) AS og_image_attach_id';
+			$topic_tables[]  = 'LEFT JOIN {db_prefix}attachments AS optimus_attachments ON (optimus_attachments.id_msg = t.id_first_msg AND optimus_attachments.width > 0 AND optimus_attachments.height > 0)';
 		}
 	}
 

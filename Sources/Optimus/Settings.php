@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -44,7 +44,7 @@ class Settings
 		}');
 
 		if (isset($_REQUEST['area']) && $_REQUEST['area'] == 'optimus')
-			loadCSSFile('optimus\optimus.css');
+			loadCSSFile('optimus/optimus.css');
 
 		$admin_areas['config']['areas']['optimus'] = array(
 			'label' => $txt['optimus_title'],
@@ -173,6 +173,7 @@ class Settings
 			$config_vars[] = array('title', 'optimus_extra_settings');
 			$config_vars[] = array('check', 'optimus_use_only_cookies', 'help' => 'optimus_use_only_cookies_help');
 			$config_vars[] = array('check', 'optimus_remove_index_php');
+			$config_vars[] = array('check', 'optimus_extend_h1');
 		}
 
 		if ($return_config)

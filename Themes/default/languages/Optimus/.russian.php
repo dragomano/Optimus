@@ -37,9 +37,10 @@ $txt['optimus_extra_settings']        = 'Дополнительно';
 $txt['optimus_use_only_cookies']      = 'Использовать куки для хранения идентификатора сессии на стороне клиента';
 $txt['optimus_use_only_cookies_help'] = 'Включение параметра <a href="https://www.php.net/manual/ru/session.configuration.php#ini.session.use-only-cookies" target="_blank" rel="noopener" class="bbc_link">session.use_only_cookies</a> предотвращает атаки с использованием идентификатора сессии, размещенного в URL.<br>Кроме того, вы сможете избавиться от идентификатора сессии в канонических адресах страниц форума.';
 $txt['optimus_remove_index_php']      = 'Убрать «index.php» из адресов форума';
+$txt['optimus_extend_h1']             = 'Добавлять заголовок страницы к тегу <strong>H1</strong>';
 
 $txt['optimus_extra_title'] = 'Микроразметка';
-$txt['optimus_extra_desc']  = 'Добавление дополнительной <a href="https://ruogp.me/" target="_blank" rel="noopener">разметки</a> для страниц форума.';
+$txt['optimus_extra_desc']  = 'Добавление дополнительной <a href="https://ruogp.me/" target="_blank" rel="noopener" class="bbc_link">разметки</a> для страниц форума.';
 
 $txt['optimus_og_image']         = 'Использовать изображение из первого сообщения темы в мета-теге <strong>og:image</strong>';
 $txt['optimus_og_image_subtext'] = 'По умолчанию используется изображение, заданное в <a href="%s" class="bbc_link">настройках текущей темы оформления</a>.';

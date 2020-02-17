@@ -42,7 +42,7 @@ function template_favicon()
 						<textarea rows="5" style="width:90%" name="optimus_favicon_text" id="optimus_favicon_text">', !empty($modSettings['optimus_favicon_text']) ? $modSettings['optimus_favicon_text'] : '', '</textarea>
 					</dd>
 				</dl>
-				<hr class="hrcolor clear">
+				<hr class="clear">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
@@ -147,7 +147,7 @@ function template_metatags()
 						setOuterHTML(document.getElementById("moreTags"), \'<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text"> => <input type="text" name="custom_tag_value[]" size="40" class="input_text"><\' + \'/div><div id="moreTags"><\' + \'/div>\');
 					}
 				// ]]></script>
-				<hr class="hrcolor clear">
+				<hr class="clear">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
@@ -182,7 +182,7 @@ function template_counters()
 				<br><br>
 				<label for="optimus_ignored_actions">', $txt['optimus_ignored_actions'], '</label><br>
 				<input type="text" class="input_text" value="', !empty($modSettings['optimus_ignored_actions']) ? $modSettings['optimus_ignored_actions'] : '', '" id="optimus_ignored_actions" name="optimus_ignored_actions" style="width: 99%">
-				<hr class="hrcolor clear">
+				<hr class="clear">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
@@ -217,7 +217,7 @@ function template_robots()
 						<textarea rows="22" name="robots">', $context['robots_content'], '</textarea>
 					</div>
 				</div>
-				<hr class="hrcolor clear">
+				<hr class="clear">
 				<div class="half_content">
 					<div class="floatleft">
 						<h4>', $txt['optimus_links_title'], '</h4>
@@ -232,7 +232,7 @@ function template_robots()
 						</ul>
 					</div>
 				</div>
-				<hr class="hrcolor clear">
+				<hr class="clear">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>

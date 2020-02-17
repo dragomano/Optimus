@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -833,9 +833,9 @@ class Subs
 	 */
 	public static function addSitemapLink()
 	{
-		global $modSettings, $boarddir, $forum_copyright, $boardurl, $txt;
+		global $modSettings, $boarddir, $txt, $forum_copyright, $boardurl;
 
-		if (!empty($modSettings['optimus_sitemap_link']) && is_file($boarddir . '/' . (!empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : 'sitemap') . '.xml'))
+		if (!empty($modSettings['optimus_sitemap_link']) && is_file($boarddir . '/' . (!empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : 'sitemap') . '.xml') && isset($txt['optimus_sitemap_xml_link']))
 			$forum_copyright .= ' | <a href="' . $boardurl . '/' . (!empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : 'sitemap') . '.xml" target="_blank" rel="noopener">' . $txt['optimus_sitemap_xml_link'] . '</a>';
 	}
 

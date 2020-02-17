@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5.1
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -87,12 +87,19 @@ class Integration
 	 */
 	public static function buffer($buffer)
 	{
-		global $modSettings, $boardurl;
+		global $modSettings, $boardurl, $scripturl, $mbname, $context;
 
-		if (empty($modSettings['optimus_remove_index_php']))
+		if (isset($_REQUEST['xml']) || (empty($modSettings['optimus_remove_index_php']) && empty($modSettings['optimus_extend_h1'])))
 			return $buffer;
 
-		return str_replace($boardurl . '/index.php', $boardurl . '/', $buffer);
+		$replacements = [];
+		if (!empty($modSettings['optimus_remove_index_php']))
+			$replacements[$boardurl . '/index.php'] = $boardurl . '/';
+
+		if (!empty($modSettings['optimus_extend_h1']))
+			$replacements['<a id="top" href="' . $scripturl . '">' . $context['forum_name_html_safe'] . '</a>'] = (!empty($context['current_action']) || !empty($_GET) ? '<a id="top" href="' . $scripturl . '">' : '') . $mbname . ' - ' . str_replace($mbname . ' - ', '', $context['page_title']) . (!empty($context['current_action']) || !empty($_GET) ? '</a>' : '');
+
+		return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 	}
 
 	/**

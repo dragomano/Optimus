@@ -37,9 +37,10 @@ $txt['optimus_extra_settings']        = 'Extra settings';
 $txt['optimus_use_only_cookies']      = 'Use cookies to store the session id on the client side';
 $txt['optimus_use_only_cookies_help'] = 'Enabling the setting <a href="https://www.php.net/manual/en/session.configuration.php#ini.session.use-only-cookies" target="_blank" rel="noopener" class="bbc_link">session.use_only_cookies</a> prevents attacks involved passing session ids in URLs.<br>In addition, you will be able to get rid of the session ids in the canonical addresses of the forum pages.';
 $txt['optimus_remove_index_php']      = 'Remove "index.php" from the forum urls';
+$txt['optimus_extend_h1']             = 'Add a page title to the <strong>H1</strong> tag';
 
 $txt['optimus_extra_title'] = 'Metadata';
-$txt['optimus_extra_desc']  = 'Here you can add an additional <a href="https://ogp.me/" target="_blank" rel="noopener">markup</a> for forum pages.';
+$txt['optimus_extra_desc']  = 'Here you can add an additional <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">markup</a> for forum pages.';
 
 $txt['optimus_og_image']         = 'Use the image from the first topic message in the meta tag <strong>og:image</strong>';
 $txt['optimus_og_image_subtext'] = 'By default, the image specified in <a href="%s" class="bbc_link">current theme settings</a> is used.';
