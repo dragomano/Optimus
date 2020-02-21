@@ -102,7 +102,7 @@ class TinyPortal
 			WHERE a.' . ($page_is_num ? 'id = {int' : 'shortname = {string') . ':page}
 			LIMIT 1',
 			array(
-				'page' => filter_input(INPUT_GET, 'page', $page_is_num ? FILTER_VALIDATE_INT : FILTER_SANITIZE_STRING)
+				'page' => $page_is_num ? (int) $_GET['page'] : (string) $_GET['page']
 			)
 		);
 
