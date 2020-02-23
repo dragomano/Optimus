@@ -44,10 +44,10 @@ The **portamx**, **elkarte** and **wedge** branches contain the mod versions for
 P.S. Ветка **master** содержит версию Optimus 2.x для SMF 2.1 RC3+.
 В ветках **portamx**, **elkarte** и **wedge** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
 
-![Base settings](screenshots/optimus_1-min.png)
-![Metadata](screenshots/optimus_2-min.png)
-![Favicon](screenshots/optimus_3-min.png)
-![Metatags](screenshots/optimus_4-min.png)
-![Counters](screenshots/optimus_5-min.png)
-![robots](screenshots/optimus_6-min.png)
-![Sitemap](screenshots/optimus_7-min.png)
+![Base settings](https://user-images.githubusercontent.com/229402/75113837-0ac2fc80-5673-11ea-99e3-ecf208b67906.png)
+![Metadata](https://user-images.githubusercontent.com/229402/75113839-0c8cc000-5673-11ea-901e-967917523427.png)
+![Favicon](https://user-images.githubusercontent.com/229402/75113840-0d255680-5673-11ea-9b04-3296929423cd.png)
+![Metatags](https://user-images.githubusercontent.com/229402/75113841-0dbded00-5673-11ea-9e67-5523119fd4f8.png)
+![Counters](https://user-images.githubusercontent.com/229402/75113842-0dbded00-5673-11ea-8cec-af737e5be9e6.png)
+![robots](https://user-images.githubusercontent.com/229402/75113843-0eef1a00-5673-11ea-9679-ff2433859c8a.png)
+![Sitemap](https://user-images.githubusercontent.com/229402/75113844-0eef1a00-5673-11ea-9a9d-b433a5d173ae.png)
