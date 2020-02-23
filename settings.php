@@ -22,6 +22,7 @@ $newSettings = array(
 );
 
 $base = array();
+updateSettings(array('optimus_meta' => ''));
 foreach ($newSettings as $setting => $value) {
 	if (!isset($modSettings[$setting]))
 		$base[$setting] = $value;

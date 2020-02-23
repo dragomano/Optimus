@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3
+ * @version 2.3.1
  */
 
 if (!defined('SMF'))
@@ -62,7 +62,7 @@ class Settings
 		loadTemplate('Optimus', array('admin', 'optimus'));
 
 		$subActions = array(
-			'base'     =>'baseSettings',
+			'base'     => 'baseSettings',
 			'extra'    => 'extraSettings',
 			'favicon'  => 'faviconSettings',
 			'metatags' => 'metatagsSettings',
