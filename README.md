@@ -1,7 +1,11 @@
-# SMF Optimus mod
+# Optimus
+![SMF 2.0](https://img.shields.io/badge/SMF-2.0-75879b.svg?style=flat)
+![License](https://img.shields.io/github/license/dragomano/optimus)
+
 * **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.x
+* **Tested on:** PHP 7.3.15 / MariaDB 10.4.12
 * **Hooks only:** Yes
 * **Languages:** Dutch, English, French, Russian, Spanish, Turkish
 
