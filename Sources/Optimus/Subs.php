@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6
+ * @version 2.6.1
  */
 
 if (!defined('SMF'))
@@ -489,28 +489,33 @@ class Subs
 					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
 						AND bpv.id_board = b.id_board
 				)' . (!empty($modSettings['recycle_board']) ? '
-				AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? '
-				AND t.num_replies > {int:replies}' : '') . '
-				AND t.approved = 1
+				AND b.id_board <> {int:recycle_board}' : '') . '
+				AND t.num_replies > {int:num_replies}
+				AND t.approved = {int:is_approved}
 			ORDER BY t.id_topic, m.id_msg',
 			array(
 				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-				'replies'       => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
+				'num_replies'   => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : -1,
+				'is_approved'   => 1
 			)
 		);
 
 		$topics = array();
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$total_pages = ceil($row['num_replies'] / $modSettings['defaultMaxMessages']);
+			$total_pages = ceil($row['num_replies'] / (int) $modSettings['defaultMaxMessages']);echo $row['id_topic'] . ' = ' . $total_pages . '<br>';
 			$start = 0;
-			for ($i = 0; $i < $total_pages; $i++) {
+			if (empty($total_pages)) {
 				$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
+			} else {
+				for ($i = 0; $i < $total_pages; $i++) {
+					$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
 
-				if (count($topics[$row['id_topic']][$start]) <= $total_pages)
-					break;
+					if (count($topics[$row['id_topic']][$start]) <= $total_pages)
+						break;
 
-				$topics[$row['id_topic']][$start] = array_slice($topics[$row['id_topic']][$start], 0, $total_pages, true);
-				$start += (int) $modSettings['defaultMaxMessages'];
+					$topics[$row['id_topic']][$start] = array_slice($topics[$row['id_topic']][$start], 0, $total_pages, true);
+					$start += (int) $modSettings['defaultMaxMessages'];
+				}
 			}
 		}
 

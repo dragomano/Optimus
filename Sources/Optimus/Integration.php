@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6
+ * @version 2.6.1
  */
 
 if (!defined('SMF'))
@@ -187,7 +187,7 @@ class Integration
 	/**
 	 * Calling sitemap generation via task manager
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public static function scheduledTask()
 	{
