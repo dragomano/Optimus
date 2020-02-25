@@ -225,7 +225,7 @@ class Keywords
 	{
 		global $settings, $context, $txt, $scripturl, $sourcedir;
 
-		if (isset($_REQUEST['sa']) && $_REQUEST['sa'] == 'search') {
+		if ($context['current_subaction'] == 'search') {
 			self::getSearchData();
 			return;
 		}

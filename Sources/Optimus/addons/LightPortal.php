@@ -62,7 +62,7 @@ class LightPortal
 	 */
 	public static function sitemap(&$links)
 	{
-		global $smcFunc, $scripturl;
+		global $smcFunc, $modSettings, $scripturl;
 
 		if (empty(self::isPortalTableExist()))
 			return;
@@ -71,21 +71,22 @@ class LightPortal
 			SELECT alias, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
-				AND permissions IN ({array_int:permissions})
-				AND alias != {string:main_page}
-			ORDER BY id_page',
+				AND permissions IN ({array_int:permissions})' . (!empty($modSettings['lp_frontpage_mode']) && $modSettings['lp_frontpage_mode'] == 1 && !empty($modSettings['lp_frontpage_id']) ? '
+				AND page_id != {int:page_id}' : '') . '
+			ORDER BY page_id',
 			array(
 				'status'      => 1, // The page must be active
 				'permissions' => array(1, 3), // The page must be available to guests
-				'main_page'   => '/'
+				'page_id'     => $modSettings['lp_frontpage_id'] ?: null,
 			)
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$links[] = array(
 				'url'  => $scripturl . '?page=' . $row['alias'],
 				'date' => $row['date']
 			);
+		}
 
 		$smcFunc['db_free_result']($request);
 	}
