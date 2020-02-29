@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3
+ * @version 2.3.2
  */
 
 if (!defined('SMF'))
@@ -93,11 +93,13 @@ class Sitemap
 				SELECT b.id_board, m.poster_time, m.modified_time
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-				WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND b.num_posts > {int:posts}' : '') . '
+				WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? '
+					AND b.id_board <> {int:recycle_board}' : '') . '
+					AND b.num_posts > {int:num_posts}
 				ORDER BY b.id_board',
 				array(
 					'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-					'posts'         => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
+					'num_posts'     => 0
 				)
 			);
 
@@ -174,11 +176,15 @@ class Sitemap
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND t.num_replies > {int:replies}' : '') . ' AND t.approved = 1
+			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? '
+				AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? '
+				AND t.num_replies > {int:num_replies}' : '') . '
+				AND t.approved = {int:is_approved}
 			ORDER BY t.id_topic',
 			array(
 				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-				'replies'       => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : 0
+				'num_replies'   => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : -1,
+				'is_approved'   => 1
 			)
 		);
 
