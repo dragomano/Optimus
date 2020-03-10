@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -27,13 +27,13 @@ class LightPortal
 	 *
 	 * @return boolean
 	 */
-	public static function isPortalTableExist()
+	public static function isPortalInstalled()
 	{
 		global $smcFunc, $db_prefix;
 
 		db_extend();
 
-		return !empty($smcFunc['db_list_tables'](false, $db_prefix . 'lp_pages')) && class_exists('\Bugo\LightPortal\Integration');
+		return !empty($smcFunc['db_list_tables'](false, $db_prefix . 'lp_pages')) && class_exists('\Bugo\LightPortal\Helpers');
 	}
 
 	/**
@@ -47,7 +47,7 @@ class LightPortal
 	{
 		global $modSettings;
 
-		if (empty(self::isPortalTableExist()))
+		if (empty(self::isPortalInstalled()))
 			return;
 
 		$common_rules[] = empty($modSettings['lp_standalone']) && empty($modSettings['lp_main_page_disable']) ? "Allow: " . $url_path . "/*action=forum$" : "";
@@ -62,29 +62,30 @@ class LightPortal
 	 */
 	public static function sitemap(&$links)
 	{
-		global $smcFunc, $modSettings, $scripturl;
+		global $smcFunc, $scripturl;
 
-		if (empty(self::isPortalTableExist()))
+		if (empty(self::isPortalInstalled()))
 			return;
 
 		$request = $smcFunc['db_query']('', '
-			SELECT alias, GREATEST(created_at, updated_at) AS date
+			SELECT page_id, alias, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
-				AND permissions IN ({array_int:permissions})' . (!empty($modSettings['lp_frontpage_mode']) && $modSettings['lp_frontpage_mode'] == 1 && !empty($modSettings['lp_frontpage_id']) ? '
-				AND page_id != {int:page_id}' : '') . '
+				AND permissions IN ({array_int:permissions})
 			ORDER BY page_id',
 			array(
 				'status'      => 1, // The page must be active
 				'permissions' => array(1, 3), // The page must be available to guests
-				'page_id'     => $modSettings['lp_frontpage_id'] ?: null,
 			)
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			if (\Bugo\LightPortal\Helpers::isFrontPage($row['page_id']))
+				continue;
+
 			$links[] = array(
-				'url'  => $scripturl . '?page=' . $row['alias'],
-				'date' => $row['date']
+				'loc'     => $scripturl . '?page=' . $row['alias'],
+				'lastmod' => $row['date']
 			);
 		}
 

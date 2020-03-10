@@ -101,21 +101,5 @@ $smcFunc['db_add_column'](
 	'do_nothing'
 );
 
-// Scheduled Tasks
-$smcFunc['db_insert']('',
-	'{db_prefix}scheduled_tasks',
-	array(
-		'next_time'       => 'int',
-		'time_offset'     => 'int',
-		'time_regularity' => 'int',
-		'time_unit'       => 'string',
-		'disabled'        => 'int',
-		'task'            => 'string',
-		'callable'        => 'string'
-	),
-	array(0, 0, 1, 'w', 1, 'optimus_sitemap', '\\Bugo\\Optimus\\Integration::scheduledTask'),
-	array('id_task')
-);
-
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';

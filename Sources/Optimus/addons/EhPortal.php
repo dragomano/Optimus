@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -92,8 +92,8 @@ class EhPortal
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$links[] = array(
-				'url'  => $scripturl . '?page=' . $row['namespace'],
-				'date' => time()
+				'loc'     => $scripturl . '?page=' . $row['namespace'],
+				'lastmod' => time()
 			);
 
 		$smcFunc['db_free_result']($request);

@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -25,10 +25,9 @@ class PrettyUrls
 	/**
 	 * Make preparing of sitemap content before creating
 	 *
-	 * @param string $content
 	 * @return void
 	 */
-	public static function prepareContent(&$content)
+	public static function sitemap()
 	{
 		global $sourcedir, $modSettings, $context;
 
@@ -39,10 +38,6 @@ class PrettyUrls
 
 			$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
 			$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';
-			$context['pretty']['search_patterns'][]  = '~(">)([^#<]+)~';
-			$context['pretty']['replace_patterns'][] = '~(">)([^<]+)~';
-
-			$content = pretty_rewrite_buffer($content);
 		}
 	}
 }

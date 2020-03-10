@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -36,6 +36,7 @@ class Integration
 		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false, __FILE__);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__);
 		add_integration_function('integrate_actions', __CLASS__ . '::actions', false, __FILE__);
+		add_integration_function('integrate_simple_actions', __CLASS__ . '::simpleActions', false, __FILE__);
 		add_integration_function('integrate_theme_context', __CLASS__ . '::themeContext', false, __FILE__);
 		add_integration_function('integrate_display_topic', __NAMESPACE__ . '\TopicHooks::displayTopic', false, '$sourcedir/Optimus/TopicHooks.php');
 		add_integration_function('integrate_prepare_display_context', __NAMESPACE__ . '\TopicHooks::prepareDisplayContext', false, '$sourcedir/Optimus/TopicHooks.php');
@@ -50,6 +51,7 @@ class Integration
 		add_integration_function('integrate_boardtree_board', __NAMESPACE__ . '\BoardHooks::boardtreeBoard', false, '$sourcedir/Optimus/BoardHooks.php');
 		add_integration_function('integrate_edit_board', __NAMESPACE__ . '\BoardHooks::editBoard', false, '$sourcedir/Optimus/BoardHooks.php');
 		add_integration_function('integrate_modify_board', __NAMESPACE__ . '\BoardHooks::modifyBoard', false, '$sourcedir/Optimus/BoardHooks.php');
+		add_integration_function('integrate_modify_basic_settings', __NAMESPACE__ . '\Settings::modifyBasicSettings', false, '$sourcedir/Optimus/Settings.php');
 		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false, '$sourcedir/Optimus/Settings.php');
 		add_integration_function('integrate_admin_search', __NAMESPACE__ . '\Settings::adminSearch', false, '$sourcedir/Optimus/Settings.php');
 		add_integration_function('integrate_credits', __CLASS__ . '::credits', false, __FILE__);
@@ -96,8 +98,14 @@ class Integration
 		if (!empty($modSettings['optimus_remove_index_php']))
 			$replacements[$boardurl . '/index.php'] = $boardurl . '/';
 
-		if (!empty($modSettings['optimus_extend_h1']))
-			$replacements['<a id="top" href="' . $scripturl . '">' . $context['forum_name_html_safe'] . '</a>'] = (!empty($context['current_action']) || !empty($_GET) ? '<a id="top" href="' . $scripturl . '">' : '') . $mbname . ' - ' . str_replace($mbname . ' - ', '', $context['page_title']) . (!empty($context['current_action']) || !empty($_GET) ? '</a>' : '');
+		if (!empty($modSettings['optimus_extend_h1'])) {
+			if (!empty($context['current_action']) || !empty($_GET))
+				$new_h1 = '<a id="top" href="' . $scripturl . '">' . $mbname . ' - ' . str_replace($mbname . ' - ', '', $context['page_title']) . '</a>';
+			else
+				$new_h1 = $mbname;
+
+			$replacements['<a id="top" href="' . $scripturl . '">' . $context['forum_name_html_safe'] . '</a>'] = $new_h1;
+		}
 
 		return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 	}
@@ -122,10 +130,13 @@ class Integration
 	 */
 	public static function loadTheme()
 	{
+		global $sourcedir;
+
 		loadLanguage('Optimus/');
 
-		self::loadClass('Subs');
-		self::loadClass('Keywords');
+		require_once($sourcedir . "/Optimus/Subs.php");
+		require_once($sourcedir . "/Optimus/Keywords.php");
+
 		Subs::changeFrontPageTitle();
 		Subs::addCounters();
 	}
@@ -138,7 +149,6 @@ class Integration
 	public static function menuButtons()
 	{
 		Subs::addFavicon();
-		Subs::addJsonLd();
 		Subs::addFrontPageDescription();
 		Subs::makeErrorCodes();
 		Subs::makeTopicDescription();
@@ -159,6 +169,27 @@ class Integration
 
 		if (!empty($modSettings['optimus_allow_change_topic_keywords']) || !empty($modSettings['optimus_show_keywords_block']))
 			$actions['keywords'] = array('Optimus/Keywords.php', array(__NAMESPACE__ . '\Keywords', 'showTableWithTheSameKeyword'));
+
+		if (!empty($modSettings['optimus_sitemap_enable']))
+			$actions['sitemap'] = array('Optimus/Sitemap.php', array(__NAMESPACE__ . '\Sitemap', 'main'));
+	}
+
+	/**
+	 * Add simple action
+	 *
+	 * @param array $simpleActions
+	 * @param array $simpleAreas
+	 * @param array $simpleSubActions
+	 * @param array $extraParams
+	 * @param array $xmlActions
+	 * @return void
+	 */
+	public static function simpleActions(&$simpleActions, &$simpleAreas, &$simpleSubActions, &$extraParams, &$xmlActions)
+	{
+		global $modSettings;
+
+		if (!empty($modSettings['optimus_sitemap_enable']))
+			$xmlActions[] = 'sitemap';
 	}
 
 	/**
@@ -182,43 +213,5 @@ class Integration
 		global $context;
 
 		$context['credits_modifications'][] = Subs::getOptimusLink() . ' &copy; 2010&ndash;2020, Bugo';
-	}
-
-	/**
-	 * Calling sitemap generation via task manager
-	 *
-	 * @return bool
-	 */
-	public static function scheduledTask()
-	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_sitemap_enable']))
-			return false;
-
-		self::loadClass('Subs');
-		self::loadClass('Sitemap');
-
-		$links   = Subs::getLinks();
-		$sitemap = new Sitemap($links, '', !empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : '');
-
-		return $sitemap->generate();
-	}
-
-	/**
-	 * Include $class.php file if it is not loaded previously (for Tapatalk etc)
-	 *
-	 * @param string $className
-	 * @return void
-	 */
-	public static function loadClass($className)
-	{
-		global $sourcedir;
-
-		if (empty($className))
-			return;
-
-		if (!class_exists(__NAMESPACE__ . "\{$className}"))
-			require_once($sourcedir . "/Optimus/{$className}.php");
 	}
 }

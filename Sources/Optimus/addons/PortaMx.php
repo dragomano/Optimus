@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -53,7 +53,7 @@ class PortaMx
 
 		if (file_exists($sourcedir . '/PortaMx/PortaMxSEF.php') && function_exists('create_sefurl')) {
 			foreach ($links as $id => $entry)
-				$links[$id]['url'] = create_sefurl($entry['url']);
+				$links[$id]['loc'] = create_sefurl($entry['loc']);
 		}
 	}
 }

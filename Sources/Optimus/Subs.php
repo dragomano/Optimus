@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -73,43 +73,6 @@ class Subs
 			$favicon = explode(PHP_EOL, trim($modSettings['optimus_favicon_text']));
 			foreach ($favicon as $fav_line)
 				$context['html_headers'] .= "\n\t" . $fav_line;
-		}
-	}
-
-	/**
-	 * JSON-LD markup => footer
-	 *
-	 * @return void
-	 */
-	public static function addJsonLd()
-	{
-		global $modSettings, $context;
-
-		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
-			$context['insert_after_template'] .= '
-		<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "BreadcrumbList",
-			"itemListElement": [';
-
-			$i = 1;
-			foreach ($context['linktree'] as $id => $data)
-				$list_item[$id] = '{
-				"@type": "ListItem",
-				"position": ' . $i++ . ',
-				"item": {
-					"@id": "' . (isset($data['url']) ? $data['url'] : '') . '",
-					"name": "' . $data['name'] . '"
-				}
-			}';
-
-			if (!empty($list_item))
-				$context['insert_after_template'] .= implode(',', $list_item);
-
-			$context['insert_after_template'] .= ']
-		}
-		</script>';
 		}
 	}
 
@@ -339,7 +302,7 @@ class Subs
 				$context['meta_description'] = $context['topicinfo']['optimus_description'];
 			// Generated description from the text of the first post of the topic
 			else
-				Subs::getDescriptionFromFirstMessage();
+				self::getDescriptionFromFirstMessage();
 		}
 
 		// Additional data
@@ -368,195 +331,28 @@ class Subs
 	}
 
 	/**
-	 * Find the most recent date in the array of links for the map
-	 *
-	 * @param array $links
-	 * @return null|int
-	 */
-	public static function getLastDate($links)
-	{
-		if (empty($links))
-			return null;
-
-		$data = array_values(array_values($links));
-
-		$dates = array();
-		foreach ($data as $value)
-			$dates[] = $value['date'];
-
-		return max($dates);
-	}
-
-	/**
-	 * Get an array of forum links to create a Sitemap
-	 *
-	 * @return array
-	 */
-	public static function getLinks()
-	{
-		global $boardurl, $modSettings;
-
-		$boards = self::getBoardLinks();
-		$topics = self::getTopicLinks();
-
-		if (!empty($boards) || !empty($topics))
-			$links = array_merge($boards, $topics);
-		else
-			$links = [];
-
-		// Adding the main page
-		$home = array(
-			'url'  => $boardurl . '/',
-			'date' => !empty($modSettings['optimus_main_page_frequency']) ? self::getLastDate($links) : time()
-		);
-
-		array_unshift($links, $home);
-
-		// Possibility for the mod authors to add their own links or process them
-		self::runAddons('sitemap', array(&$links));
-
-		return $links;
-	}
-
-	/**
-	 * Get an array of forum boards ([] = array('url' => link, 'date' => date))
-	 *
-	 * @return array
-	 */
-	public static function getBoardLinks()
-	{
-		global $modSettings, $smcFunc, $scripturl;
-
-		if (empty($modSettings['optimus_sitemap_boards']))
-			return [];
-
-		$request = $smcFunc['db_query']('', '
-			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
-			FROM {db_prefix}boards AS b
-				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-			WHERE EXISTS (
-					SELECT DISTINCT bpv.id_board
-					FROM {db_prefix}board_permissions_view bpv
-					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
-						AND bpv.id_board = b.id_board
-				)' . (!empty($modSettings['recycle_board']) ? '
-				AND b.id_board <> {int:recycle_board}' : '') . '
-				AND b.num_posts > {int:posts}
-			ORDER BY b.id_board',
-			array(
-				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-				'posts'         => 0
-			)
-		);
-
-		$boards = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$boards[] = $row;
-
-		$smcFunc['db_free_result']($request);
-
-		$links = array();
-
-		if (!empty($boards)) {
-			foreach ($boards as $entry)	{
-				$links[] = array(
-					'url'  => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
-					'date' => $entry['last_date']
-				);
-			}
-		}
-
-		return $links;
-	}
-
-	/**
-	 * Get an array of forum topics ([] = array('url' => link, 'date' => date))
-	 *
-	 * @return array
-	 */
-	public static function getTopicLinks()
-	{
-		global $smcFunc, $modSettings, $scripturl;
-
-		$request = $smcFunc['db_query']('', '
-			SELECT t.id_topic, m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date, t.num_replies
-			FROM {db_prefix}messages AS m
-				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
-				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-			WHERE EXISTS (
-					SELECT DISTINCT bpv.id_board
-					FROM {db_prefix}board_permissions_view bpv
-					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
-						AND bpv.id_board = b.id_board
-				)' . (!empty($modSettings['recycle_board']) ? '
-				AND b.id_board <> {int:recycle_board}' : '') . '
-				AND t.num_replies > {int:num_replies}
-				AND t.approved = {int:is_approved}
-			ORDER BY t.id_topic, m.id_msg',
-			array(
-				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
-				'num_replies'   => !empty($modSettings['optimus_sitemap_topics']) ? (int) $modSettings['optimus_sitemap_topics'] : -1,
-				'is_approved'   => 1
-			)
-		);
-
-		$topics = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$total_pages = ceil($row['num_replies'] / (int) $modSettings['defaultMaxMessages']);echo $row['id_topic'] . ' = ' . $total_pages . '<br>';
-			$start = 0;
-			if (empty($total_pages)) {
-				$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
-			} else {
-				for ($i = 0; $i < $total_pages; $i++) {
-					$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
-
-					if (count($topics[$row['id_topic']][$start]) <= $total_pages)
-						break;
-
-					$topics[$row['id_topic']][$start] = array_slice($topics[$row['id_topic']][$start], 0, $total_pages, true);
-					$start += (int) $modSettings['defaultMaxMessages'];
-				}
-			}
-		}
-
-		$smcFunc['db_free_result']($request);
-
-		$links = array();
-		foreach ($topics as $id_topic => $data) {
-			foreach ($data as $start => $dump) {
-				$links[] = array(
-					'url'  => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $id_topic . '.' . $start . '.html' : $scripturl . '?topic=' . $id_topic . '.' . $start,
-					'date' => max($dump)
-				);
-			}
-		}
-
-		return $links;
-	}
-
-	/**
 	 * Get nested dirs recursively
 	 *
 	 * @param string $path
 	 * @param array $ret
 	 * @return array
 	 */
-	public static function globDirsRecursive($path, $ret = [])
+	public static function getNestedDirs($path, $nested_dirs = [])
 	{
 		$dirs = glob(rtrim($path, "/") . "/*", GLOB_ONLYDIR) or array();
 
 		foreach ($dirs as $path) {
-			$ret[] = $path;
-			$ret = self::globDirsRecursive($path, $ret);
+			$nested_dirs[] = $path;
+			$nested_dirs = self::getNestedDirs($path, $nested_dirs);
 		}
 
-		return $ret;
+		return $nested_dirs;
 	}
 
 	/**
 	 * Connecting add-ons
 	 *
-	 * @param string $type ('meta', 'prepareContent', 'sitemap' or 'robots')
+	 * @param string $type
 	 * @param array $vars (extra variables for changing)
 	 * @return void
 	 */
@@ -573,9 +369,9 @@ class Subs
 					$optimus_addons[] = str_replace('.php', '', $filename);
 			}
 
-			$dirs = self::globDirsRecursive($addon_dir);
+			$dirs = self::getNestedDirs($addon_dir);
 			foreach ($dirs as $dir)
-				$optimus_addons[] = basename($dir) . '\\' . basename($dir);
+				$optimus_addons[] = basename($dir) . '|' . basename($dir);
 
 			cache_put_data('optimus_addons', $optimus_addons, 3600);
 		}
@@ -584,11 +380,10 @@ class Subs
 			return;
 
 		foreach ($optimus_addons as $addon) {
-			$class = __NAMESPACE__ . '\Addons\\' . $addon;
-			$function = $class . '::' . $type;
+			$class = __NAMESPACE__ . '\Addons\\' . str_replace('|', '\\', $addon);
 
 			if (method_exists($class, $type))
-				call_user_func_array($function, $vars);
+				call_user_func_array(array($class, $type), $vars);
 		}
 	}
 
@@ -632,7 +427,7 @@ class Subs
 
 		if (!empty($modSettings['optimus_allow_change_topic_desc'])) {
 			if ($context['is_new_topic']) {
-				$context['optimus']['description'] = isset($_REQUEST['optimus_description']) ? Subs::xss($_REQUEST['optimus_description']) : '';
+				$context['optimus']['description'] = isset($_REQUEST['optimus_description']) ? self::xss($_REQUEST['optimus_description']) : '';
 			} else {
 				$request = $smcFunc['db_query']('', '
 					SELECT optimus_description
@@ -675,7 +470,7 @@ class Subs
 			return;
 
 		if ($context['is_new_topic']) {
-			$context['optimus']['keywords'] = isset($_REQUEST['optimus_keywords']) ? Subs::xss($_REQUEST['optimus_keywords']) : '';
+			$context['optimus']['keywords'] = isset($_REQUEST['optimus_keywords']) ? self::xss($_REQUEST['optimus_keywords']) : '';
 		} else {
 			Keywords::getAll();
 			$context['optimus']['keywords'] = array_values($context['optimus_keywords']);
@@ -762,7 +557,7 @@ class Subs
 		if (empty($modSettings['optimus_allow_change_topic_desc']))
 			return;
 
-		$description = isset($_REQUEST['optimus_description']) ? Subs::xss($_REQUEST['optimus_description']) : '';
+		$description = isset($_REQUEST['optimus_description']) ? self::xss($_REQUEST['optimus_description']) : '';
 
 		$smcFunc['db_query']('', '
 			UPDATE {db_prefix}topics
@@ -789,7 +584,7 @@ class Subs
 		if (empty($modSettings['optimus_allow_change_topic_keywords']))
 			return;
 
-		$keywords = isset($_REQUEST['optimus_keywords']) ? Subs::xss($_REQUEST['optimus_keywords']) : [];
+		$keywords = isset($_REQUEST['optimus_keywords']) ? self::xss($_REQUEST['optimus_keywords']) : [];
 
 		// Check if the keywords have been changed
 		Keywords::getAll();
@@ -838,10 +633,10 @@ class Subs
 	 */
 	public static function addSitemapLink()
 	{
-		global $modSettings, $boarddir, $txt, $forum_copyright, $boardurl;
+		global $modSettings, $txt, $forum_copyright, $scripturl;
 
-		if (!empty($modSettings['optimus_sitemap_link']) && is_file($boarddir . '/' . (!empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : 'sitemap') . '.xml') && isset($txt['optimus_sitemap_xml_link']))
-			$forum_copyright .= ' | <a href="' . $boardurl . '/' . (!empty($modSettings['optimus_sitemap_name']) ? $modSettings['optimus_sitemap_name'] : 'sitemap') . '.xml" target="_blank" rel="noopener">' . $txt['optimus_sitemap_xml_link'] . '</a>';
+		if (!empty($modSettings['optimus_sitemap_link']) && isset($txt['optimus_sitemap_title']))
+			$forum_copyright .= ' | <a href="' . $scripturl . '?action=sitemap;xml">' . $txt['optimus_sitemap_title'] . '</a>';
 	}
 
 	/**

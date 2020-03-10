@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -68,7 +68,7 @@ class TopicHooks
 			return;
 
 		if ($counter == 1) {
-			$keywords = '<fieldset class="roundframe"><legend class="windowbg" style="padding: 0.2em 0.4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
+			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="windowbg" style="padding: 0.2em 0.4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
 
 			foreach ($context['optimus_keywords'] as $id => $keyword)
 				$keywords .= '<a class="button" href="' . $scripturl . '?action=keywords;id=' . $id . '">' . $keyword . '</a>';
@@ -90,17 +90,17 @@ class TopicHooks
 		Subs::topicKeywordsField();
 	}
 
-    /**
-     * Add the necessary data before creating a topic
-     *
-     * @param array $msgOptions
-     * @param array $topicOptions
-     * @param array $posterOptions
-     * @param array $topic_columns
-     * @param array $topic_parameters
-     *
-     * @return void
-     */
+	/**
+	 * Add the necessary data before creating a topic
+	 *
+	 * @param array $msgOptions
+	 * @param array $topicOptions
+	 * @param array $posterOptions
+	 * @param array $topic_columns
+	 * @param array $topic_parameters
+	 *
+	 * @return void
+	 */
 	public static function beforeCreateTopic(&$msgOptions, &$topicOptions, &$posterOptions, &$topic_columns, &$topic_parameters)
 	{
 		global $modSettings;
@@ -114,15 +114,15 @@ class TopicHooks
 		$topic_parameters[] = $description;
 	}
 
-    /**
-     * Creating a topic
-     *
-     * @param array $msgOptions
-     * @param array $topicOptions
-     * @param array $posterOptions
-     *
-     * @return void
-     */
+	/**
+	 * Creating a topic
+	 *
+	 * @param array $msgOptions
+	 * @param array $topicOptions
+	 * @param array $posterOptions
+	 *
+	 * @return void
+	 */
 	public static function createTopic(&$msgOptions, &$topicOptions, &$posterOptions)
 	{
 		global $modSettings;

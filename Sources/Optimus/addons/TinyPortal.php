@@ -13,7 +13,7 @@ use Bugo\Optimus\Subs;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -74,8 +74,8 @@ class TinyPortal
 
 		while ($row = $smcFunc['db_fetch_assoc']($request))
 			$links[] = array(
-				'url'  => $scripturl . '?page=' . ($row['shortname'] ?: $row['id']),
-				'date' => $row['date']
+				'loc'     => $scripturl . '?page=' . ($row['shortname'] ?: $row['id']),
+				'lastmod' => $row['date']
 			);
 
 		$smcFunc['db_free_result']($request);

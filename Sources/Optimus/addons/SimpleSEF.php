@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -38,7 +38,7 @@ class SimpleSEF
 			$simple_sef = new \SimpleSEF;
 
 			foreach ($links as $id => $entry)
-				$links[$id]['url'] = $simple_sef->create_sef_url($entry['url']);
+				$links[$id]['loc'] = $simple_sef->create_sef_url($entry['loc']);
 		}
 	}
 }

@@ -253,3 +253,42 @@ function template_footer_counters_below()
 		echo '
 	<div class="counters">', $modSettings['optimus_count_code'], '</div>';
 }
+
+function template_sitemap_xml()
+{
+	global $settings, $context;
+
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="' . $settings['default_theme_url'] . '/css/optimus/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+	foreach ($context['sitemap']['items'] as $item)
+		echo '
+	<url>
+		<loc>', $item['loc'], '</loc>
+		<lastmod>', $item['lastmod'], '</lastmod>
+		<changefreq>', $item['changefreq'], '</changefreq>
+		<priority>', $item['priority'], '</priority>
+	</url>';
+
+	echo '
+</urlset>';
+}
+
+function template_sitemapindex_xml()
+{
+	global $settings, $context;
+
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="' . $settings['default_theme_url'] . '/css/optimus/sitemap.xsl"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+	foreach ($context['sitemap']['items'] as $item)
+		echo '
+	<sitemap>
+		<loc>', $item['loc'], '</loc>
+	</sitemap>';
+
+	echo '
+</sitemapindex>';
+}

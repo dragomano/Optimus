@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -22,33 +22,33 @@ if (!defined('SMF'))
  */
 class Robots
 {
-	private $map = 'sitemap.xml';
-	private $url_path;
+	/**
+	 * Root dir url
+	 *
+	 * @var string
+	 */
+	private $url_path = '';
+
+	/**
+	 * Rules
+	 *
+	 * @var array
+	 */
 	public $rules = [];
 
 	/**
-	 * Getter for $map field
-	 *
-	 * @return string
-	 */
-	protected function getMap()
-	{
-		return $this->map;
-	}
-
-	/**
-	 * Setter for $map field
+	 * Setter for $url_path var
 	 *
 	 * @param string $value
 	 * @return void
 	 */
-	protected function setMap($value)
+	protected function setUrlPath($value)
 	{
-		$this->map = $value;
+		$this->url_path = $value;
 	}
 
 	/**
-	 * Getter for $url_path field
+	 * Getter for $url_path var
 	 *
 	 * @return void
 	 */
@@ -68,10 +68,7 @@ class Robots
 
 		clearstatcache();
 
-		if (!empty($modSettings['optimus_sitemap_name']))
-			$this->setMap($modSettings['optimus_sitemap_name'] . '.xml');
-
-		$this->url_path = parse_url($boardurl, PHP_URL_PATH);
+		$this->setUrlPath(parse_url($boardurl, PHP_URL_PATH));
 		$this->rules[] = "User-agent: *";
 
 		self::sefRules();
@@ -162,22 +159,14 @@ class Robots
 	 */
 	private function sitemapRules()
 	{
-		global $boardurl, $boarddir, $sourcedir, $scripturl;
+		global $sourcedir, $modSettings, $scripturl;
 
-		$path_map    = $boardurl . '/' . $this->getMap();
-		$temp_map    = file_exists($boarddir . '/' . $this->getMap());
-		$temp_map_gz = file_exists($boarddir . '/' . $this->getMap() . '.gz');
+		$sitemap = file_exists($sourcedir . '/Sitemap.php') || !empty($modSettings['optimus_sitemap_enable']);
 
-		$this->setMap($temp_map ? $path_map : '');
-
-		$map_gz = $temp_map_gz ? $path_map . '.gz' : '';
-
-		$sitemap = file_exists($sourcedir . '/Sitemap.php');
-
-		$this->rules[] = !empty($this->getMap()) || file_exists($sourcedir . '/Sitemap.php') ? "Allow: " . $this->getUrlPath() . "/*sitemap" : "";
-		$this->rules[] = !empty($this->getMap()) || !empty($map_gz) || $sitemap ? "|" : "";
-		$this->rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
-		$this->rules[] = !empty($this->getMap()) ? "Sitemap: " . $this->getMap() : "";
-		$this->rules[] = !empty($map_gz) ? "Sitemap: " . $map_gz : "";
+		if ($sitemap) {
+			$this->rules[] = "Allow: " . $this->getUrlPath() . "/*sitemap";
+			$this->rules[] = "|";
+			$this->rules[] = "Sitemap: " . $scripturl . "?action=sitemap;xml";
+		}
 	}
 }

@@ -19,7 +19,7 @@ This mod might help you solve some problems related with indexing of your forum 
 * Managing of title, description and keywords metatags for topic pages.
 * Description meta-tag for boards' and topics' pages.
 * Keywords meta-tag for topics. Users can fill them when creating/changing topics.
-* Support of Open Graph meta-tags, Twitter Cards and JSON-LD markup.
+* Support of Open Graph meta-tags and Twitter Cards.
 * Ability to specify the verification codes when adding sites to Google, Yandex and Bing (Webmaster Tools).
 * Adding of custom metatags.
 * Adding of any counters without template's editing.
@@ -40,7 +40,7 @@ The **portamx**, **elkarte** and **wedge** branches contain versions for corresp
 * Управление заголовками страниц тем и разделов.
 * Мета-тег description для страниц разделов и тем.
 * Мета-тег keywords для тем форума (заполняются при создании/редактировании тем).
-* Поддержка тегов Open Graph, карточек Twitter и разметки JSON-LD для страниц форума.
+* Поддержка тегов Open Graph и карточек Twitter.
 * Проверочные мета-теги при добавлении сайтов в Google, Яндекс, Mail, Bing (Инструменты вебмастера).
 * Пользовательские мета-теги.
 * Добавление счетчиков в код страниц без редактирования файлов движка.

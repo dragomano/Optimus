@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>2.6.1 [02/25/20]</version>
+	<version>2.7 [03/10/20]</version>
 	<type>modification</type>
 
 	<install for="2.1.*">
@@ -18,7 +18,6 @@
 
 	<uninstall for="2.1.*">
 		<hook hook="integrate_pre_load" function="Bugo\Optimus\Integration::hooks" file="$sourcedir/Optimus/Integration.php" reverse="true" />
-		<code>uninstall.php</code>
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$themedir/images/optimus.png" />
 		<remove-file name="$themedir/images/optimus_large.png" />

@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -22,6 +22,22 @@ if (!defined('SMF'))
  */
 class Settings
 {
+	/**
+	 * Remove meta_keywords setting (it moved to Optimus settings)
+	 *
+	 * @param array $config_vars
+	 * @return void
+	 */
+	public static function modifyBasicSettings(&$config_vars)
+	{
+		foreach ($config_vars as $key => $dump) {
+			if (isset($dump[1]) && $dump[1] == 'meta_keywords') {
+				unset($config_vars[$key]);
+				break;
+			}
+		}
+	}
+
 	/**
 	 * The menu with the settings of the mod in the admin area
 	 *
@@ -158,6 +174,7 @@ class Settings
 			array('title', 'optimus_main_page'),
 			array('text', 'optimus_forum_index', 40),
 			array('large_text', 'optimus_description', '4" style="width:80%', 'subtext' => $txt['optimus_description_subtext']),
+			array('large_text', 'meta_keywords', '4" style="width:80%', 'subtext' => $txt['meta_keywords_note']),
 			array('title', 'optimus_all_pages'),
 			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
 			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
@@ -212,7 +229,6 @@ class Settings
 			array('check', 'optimus_og_image', 'help' => 'optimus_og_image_help', 'subtext' => sprintf($txt['optimus_og_image_subtext'], $og_image_option_link)),
 			array('text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'),
 			array('text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'),
-			array('check', 'optimus_json_ld', 'help' => 'optimus_json_ld_help'),
 		);
 
 		if ($return_config)
@@ -356,7 +372,7 @@ class Settings
 	 */
 	public static function robotsTabSettings()
 	{
-		global $context, $txt, $scripturl;
+		global $context, $txt, $scripturl, $sourcedir;
 
 		$context['sub_template'] = 'robots';
 		$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
@@ -369,16 +385,14 @@ class Settings
 		$context['robots_txt_exists'] = file_exists($common_rules_path);
 		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
 
-		Integration::loadClass('Robots');
+		require_once($sourcedir . "/Optimus/Robots.php");
 
 		$robots = new Robots();
 		$robots->generate();
 
 		if (isset($_GET['save'])) {
 			checkSession();
-
 			file_put_contents($common_rules_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING));
-
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
 	}
@@ -392,46 +406,23 @@ class Settings
 	 */
 	public static function sitemapTabSettings($return_config = false)
 	{
-		global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
+		global $context, $txt, $scripturl;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
+		$context['settings_title'] = $txt['optimus_sitemap_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
-		if (!isset($modSettings['optimus_sitemap_name']))
-			updateSettings(array('optimus_sitemap_name' => 'sitemap'));
-
 		$config_vars = array(
-			array('title', 'optimus_sitemap_xml_link'),
-			array(
-				'check',
-				'optimus_sitemap_enable',
-				'subtext' => sprintf($txt['optimus_sitemap_enable_subtext'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id'])
-			),
+			array('check', 'optimus_sitemap_enable'),
 			array('check', 'optimus_sitemap_link'),
-			array('text', 'optimus_sitemap_name', 'postinput' => '.xml'),
 			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
-			array('check', 'optimus_sitemap_boards'),
-			array('int', 'optimus_sitemap_topics')
+			array('check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']),
+			array('int', 'optimus_sitemap_topics_num_replies'),
+			array('check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext'])
 		);
 
 		if ($return_config)
 			return $config_vars;
-
-		// Update the entry in the task manager
-		$smcFunc['db_query']('', '
-			UPDATE {db_prefix}scheduled_tasks
-			SET disabled = {int:disabled}
-			WHERE task = {string:task}',
-			array(
-				'disabled' => (int) empty($modSettings['optimus_sitemap_enable']),
-				'task'     => 'optimus_sitemap'
-			)
-		);
-
-		if (!empty($modSettings['optimus_sitemap_enable'])) {
-			require_once($sourcedir . '/ScheduledTasks.php');
-			CalculateNextTrigger('optimus_sitemap');
-		}
 
 		if (isset($_GET['save'])) {
 			checkSession();

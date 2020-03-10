@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.1
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -22,53 +22,12 @@ if (!defined('SMF'))
  */
 class Sitemap
 {
-	const TAB = "\t";
-
 	/**
 	 * Maximum number links
 	 *
 	 * @var int
 	 */
-	private $count = 50000;
-
-	/**
-	 * Links for sitemap
-	 *
-	 * @var array
-	 */
-	protected $links = [];
-
-	/**
-	 * XML namespace
-	 *
-	 * @var string
-	 */
-	protected $xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-
-	/**
-	 * XML filename
-	 *
-	 * @var string
-	 */
-	protected $name = 'sitemap';
-
-	/**
-	 * Class constructor
-	 *
-	 * @param array $links
-	 * @param string $xmlns
-	 * @param string $name
-	 */
-	public function __construct($links = [], $xmlns = '', $name = '')
-	{
-		$this->links = $links;
-
-		if (!empty($xmlns))
-			$this->xmlns = $xmlns;
-
-		if (!empty($name))
-			$this->name = $name;
-	}
+	private static $count = 50000;
 
 	/**
 	 * Setter for $count field
@@ -76,9 +35,9 @@ class Sitemap
 	 * @param int $value
 	 * @return void
 	 */
-	public function setCount($value)
+	public static function setCount($value)
 	{
-		$this->count = $value;
+		self::$count = $value;
 	}
 
 	/**
@@ -86,142 +45,270 @@ class Sitemap
 	 *
 	 * @return int
 	 */
-	public function getCount()
+	public static function getCount()
 	{
-		return (int) $this->count;
+		return (int) self::$count;
 	}
 
 	/**
-	 * Map generation
+	 * Show main action of Sitemap area
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	public function generate()
+	public static function main()
 	{
-		global $modSettings, $boarddir, $boardurl;
+		loadTemplate('Optimus');
 
-		if (empty($this->links))
-			return false;
+		if (isset($_REQUEST['xml']))
+			return self::getXml();
 
-		$urls = array();
+		redirectexit('action=sitemap;xml');
+	}
+
+	/**
+	 * Show sitemap XML
+	 *
+	 * @return void
+	 */
+	public static function getXml()
+	{
+		global $modSettings, $context, $scripturl;
+
+		$links = self::getLinks();
+		$items = [];
 
 		$sitemap_counter = 0;
-		foreach ($this->links as $link_counter => $entry) {
-			if (!empty($link_counter) && $link_counter % $this->getCount() == 0)
+		foreach ($links as $counter => $entry) {
+			if (!empty($counter) && $counter % self::getCount() == 0)
 				$sitemap_counter++;
 
-			$urls[$sitemap_counter][] = array(
-				'loc'        => $entry['url'],
-				'lastmod'    => $this->getDate($entry['date']),
-				'changefreq' => $this->getFrequency($entry['date']),
-				'priority'   => $this->getPriority($entry['date'])
+			$items[$sitemap_counter][] = array(
+				'loc'        => $entry['loc'],
+				'lastmod'    => self::getDate($entry['lastmod']),
+				'changefreq' => self::getFrequency($entry['lastmod']),
+				'priority'   => self::getPriority($entry['lastmod'])
 			);
 		}
 
 		// The update frequency of the main page
 		if (empty($modSettings['optimus_main_page_frequency']))
-			$urls[0][0]['changefreq'] = 'always';
+			$items[0][0]['changefreq'] = 'always';
 
 		// The priority of the main page
-		$urls[0][0]['priority'] = '1.0';
+		$items[0][0]['priority'] = '1.0';
 
-		// Remove the previous sitemaps
-		array_map("unlink", glob($boarddir . '/' . $this->name . '*.xml'));
+		$context['sitemap']['items'] = [];
 
-		// Create the sitemap
-		$header = '<' . '?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+		// If number of links is more than self::$count, we show the sitemapindex file
+		if ($sitemap_counter > 0) {
+			if (isset($_GET['start'])) {
+				$index = (int) $_GET['start'];
 
-		// If links more than $this->count, then make the sitemapindex file
-		if ($sitemap_counter > $this->getCount()) {
-			for ($number = 0; $number <= $sitemap_counter; $number++) {
-				$content  = self::prepareContent($urls[$number]);
-				$content  = $header . '<urlset xmlns="' . $this->xmlns . '">' . PHP_EOL . $content . '</urlset>';
-				$filename = $boarddir . '/' . $this->name . '_' . $number . '.xml';
-				$this->createFile($filename, $content);
+				if (!array_key_exists($index, $items))
+					redirectexit('action=sitemap;xml');
+
+				$context['sitemap']['items'] = array_merge($context['sitemap']['items'], $items[$index]);
+				$context['sub_template'] = 'sitemap_xml';
+
+				return;
 			}
 
-			// Create a Sitemap index file
-			$content = '';
+			for ($number = 0; $number <= $sitemap_counter; $number++)
+				$context['sitemap']['items'][$number]['loc'] = $scripturl . '?action=sitemap;xml;start=' . $number;
 
-			for ($number = 0; $number <= $sitemap_counter; $number++) {
-				$content .= self::TAB . '<sitemap>' . PHP_EOL;
-				$content .= self::TAB . self::TAB . '<loc>' . $boardurl . '/' . $this->name . '_' . $number . '.xml</loc>' . PHP_EOL;
-				$content .= self::TAB . self::TAB . '<lastmod>' . $this->getDate() . '</lastmod>' . PHP_EOL;
-				$content .= self::TAB . '</sitemap>' . PHP_EOL;
-			}
-
-			$content  = $header . '<sitemapindex xmlns="' . $this->xmlns . '">' . PHP_EOL . $content . '</sitemapindex>';
-			$filename = $boarddir . '/' . $this->name . '.xml';
-			$this->createFile($filename, $content);
+			$context['sub_template'] = 'sitemapindex_xml';
 		} else {
-			$content  = self::prepareContent($urls[0]);
-			$content  = $header . '<urlset xmlns="' . $this->xmlns . '">' . PHP_EOL . $content . '</urlset>';
-			$filename = $boarddir . '/' . $this->name . '.xml';
-			$this->createFile($filename, $content);
-		}
+			if (isset($_GET['start']))
+				redirectexit('action=sitemap;xml');
 
-		return true;
+			$context['sitemap']['items'] = $items[0];
+			$context['sub_template'] = 'sitemap_xml';
+		}
 	}
 
 	/**
-	 * Preparing links for the sitemap
+	 * Find the most recent date in the array of links for the map
 	 *
-	 * @param array $data
-	 * @return string
+	 * @param array $links
+	 * @return null|int
 	 */
-	private function prepareContent($data)
+	public static function getLastDate($links)
 	{
-		$content = '';
+		if (empty($links))
+			return null;
 
-		foreach ($data as $entry) {
-			$content .= self::TAB . '<url>' . PHP_EOL;
-			$content .= self::TAB . self::TAB . '<loc>' . $entry['loc'] . '</loc>' . PHP_EOL;
+		$data = array_values(array_values($links));
 
-			if (!empty($entry['lastmod']))
-				$content .= self::TAB . self::TAB . '<lastmod>' . $entry['lastmod'] . '</lastmod>' . PHP_EOL;
+		$dates = array();
+		foreach ($data as $value)
+			$dates[] = $value['lastmod'];
 
-			if (!empty($entry['changefreq']))
-				$content .= self::TAB . self::TAB . '<changefreq>' . $entry['changefreq'] . '</changefreq>' . PHP_EOL;
-
-			if (!empty($entry['priority']))
-				$content .= self::TAB . self::TAB . '<priority>' . $entry['priority'] . '</priority>' . PHP_EOL;
-
-			$content .= self::TAB . '</url>' . PHP_EOL;
-		}
-
-		// We make mass processing of links
-		Subs::runAddons('prepareContent', array(&$content));
-
-		return $content;
+		return max($dates);
 	}
 
 	/**
-	 * Create a map file
+	 * Get an array of forum links to create a Sitemap
 	 *
-	 * @param string $path file path
-	 * @param string $data content
-	 * @return bool
+	 * @return array
 	 */
-	private function createFile($path, $data)
+	public static function getLinks()
 	{
-		if (!$fp = fopen($path, 'w'))
-			return false;
+		global $boardurl, $modSettings;
 
-		flock($fp, LOCK_EX);
-		fwrite($fp, $data);
-		flock($fp, LOCK_UN);
-		fclose($fp);
+		$cache_ttl = 24 * 60 * 60;
 
-		// If the file size exceeds 10 MB, we also create a packaged gz-version
-		if (filesize($path) > (10 * 1024 * 1024)) {
-			$data = implode('', file($path));
-			$gzdata = gzencode($data, 9);
-			$fp = fopen($path . '.gz', 'w');
-			fwrite($fp, $gzdata);
-			fclose($fp);
+		if (($links = cache_get_data('optimus_sitemap', $cache_ttl)) == null) {
+			$boards = self::getBoardLinks();
+			$topics = self::getTopicLinks();
+			$links  = !empty($boards) || !empty($topics) ? array_merge($boards, $topics) : [];
+
+			// Adding the main page
+			$home = array(
+				'loc'     => $boardurl . '/',
+				'lastmod' => !empty($modSettings['optimus_main_page_frequency']) ? self::getLastDate($links) : time()
+			);
+
+			array_unshift($links, $home);
+
+			// Possibility for the mod authors to add their own links or process them
+			Subs::runAddons('sitemap', array(&$links));
+
+			cache_put_data('optimus_sitemap', $links, $cache_ttl);
 		}
 
-		return true;
+		return $links;
+	}
+
+	/**
+	 * Get an array of forum boards ([] = array('url' => link, 'date' => date))
+	 *
+	 * @return array
+	 */
+	public static function getBoardLinks()
+	{
+		global $modSettings, $smcFunc, $scripturl;
+
+		if (empty($modSettings['optimus_sitemap_boards']))
+			return [];
+
+		$request = $smcFunc['db_query']('', '
+			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
+			FROM {db_prefix}boards AS b
+				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
+			WHERE EXISTS (
+					SELECT DISTINCT bpv.id_board
+					FROM {db_prefix}board_permissions_view bpv
+					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
+						AND bpv.id_board = b.id_board
+				)' . (!empty($modSettings['recycle_board']) ? '
+				AND b.id_board <> {int:recycle_board}' : '') . '
+				AND b.num_posts > {int:posts}
+			ORDER BY b.id_board',
+			array(
+				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
+				'posts'         => 0
+			)
+		);
+
+		$boards = array();
+		while ($row = $smcFunc['db_fetch_assoc']($request))
+			$boards[] = $row;
+
+		$smcFunc['db_free_result']($request);
+
+		$links = array();
+
+		if (!empty($boards)) {
+			foreach ($boards as $entry)	{
+				$links[] = array(
+					'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
+					'lastmod' => $entry['last_date']
+				);
+			}
+		}
+
+		return $links;
+	}
+
+	/**
+	 * Get an array of forum topics ([] = array('url' => link, 'date' => date))
+	 *
+	 * @return array
+	 */
+	public static function getTopicLinks()
+	{
+		global $smcFunc, $modSettings, $scripturl;
+
+		$request = $smcFunc['db_query']('', '
+			SELECT t.id_topic, m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date, t.num_replies' . (!empty($modSettings['optimus_sitemap_all_topic_pages']) ? '
+			FROM {db_prefix}messages AS m
+				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)' : '
+			FROM {db_prefix}topics AS t
+				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)') . '
+				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
+			WHERE EXISTS (
+					SELECT DISTINCT bpv.id_board
+					FROM {db_prefix}board_permissions_view bpv
+					WHERE (bpv.id_group = -1 AND bpv.deny = 0)
+						AND bpv.id_board = b.id_board
+				)' . (!empty($modSettings['recycle_board']) ? '
+				AND b.id_board <> {int:recycle_board}' : '') . '
+				AND t.num_replies > {int:num_replies}
+				AND t.approved = {int:is_approved}
+			ORDER BY t.id_topic, m.id_msg',
+			array(
+				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
+				'num_replies'   => !empty($modSettings['optimus_sitemap_topics_num_replies']) ? (int) $modSettings['optimus_sitemap_topics_num_replies'] : -1,
+				'is_approved'   => 1
+			)
+		);
+
+		$topics = array();
+		$max_messages = (int) $modSettings['defaultMaxMessages'];
+
+		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			if (!empty($modSettings['optimus_sitemap_all_topic_pages'])) {
+				$total_pages = ceil($row['num_replies'] / $max_messages);
+				$start = 0;
+
+				if (empty($total_pages)) {
+					$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
+				} else {
+					for ($i = 0; $i <= $total_pages; $i++) {
+						$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
+
+						if (count($topics[$row['id_topic']][$start]) <= $max_messages)
+							break;
+
+						$topics[$row['id_topic']][$start] = array_slice($topics[$row['id_topic']][$start], 0, $max_messages, true);
+						$start += $max_messages;
+					}
+				}
+			} else {
+				$topics[$row['id_topic']] = $row['last_date'];
+			}
+		}
+
+		$smcFunc['db_free_result']($request);
+
+		$links = array();
+		foreach ($topics as $id_topic => $data) {
+			if (!empty($modSettings['optimus_sitemap_all_topic_pages'])) {
+				foreach ($data as $start => $dump) {
+					$links[] = array(
+						'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $id_topic . '.' . $start . '.html' : $scripturl . '?topic=' . $id_topic . '.' . $start,
+						'lastmod' => max($dump)
+					);
+				}
+			} else {
+				$links[] = array(
+					'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $id_topic . '.0.html' : $scripturl . '?topic=' . $id_topic . '.0',
+					'lastmod' => $data
+				);
+			}
+		}
+
+		return $links;
 	}
 
 	/**
@@ -230,7 +317,7 @@ class Sitemap
 	 * @param int $timestamp
 	 * @return string
 	 */
-	private function getDate($time = 0)
+	private static function getDate($time = 0)
 	{
 		$timestamp = $time ?: time();
 		$gmt       = substr(date("O", $timestamp), 0, 3) . ':00';
@@ -245,7 +332,7 @@ class Sitemap
 	 * @param int $time
 	 * @return string
 	 */
-	private function getFrequency($time)
+	private static function getFrequency($time)
 	{
 		$frequency = time() - $time;
 
@@ -267,7 +354,7 @@ class Sitemap
 	 * @param int $time
 	 * @return float
 	 */
-	private function getPriority($time)
+	private static function getPriority($time)
 	{
 		$diff = floor((time() - $time) / 60 / 60 / 24);
 

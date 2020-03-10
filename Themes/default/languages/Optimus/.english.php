@@ -49,8 +49,6 @@ $txt['optimus_fb_appid']         = 'Facebook Application ID (if you have)';
 $txt['optimus_fb_appid_help']    = 'Create an application <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener" class="bbc_link"><strong>here</strong></a>, copy its ID and fill this field.';
 $txt['optimus_tw_cards']         = 'Twitter account name (if you have)';
 $txt['optimus_tw_cards_help']    = 'Read more about Twitter cards <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener" class="bbc_link"><strong>here</strong></a>.';
-$txt['optimus_json_ld']          = 'JSON-LD markup for "breadcrumbs"';
-$txt['optimus_json_ld_help']     = 'JSON-LD is a lightweight Linked Data format. It is easy for humans to read and write. It is based on the already successful JSON format and provides a way to help JSON data interoperate at Web-scale. JSON-LD is an ideal data format for programming environments, REST Web services, and unstructured databases such as CouchDB and MongoDB.<br><br>Enable this option to generate JSON-LD markup for "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=en" target="_blank" rel="noopener" class="bbc_link"><strong>breadcrumbs</strong></a>".';
 
 $txt['optimus_favicon_title'] = 'Favicon';
 $txt['optimus_favicon_desc']  = 'Create your own forum icon. It will be displayed by the browser in the tab before the page name, as well as an image next to the open tab and other interface elements.';
@@ -84,8 +82,8 @@ $txt['optimus_count_code']      = 'Visible counters (<a href="http://www.prtrack
 $txt['optimus_counters_css']    = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 
-$txt['optimus_robots_title'] = 'Editor robots.txt';
-$txt['optimus_robots_desc']  = 'On this page you can change some options of forum map\'s creating, as well as modify a robots.txt file by using special generator.';
+$txt['optimus_robots_title'] = 'Customizing a robots.txt';
+$txt['optimus_robots_desc']  = 'The rule generator is updated depending on the installed mods and some settings of your SMF.';
 
 $txt['optimus_manage']      = 'Manage robots.txt';
 $txt['optimus_rules']       = 'Robots.txt Generator';
@@ -103,20 +101,17 @@ $txt['optimus_links']       = array(
 
 
 $txt['optimus_sitemap_title'] = 'Optimus Sitemap';
-$txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below.';
+$txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate a XML-map for forums of any size. Just enable this option below.';
 
-$txt['optimus_sitemap_enable']          = 'Create and periodically update Sitemap XML file';
-$txt['optimus_sitemap_enable_subtext']  = 'This sitemap will be updated depending on settings in the <a href="%1$s" class="bbc_link">Task Manager</a>.';
-$txt['optimus_sitemap_link']            = 'Show Sitemap XML-link on the footer';
-$txt['optimus_sitemap_name']            = 'XML-map file name (without extension!)';
-$txt['optimus_main_page_frequency']     = 'The update frequency of the main page';
-$txt['optimus_main_page_frequency_set'] = array('Constant (always)', 'Depending on the date of the last message');
-$txt['optimus_sitemap_boards']          = 'Add links to boards to the sitemap<br><span class="smalltext error">Boards that closed to guests will NOT be added.</span>';
-$txt['optimus_sitemap_topics']          = 'Add to the sitemap only those topics that have the number of replies is more than';
-
-$txt['optimus_sitemap_rec']       = ' Optimus is not able to split files into several parts.';
-$txt['optimus_sitemap_url_limit'] = 'Sitemap file must have no more than 50,000 URLs!';
-$txt['optimus_sitemap_xml_link']  = 'Sitemap XML';
+$txt['optimus_sitemap_enable']                  = 'Activate the Sitemap area';
+$txt['optimus_sitemap_link']                    = 'Show the Sitemap link on the footer';
+$txt['optimus_main_page_frequency']             = 'The update frequency of the main page';
+$txt['optimus_main_page_frequency_set']         = array('Constant (always)', 'Depending on the date of the last message');
+$txt['optimus_sitemap_boards']                  = 'Add links to boards to the sitemap';
+$txt['optimus_sitemap_boards_subtext']          = 'Boards that closed to guests will NOT be added.';
+$txt['optimus_sitemap_topics_num_replies']      = 'Add to the sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_all_topic_pages']         = 'Add ALL topic pages to the sitemap';
+$txt['optimus_sitemap_all_topic_pages_subtext'] = 'If not checked, only the first pages of topics will be added to the sitemap.';
 
 $txt['optimus_404_page_title']       = '404 - Page not found';
 $txt['optimus_404_h2']               = 'Error 404';
@@ -133,7 +128,3 @@ $txt['optimus_no_keywords']          = 'There is no information about this keywo
 $txt['optimus_all_keywords']         = 'All keywords in the forum topics';
 $txt['optimus_keyword_column']       = 'Keyword';
 $txt['optimus_frequency_column']     = 'Frequency';
-
-// Task Manager
-$txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Generation';
-$txt['scheduled_task_desc_optimus_sitemap'] = 'You can set the frequency of the sitemap\'s creation.';
