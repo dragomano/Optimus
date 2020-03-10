@@ -9,7 +9,7 @@
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3.2
+ * @version 2.3.3
  */
 
 if (!defined('SMF'))

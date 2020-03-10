@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3.2
+ * @version 2.3.3
  */
 
 if (!defined('SMF'))
@@ -89,9 +89,9 @@ class Integration
 		}
 
 		// Metatags
-		if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 1) {
+		if (!empty($modSettings['optimus_metatags']) && $modSettings['optimus_portal_compat'] != 1) {
 			$meta = '';
-			$test = unserialize($modSettings['optimus_meta']);
+			$test = unserialize($modSettings['optimus_metatags']);
 
 			foreach ($test as $n => $val) {
 				if (!empty($val))

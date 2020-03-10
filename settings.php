@@ -14,15 +14,15 @@ $newSettings = array(
 	'optimus_description'     => $context['forum_name'],
 	'optimus_templates'       => 'a:0:{}',
 	'optimus_no_first_number' => 1,
+	'optimus_sitemap_enable'  => 0,
 	'optimus_sitemap_boards'  => 1,
 	'optimus_sitemap_topics'  => 1,
-	'optimus_meta'            => 'a:0:{}',
+	'optimus_metatags'        => 'a:0:{}',
 	'optimus_counters_css'    => '.copyright a>img {opacity: 0.3} .copyright a:hover>img {opacity: 1.0}',
 	'optimus_ignored_actions' => 'admin,bookmarks,credits,helpadmin,pm,printpage'
 );
 
 $base = array();
-updateSettings(array('optimus_meta' => ''));
 foreach ($newSettings as $setting => $value) {
 	if (!isset($modSettings[$setting]))
 		$base[$setting] = $value;
@@ -48,9 +48,12 @@ $rows[] = array(
 	'keys' => array('id_task')
 );
 
-if (!empty($rows) && empty($context['uninstalling']))
+if (empty($context['uninstalling'])) {
 	foreach ($rows as $row)
 		$smcFunc['db_insert']($row['method'], $row['table_name'], $row['columns'], $row['data'], $row['keys']);
+}
+
+clean_cache();
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';

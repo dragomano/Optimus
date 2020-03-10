@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3.2
+ * @version 2.3.3
  */
 
 if (!defined('SMF'))
@@ -249,7 +249,7 @@ class Settings
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
 
-			updateSettings(array('optimus_meta' => serialize($meta)));
+			updateSettings(array('optimus_metatags' => serialize($meta)));
 			redirectexit('action=admin;area=optimus;sa=metatags');
 		}
 
