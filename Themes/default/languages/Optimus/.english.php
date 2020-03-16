@@ -100,7 +100,7 @@ $txt['optimus_links']       = array(
 
 
 
-$txt['optimus_sitemap_title'] = 'Optimus Sitemap';
+$txt['optimus_sitemap_title'] = 'Sitemap';
 $txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate a XML-map for forums of any size. Just enable this option below.';
 
 $txt['optimus_sitemap_enable']                  = 'Activate the Sitemap area';

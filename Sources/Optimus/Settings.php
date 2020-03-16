@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7
+ * @version 2.7.1
  */
 
 if (!defined('SMF'))
@@ -109,6 +109,7 @@ class Settings
 		$context['page_title'] = $txt['optimus_main'];
 
 		loadTemplate('Optimus');
+		loadLanguage('ManageSettings');
 
 		$subActions = array(
 			'base'     => 'baseTabSettings',
@@ -153,13 +154,13 @@ class Settings
 		call_helper(__CLASS__ . '::' . $subActions[$_REQUEST['sa']]);
 	}
 
-    /**
-     * Main mod settings
-     *
-     * @param bool $return_config
-     *
-     * @return array|void
-     */
+	/**
+	 * Main mod settings
+	 *
+	 * @param bool $return_config
+	 *
+	 * @return array|void
+	 */
 	public static function baseTabSettings($return_config = false)
 	{
 		global $context, $txt, $scripturl, $modSettings;
@@ -248,13 +249,13 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-    /**
-     * Favicon settings
-     *
-     * @param bool $return_config
-     *
-     * @return array|void
-     */
+	/**
+	 * Favicon settings
+	 *
+	 * @param bool $return_config
+	 *
+	 * @return array|void
+	 */
 	public static function faviconTabSettings($return_config = false)
 	{
 		global $context, $txt, $scripturl;
@@ -321,13 +322,13 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-    /**
-     * Counters settings
-     *
-     * @param bool $return_config
-     *
-     * @return array|void
-     */
+	/**
+	 * Counters settings
+	 *
+	 * @param bool $return_config
+	 *
+	 * @return array|void
+	 */
 	public static function countersTabSettings($return_config = false)
 	{
 		global $context, $txt, $scripturl, $modSettings;
@@ -392,7 +393,7 @@ class Settings
 
 		if (isset($_GET['save'])) {
 			checkSession();
-			file_put_contents($common_rules_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING));
+			file_put_contents($common_rules_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING), LOCK_EX);
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
 	}
