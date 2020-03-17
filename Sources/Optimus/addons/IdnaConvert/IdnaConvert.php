@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons\IdnaConvert;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7
+ * @version 2.7.2
  */
 
 if (!defined('SMF'))

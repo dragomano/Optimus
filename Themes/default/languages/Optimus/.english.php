@@ -86,9 +86,9 @@ $txt['optimus_robots_title'] = 'Customizing a robots.txt';
 $txt['optimus_robots_desc']  = 'The rule generator is updated depending on the installed mods and some settings of your SMF.';
 
 $txt['optimus_manage']      = 'Manage robots.txt';
-$txt['optimus_rules']       = 'Robots.txt Generator';
-$txt['optimus_rules_hint']  = 'You can copy these rules into the field on the right:';
-$txt['optimus_robots_hint'] = 'Here you can insert your own rules or modify existing ones:';
+$txt['optimus_root_path']   = 'Path to the site root directory';
+$txt['optimus_rules']       = 'Rule generator';
+$txt['optimus_rules_hint']  = 'You can use these rules as an example for your robots.txt (on the right textarea):';
 $txt['optimus_useful']      = '';
 $txt['optimus_links_title'] = 'Useful links';
 $txt['optimus_links']       = array(

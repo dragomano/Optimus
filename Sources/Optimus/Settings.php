@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.1
+ * @version 2.7.2
  */
 
 if (!defined('SMF'))
@@ -373,19 +373,18 @@ class Settings
 	 */
 	public static function robotsTabSettings()
 	{
-		global $context, $txt, $scripturl, $sourcedir;
+		global $context, $txt, $scripturl, $modSettings, $sourcedir;
 
 		$context['sub_template'] = 'robots';
 		$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$common_rules_path = filter_input(INPUT_SERVER, 'DOCUMENT_ROOT') . "/robots.txt";
+		$config_vars = array(
+			array('text', 'optimus_root_path')
+		);
 
-		clearstatcache();
-
-		$context['robots_txt_exists'] = file_exists($common_rules_path);
-		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
-
+		$robots_path = ($_SERVER['DOCUMENT_ROOT'] ?? $modSettings['optimus_root_path'] ?? '') . "/robots.txt";
+		$context['robots_content'] = file_get_contents($robots_path);
 		require_once($sourcedir . "/Optimus/Robots.php");
 
 		$robots = new Robots();
@@ -393,9 +392,16 @@ class Settings
 
 		if (isset($_GET['save'])) {
 			checkSession();
-			file_put_contents($common_rules_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING), LOCK_EX);
+
+			$save_vars = $config_vars;
+			saveDBSettings($save_vars);
+
+			file_put_contents($robots_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING), LOCK_EX);
+
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
+
+		prepareDBSettingContext($config_vars);
 	}
 
 	/**

@@ -53,7 +53,7 @@ function template_favicon()
 	// https://realfavicongenerator.net/api/interactive_api
 	if (!empty($modSettings['optimus_favicon_api_key']))
 		echo '
-	<script type="text/javascript">
+	<script>
 		function computeJson() {
 			let params = { favicon_generation: {
 				callback: {},
@@ -141,12 +141,12 @@ function template_metatags()
 				<div style="margin-top: 1ex; display: none;" id="newtag_link">
 					<a href="#" onclick="addNewTag(); return false;" class="bbc_link">', $txt['optimus_meta_addtag'], '</a>
 				</div>
-				<script type="text/javascript"><!-- // --><![CDATA[
+				<script>
 					document.getElementById("newtag_link").style.display = "";
 					function addNewTag() {
 						setOuterHTML(document.getElementById("moreTags"), \'<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text"> => <input type="text" name="custom_tag_value[]" size="40" class="input_text"><\' + \'/div><div id="moreTags"><\' + \'/div>\');
 					}
-				// ]]></script>
+				</script>
 				<hr class="clear">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
@@ -194,13 +194,30 @@ function template_counters()
 
 function template_robots()
 {
-	global $context, $txt, $boardurl;
+	global $context, $txt;
 
 	echo '
 	<form action="', $context['post_url'], '" method="post">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['optimus_manage'], '</h3>
-		</div>
+		</div>';
+
+	if (empty($context['robots_content'])) {
+		echo '
+		<div class="windowbg noup">
+			<div class="content">
+				<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
+					<dl class="settings">
+						<dt>
+							<span><label for="optimus_root_path">', $txt['optimus_root_path'], '</label></span>
+						</dt>
+						<dd>
+							<input name="optimus_root_path" id="optimus_root_path" value="', !empty($modSettings['optimus_root_path']) ? $modSettings['optimus_root_path'] : '', '" class="input_text" type="text" size="50">
+						</dd>
+					</dl>
+				</form>';
+	} else {
+		echo '
 		<div class="windowbg noup">
 			<div class="content">
 				<div class="half_content">
@@ -213,7 +230,7 @@ function template_robots()
 				</div>
 				<div class="half_content">
 					<div class="content">
-						<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
+						<h4><a href="/robots.txt">robots.txt</a></h4>
 						<textarea rows="22" name="robots">', $context['robots_content'], '</textarea>
 					</div>
 				</div>
@@ -223,17 +240,21 @@ function template_robots()
 						<h4>', $txt['optimus_links_title'], '</h4>
 						<ul class="smalltext">';
 
-	foreach ($txt['optimus_links'] as $ankor => $url) {
-		echo '
+		foreach ($txt['optimus_links'] as $ankor => $url) {
+			echo '
 							<li><a href="', $url, '" target="_blank">', $ankor, '</a></li>';
+		}
+
+		echo '
+						</ul>
+					</div>
+				</div>';
 	}
 
 	echo '
-						</ul>
-					</div>
-				</div>
 				<hr class="clear">
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<div class="righttext"><input type="submit" class="button" value="', $txt['save'], '"></div>
 			</div>
 		</div>

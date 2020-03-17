@@ -87,9 +87,9 @@ $txt['optimus_robots_title'] = 'Редактор robots.txt';
 $txt['optimus_robots_desc']  = 'Генератор правил оновлюється в залежності від встановлених модів і деяких налаштувань SMF.';
 
 $txt['optimus_manage']      = 'Налаштування robots.txt';
+$txt['optimus_root_path']   = 'Шлях до кореневої директорії сайту';
 $txt['optimus_rules']       = 'Генератор правил';
-$txt['optimus_rules_hint']  = 'Можете скористатись цими заготовками для створення своїх правил в області, що знаходиться праворуч:';
-$txt['optimus_robots_hint'] = 'Сюди можна вставити власні правила або змінити вже існуючі:';
+$txt['optimus_rules_hint']  = 'Можете скористатись цими заготовками для створення своїх правил (в області, що знаходиться праворуч):';
 $txt['optimus_useful']      = '<a href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank" rel="noopener" class="bbc_link">Правильний robots.txt для SMF</a>';
 $txt['optimus_links_title'] = 'Корисні посилання';
 $txt['optimus_links']       = array(
