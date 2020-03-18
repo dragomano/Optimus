@@ -147,11 +147,6 @@ class Subs
 			}
 		}
 
-		if (empty($settings['og_image'])) {
-			$settings['og_image'] = $settings['images_url'] . '/thumbnail.png';
-			$context['meta_tags'][] = array('prefix' => 'og: http://ogp.me/ns#', 'property' => 'og:image', 'content' => $settings['og_image']);
-		}
-
 		// Various types
 		if (!empty($context['optimus_og_type'])) {
 			$type = key($context['optimus_og_type']);
