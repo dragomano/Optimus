@@ -11,7 +11,7 @@ namespace Bugo\Optimus\Addons;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.2
+ * @version 2.7.3
  */
 
 if (!defined('SMF'))
@@ -22,6 +22,19 @@ if (!defined('SMF'))
  */
 class SimpleSEF
 {
+	/**
+	 * Make compatibility with Optimus
+	 *
+	 * @return void
+	 */
+	public static function meta()
+	{
+		global $modSettings;
+
+		if (!empty($modSettings['simplesef_enable']))
+			$modSettings['optimus_remove_index_php'] = false;
+	}
+
 	/**
 	 * Make preparing of sitemap content before creating
 	 *

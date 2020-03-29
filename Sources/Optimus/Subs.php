@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.2
+ * @version 2.7.3
  */
 
 if (!defined('SMF'))
@@ -232,7 +232,7 @@ class Subs
 	{
 		global $context, $settings, $txt;
 
-		if (empty($context['topicinfo']['topic_first_message']))
+		if (empty($context['topicinfo']['topic_first_message']) || !empty($context['topicinfo']['optimus_description']))
 			return;
 
 		$body = $context['topicinfo']['topic_first_message'];
@@ -291,14 +291,13 @@ class Subs
 		if (empty($context['first_message']))
 			return;
 
-		if (!empty($modSettings['optimus_topic_description'])) {
-			// Use own description of topic
-			if (!empty($context['topicinfo']['optimus_description']))
-				$context['meta_description'] = $context['topicinfo']['optimus_description'];
-			// Generated description from the text of the first post of the topic
-			else
-				self::getDescriptionFromFirstMessage();
-		}
+		// Generated description from the text of the first post of the topic
+		if (!empty($modSettings['optimus_topic_description']))
+			self::getDescriptionFromFirstMessage();
+
+		// Use own description of topic
+		if (!empty($context['topicinfo']['optimus_description']))
+			$context['meta_description'] = $context['topicinfo']['optimus_description'];
 
 		// Additional data
 		$context['optimus_og_type']['article'] = array(
