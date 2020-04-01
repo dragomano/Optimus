@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2018 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 if (!defined('ELK'))
@@ -296,7 +296,7 @@ class ManageOptimus_Controller extends Action_Controller
 		$context['sub_template'] = 'robots';
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$common_rules_path = $_SERVER['DOCUMENT_ROOT'] . "/robots.txt";
+		$common_rules_path = (isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : '') . "/robots.txt";
 
 		clearstatcache();
 

@@ -1,7 +1,12 @@
 # Optimus for ElkArte
+![ElkArte 1.1.x](https://img.shields.io/badge/ElkArte-1.1.x-ed6033.svg?style=flat)
+![License](https://img.shields.io/github/license/dragomano/optimus)
+![PHP](https://img.shields.io/badge/PHP-^5.6-blue.svg?style=flat)
+![Downloads](https://img.shields.io/github/downloads/dragomano/optimus/total)
+
 * **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
-* **Compatible with:** ElkArte 1.x
+* **Compatible with:** ElkArte 1.1.x
 * **Hooks only:** Yes
 * **Languages:** Russian, English
 

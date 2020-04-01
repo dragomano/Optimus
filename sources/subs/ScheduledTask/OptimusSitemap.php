@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2018 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 namespace ElkArte\sources\subs\ScheduledTask;
@@ -24,22 +24,13 @@ class Optimus_Sitemap implements Scheduled_Task_Interface
 {
 	public function run()
 	{
-		// Additional links for Sitemap
-		$urls = array(
-			array(
-				'loc'          => 'https://www.example.com',
-				//'lastmod'    => time(),
-				//'changefreq' => weekly,
-				//'priority'   => 0.8
-			)
-		);
-
-		//$sitemap = new OP_Sitemap(false, $urls);
-		$sitemap = new OP_Sitemap();
-		return $sitemap->create();
+		return (new OP_Sitemap())->create();
 	}
 }
 
+/**
+ * Класс генерации XML-карты
+ */
 class OP_Sitemap
 {
 	private $t     = "\t";
@@ -49,6 +40,12 @@ class OP_Sitemap
 
 	private $custom_links = array();
 
+	/**
+	 * Class constructor
+	 *
+	 * @param string $xmlns
+	 * @param array $urls
+	 */
 	public function __construct($xmlns = '', $urls = [])
 	{
 		if (!empty($xmlns))
@@ -80,8 +77,9 @@ class OP_Sitemap
 		// Добавляем главную страницу
 		if (empty($modSettings['optimus_sitemap_boards'])) {
 			$base_links[] = $url_list[] = array(
-				'loc'      => $boardurl . '/',
-				'priority' => '1.0'
+				'loc'        => $boardurl . '/',
+				'changefreq' => 'always',
+				'priority'   => '1.0'
 			);
 		}
 
@@ -93,7 +91,9 @@ class OP_Sitemap
 				SELECT b.id_board, m.poster_time, m.modified_time
 				FROM {db_prefix}boards AS b
 					LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-				WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND b.num_posts > {int:posts}' : '') . '
+				WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? '
+					AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? '
+					AND b.num_posts > {int:posts}' : '') . '
 				ORDER BY b.id_board',
 				array(
 					'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
@@ -109,7 +109,6 @@ class OP_Sitemap
 
 			$last = array(0);
 
-			// А вот насчет разделов можно и подумать...
 			if (!empty($boards)) {
 				foreach ($boards as $entry)	{
 					$last_edit = empty($entry['modified_time']) ? $entry['poster_time'] : $entry['modified_time'];
@@ -128,7 +127,7 @@ class OP_Sitemap
 				$home = array(
 					'loc'        => $boardurl . '/',
 					'lastmod'    => self::getSitemapDate($home_last_edit),
-					'changefreq' => self::getSitemapFrequency($home_last_edit),
+					'changefreq' => 'always',
 					'priority'   => '1.0'
 				);
 				array_unshift($url_list, $home);
@@ -159,7 +158,10 @@ class OP_Sitemap
 			FROM {db_prefix}topics AS t
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
 				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? ' AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? ' AND t.num_replies > {int:replies}' : '') . ' AND t.approved = 1
+			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($modSettings['recycle_board']) ? '
+				AND b.id_board <> {int:recycle_board}' : '') . (!empty($modSettings['optimus_sitemap_topics']) ? '
+				AND t.num_replies > {int:replies}' : '') . '
+				AND t.approved = 1
 			ORDER BY t.id_topic',
 			array(
 				'recycle_board' => !empty($modSettings['recycle_board']) ? (int) $modSettings['recycle_board'] : 0,
@@ -340,7 +342,7 @@ class OP_Sitemap
 	 * Определяем приоритет индексирования
 	 *
 	 * @param int $time
-	 * @return float
+	 * @return string
 	 */
 	private static function getSitemapPriority($time)
 	{
@@ -352,7 +354,7 @@ class OP_Sitemap
 			return '0.6';
 		elseif ($diff <= 90)
 			return '0.4';
-		else
-			return '0.2';
+
+		return '0.2';
 	}
 }

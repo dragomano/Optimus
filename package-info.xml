@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:smf="http://www.elkarte.net/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.2</version>
+	<version>0.3</version>
 	<type>addon</type>
 
 	<install for="1.1 - 1.1.99">

@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2018 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 function template_favicon()
@@ -68,7 +68,7 @@ function template_favicon()
 	// https://realfavicongenerator.net/api/interactive_api
 	if (!empty($modSettings['optimus_favicon_api_key']))
 		echo '
-	<script type="text/javascript">
+	<script>
 		function computeJson() {
 			var params = { favicon_generation: {
 				callback: {},
@@ -153,12 +153,12 @@ function template_metatags()
 			<div style="margin-top: 1ex; display: none;" id="newtag_link">
 				<a href="#" onclick="addNewTag(); return false;">', $txt['optimus_meta_addtag'], '</a>
 			</div>
-			<script type="text/javascript"><!-- // --><![CDATA[
+			<script>
 				document.getElementById("newtag_link").style.display = "";
 				function addNewTag() {
 					setOuterHTML(document.getElementById("moreTags"), \'<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text"> => <input type="text" name="custom_tag_value[]" size="40" class="input_text"><\' + \'/div><div id="moreTags"><\' + \'/div>\');
 				}
-			// ]]></script>
+			</script>
 			<hr class="hrcolor clear">';
 
 	if (isset($context['admin-ssc_token']))
@@ -211,7 +211,7 @@ function template_counters()
 
 function template_robots()
 {
-	global $context, $txt, $boardurl;
+	global $context, $txt;
 
 	echo '
 	<form id="admin_form_wrapper" action="', $context['post_url'], '" method="post">
@@ -227,7 +227,7 @@ function template_robots()
 			</div>
 			<div class="min">
 				<div class="content">
-					<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
+					<h4>', $context['robots_txt_exists'] ? '<a href="/robots.txt">robots.txt</a>' : 'robots.txt', '</h4>
 					<textarea rows="22" name="robots">', $context['robots_content'], '</textarea>
 				</div>
 			</div>
@@ -257,13 +257,13 @@ function template_robots()
 
 function template_donate()
 {
-	global $txt, $scripturl;
+	global $txt, $language, $scripturl;
 
 	echo '
 	<div id="admin_form_wrapper">
 		<h3 class="category_header">', $txt['optimus_donate_title'], '</h3>';
 
-	if (in_array($txt['lang_dictionary'], array('ru', 'uk')))
+	if (in_array($language, array('russian', 'ukrainian')))
 		echo '
 		<div class="content centertext">
 			<iframe src="https://money.yandex.ru/embed/donate.xml?account=410011113366680&quickpay=donate&payment-type-choice=on&mobile-payment-type-choice=on&default-sum=100&targets=%D0%9D%D0%B0+%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D0%B5+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0&target-visibility=on&project-name=%D0%9B%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE+%D0%BC%D0%B5%D0%B4%D0%B2%D0%B5%D0%B4%D1%8F&project-site=https%3A%2F%2Fdragomano.ru&button-text=05&successURL=" width="508" height="117" style="border:none;"></iframe>

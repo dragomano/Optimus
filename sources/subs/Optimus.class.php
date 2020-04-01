@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2018 Bugo
+ * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.2
+ * @version 0.3
  */
 
 if (!defined('ELK'))
@@ -24,11 +24,11 @@ class Optimus
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_load_theme', 'Optimus::loadTheme', false);
-		add_integration_function('integrate_menu_buttons', 'Optimus::menuButtons', false);
-		add_integration_function('integrate_credits', 'Optimus::credits', false);
-		add_integration_function('integrate_buffer', 'Optimus::buffer', false);
-		add_integration_function('integrate_admin_areas', 'Optimus::adminAreas', false);
+		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false);
+		add_integration_function('integrate_credits', __CLASS__ . '::credits', false);
+		add_integration_function('integrate_buffer', __CLASS__ . '::buffer', false);
+		add_integration_function('integrate_admin_areas', __CLASS__ . '::adminAreas', false);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Optimus
 	 */
 	private static function addCounters()
 	{
-		global $modSettings, $context;
+		global $modSettings, $context, $forum_copyright;
 
 		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
 
@@ -82,6 +82,10 @@ class Optimus
 				foreach ($stat as $part)
 					$context['insert_after_template'] .= "\n\t" . $part;
 			}
+
+			// Visible counters
+			if (!empty($modSettings['optimus_count_code']))
+				$forum_copyright = $modSettings['optimus_count_code'] . '<br>' . $forum_copyright;
 
 			// Styles for visible counters
 			if (!empty($modSettings['optimus_count_code']) && !empty($modSettings['optimus_counters_css']))
@@ -313,7 +317,7 @@ class Optimus
 
 		// XML sitemap link
 		if (!empty($modSettings['optimus_sitemap_link']) && file_exists($boarddir . '/sitemap.xml'))
-			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml" target="_blank">' . $txt['optimus_sitemap_xml_link'] . '</a>';
+			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_xml_link'] . '</a>';
 	}
 
 	/**
@@ -324,7 +328,7 @@ class Optimus
 	 */
 	public static function credits(&$credits)
 	{
-		$credits['credits_addons'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;2018, Bugo';
+		$credits['credits_addons'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;2020, Bugo';
 	}
 
 	/**
@@ -416,17 +420,6 @@ class Optimus
 			$tw_head = $twitter . "\n\t" . $head_tw;
 			$replacements[$head_tw] = $tw_head;
 		}
-
-		// Counters
-		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
-		if (!in_array($context['current_action'], $ignored_actions) && !empty($modSettings['optimus_count_code']))
-			$count_code = $modSettings['optimus_count_code'] . '<br>';
-
-		// XML sitemap link
-		if (!empty($modSettings['optimus_sitemap_link']) && file_exists($boarddir . '/sitemap.xml'))
-			$xml_link = '<li class="smalltext">| <a href="' . $boardurl . '/sitemap.xml" target="_blank">' . $txt['optimus_sitemap_xml_link'] . '</a></li>';
-
-		$replacements[$forum_copyright] = (!empty($count_code) ? $count_code : '') . $forum_copyright . (!empty($xml_link) ? $xml_link : '');
 
 		return str_replace(array_keys($replacements), array_values($replacements), $buffer);
 	}
