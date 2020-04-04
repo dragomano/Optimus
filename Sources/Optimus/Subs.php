@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.3
+ * @version 2.7.4
  */
 
 if (!defined('SMF'))
@@ -86,7 +86,7 @@ class Subs
 		global $context, $modSettings, $smcFunc;
 
 		if (empty($context['current_action']) || in_array($context['current_action'], array('forum', 'community'))) {
-			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']) && !empty($modSettings['optimus_description']))
+			if (empty($_SERVER['QUERY_STRING']) && empty($_SERVER['argv']) && !empty($modSettings['optimus_description']))
 				$context['meta_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
 		}
 	}
