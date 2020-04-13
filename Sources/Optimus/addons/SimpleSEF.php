@@ -31,8 +31,8 @@ class SimpleSEF
 	{
 		global $modSettings;
 
-		if (!empty($modSettings['simplesef_enable']))
-			$modSettings['optimus_remove_index_php'] = false;
+		if (!empty($modSettings['simplesef_enable']) && !empty($modSettings['optimus_remove_index_php']))
+			updateSettings(array('optimus_remove_index_php' => 0));
 	}
 
 	/**
