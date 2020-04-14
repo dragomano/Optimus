@@ -110,6 +110,7 @@ $txt['optimus_main_page_frequency_set']         = array('Постоянная (a
 $txt['optimus_sitemap_boards']                  = 'Добавлять в карту ссылки на разделы форума';
 $txt['optimus_sitemap_boards_subtext']          = 'Разделы, закрытые для гостей, добавлены НЕ будут.';
 $txt['optimus_sitemap_topics_num_replies']      = 'Добавлять в карту только темы с количеством ответов более';
+$txt['optimus_sitemap_items_display']           = 'Максимальное количество элементов в одном XML-файле';
 $txt['optimus_sitemap_all_topic_pages']         = 'Добавлять в карту ВСЕ страницы тем';
 $txt['optimus_sitemap_all_topic_pages_subtext'] = 'Если не отмечено, в карту будут добавляться только первые страницы тем.';
 

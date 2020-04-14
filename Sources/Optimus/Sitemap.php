@@ -23,34 +23,6 @@ if (!defined('SMF'))
 class Sitemap
 {
 	/**
-	 * Maximum number links
-	 *
-	 * @var int
-	 */
-	private static $count = 50000;
-
-	/**
-	 * Setter for $count field
-	 *
-	 * @param int $value
-	 * @return void
-	 */
-	public static function setCount($value)
-	{
-		self::$count = $value;
-	}
-
-	/**
-	 * Getter for $count field
-	 *
-	 * @return int
-	 */
-	public static function getCount()
-	{
-		return (int) self::$count;
-	}
-
-	/**
 	 * Show main action of Sitemap area
 	 *
 	 * @return void
@@ -74,12 +46,13 @@ class Sitemap
 	{
 		global $modSettings, $context, $scripturl;
 
-		$links = self::getLinks();
-		$items = [];
+		$links     = self::getLinks();
+		$items     = [];
+		$max_items = $modSettings['optimus_sitemap_items_display'] ?: 50000;
 
 		$sitemap_counter = 0;
 		foreach ($links as $counter => $entry) {
-			if (!empty($counter) && $counter % self::getCount() == 0)
+			if (!empty($counter) && $counter % $max_items == 0)
 				$sitemap_counter++;
 
 			$items[$sitemap_counter][] = array(

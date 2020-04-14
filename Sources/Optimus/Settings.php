@@ -413,18 +413,22 @@ class Settings
 	 */
 	public static function sitemapTabSettings($return_config = false)
 	{
-		global $context, $txt, $scripturl;
+		global $context, $txt, $scripturl, $modSettings;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 		$context['settings_title'] = $txt['optimus_sitemap_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
+
+		if (!isset($modSettings['optimus_sitemap_items_display']))
+			updateSettings(array('optimus_sitemap_items_display' => 10000));
 
 		$config_vars = array(
 			array('check', 'optimus_sitemap_enable'),
 			array('check', 'optimus_sitemap_link'),
 			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
 			array('check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']),
-			array('int', 'optimus_sitemap_topics_num_replies'),
+			array('int', 'optimus_sitemap_topics_num_replies', 'min' => 0),
+			array('int', 'optimus_sitemap_items_display', 'max' => 50000, 'min' => 1),
 			array('check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext'])
 		);
 

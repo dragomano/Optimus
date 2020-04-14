@@ -110,6 +110,7 @@ $txt['optimus_main_page_frequency_set']         = array('Constant (always)', 'De
 $txt['optimus_sitemap_boards']                  = 'Add links to boards to the sitemap';
 $txt['optimus_sitemap_boards_subtext']          = 'Boards that closed to guests will NOT be added.';
 $txt['optimus_sitemap_topics_num_replies']      = 'Add to the sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_items_display']           = 'Maximum number items to display (in XML-file)';
 $txt['optimus_sitemap_all_topic_pages']         = 'Add ALL topic pages to the sitemap';
 $txt['optimus_sitemap_all_topic_pages_subtext'] = 'If not checked, only the first pages of topics will be added to the sitemap.';
 
