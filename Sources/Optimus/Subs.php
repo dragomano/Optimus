@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3.3
+ * @version 2.4
  */
 
 if (!defined('SMF'))
@@ -84,7 +84,7 @@ class Subs
 	 */
 	public static function addCounters()
 	{
-		global $modSettings, $context;
+		global $modSettings, $context, $forum_copyright;
 
 		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
 
@@ -102,6 +102,10 @@ class Subs
 				foreach ($stat as $part)
 					$context['insert_after_template'] .= "\n\t" . $part;
 			}
+
+			// Visible counters
+			if (!empty($modSettings['optimus_count_code']))
+				$forum_copyright = $modSettings['optimus_count_code'] . '<br />' . $forum_copyright;
 
 			// Styles for visible counters
 			if (!empty($modSettings['optimus_count_code']) && !empty($modSettings['optimus_counters_css']))
@@ -421,43 +425,6 @@ class Subs
 	}
 
 	/**
-	 * Добавляем разметку JSON-LD в код страницы
-	 *
-	 * @return void
-	 */
-	public static function addJsonLd()
-	{
-		global $modSettings, $context;
-
-		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
-			$context['insert_after_template'] .= '
-		<script type="application/ld+json">
-		{
-			"@context": "http://schema.org",
-			"@type": "BreadcrumbList",
-			"itemListElement": [';
-
-			$i = 1;
-			foreach ($context['linktree'] as $id => $data)
-				$list_item[$id] = '{
-				"@type": "ListItem",
-				"position": ' . $i++ . ',
-				"item": {
-					"@id": "' . (isset($data['url']) ? $data['url'] : '') . '",
-					"name": "' . $data['name'] . '"
-				}
-			}';
-
-			if (!empty($list_item))
-				$context['insert_after_template'] .= implode($list_item, ',');
-
-			$context['insert_after_template'] .= ']
-		}
-		</script>';
-		}
-	}
-
-	/**
 	 * Добавление канонического адреса при использовании некоторых модов порталов
 	 *
 	 * @return void
@@ -508,66 +475,6 @@ class Subs
 			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']))
 				$context['optimus_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
 		}
-	}
-
-	/**
-	 * Получаем массив дополнительных ссылок для карты форума
-	 *
-	 * @return array
-	 */
-	public static function getSitemapLinks()
-	{
-		global $modSettings;
-
-		$links = [];
-
-		if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 3)
-			$links = self::getTPLinks();
-
-		return $links;
-	}
-
-	/**
-	 * Получаем массив ссылок статей TinyPortal
-	 *
-	 * @return array
-	 */
-	private static function getTPLinks()
-	{
-		global $smcFunc, $scripturl;
-
-		$tp_articles_exists  = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}tp_articles'", array());
-		$tp_variables_exists = $smcFunc['db_query']('', "SHOW TABLES LIKE '{db_prefix}tp_variables'", array());
-		$result = $smcFunc['db_num_rows']($tp_articles_exists) != 0 && $smcFunc['db_num_rows']($tp_variables_exists) != 0;
-
-		if (empty($result))
-			return;
-
-		$request = $smcFunc['db_query']('', '
-			SELECT a.id, a.date, a.shortname
-			FROM {db_prefix}tp_articles AS a
-				INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
-			WHERE a.approved = {int:approved}
-				AND a.off = {int:off_status}
-				AND {int:guests} IN (v.value3)
-			ORDER BY a.id',
-			array(
-				'approved'   => 1, // Статья должна быть одобрена
-				'off_status' => 0, // Статья должна быть активна
-				'guests'     => -1 // Категория статьи должна быть доступна гостям
-			)
-		);
-
-		$links = array();
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$links[] = array(
-				'url'  => $scripturl . '?page=' . ($row['shortname'] ?: $row['id']),
-				'date' => $row['date']
-			);
-
-		$smcFunc['db_free_result']($request);
-
-		return $links;
 	}
 
 	/**

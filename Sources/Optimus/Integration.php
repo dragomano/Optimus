@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.3.3
+ * @version 2.4
  */
 
 if (!defined('SMF'))
@@ -26,9 +26,9 @@ class Integration
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_load_theme', __NAMESPACE__ . '\Integration::loadTheme', false);
-		add_integration_function('integrate_menu_buttons', __NAMESPACE__ . '\Integration::menuButtons', false);
-		add_integration_function('integrate_buffer', __NAMESPACE__ . '\Integration::buffer', false);
+		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false);
+		add_integration_function('integrate_buffer', __CLASS__ . '::buffer', false);
 		add_integration_function('integrate_admin_include', '$sourcedir/Optimus/Settings.php', false);
 		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false);
 	}
@@ -40,10 +40,7 @@ class Integration
 	 */
 	public static function loadTheme()
 	{
-		global $sourcedir;
-
 		loadLanguage('Optimus/');
-		require_once($sourcedir . '/Optimus/Subs.php');
 
 		Subs::addPortalFixes();
 		Subs::addFavicon();
@@ -57,7 +54,6 @@ class Integration
 	 */
 	public static function menuButtons()
 	{
-		Subs::addJsonLd();
 		Subs::addCanonicalFix();
 		Subs::addMainPageTitle();
 		Subs::addMainPageDescription();
@@ -74,7 +70,7 @@ class Integration
 	 */
 	public static function buffer($buffer)
 	{
-		global $context, $modSettings, $mbname, $boardurl, $forum_copyright, $boarddir, $txt;
+		global $context, $modSettings, $mbname, $txt;
 
 		if (isset($_REQUEST['xml']) || !empty($context['robot_no_index']))
 			return $buffer;
@@ -89,9 +85,9 @@ class Integration
 		}
 
 		// Metatags
-		if (!empty($modSettings['optimus_metatags']) && $modSettings['optimus_portal_compat'] != 1) {
+		if (!empty($modSettings['optimus_meta']) && $modSettings['optimus_portal_compat'] != 1) {
 			$meta = '';
-			$test = unserialize($modSettings['optimus_metatags']);
+			$test = unserialize($modSettings['optimus_meta']);
 
 			foreach ($test as $n => $val) {
 				if (!empty($val))
@@ -176,24 +172,6 @@ class Integration
 			$head_tw = '<title>';
 			$tw_head = $twitter . "\n\t" . $head_tw;
 			$replacements[$head_tw] = $tw_head;
-		}
-
-		// Counters
-		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
-		if (!in_array($context['current_action'], $ignored_actions)) {
-			if (!empty($modSettings['optimus_count_code']))
-				$replacements[$forum_copyright] = $modSettings['optimus_count_code'] . '<br />' . $forum_copyright;
-		}
-
-		// XML sitemap link
-		if (!empty($modSettings['optimus_sitemap_link'])) {
-			clearstatcache();
-
-			if (file_exists($boarddir . '/sitemap.xml')) {
-				$text = '<li class="last"><a id="button_wap2"';
-				$link = '<li><a href="' . $boardurl . '/sitemap.xml" target="_blank">' . $txt['optimus_sitemap_xml_link'] . '</a></li>';
-				$replacements[$text] = $link . $text;
-			}
 		}
 
 		return str_replace(array_keys($replacements), array_values($replacements), $buffer);

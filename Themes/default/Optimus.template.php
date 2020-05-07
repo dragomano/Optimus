@@ -2,7 +2,7 @@
 
 function template_base()
 {
-	global $context, $txt, $smcFunc, $modSettings;
+	global $context, $txt, $modSettings;
 
 	echo '
 	<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
@@ -40,7 +40,7 @@ function template_base()
 						</span>
 					</dt>
 					<dd>
-						<em>', $context['forum_name'], '</em> - <input type="text" class="input_text" value="', !empty($modSettings['optimus_portal_index']) ? $modSettings['optimus_portal_index'] : '', '" id="optimus_portal_index" name="optimus_portal_index" size="', !empty($modSettings['optimus_portal_index']) ? $smcFunc['strlen']($modSettings['optimus_portal_index']) + 4 : 16, '" />
+						<em>', $context['forum_name'], '</em> - <input type="text" class="input_text" value="', !empty($modSettings['optimus_portal_index']) ? $modSettings['optimus_portal_index'] : '', '" id="optimus_portal_index" name="optimus_portal_index" style="width: 59%" />
 					</dd>';
 	}
 
@@ -51,7 +51,7 @@ function template_base()
 						</span>
 					</dt>
 					<dd>
-						<em>', $context['forum_name'], '</em> - <input type="text" class="input_text" value="', !empty($modSettings['optimus_forum_index']) ? $modSettings['optimus_forum_index'] : '', '" id="optimus_forum_index" name="optimus_forum_index" size="', !empty($modSettings['optimus_forum_index']) ? $smcFunc['strlen']($modSettings['optimus_forum_index']) + 4 : 16, '"/>
+						<em>', $context['forum_name'], '</em> - <input type="text" class="input_text" value="', !empty($modSettings['optimus_forum_index']) ? $modSettings['optimus_forum_index'] : '', '" id="optimus_forum_index" name="optimus_forum_index" style="width: 59%" />
 					</dd>
 					<dt>
 						<span>
@@ -59,7 +59,7 @@ function template_base()
 						</span>
 					</dt>
 					<dd>
-						<textarea id="optimus_description" name="optimus_description" rows="2" style="width: 80%">', !empty($modSettings['optimus_description']) ? $modSettings['optimus_description'] : '', '</textarea> ', !empty($modSettings['optimus_description']) ? $smcFunc['strlen']($modSettings['optimus_description']) : '' ,'
+						<textarea id="optimus_description" name="optimus_description" rows="4" style="width: 99%">', !empty($modSettings['optimus_description']) ? $modSettings['optimus_description'] : '', '</textarea>
 					</dd>
 				</dl>
 			</div>
@@ -81,9 +81,9 @@ function template_base()
 						<span><label>', $txt['optimus_' . $name . '_tpl'], '</label></span>
 					</dt>
 					<dd>
-						<input type="text" class="input_text" value="', isset($templates[$name]['name']) ? $templates[$name]['name'] : $template[0], '" name="', $name, '_name" size="', !empty($templates[$name]['name']) ? $smcFunc['strlen']($templates[$name]['name']) : 14, '" />&nbsp;
-						<input type="text" class="input_text" value="', isset($templates[$name]['page']) ? $templates[$name]['page'] : $template[1], '" name="', $name, '_page" size="', !empty($templates[$name]['page']) ? $smcFunc['strlen']($templates[$name]['page']) : 14, '" />&nbsp;
-						<input type="text" class="input_text" value="', isset($templates[$name]['site']) ? $templates[$name]['site'] : $template[2], '" name="', $name, '_site" size="', !empty($templates[$name]['site']) ? $smcFunc['strlen']($templates[$name]['site']) : 28, '" />
+						<input type="text" class="input_text" value="', isset($templates[$name]['name']) ? $templates[$name]['name'] : $template[0], '" name="', $name, '_name" />&nbsp;
+						<input type="text" class="input_text" value="', isset($templates[$name]['page']) ? $templates[$name]['page'] : $template[1], '" name="', $name, '_page" />&nbsp;
+						<input type="text" class="input_text" value="', isset($templates[$name]['site']) ? $templates[$name]['site'] : $template[2], '" name="', $name, '_site" />
 					</dd>';
 	}
 
@@ -345,21 +345,6 @@ function template_robots()
 				<div class="modblock_right">
 					<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
 					<textarea cols="70" rows="22" name="robots">', $context['robots_content'], '</textarea>
-				</div>
-				<br class="clear" />
-				<div class="modblock_left">
-					<div class="floatleft">
-						<h4>', $txt['optimus_links_title'], '</h4>
-						<ul>';
-
-	foreach ($txt['optimus_links'] as $ankor => $url) {
-		echo '
-							<li><a href="', $url, '" target="_blank">', $ankor, '</a></li>';
-	}
-
-	echo '
-						</ul>
-					</div>
 				</div>
 				<hr class="hrcolor clear" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />

@@ -32,8 +32,8 @@ $txt['optimus_templates'] = array(
 );
 $txt['optimus_no_first_number']   = 'Ne pas afficher le numéro de la première page';
 $txt['optimus_board_description'] = 'Utiliser le titre du sujet dans la balise meta "<strong>description</strong>"';
-$txt['optimus_topic_description'] = 'Utiliser la description du sujet dans la balise meta "<strong>description</strong>"<br /><span class="smalltext">Utiliser <a href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank">le mod "Topic Descriptions"</a> pour créer des descriptions courtes de vos sujets.</span>';
-$txt['optimus_404_status']        = 'Retourner le <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">code de statut</a> 403/404 en fonction de l\'état de la page demandée';
+$txt['optimus_topic_description'] = 'Utiliser la description du sujet dans la balise meta "<strong>description</strong>"<br /><span class="smalltext">Utiliser <a class="bbc_link" href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank">le mod "Topic Descriptions"</a> pour créer des descriptions courtes de vos sujets.</span>';
+$txt['optimus_404_status']        = 'Retourner le <a class="bbc_link" href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank">code de statut</a> 403/404 en fonction de l\'état de la page demandée';
 $txt['optimus_404_page_title']    = '404 - Page inexistante';
 $txt['optimus_404_h2']            = 'Erreur 404';
 $txt['optimus_404_h3']            = 'Désolé, mais la page demandée n\'existe pas.';
@@ -45,20 +45,19 @@ $txt['optimus_favicon_title'] = 'Favicon';
 $txt['optimus_favicon_desc']  = 'Créez votre propre icône de forum. Elle sera affichée par le navigateur dans l\'onglet avant le nom de la page, comme une image à gauche de l\'onglet ouvert et des autres éléments.';
 
 $txt['optimus_favicon_create']  = 'Créer une favicon';
-$txt['optimus_favicon_api_key'] = 'Clé API pour travailler avec Favicon Generator (<a href="https://realfavicongenerator.net/api/#register_key" target="_blank">Obtenir une clé API</a>)';
+$txt['optimus_favicon_api_key'] = 'Clé API pour travailler avec Favicon Generator (<a class="bbc_link" href="https://realfavicongenerator.net/api/#register_key" target="_blank">Obtenir une clé API</a>)';
 $txt['optimus_favicon_text']    = 'Code de la favicon';
-$txt['optimus_favicon_help']    = 'Générez votre propre favicon <a href="http://www.favicomatic.com/" target="_blank">ICI</a>, ou utilisez un générateur spécial (vous devez entrer la clé API dans le champ ci-dessus).<br />Ensuite, téléchargez les fichiers favicon à la racine du forum, et sauvegardez le code du générateur dans le champ de droite.<br />Ce code sera chargé en tête des pages du site, entre les balises &lt;head&gt;&lt;/head&gt;.';
+$txt['optimus_favicon_help']    = 'Générez votre propre favicon <a class="bbc_link" href="http://www.favicomatic.com/" target="_blank">ICI</a>, ou utilisez un générateur spécial (vous devez entrer la clé API dans le champ ci-dessus).<br />Ensuite, téléchargez les fichiers favicon à la racine du forum, et sauvegardez le code du générateur dans le champ de droite.<br />Ce code sera chargé en tête des pages du site, entre les balises &lt;head&gt;&lt;/head&gt;.';
 
 $txt['optimus_extra_title'] = 'Meta données';
 $txt['optimus_extra_desc']  = 'Ici vous trouverez quelques corrections pour votre forum. De plus, vous pouvez activer le support d\'<strong>Open Graph</strong> et <strong>JSON-LD</strong>. profitez-en !';
 
 $txt['optimus_remove_last_bc_item'] = 'Fil d\'Ariane correct (le dernier élément ne sera pas un lien)';
-$txt['optimus_correct_prevnext']    = 'Balises <a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">rel="next"</a> et <a href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">rel="prev"</a> correctes (pagination des sujets)';
-$txt['optimus_open_graph']          = 'Meta <a href="http://ogp.me/" target="_blank">Open Graph</a> pour les pages du forum';
+$txt['optimus_correct_prevnext']    = 'Balises <a class="bbc_link" href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">rel="next"</a> et <a class="bbc_link" href="http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html" target="_blank">rel="prev"</a> correctes (pagination des sujets)';
+$txt['optimus_open_graph']          = 'Meta <a class="bbc_link" href="http://ogp.me/" target="_blank">Open Graph</a> pour les pages du forum';
 $txt['optimus_og_image']            = 'Lien vers votre image par défaut Open Graph<br /><span class="smalltext">Est remplacée par la pièce jointe du premier message dans les sujets (si existante).</span>';
-$txt['optimus_fb_appid']            = '<a href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID d\'application) <a href="https://www.facebook.com/" target="_blank">Facebook</a> (si vous en avez un)';
-$txt['optimus_tw_cards']            = '<a href="https://twitter.com/" target="_blank">Twitter</a> : Nom de compte (à spécifier pour activer les "<a href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>")';
-$txt['optimus_json_ld']             = 'Marquage <a href="https://json-ld.org/" target="_blank">JSON-LD</a> pour "<a href="https://developers.google.com/search/docs/data-types/breadcrumbs?hl=' . $txt['lang_dictionary'] . '" target="_blank">fil d\'Ariane</a>"';
+$txt['optimus_fb_appid']            = '<a class="bbc_link" href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID d\'application) <a class="bbc_link" href="https://www.facebook.com/" target="_blank">Facebook</a> (si vous en avez un)';
+$txt['optimus_tw_cards']            = '<a class="bbc_link" href="https://twitter.com/" target="_blank">Twitter</a> : Nom de compte (à spécifier pour activer les "<a class="bbc_link" href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>")';
 
 $txt['optimus_meta_title'] = 'Balises Meta';
 $txt['optimus_meta_desc']  = 'Sur cette page, vous pouvez ajouter n\'importe quel code régulier ou de vérification de la liste ci-dessous.';
@@ -70,17 +69,17 @@ $txt['optimus_meta_name']      = 'Nom';
 $txt['optimus_meta_content']   = 'Contenu';
 $txt['optimus_meta_info']      = 'Veuillez n\'utiliser que les valeurs du paramètre "<strong>contenu</strong>" des balises META.<br />Exemple : <span class="smalltext">&lt;meta name="<strong>NOM</strong>" content="<strong>VALEUR</strong>" /&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a href="https://www.google.com/webmasters/tools/" target="_blank">Search Console</a>'),
-	'Yandex' => array('yandex-verification', '<a href="https://webmaster.yandex.com/" target="_blank">Yandex.Webmaster</a>'),
-	'Bing'   => array('msvalidate.01', '<a href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing Webmaster</a>')
+	'Google' => array('google-site-verification','<a class="bbc_link" href="https://www.google.com/webmasters/tools/" target="_blank">Search Console</a>'),
+	'Yandex' => array('yandex-verification', '<a class="bbc_link" href="https://webmaster.yandex.com/" target="_blank">Yandex.Webmaster</a>'),
+	'Bing'   => array('msvalidate.01', '<a class="bbc_link" href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing Webmaster</a>')
 );
 
 $txt['optimus_counters']      = 'Compteurs';
 $txt['optimus_counters_desc'] = 'Vous pouvez ajouter et modifier des compteurs dans cette partie pour enregistrer les visites de votre forum.';
 
-$txt['optimus_head_code']       = 'Chargement de compteurs invisibles en tête (<strong>head</strong>) de section (<a href="https://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
-$txt['optimus_stat_code']       = 'Autres compteurs invisibles (<a href="https://matomo.org/" target="_blank">Matomo</a>, etc)';
-$txt['optimus_count_code']      = 'Compteurs visibles (<a href="http://www.freestats.com/" target="_blank">FreeStats</a>, <a href="http://www.superstats.com/" target="_blank">SuperStats</a>, <a href="http://www.prtracker.com/FreeCounter.html" target="_blank">PRTracker</a>, etc)';
+$txt['optimus_head_code']       = 'Chargement de compteurs invisibles en tête (<strong>head</strong>) de section (<a class="bbc_link" href="https://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
+$txt['optimus_stat_code']       = 'Autres compteurs invisibles';
+$txt['optimus_count_code']      = 'Compteurs visibles';
 $txt['optimus_counters_css']    = 'Apparence des compteurs visibles (CSS)';
 $txt['optimus_ignored_actions'] = 'Actions ignorées';
 
@@ -92,23 +91,3 @@ $txt['optimus_rules']       = 'Générateur de robots.txt';
 $txt['optimus_rules_hint']  = 'Vous pouvez copier ces règles dans le champ de droite :';
 $txt['optimus_robots_hint'] = 'Ici vous pouvez insérer vos propres règles ou modifier celles qui existent déjà :';
 $txt['optimus_useful']      = '';
-$txt['optimus_links_title'] = 'Liens utiles';
-$txt['optimus_links']       = array(
-	'Créer un fichier robots.txt'              => 'https://support.google.com/webmasters/answer/6062596?hl=fr',
-	'Utiliser robots.txt'                      => 'https://help.yandex.com/webmaster/?id=1113851',
-	'Audit technique de l\'ensemble du site' => 'https://netpeaksoftware.com/ucp?invite=94cdaf6a'
-);
-
-$txt['optimus_sitemap_title'] = 'Optimus Sitemap';
-$txt['optimus_sitemap_desc']  = 'Vous voulez un sitemap simple ? Optimus peut générer un sitemap.xml pour les petits forums. Activez simplement cette option ci-dessous. Ce sitemap sera mis à jour en fonction des paramètres dans les <a href="%1$s">Tâches programmées</a>.';
-
-$txt['optimus_sitemap_enable']      = 'Créer et mettre à jour périodiquement le fichier XML Sitemap';
-$txt['optimus_sitemap_link']        = 'Afficher un lien vers le sitemap en pied de page (footer)';
-$txt['optimus_sitemap_boards']      = 'Ajouter les liens vers les sections dans le sitemap<br /><span class="smalltext error">Les sections cachées aux invités NE seront PAS ajoutées.</span>';
-$txt['optimus_sitemap_topics']      = 'Ajoutez uniquement au sitemap les sujets ayant un nombre de réponses supérieur à';
-
-$txt['optimus_sitemap_xml_link']   = 'Sitemap XML';
-
-// Task Manager
-$txt['scheduled_task_optimus_sitemap']      = 'Génération du sitemap XML';
-$txt['scheduled_task_desc_optimus_sitemap'] = 'Vous pouvez régler la fréquence de création du sitemap.';
