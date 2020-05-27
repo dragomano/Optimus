@@ -5,7 +5,7 @@
 * **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.17+
-* **Tested on:** PHP 7.2.29 / MariaDB 10.4.12
+* **Tested on:** PHP 7.3.18 / MariaDB 10.4.13
 * **Hooks only:** Yes
 * **Languages:** Dutch, English, French, Russian, Spanish
 
@@ -20,9 +20,10 @@ This mod might help you solve some problems related with indexing of your forum 
 * Ability to specify the verification codes when adding sites to Google, Yandex and Bing (Webmaster Tools).
 * Adding of custom metatags.
 * Changing the robots.txt from Settings page.
+* Simple Sitemap XML.
 * Favicon Support.
 
-P.S. The **master** branch contains the Optimus 2.x version for SMF 2.1 RC3+.
+P.S. The **master** branch contains the Optimus 2.x version for SMF 2.1 RC2+.
 The **portamx**, **elkarte** and **wedge** branches contain the mod versions for corresponding forks. Their functions may differ from those described above.
 
 ## Описание
@@ -38,9 +39,10 @@ The **portamx**, **elkarte** and **wedge** branches contain the mod versions for
 * Пользовательские мета-теги.
 * Добавление счетчиков без редактирования файлов шаблонов.
 * Редактирование robots.txt из админки.
+* Создание карты форума (sitemap.xml).
 * Поддержка favicon (иконка сайта).
 
-P.S. Ветка **master** содержит версию Optimus 2.x для SMF 2.1 RC3+.
+P.S. Ветка **master** содержит версию Optimus 2.x для SMF 2.1 RC2+.
 В ветках **portamx**, **elkarte** и **wedge** находятся версии мода для соответствующих форков. Их функции могут отличаться от представленных выше.
 
 ![Base settings](https://user-images.githubusercontent.com/229402/75113837-0ac2fc80-5673-11ea-99e3-ecf208b67906.png)

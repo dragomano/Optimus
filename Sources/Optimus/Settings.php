@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.4
+ * @version 2.5
  */
 
 if (!defined('SMF'))
@@ -30,18 +30,19 @@ class Settings
 		global $txt;
 
 		$admin_areas['config']['areas']['optimus'] = array(
-			'label'    => $txt['optimus_title'],
+			'label' => $txt['optimus_title'],
 			'function' => function() {
 				self::settingActions();
 			},
-			'icon'     => 'maintain.gif',
+			'icon' => 'maintain.gif',
 			'subsections' => array(
 				'base'     => array($txt['optimus_base_title']),
 				'extra'    => array($txt['optimus_extra_title']),
 				'favicon'  => array($txt['optimus_favicon_title']),
 				'metatags' => array($txt['optimus_meta_title']),
 				'counters' => array($txt['optimus_counters']),
-				'robots'   => array($txt['optimus_robots_title'])
+				'robots'   => array($txt['optimus_robots_title']),
+				'sitemap'  => array($txt['optimus_sitemap_title'])
 			)
 		);
 	}
@@ -58,7 +59,7 @@ class Settings
 		$context['page_title'] = $txt['optimus_main'];
 
 		// Подключаем файл шаблона вместе с таблицами стилей
-		loadTemplate('Optimus', array('admin', 'optimus'));
+		loadTemplate('Optimus', array('admin', 'optimus/optimus'));
 
 		$subActions = array(
 			'base'     => 'baseSettings',
@@ -66,7 +67,8 @@ class Settings
 			'favicon'  => 'faviconSettings',
 			'metatags' => 'metatagsSettings',
 			'counters' => 'counterSettings',
-			'robots'   => 'robotsSettings'
+			'robots'   => 'robotsSettings',
+			'sitemap'  => 'sitemapSettings'
 		);
 
 		require_once($sourcedir . '/ManageSettings.php');
@@ -92,6 +94,9 @@ class Settings
 				),
 				'robots' => array(
 					'description' => $txt['optimus_robots_desc'],
+				),
+				'sitemap' => array(
+					'description' => $txt['optimus_sitemap_desc'],
 				)
 			),
 		);
@@ -121,8 +126,6 @@ class Settings
 			updateSettings($add_settings);
 
 		$config_vars = array(
-			array('int', 'optimus_portal_compat'),
-			array('text', 'optimus_portal_index'),
 			array('text', 'optimus_forum_index'),
 			array('text', 'optimus_description'),
 			array('check', 'optimus_no_first_number'),
@@ -131,7 +134,7 @@ class Settings
 			array('check', 'optimus_404_status')
 		);
 
-		$templates = array();
+		$templates = [];
 		foreach ($txt['optimus_templates'] as $name => $template) {
 			$templates[$name] = array(
 				'name' => isset($_POST['' . $name . '_name']) ? $_POST['' . $name . '_name'] : '',
@@ -233,9 +236,9 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_meta_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
-		$config_vars = array();
+		$config_vars = [];
 
-		$meta = array();
+		$meta = [];
 		if (isset($_POST['custom_tag_name'])) {
 			foreach ($_POST['custom_tag_name'] as $key => $value) {
 				if (empty($value))
@@ -306,140 +309,74 @@ class Settings
 	 */
 	public static function robotsSettings()
 	{
-		global $context, $txt, $scripturl, $boarddir;
+		global $context, $txt, $scripturl, $boarddir, $modSettings, $sourcedir;
 
 		$context['sub_template'] = 'robots';
 		$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$common_rules_path = (isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : $boarddir) . '/robots.txt';
+		$root = $_SERVER['DOCUMENT_ROOT'] ?? $boarddir;
+		if (empty($modSettings['optimus_root_path']))
+			updateSettings(array('optimus_root_path' => $root));
 
-		clearstatcache();
+		$config_vars = array(
+			array('text', 'optimus_root_path')
+		);
 
-		$context['robots_txt_exists'] = file_exists($common_rules_path);
-		$context['robots_content']    = $context['robots_txt_exists'] ? file_get_contents($common_rules_path) : '';
+		$robots_path = ($modSettings['optimus_root_path'] ?? $root) . '/robots.txt';
+		$context['robots_content'] = is_writable($robots_path) ? file_get_contents($robots_path) : '';
 
-		self::robotsCreate();
+		require_once($sourcedir . "/Optimus/Robots.php");
+		(new Robots())->generate();
 
 		if (isset($_GET['save'])) {
 			checkSession();
 
-			if (isset($_POST['robots'])) {
-				$common_rules = stripslashes($_POST['robots']);
-				file_put_contents($common_rules_path, $common_rules);
-			}
+			$save_vars = $config_vars;
+			saveDBSettings($save_vars);
 
+			file_put_contents($robots_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING), LOCK_EX);
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
+
+		prepareDBSettingContext($config_vars);
 	}
 
 	/**
-	 * Генерация правил для файла robots.txt
+	 * Страница с настройками карты форума
 	 *
 	 * @return void
 	 */
-	private static function robotsCreate()
+	public static function sitemapSettings()
 	{
-		global $modSettings, $boardurl, $sourcedir, $boarddir, $context, $scripturl;
+		global $context, $txt, $scripturl, $modSettings;
 
-		clearstatcache();
+		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
+		$context['settings_title'] = $txt['optimus_sitemap_title'];
+		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
-		// SimplePortal
-		$sp = isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1 && function_exists('sportal_init');
-		// Standalone mode
-		$autosp = !empty($modSettings['sp_standalone_url']) ? substr($modSettings['sp_standalone_url'], strlen($boardurl)) : '';
+		if (!isset($modSettings['optimus_sitemap_items_display']))
+			updateSettings(array('optimus_sitemap_items_display' => 100));
 
-		// PortaMx
-		$pm = !empty($modSettings['pmx_frontmode']) && function_exists('PortaMx');
-		// if (forum == community)
-		$alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
+		$config_vars = array(
+			array('check', 'optimus_sitemap_enable'),
+			array('check', 'optimus_sitemap_link'),
+			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
+			array('check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']),
+			array('int', 'optimus_sitemap_topics_num_replies', 'min' => 0),
+			array('int', 'optimus_sitemap_items_display', 'max' => 50000, 'min' => 1),
+			array('check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext'])
+		);
 
-		// Is any SEF mod enabled?
-		$pretty    = file_exists($sourcedir . '/PrettyUrls-Filters.php') && !empty($modSettings['pretty_enable_filters']);
-		$simplesef = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
-		$sef       = $pretty || $simplesef;
+		if (isset($_GET['save'])) {
+			checkSession();
 
-		// Sitemap file exists?
-		$map      = 'sitemap.xml';
-		$path_map = $boardurl . '/' . $map;
+			$save_vars = $config_vars;
+			saveDBSettings($save_vars);
 
-		require_once($sourcedir . '/Optimus/libs/idna_convert.class.php');
-		$idn = new \idna_convert(array('idn_version' => 2008));
-		if (stripos($idn->encode($boardurl), 'xn--') !== false)
-			$path_map = $idn->encode($boardurl) . '/' . $map;
-
-		$temp_map = file_exists($boarddir . '/' . $map);
-		$map      = $temp_map ? $path_map : '';
-		$url_path = parse_url($boardurl, PHP_URL_PATH);
-
-		$actions = array('msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all');
-
-		$common_rules = [];
-		$common_rules[] = "User-agent: *";
-
-		// Special rules for Pretty URLs or SimpleSEF
-		if ($sef) {
-			$common_rules[] = "Disallow: " . $url_path . "/login/";
-
-			foreach ($actions as $action)
-				$common_rules[] = "Disallow: " . $url_path . "/*" . $action;
+			redirectexit('action=admin;area=optimus;sa=sitemap');
 		}
 
-		$common_rules[] = "Disallow: " . $url_path . "/*action";
-
-		if (!empty($modSettings['queryless_urls']) || $sef)
-			$common_rules[] = "";
-		else
-			$common_rules[] = "Disallow: " . $url_path . "/*topic=*.msg\nDisallow: " . $url_path . "/*topic=*.new";
-
-		$common_rules[] = "Disallow: " . $url_path . "/*PHPSESSID";
-		$common_rules[] = $sef ? "" : "Disallow: " . $url_path . "/*;";
-
-		// Front page
-		$common_rules[] = "Allow: " . $url_path . "/$";
-
-		// Content
-		if (!empty($modSettings['queryless_urls']))
-			$common_rules[] = ($sef ? "" : "Allow: " . $url_path . "/*board*.html$\nAllow: " . $url_path . "/*topic*.html$");
-		else
-			$common_rules[] = ($sef ? "" : "Allow: " . $url_path . "/*board\nAllow: " . $url_path . "/*topic");
-
-		// action=forum
-		$common_rules[] = $sp ? "Allow: " . $url_path . "/*forum$" : "";
-
-		// SimplePortal
-		if (isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 3 && file_exists($boarddir . $autosp))
-			$common_rules[] = "Allow: " . $url_path . $autosp;
-
-		$common_rules[] = $sp ? "Allow: " . $url_path . "/*page*page" : "";
-
-		// PortaMx
-		$common_rules[] = $pm && $alias ? "Allow: " . $url_path . "/*forum$" : "";
-		$common_rules[] = $pm && !$alias ? "Allow: " . $url_path . "/*community$" : "";
-
-		// RSS
-		$common_rules[] = !empty($modSettings['xmlnews_enable']) ? "Allow: " . $url_path . "/*.xml" : "";
-
-		// Sitemap
-		$common_rules[] = !empty($map) || file_exists($sourcedir . '/Sitemap.php') ? "Allow: " . $url_path . "/*sitemap" : "";
-
-		// We have nothing to hide ;)
-		$common_rules[] = "Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$";
-
-		// Sitemap XML
-		$sitemap = file_exists($sourcedir . '/Sitemap.php');
-		$common_rules[] = !empty($map) || $sitemap ? "|" : "";
-		$common_rules[] = !empty($map) ? "Sitemap: " . $map : "";
-		$common_rules[] = $sitemap ? "Sitemap: " . $scripturl . "?action=sitemap;xml" : "";
-
-		$new_robots = array();
-
-		foreach ($common_rules as $line) {
-			if (!empty($line))
-				$new_robots[] = $line;
-		}
-
-		$new_robots = implode("<br />", str_replace("|", "", $new_robots));
-		$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
+		prepareDBSettingContext($config_vars);
 	}
 }

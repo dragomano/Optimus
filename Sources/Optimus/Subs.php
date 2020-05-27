@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.4
+ * @version 2.5
  */
 
 if (!defined('SMF'))
@@ -20,45 +20,18 @@ if (!defined('SMF'))
 class Subs
 {
 	/**
-	 * Различные фиксы для установленного мода портала
+	 * Меняем заголовок форума
 	 *
 	 * @return void
 	 */
-	public static function addPortalFixes()
+	public static function changeForumTitle()
 	{
-		global $modSettings, $context, $mbname, $txt;
-
-		// Set Portal Compat Mode
-		if (!isset($modSettings['optimus_portal_compat']))
-			$modSettings['optimus_portal_compat'] = 0;
-
-		// Меняем заголовок главной страницы в зависимости от режима совместимости и установленного портала
-		if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
-			if (!empty($modSettings['pmx_frontmode']) || (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1)) {
-				if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))
-					$context['forum_name'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
-			}
-		}
+		global $txt, $modSettings;
 
 		// Forum
 		$txt['forum_index'] = '%1$s';
 		if (!empty($modSettings['optimus_forum_index']))
 			$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
-
-		// Special fix for PortaMx
-		if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 1) {
-			if (empty($_REQUEST['action']) && empty($_REQUEST['board']) && empty($_REQUEST['topic'])) {
-				// Для режима "Без главной страницы, направлять сразу на форум"
-				if (!empty($modSettings['optimus_meta']) && empty($modSettings['pmx_frontmode'])) {
-					$test = unserialize($modSettings['optimus_meta']);
-
-					foreach ($test as $n => $val) {
-						if (!empty($val))
-							$context['html_headers'] .= "\n\t" . '<meta name="' . $n . '" content="' . $val . '" />';
-					}
-				}
-			}
-		}
 	}
 
 	/**
@@ -202,10 +175,6 @@ class Subs
 				$context['optimus_description'] = $smcFunc['htmlspecialchars']($context['optimus_description']);
 			}
 		}
-
-		// TP Articles
-		if (!empty($modSettings['optimus_portal_compat']) && $modSettings['optimus_portal_compat'] == 3)
-			self::getTPMeta();
 	}
 
 	/**
@@ -329,82 +298,13 @@ class Subs
 	}
 
 	/**
-	 * Формируем описание и og-изображения для страниц TinyPortal
-	 *
-	 * @return void
-	 */
-	private static function getTPMeta()
-	{
-		global $smcFunc, $context, $txt, $scripturl;
-
-		if (!isset($_REQUEST['page']))
-			return;
-
-		if (is_numeric($_REQUEST['page'])) {
-			$request = $smcFunc['db_query']('substring', '
-				SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
-				FROM {db_prefix}tp_articles AS a
-					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
-				WHERE a.id = {int:page}
-				LIMIT 1',
-				array(
-					'page' => (int) $_REQUEST['page']
-				)
-			);
-		} else {
-			$request = $smcFunc['db_query']('substring', '
-				SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
-				FROM {db_prefix}tp_articles AS a
-					INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
-				WHERE a.shortname = {string:page}
-				LIMIT 1',
-				array(
-					'page' => $_REQUEST['page']
-				)
-			);
-		}
-
-		while ($row = $smcFunc['db_fetch_assoc']($request))	{
-			censorText($row['body']);
-
-			$row['body'] = $row['type'] == 'bbc' ? parse_bbc($row['body'], false) : ($row['type'] == 'php' ? '<?php' . $row['body'] : $row['body']);
-
-			// Ищем изображение в тексте страницы
-			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
-			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
-
-			if ($row['useintro']) {
-				$row['intro'] = $row['type'] == 'bbc' ? parse_bbc($row['intro'], false) : ($row['type'] == 'php' ? '<?php' . $row['intro'] : $row['intro']);
-				$row['intro'] = self::getTeaser($row['intro']);
-
-				$context['optimus_description'] = explode('&nbsp;', $row['intro'])[0];
-			} else {
-				$row['body'] = self::getTeaser($row['body']);
-
-				$context['optimus_description'] = explode('&nbsp;', $row['body'])[0];
-			}
-
-			if ($smcFunc['strlen']($context['optimus_description']) > 130)
-				$context['optimus_description'] = $smcFunc['substr']($context['optimus_description'], 0, 127) . '...';
-
-			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['date']);
-			$context['optimus_og_type']['article']['section'] = $row['cat_name'];
-
-			// Укажем и canonical url
-			$context['canonical_url'] = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
-		}
-
-		$smcFunc['db_free_result']($request);
-	}
-
-	/**
 	 * Получаем выдержку текста для создания описания страницы
 	 *
 	 * @param string $text — текст для обработки
 	 * @param integer $num_sentences — количество предложений, которые нужно взять из текста
 	 * @return string
 	 */
-	private static function getTeaser($text, $num_sentences = 2)
+	public static function getTeaser($text, $num_sentences = 2)
 	{
 		$body = preg_replace('/\s+/', ' ', strip_tags($text));
 		$sentences = preg_split('/(\.|\?|\!)(\s)/', $body);
@@ -431,34 +331,13 @@ class Subs
 	 */
 	public static function addCanonicalFix()
 	{
-		global $modSettings, $context, $mbname, $boardurl, $scripturl;
+		global $modSettings, $context, $mbname, $boardurl;
 
 		if (!empty($modSettings['optimus_portal_compat'])) {
 			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action'])) {
 				$context['linktree'][0]['name'] = $mbname;
 				$context['canonical_url'] = $boardurl . '/';
 			}
-
-			if (in_array($context['current_action'], array('forum', 'community'))) {
-				if (!empty($modSettings['pmx_frontmode']) || !empty($modSettings['sp_portal_mode']))
-					$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
-			}
-		}
-	}
-
-	/**
-	 * Добавляем заголовок для главной страницы
-	 *
-	 * @return void
-	 */
-	public static function addMainPageTitle()
-	{
-		global $modSettings, $context, $mbname;
-
-		// TinyPortal compat mode
-		if (!empty($modSettings['optimus_portal_compat']) && !empty($modSettings['optimus_portal_index'])) {
-			if ($modSettings['optimus_portal_compat'] == 3 && !empty($context['TPortal']['is_front']))
-				$context['page_title'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
 		}
 	}
 
@@ -474,6 +353,77 @@ class Subs
 		if (empty($context['current_action']) && !empty($modSettings['optimus_description'])) {
 			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']))
 				$context['optimus_description'] = $smcFunc['htmlspecialchars']($modSettings['optimus_description']);
+		}
+	}
+
+	/**
+	 * Добавляем ссылку на карту форума в подвале
+	 *
+	 * @return void
+	 */
+	public static function addSitemapLink()
+	{
+		global $modSettings, $txt, $forum_copyright, $scripturl;
+
+		if (!empty($modSettings['optimus_sitemap_enable']) && !empty($modSettings['optimus_sitemap_link']) && isset($txt['optimus_sitemap_title']))
+			$forum_copyright .= ' | <a href="' . $scripturl . '?action=sitemap;xml">' . $txt['optimus_sitemap_title'] . '</a>';
+	}
+
+	/**
+	 * Получаем все вложенные директории по указанному пути
+	 *
+	 * @param string $path
+	 * @param array $ret
+	 * @return array
+	 */
+	public static function getNestedDirs($path, $nested_dirs = [])
+	{
+		$dirs = glob(rtrim($path, "/") . "/*", GLOB_ONLYDIR) or array();
+
+		foreach ($dirs as $path) {
+			$nested_dirs[] = $path;
+			$nested_dirs = self::getNestedDirs($path, $nested_dirs);
+		}
+
+		return $nested_dirs;
+	}
+
+	/**
+	 * Подключаем аддоны
+	 *
+	 * @param string $type
+	 * @param array $vars
+	 * @return void
+	 */
+	public static function runAddons($type = 'meta', $vars = [])
+	{
+		global $sourcedir;
+
+		$addon_dir = $sourcedir . '/Optimus/addons';
+
+		if (($optimus_addons = cache_get_data('optimus_addons', 3600)) == null) {
+			foreach (glob($addon_dir . '/*.php') as $filename) {
+				$filename = basename($filename);
+				if ($filename !== 'index.php')
+					$optimus_addons[] = str_replace('.php', '', $filename);
+			}
+
+			$dirs = self::getNestedDirs($addon_dir);
+			foreach ($dirs as $dir)
+				$optimus_addons[] = basename($dir) . '|' . basename($dir);
+
+			cache_put_data('optimus_addons', $optimus_addons, 3600);
+		}
+
+		if (empty($optimus_addons))
+			return;
+
+		foreach ($optimus_addons as $addon) {
+			$class = __NAMESPACE__ . '\Addons\\' . str_replace('|', '\\', $addon);
+			require_once($addon_dir . '/' . str_replace('|', '/', $addon) . '.php');
+
+			if (method_exists($class, $type))
+				call_user_func_array(array($class, $type), $vars);
 		}
 	}
 

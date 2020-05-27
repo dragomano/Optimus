@@ -13,13 +13,10 @@ $txt['optimus_title'] = 'Optimizaci&oacute;n de motores de b&uacute;squeda';
 $txt['optimus_base_title'] = 'Base de ceonfiguraci&oacute;n';
 $txt['optimus_base_desc']  = 'En esta p&aacute;gina puede cambiar la descripci&oacute;n de un foro, el administrador de plantillas de t&iacute;tulos de p&aacute;ginas, activar/desactivar la generaci&oacute;n XML de Sitemap.';
 
-$txt['optimus_main_page']         = 'P&aacute;gina principal';
-$txt['optimus_base_info']         = 'Bueno, el contenido de la etiqueta de descripci&oacute;n puede tenerse en cuenta cuando el robot determina si una p&aacute;gina coincide con una consulta de b&uacute;squeda.';
-$txt['optimus_portal_compat']     = 'Compatibilidad con Portal';
-$txt['optimus_portal_compat_set'] = array('None', 'PortaMx', 'SimplePortal', 'TinyPortal');
-$txt['optimus_portal_index']      = 'T&iacute;tulo de la p&aacute;gina Portal';
-$txt['optimus_forum_index']       = 'T&iacute;tulo de la p&aacute;gina del foro';
-$txt['optimus_description']       = 'La anotaci&oacute;n del foro<br /><span class="smalltext">Se usar&aacute; como contenido de la meta-etiqueta <strong>descripci&oacute;n</strong>.</span>';
+$txt['optimus_main_page']   = 'P&aacute;gina principal';
+$txt['optimus_base_info']   = 'Bueno, el contenido de la etiqueta de descripci&oacute;n puede tenerse en cuenta cuando el robot determina si una p&aacute;gina coincide con una consulta de b&uacute;squeda.';
+$txt['optimus_forum_index'] = 'T&iacute;tulo de la p&aacute;gina del foro';
+$txt['optimus_description'] = 'La anotaci&oacute;n del foro<br /><span class="smalltext">Se usar&aacute; como contenido de la meta-etiqueta <strong>descripci&oacute;n</strong>.</span>';
 
 $txt['optimus_all_pages'] = 'P&aacute;gina(s) de tema(s) y foro(s)';
 $txt['optimus_tpl_info']  = 'Posibles variables:<br/><strong>{board_name}</strong> &mdash; nombre del foro, <strong>{topic_name}</strong> &mdash; asunto del tema,<br/><strong>{#}</strong> &mdash; n&uacute;mero de p&aacute;gina actual, <strong>{cat_name}</strong> &mdash; nombre de la categor&iacute;a, <strong>{forum_name}</strong> &mdash; el nombre de tu foro.';
@@ -88,3 +85,11 @@ $txt['optimus_rules']       = 'Robots.txt generador';
 $txt['optimus_rules_hint']  = 'Puede copiar estas reglas en el campo de la derecha:';
 $txt['optimus_robots_hint'] = 'Aqu&iacute; puede insertar sus propias reglas o modificar las existentes:';
 $txt['optimus_useful']      = '';
+
+$txt['optimus_sitemap_title'] = 'Optimus Sitemap';
+$txt['optimus_sitemap_desc']  = '&iquest;Quieres un mapa del sitio simple? Optimus puede generar sitemap.xml para peque&ntilde;os foros.';
+
+$txt['optimus_sitemap_enable'] = 'Crear y actualizar peri&oacute;dicamente el archivo XML de Sitemap';
+$txt['optimus_sitemap_link']   = 'Mostrar enlace XML de Sitemap en el pie de p&aacute;gina';
+$txt['optimus_sitemap_boards'] = 'Agregar enlaces a los foros en el mapa del sitio<br /><span class="smalltext error">No se agregar&aacute;n paneles cerrados a los invitados.</span>';
+$txt['optimus_sitemap_topics'] = 'Agregue al sitemap solo aquellos temas que tienen el n&uacute;mero de respuestas es m&aacute;s que';

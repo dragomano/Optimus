@@ -13,13 +13,10 @@ $txt['optimus_title'] = 'Поисковая оптимизация';
 $txt['optimus_base_title'] = 'Общие настройки';
 $txt['optimus_base_desc']  = 'Изменение описания форума, настройка шаблонов заголовков страниц разделов и тем, а также включение/отключение генерации карты сайта.';
 
-$txt['optimus_main_page']         = 'Главная страница';
-$txt['optimus_base_info']         = 'Содержание мета-тега description может использоваться в сниппетах на странице результатов поиска.';
-$txt['optimus_portal_compat']     = 'Интеграция с порталом';
-$txt['optimus_portal_compat_set'] = array('Нет', 'PortaMx', 'SimplePortal', 'TinyPortal');
-$txt['optimus_portal_index']      = 'Заголовок главной страницы портала';
-$txt['optimus_forum_index']       = 'Заголовок главной страницы форума';
-$txt['optimus_description']       = 'Описание форума<br /><span class="smalltext">Будет выведено в мета-теге <strong>description</strong>.</span>';
+$txt['optimus_main_page']   = 'Главная страница';
+$txt['optimus_base_info']   = 'Содержание мета-тега description может использоваться в сниппетах на странице результатов поиска.';
+$txt['optimus_forum_index'] = 'Заголовок главной страницы форума';
+$txt['optimus_description'] = 'Описание форума<br /><span class="smalltext">Будет выведено в мета-теге <strong>description</strong>.</span>';
 
 $txt['optimus_all_pages'] = 'Страницы тем и разделов';
 $txt['optimus_tpl_info']  = 'Доступные переменные:<br/><strong>{board_name}</strong> &mdash; название раздела, <strong>{topic_name}</strong> &mdash; название темы,<br/><strong>{#}</strong> &mdash; номер текущей страницы, <strong>{cat_name}</strong> &mdash; название категории, <strong>{forum_name}</strong> &mdash; название форума.';
@@ -85,7 +82,22 @@ $txt['optimus_robots_title'] = 'Редактор robots.txt';
 $txt['optimus_robots_desc']  = 'К вашим услугам генератор правил для создания robots.txt.';
 
 $txt['optimus_manage']      = 'Настройка robots.txt';
+$txt['optimus_root_path']   = 'Путь к корневой директории сайта';
 $txt['optimus_rules']       = 'Генератор правил';
 $txt['optimus_rules_hint']  = 'Можете воспользоваться этими заготовками для создания своих правил в области справа:';
 $txt['optimus_robots_hint'] = 'Сюда можно вставить собственные правила или изменить существующие:';
 $txt['optimus_useful']      = '<a class="bbc_link" href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank">Правильный robots.txt для SMF</a>';
+
+$txt['optimus_sitemap_title'] = 'Карта форума';
+$txt['optimus_sitemap_desc']  = 'Optimus умеет создавать XML-карту для форумов любого размера. Она хранится в кэше и обновляется раз в сутки.';
+
+$txt['optimus_sitemap_enable']                  = 'Активировать карту форума';
+$txt['optimus_sitemap_link']                    = 'Показывать ссылку на карту в подвале';
+$txt['optimus_main_page_frequency']             = 'Частота изменения главной страницы';
+$txt['optimus_main_page_frequency_set']         = array('Постоянная (always)', 'В зависимости от даты последнего сообщения');
+$txt['optimus_sitemap_boards']                  = 'Добавлять в карту ссылки на разделы форума';
+$txt['optimus_sitemap_boards_subtext']          = 'Разделы, закрытые для гостей, добавлены НЕ будут.';
+$txt['optimus_sitemap_topics_num_replies']      = 'Добавлять в карту только темы с количеством ответов более';
+$txt['optimus_sitemap_items_display']           = 'Максимальное количество элементов на странице';
+$txt['optimus_sitemap_all_topic_pages']         = 'Добавлять в карту ВСЕ страницы тем';
+$txt['optimus_sitemap_all_topic_pages_subtext'] = 'Если не отмечено, в карту будут добавляться только первые страницы тем.';

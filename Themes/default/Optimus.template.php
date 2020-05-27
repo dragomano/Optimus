@@ -16,37 +16,6 @@ function template_base()
 				<dl class="settings">
 					<dt>
 						<span>
-							<label for="optimus_portal_compat">', $txt['optimus_portal_compat'], '</label>
-						</span>
-					</dt>
-					<dd>
-						<select name="optimus_portal_compat" id="optimus_portal_compat">';
-
-	$modSettings['optimus_portal_compat'] = !empty($modSettings['optimus_portal_compat']) ? $modSettings['optimus_portal_compat'] : 0;
-	foreach ($txt['optimus_portal_compat_set'] as $val => $portal) {
-		echo '
-							<option value="', $val, '"', $modSettings['optimus_portal_compat'] == $val ? ' selected="selected"' : '', '>', $portal, '</option>';
-	}
-
-	echo '
-						</select>
-					</dd>';
-
-	if (!empty($modSettings['optimus_portal_compat'])) {
-		echo '
-					<dt>
-						<span>
-							<label for="optimus_portal_index">', $txt['optimus_portal_index'], '</label>
-						</span>
-					</dt>
-					<dd>
-						<em>', $context['forum_name'], '</em> - <input type="text" class="input_text" value="', !empty($modSettings['optimus_portal_index']) ? $modSettings['optimus_portal_index'] : '', '" id="optimus_portal_index" name="optimus_portal_index" style="width: 59%" />
-					</dd>';
-	}
-
-	echo '
-					<dt>
-						<span>
 							<label for="optimus_forum_index">', $txt['optimus_forum_index'], '</label>
 						</span>
 					</dt>
@@ -326,12 +295,26 @@ function template_counters()
 
 function template_robots()
 {
-	global $context, $txt, $boardurl;
+	global $context, $txt, $modSettings;
 
 	echo '
 	<form action="', $context['post_url'], '" method="post">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['optimus_manage'], '</h3>
+		</div>
+		<div class="windowbg">
+			<span class="topslice"><span></span></span>
+			<div class="content">
+				<dl class="settings">
+					<dt>
+						<span><label for="optimus_root_path">', $txt['optimus_root_path'], '</label></span>
+					</dt>
+					<dd>
+						<input name="optimus_root_path" id="optimus_root_path" value="', $modSettings['optimus_root_path'] ?? '', '" class="input_text" type="text" size="80" />
+					</dd>
+				</dl>
+			</div>
+			<span class="botslice"><span></span></span>
 		</div>
 		<div class="windowbg2">
 			<span class="topslice"><span></span></span>
@@ -343,7 +326,7 @@ function template_robots()
 					<span class="smalltext">', $txt['optimus_useful'], '</span>
 				</div>
 				<div class="modblock_right">
-					<h4>', $context['robots_txt_exists'] ? '<a href="' . $boardurl . '/robots.txt" target="_blank">robots.txt</a>' : 'robots.txt', '</h4>
+					<h4><a href="/robots.txt">robots.txt</a></h4>
 					<textarea cols="70" rows="22" name="robots">', $context['robots_content'], '</textarea>
 				</div>
 				<hr class="hrcolor clear" />
@@ -388,4 +371,43 @@ function template_403()
 			<span class="botslice"><span></span></span>
 		</div>
 	</div>';
+}
+
+function template_sitemap_xml()
+{
+	global $settings, $context;
+
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="' . $settings['default_theme_url'] . '/css/optimus/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+	foreach ($context['sitemap']['items'] as $item)
+		echo '
+	<url>
+		<loc>', $item['loc'], '</loc>
+		<lastmod>', $item['lastmod'], '</lastmod>
+		<changefreq>', $item['changefreq'], '</changefreq>
+		<priority>', $item['priority'], '</priority>
+	</url>';
+
+	echo '
+</urlset>';
+}
+
+function template_sitemapindex_xml()
+{
+	global $settings, $context;
+
+	echo '<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="' . $settings['default_theme_url'] . '/css/optimus/sitemap.xsl"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+	foreach ($context['sitemap']['items'] as $item)
+		echo '
+	<sitemap>
+		<loc>', $item['loc'], '</loc>
+	</sitemap>';
+
+	echo '
+</sitemapindex>';
 }

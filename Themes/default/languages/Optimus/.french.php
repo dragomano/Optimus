@@ -14,13 +14,10 @@ $txt['optimus_title'] = 'SEO';
 $txt['optimus_base_title'] = 'Configuration de base';
 $txt['optimus_base_desc']  = 'Sur cette page, vous pouvez changer la description du forum, g&eacute;rer les mod&egrave;les de titres de vos pages, activer/d&eacute;sactiver la g&eacute;n&eacute;ration d\'un sitemap XML.';
 
-$txt['optimus_main_page']         = 'page d\'accueil';
-$txt['optimus_base_info']         = 'La balise "description" peut &ecirc;tre prise en compte par les moteurs de recherche si une page correspond &agrave; la requ&ecirc;te de la recherche.';
-$txt['optimus_portal_compat']     = 'Compatibilit&eacute; du portail';
-$txt['optimus_portal_compat_set'] = array('None', 'PortaMx', 'SimplePortal', 'TinyPortal');
-$txt['optimus_portal_index']      = 'Titre de la page d\'accueil du portail';
-$txt['optimus_forum_index']       = 'Titre de la page d\'accueil du forum';
-$txt['optimus_description']       = 'Description du forum<br /><span class="smalltext">Sera le contenu de la balise meta "description"</strong>.</span>';
+$txt['optimus_main_page']   = 'page d\'accueil';
+$txt['optimus_base_info']   = 'La balise "description" peut &ecirc;tre prise en compte par les moteurs de recherche si une page correspond &agrave; la requ&ecirc;te de la recherche.';
+$txt['optimus_forum_index'] = 'Titre de la page d\'accueil du forum';
+$txt['optimus_description'] = 'Description du forum<br /><span class="smalltext">Sera le contenu de la balise meta "description"</strong>.</span>';
 
 $txt['optimus_all_pages'] = 'Page des sujets &amp; sections';
 $txt['optimus_tpl_info']  = 'Variables utilisables :<br /><strong>{board_name}</strong> —> nom de la section, <strong>{topic_name}</strong> —> titre du sujet,<br /><strong>{#}</strong> —> num&eacute;ro de la page, <strong>{cat_name}</strong> —> nom de la cat&eacute;gorie, <strong>{forum_name}</strong> —> nom de votre forum.';
@@ -91,3 +88,11 @@ $txt['optimus_rules']       = 'G&eacute;n&eacute;rateur de robots.txt';
 $txt['optimus_rules_hint']  = 'Vous pouvez copier ces r&egrave;gles dans le champ de droite :';
 $txt['optimus_robots_hint'] = 'Ici vous pouvez ins&eacute;rer vos propres r&egrave;gles ou modifier celles qui existent d&eacute;j&agrave; :';
 $txt['optimus_useful']      = '';
+
+$txt['optimus_sitemap_title'] = 'Optimus Sitemap';
+$txt['optimus_sitemap_desc']  = 'Vous voulez un sitemap simple ? Optimus peut g&eacute;n&eacute;rer un sitemap.xml pour les petits forums.';
+
+$txt['optimus_sitemap_enable'] = 'Cr&eacute;er et mettre &agrave; jour p&eacute;riodiquement le fichier XML Sitemap';
+$txt['optimus_sitemap_link']   = 'Afficher un lien vers le sitemap en pied de page (footer)';
+$txt['optimus_sitemap_boards'] = 'Ajouter les liens vers les sections dans le sitemap<br /><span class="smalltext error">Les sections cach&eacute;es aux invit&eacute;s NE seront PAS ajout&eacute;es.</span>';
+$txt['optimus_sitemap_topics'] = 'Ajoutez uniquement au sitemap les sujets ayant un nombre de r&eacute;ponses sup&eacute;rieur &agrave;';

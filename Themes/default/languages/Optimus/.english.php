@@ -13,13 +13,10 @@ $txt['optimus_title'] = 'Search Engine Optimization';
 $txt['optimus_base_title'] = 'Base settings';
 $txt['optimus_base_desc']  = 'On this page you can change a forum description, manage of pages titles\'s templates, enable/disable Sitemap XML generation.';
 
-$txt['optimus_main_page']         = 'Homepage';
-$txt['optimus_base_info']         = 'Well, the description tag\'s content may be taken into account when the robot determines if a page matches a search query.';
-$txt['optimus_portal_compat']     = 'Portal Compatibility';
-$txt['optimus_portal_compat_set'] = array('None', 'PortaMx', 'SimplePortal', 'TinyPortal');
-$txt['optimus_portal_index']      = 'Portal Homepage title';
-$txt['optimus_forum_index']       = 'Forum Homepage title';
-$txt['optimus_description']       = 'The forum annotation<br /><span class="smalltext">Will be used as content of the meta-tag <strong>description</strong>.</span>';
+$txt['optimus_main_page']   = 'Homepage';
+$txt['optimus_base_info']   = 'Well, the description tag\'s content may be taken into account when the robot determines if a page matches a search query.';
+$txt['optimus_forum_index'] = 'Forum Homepage title';
+$txt['optimus_description'] = 'The forum annotation<br /><span class="smalltext">Will be used as content of the meta-tag <strong>description</strong>.</span>';
 
 $txt['optimus_all_pages'] = 'Topic & board pages';
 $txt['optimus_tpl_info']  = 'Possible variables:<br/><strong>{board_name}</strong> &mdash; board name, <strong>{topic_name}</strong> &mdash; topic subject,<br/><strong>{#}</strong> &mdash; current page number, <strong>{cat_name}</strong> &mdash; category name, <strong>{forum_name}</strong> &mdash; your forum name.';
@@ -84,7 +81,22 @@ $txt['optimus_robots_title'] = 'Editor robots.txt';
 $txt['optimus_robots_desc']  = 'On this page you can change some options of forum map\'s creating, as well as modify a robots.txt file by using special generator.';
 
 $txt['optimus_manage']      = 'Manage robots.txt';
+$txt['optimus_root_path']   = 'Path to the site root directory';
 $txt['optimus_rules']       = 'Robots.txt Generator';
 $txt['optimus_rules_hint']  = 'You can copy these rules into the field on the right:';
 $txt['optimus_robots_hint'] = 'Here you can insert your own rules or modify existing ones:';
 $txt['optimus_useful']      = '';
+
+$txt['optimus_sitemap_title'] = 'Sitemap';
+$txt['optimus_sitemap_desc']  = 'Optimus can generate a XML-map for forums of any size. It is stored in the cache and updated once a day.';
+
+$txt['optimus_sitemap_enable']                  = 'Activate the Sitemap area';
+$txt['optimus_sitemap_link']                    = 'Show the Sitemap link on the footer';
+$txt['optimus_main_page_frequency']             = 'The update frequency of the main page';
+$txt['optimus_main_page_frequency_set']         = array('Constant (always)', 'Depending on the date of the last message');
+$txt['optimus_sitemap_boards']                  = 'Add links to boards to the sitemap';
+$txt['optimus_sitemap_boards_subtext']          = 'Boards that closed to guests will NOT be added.';
+$txt['optimus_sitemap_topics_num_replies']      = 'Add to the sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_items_display']           = 'Maximum number of items per page';
+$txt['optimus_sitemap_all_topic_pages']         = 'Add ALL topic pages to the sitemap';
+$txt['optimus_sitemap_all_topic_pages_subtext'] = 'If not checked, only the first pages of topics will be added to the sitemap.';

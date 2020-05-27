@@ -402,7 +402,7 @@ class idna_convert
      */
     protected function _decode($encoded)
     {
-        $decoded = array();
+        $decoded = [];
         // find the Punycode prefix
         if (!preg_match('!^'.preg_quote($this->_punycode_prefix, '!').'!', $encoded)) {
             $this->_error('This is not a punycode string');
@@ -598,7 +598,7 @@ class idna_convert
      */
     protected function _nameprep($input)
     {
-        $output = array();
+        $output = [];
         $error = false;
         //
         // Mapping
@@ -681,7 +681,7 @@ class idna_convert
     {
         $sindex = (int) $char - $this->_sbase;
         if ($sindex < 0 || $sindex >= $this->_scount) return array($char);
-        $result = array();
+        $result = [];
         $result[] = (int) $this->_lbase + $sindex / $this->_ncount;
         $result[] = (int) $this->_vbase + ($sindex % $this->_ncount) / $this->_tcount;
         $T = intval($this->_tbase + $sindex % $this->_tcount);
@@ -698,7 +698,7 @@ class idna_convert
     {
         $inp_len = count($input);
         if (!$inp_len) return array();
-        $result = array();
+        $result = [];
         $last = (int) $input[0];
         $result[] = $last; // copy first char from input to output
 
@@ -820,7 +820,7 @@ class idna_convert
      */
     protected function _utf8_to_ucs4($input)
     {
-        $output = array();
+        $output = [];
         $out_len = 0;
         $inp_len = self::byteLength($input);
         $mode = 'next';
@@ -940,7 +940,7 @@ class idna_convert
      */
     protected function _ucs4_string_to_ucs4($input)
     {
-        $output = array();
+        $output = [];
         $inp_len = self::byteLength($input);
         // Input length must be dividable by 4
         if ($inp_len % 4) {
@@ -982,7 +982,7 @@ class idna_convert
      * @return idna_convert
      * @access public
      */
-    public function getInstance($params = array())
+    public function getInstance($params = [])
     {
         return new idna_convert($params);
     }
@@ -997,11 +997,11 @@ class idna_convert
      * @return object idna_convert
      * @access public
      */
-    public function singleton($params = array())
+    public function singleton($params = [])
     {
         static $instances;
         if (!isset($instances)) {
-            $instances = array();
+            $instances = [];
         }
         $signature = serialize($params);
         if (!isset($instances[$signature])) {
