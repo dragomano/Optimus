@@ -310,7 +310,7 @@ function template_robots()
 						<span><label for="optimus_root_path">', $txt['optimus_root_path'], '</label></span>
 					</dt>
 					<dd>
-						<input name="optimus_root_path" id="optimus_root_path" value="', $modSettings['optimus_root_path'] ?? '', '" class="input_text" type="text" size="80" />
+						<input name="optimus_root_path" id="optimus_root_path" value="', !empty($modSettings['optimus_root_path']) ? $modSettings['optimus_root_path'] : '', '" class="input_text" type="text" size="80" />
 					</dd>
 				</dl>
 			</div>

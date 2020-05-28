@@ -315,7 +315,7 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_robots_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$root = $_SERVER['DOCUMENT_ROOT'] ?? $boarddir;
+		$root = !empty($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : $boarddir;
 		if (empty($modSettings['optimus_root_path']))
 			updateSettings(array('optimus_root_path' => $root));
 
@@ -323,7 +323,7 @@ class Settings
 			array('text', 'optimus_root_path')
 		);
 
-		$robots_path = ($modSettings['optimus_root_path'] ?? $root) . '/robots.txt';
+		$robots_path = (!empty($modSettings['optimus_root_path']) ? $modSettings['optimus_root_path'] : $root) . '/robots.txt';
 		$context['robots_content'] = is_writable($robots_path) ? file_get_contents($robots_path) : '';
 
 		require_once($sourcedir . "/Optimus/Robots.php");
