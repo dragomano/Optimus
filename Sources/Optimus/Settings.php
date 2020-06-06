@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -36,7 +36,7 @@ class Settings
 			},
 			'icon' => 'maintain.gif',
 			'subsections' => array(
-				'base'     => array($txt['optimus_base_title']),
+				'basic'    => array($txt['optimus_base_title']),
 				'extra'    => array($txt['optimus_extra_title']),
 				'favicon'  => array($txt['optimus_favicon_title']),
 				'metatags' => array($txt['optimus_meta_title']),
@@ -54,7 +54,7 @@ class Settings
 	 */
 	public static function settingActions()
 	{
-		global $context, $txt, $sourcedir, $scripturl;
+		global $context, $txt, $sourcedir, $smcFunc, $scripturl;
 
 		$context['page_title'] = $txt['optimus_main'];
 
@@ -62,7 +62,7 @@ class Settings
 		loadTemplate('Optimus', array('admin', 'optimus/optimus'));
 
 		$subActions = array(
-			'base'     => 'baseSettings',
+			'basic'    => 'basicSettings',
 			'extra'    => 'extraSettings',
 			'favicon'  => 'faviconSettings',
 			'metatags' => 'metatagsSettings',
@@ -72,13 +72,15 @@ class Settings
 		);
 
 		require_once($sourcedir . '/ManageSettings.php');
-		loadGeneralSettingParameters($subActions, 'base');
+		loadGeneralSettingParameters($subActions, 'basic');
+
+		db_extend();
 
 		$context[$context['admin_menu_name']]['tab_data'] = array(
 			'title' => $txt['optimus_title'],
 			'tabs' => array(
-				'base' => array(
-					'description' => $txt['optimus_base_desc'],
+				'basic' => array(
+					'description' => sprintf($txt['optimus_base_desc'], OP_VERSION, phpversion(), $smcFunc['db_title'], $smcFunc['db_get_version']()),
 				),
 				'extra' => array(
 					'description' => $txt['optimus_extra_desc'],
@@ -109,13 +111,13 @@ class Settings
 	 *
 	 * @return void
 	 */
-	public static function baseSettings()
+	public static function basicSettings()
 	{
 		global $context, $txt, $scripturl, $modSettings, $smcFunc;
 
 		$context['sub_template'] = 'base';
 		$context['page_title'] .= ' - ' . $txt['optimus_base_title'];
-		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=base;save';
+		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=basic;save';
 
 		$add_settings = [];
 		if (!isset($modSettings['optimus_forum_index']))
@@ -150,7 +152,7 @@ class Settings
 			saveDBSettings($save_vars);
 
 			updateSettings(array('optimus_templates' => serialize($templates)));
-			redirectexit('action=admin;area=optimus;sa=base');
+			redirectexit('action=admin;area=optimus;sa=basic');
 		}
 
 		prepareDBSettingContext($config_vars);
@@ -373,6 +375,7 @@ class Settings
 
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
+			cache_put_data('optimus_sitemap_counter', null);
 
 			redirectexit('action=admin;area=optimus;sa=sitemap');
 		}

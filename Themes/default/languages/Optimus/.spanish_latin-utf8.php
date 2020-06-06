@@ -11,7 +11,6 @@ $txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'Optimización de motores de búsqueda';
 
 $txt['optimus_base_title'] = 'Base de ceonfiguración';
-$txt['optimus_base_desc']  = 'En esta página puede cambiar la descripción de un foro, el administrador de plantillas de títulos de páginas, activar/desactivar la generación XML de Sitemap.';
 
 $txt['optimus_main_page']   = 'Página principal';
 $txt['optimus_base_info']   = 'Bueno, el contenido de la etiqueta de descripción puede tenerse en cuenta cuando el robot determina si una página coincide con una consulta de búsqueda.';

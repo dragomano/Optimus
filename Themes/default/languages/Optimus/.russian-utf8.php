@@ -11,7 +11,7 @@ $txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'Поисковая оптимизация';
 
 $txt['optimus_base_title'] = 'Общие настройки';
-$txt['optimus_base_desc']  = 'Изменение описания форума, настройка шаблонов заголовков страниц разделов и тем, а также включение/отключение генерации карты сайта.';
+$txt['optimus_base_desc']  = 'Версия мода: <strong>%1$s</strong>, версия PHP: <strong>%2$s</strong>, версия %3$s: <strong>%4$s</strong>.<br>Обсудить баги и фичи мода можно в <a class="bbc_link" href="https://t.me/joinchat/FcgZ0FVvbDerF9q65_Wlrg">Телеграм-группе</a>.<br>Вы также можете <a class="bbc_link" href="https://money.yandex.ru/to/410011113366680">поблагодарить</a> разработчика.';
 
 $txt['optimus_main_page']   = 'Главная страница';
 $txt['optimus_base_info']   = 'Содержание мета-тега description может использоваться в сниппетах на странице результатов поиска.';
@@ -89,7 +89,7 @@ $txt['optimus_robots_hint'] = 'Сюда можно вставить собств
 $txt['optimus_useful']      = '<a class="bbc_link" href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank">Правильный robots.txt для SMF</a>';
 
 $txt['optimus_sitemap_title'] = 'Карта форума';
-$txt['optimus_sitemap_desc']  = 'Optimus умеет создавать XML-карту для форумов любого размера. Она хранится в кэше и обновляется раз в сутки.';
+$txt['optimus_sitemap_desc']  = 'Optimus умеет создавать XML-карту для форумов любого размера. Она обновляется раз в сутки.';
 
 $txt['optimus_sitemap_enable']                  = 'Активировать карту форума';
 $txt['optimus_sitemap_link']                    = 'Показывать ссылку на карту в подвале';

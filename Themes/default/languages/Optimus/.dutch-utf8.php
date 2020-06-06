@@ -11,7 +11,6 @@ $txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'Zoekmachine Optimalisatie';
 
 $txt['optimus_base_title'] = 'Algemene instellingen';
-$txt['optimus_base_desc']  = 'Op deze pagina kun je de forum omschrijving invullen, titels van pagina templates beheren en het genereren van de sitemap XML activeren.';
 
 $txt['optimus_main_page']   = 'Homepage';
 $txt['optimus_base_info']   = 'Inhoud van de \'description tag\' kan worden gebruikt door een robot om te bepalen of een pagina aan de zoektermen voldoet.';

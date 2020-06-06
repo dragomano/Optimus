@@ -11,7 +11,7 @@ $txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_base_title'] = 'Base settings';
-$txt['optimus_base_desc']  = 'On this page you can change a forum description, manage of pages titles\'s templates, enable/disable Sitemap XML generation.';
+$txt['optimus_base_desc']  = 'The mod version: <strong>%1$s</strong>, PHP version: <strong>%2$s</strong>, %3$s version: <strong>%4$s</strong>.<br>One can discuss bugs and features of the mod at <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.com</a>.<br>You can also <a class="bbc_link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SJLXR6X7XGEDC">make a donation</a> to the developer.';
 
 $txt['optimus_main_page']   = 'Homepage';
 $txt['optimus_base_info']   = 'Well, the description tag\'s content may be taken into account when the robot determines if a page matches a search query.';
@@ -88,7 +88,7 @@ $txt['optimus_robots_hint'] = 'Here you can insert your own rules or modify exis
 $txt['optimus_useful']      = '';
 
 $txt['optimus_sitemap_title'] = 'Sitemap';
-$txt['optimus_sitemap_desc']  = 'Optimus can generate a XML-map for forums of any size. It is stored in the cache and updated once a day.';
+$txt['optimus_sitemap_desc']  = 'Optimus can generate a XML-map for forums of any size. It is updated once a day.';
 
 $txt['optimus_sitemap_enable']                  = 'Activate the Sitemap area';
 $txt['optimus_sitemap_link']                    = 'Show the Sitemap link on the footer';

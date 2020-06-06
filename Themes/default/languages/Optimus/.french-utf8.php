@@ -12,7 +12,6 @@ $txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'SEO';
 
 $txt['optimus_base_title'] = 'Réglages de base';
-$txt['optimus_base_desc']  = 'Sur cette page, vous pouvez changer la description du forum, gérer les modèles de titres de vos pages, activer/désactiver la génération d\'un sitemap XML.';
 
 $txt['optimus_main_page']   = 'page d\'accueil';
 $txt['optimus_base_info']   = 'La balise "description" peut être prise en compte par les moteurs de recherche si une page correspond à la requête de la recherche.';
