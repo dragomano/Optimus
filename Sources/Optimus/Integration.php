@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -26,26 +26,11 @@ class Integration
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_actions', __CLASS__ . '::actions', false);
 		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false);
 		add_integration_function('integrate_buffer', __CLASS__ . '::buffer', false);
 		add_integration_function('integrate_admin_include', '$sourcedir/Optimus/Settings.php', false);
 		add_integration_function('integrate_admin_areas', __NAMESPACE__ . '\Settings::adminAreas', false);
-	}
-
-	/**
-	 * Подключаем action "sitemap"
-	 *
-	 * @param array $actions
-	 * @return void
-	 */
-	public static function actions(&$actions)
-	{
-		global $modSettings;
-
-		if (!empty($modSettings['optimus_sitemap_enable']))
-			$actions['sitemap'] = array('Optimus/Sitemap.php', array(__NAMESPACE__ . '\Sitemap', 'main'));
 	}
 
 	/**
@@ -55,6 +40,10 @@ class Integration
 	 */
 	public static function loadTheme()
 	{
+		define('OP_NAME', 'Optimus');
+		define('OP_VERSION', '2.6');
+		define('OP_SITEMAP_CACHE_TTL', 24 * 60 * 60);
+
 		loadLanguage('Optimus/');
 
 		Subs::changeForumTitle();
@@ -73,8 +62,8 @@ class Integration
 		Subs::addMainPageDescription();
 		Subs::processPageTemplates();
 		Subs::processErrorCodes();
-		Subs::addSitemapLink();
 		Subs::runAddons();
+		Subs::addSitemap();
 		Subs::addCredits();
 	}
 

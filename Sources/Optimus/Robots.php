@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -164,14 +164,29 @@ class Robots
 	 */
 	private function sitemapRules()
 	{
-		global $sourcedir, $modSettings, $scripturl;
+		global $sourcedir, $modSettings, $boardurl, $boarddir, $scripturl;
 
-		$sitemap = file_exists($sourcedir . '/Sitemap.php') || !empty($modSettings['optimus_sitemap_enable']);
+		$sitemap     = file_exists($sourcedir . '/Sitemap.php');
+		$map         = 'sitemap.xml';
+		$map_gz      = 'sitemap.xml.gz';
+		$path_map    = $boardurl . '/' . $map;
+		$path_map_gz = $boardurl . '/' . $map_gz;
+		$temp_map    = file_exists($boarddir . '/' . $map);
+		$temp_map_gz = file_exists($boarddir . '/' . $map_gz);
+		$map         = $temp_map ? $path_map : '';
+		$map_gz      = $temp_map_gz ? $path_map_gz : '';
 
-		if ($sitemap) {
+		if (!empty($map) || !empty($map_gz) || $sitemap) {
 			$this->rules[] = "Allow: " . $this->getUrlPath() . "/*sitemap";
 			$this->rules[] = "|";
-			$this->rules[] = "Sitemap: " . $scripturl . "?action=sitemap;xml";
 		}
+
+		if ($sitemap)
+			$this->rules[] = "Sitemap: " . $scripturl . "?action=sitemap;xml";
+
+		if (!empty($map_gz))
+			$this->rules[] = "Sitemap: " . $map_gz;
+		elseif (!empty($map))
+			$this->rules[] = "Sitemap: " . $map;
 	}
 }

@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -357,16 +357,25 @@ class Subs
 	}
 
 	/**
-	 * Добавляем ссылку на карту форума в подвале
+	 * Создаем или обновляем карту + добавляем ссылку в подвале
 	 *
 	 * @return void
 	 */
-	public static function addSitemapLink()
+	public static function addSitemap()
 	{
-		global $modSettings, $txt, $forum_copyright, $scripturl;
+		global $modSettings, $txt, $boarddir, $sourcedir, $forum_copyright, $boardurl;
 
-		if (!empty($modSettings['optimus_sitemap_enable']) && !empty($modSettings['optimus_sitemap_link']) && isset($txt['optimus_sitemap_title']))
-			$forum_copyright .= ' | <a href="' . $scripturl . '?action=sitemap;xml">' . $txt['optimus_sitemap_title'] . '</a>';
+		if (empty($modSettings['optimus_sitemap_enable']) || !isset($txt['optimus_sitemap_title']))
+			return;
+
+		if (cache_get_data('optimus_sitemap_counter', OP_SITEMAP_CACHE_TTL) == null) {
+			array_map("unlink", glob($boarddir . "/sitemap*.xml*"));
+			require_once($sourcedir . '/Optimus/Sitemap.php');
+			Sitemap::getXml();
+		}
+
+		if (!empty($modSettings['optimus_sitemap_link']))
+			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';
 	}
 
 	/**

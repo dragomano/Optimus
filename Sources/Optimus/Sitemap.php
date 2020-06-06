@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.5
+ * @version 2.6
  */
 
 if (!defined('SMF'))
@@ -30,70 +30,40 @@ class Sitemap
 	public static $max_items = 50000;
 
 	/**
-	 * Cache time to life, in seconds
-	 *
-	 * @var int
-	 */
-	public static $cache_ttl = 24 * 60 * 60;
-
-	/**
-	 * Show main action of Sitemap area
-	 *
-	 * @return void
-	 */
-	public static function main()
-	{
-		loadTemplate('Optimus');
-
-		if (isset($_REQUEST['xml']))
-			return self::getXml();
-
-		redirectexit('action=sitemap;xml');
-	}
-
-	/**
 	 * Show sitemap XML
 	 *
 	 * @return void
 	 */
 	public static function getXml()
 	{
-		global $modSettings, $context, $scripturl;
+		global $modSettings, $context, $scripturl, $boardurl, $boarddir;
 
-		// Might take some time.
+		if (@ini_get('memory_limit') < 128)
+			@ini_set('memory_limit', '128M');
+
 		@set_time_limit(600);
 
-		$items = [];
+		$items     = [];
 		$max_items = $modSettings['optimus_sitemap_items_display'] ?: self::$max_items;
+		$sitemap_counter = 0;
 
-		if (($sitemap_counter = cache_get_data('optimus_sitemap_counter', self::$cache_ttl)) == null) {
-			$sitemap_counter = 0;
+		$links = self::getLinks();
+		if (empty($links))
+			return;
 
-			$links = self::getLinks();
-			foreach ($links as $counter => $entry) {
-				if (!empty($counter) && $counter % $max_items == 0)
-					$sitemap_counter++;
+		foreach ($links as $counter => $entry) {
+			if (!empty($counter) && $counter % $max_items == 0)
+				$sitemap_counter++;
 
-				$items[$sitemap_counter][] = array(
-					'loc'        => $entry['loc'],
-					'lastmod'    => self::getDate($entry['lastmod']),
-					'changefreq' => self::getFrequency($entry['lastmod']),
-					'priority'   => self::getPriority($entry['lastmod'])
-				);
-			}
-
-			unset($links);
-
-			cache_put_data('optimus_sitemap_counter', $sitemap_counter, self::$cache_ttl);
-
-			for ($i = 0; $i <= $sitemap_counter; $i++) {
-				cache_put_data('optimus_sitemap_' . $i, $items[$i], self::$cache_ttl);
-			}
-		} else {
-			for ($i = 0; $i <= $sitemap_counter; $i++) {
-				$items[$i] = cache_get_data('optimus_sitemap_' . $i, self::$cache_ttl);
-			}
+			$items[$sitemap_counter][] = array(
+				'loc'        => $entry['loc'],
+				'lastmod'    => self::getDate($entry['lastmod']),
+				'changefreq' => self::getFrequency($entry['lastmod']),
+				'priority'   => self::getPriority($entry['lastmod'])
+			);
 		}
+
+		unset($links);
 
 		// The update frequency of the main page
 		if (empty($modSettings['optimus_main_page_frequency']))
@@ -102,33 +72,44 @@ class Sitemap
 		// The priority of the main page
 		$items[0][0]['priority'] = '1.0';
 
-		$context['sitemap']['items'] = [];
+		loadTemplate('Optimus');
 
-		// If number of links is more than self::$count, we show the sitemapindex file
 		if ($sitemap_counter > 0) {
-			if (isset($_GET['start'])) {
-				$index = (int) $_GET['start'];
+			$gz_maps = [];
+			for ($number = 0; $number <= $sitemap_counter; $number++) {
+				$context['sitemap']['items'] = $items[$number];
 
-				if (!array_key_exists($index, $items))
-					redirectexit('action=sitemap;xml');
+				ob_start();
+				template_sitemap_xml();
+				$content = ob_get_clean();
 
-				$context['sitemap']['items'] = array_merge($context['sitemap']['items'], $items[$index]);
-				$context['sub_template']     = 'sitemap_xml';
+				Subs::runAddons('sitemapRewriteBuffer', array(&$content));
 
-				return;
+				$gz_maps[$number] = self::createFile($boarddir . '/sitemap_' . $number . '.xml', $content);
 			}
 
+			$context['sitemap']['items'] = [];
 			for ($number = 0; $number <= $sitemap_counter; $number++)
-				$context['sitemap']['items'][$number]['loc'] = $scripturl . '?action=sitemap;xml;start=' . $number;
+				$context['sitemap']['items'][$number]['loc'] = $boardurl . '/sitemap_' . $number . '.xml' . (!empty($gz_maps[$number]) ? '.gz' : '');
 
-			$context['sub_template'] = 'sitemapindex_xml';
+			ob_start();
+			template_sitemapindex_xml();
+			$content = ob_get_clean();
+
+			self::createFile($boarddir . '/sitemap.xml', $content);
 		} else {
-			if (isset($_GET['start']))
-				redirectexit('action=sitemap;xml');
-
 			$context['sitemap']['items'] = $items[0];
-			$context['sub_template']     = 'sitemap_xml';
+
+			ob_start();
+			template_sitemap_xml();
+			$content = ob_get_clean();
+
+			Subs::runAddons('sitemapRewriteBuffer', array(&$content));
+
+			self::createFile($boarddir . '/sitemap.xml', $content);
 		}
+
+		cache_put_data('optimus_sitemap_counter', $sitemap_counter, OP_SITEMAP_CACHE_TTL);
 	}
 
 	/**
@@ -361,5 +342,36 @@ class Sitemap
 			return '0.4';
 
 		return '0.2';
+	}
+
+	/**
+	 * Создаем файл карты
+	 *
+	 * @param string $path — путь к файлу
+	 * @param string $data — содержимое
+	 * @return bool if true then we have gz-verstion, else - simple
+	 */
+	private static function createFile($path, $data)
+	{
+		if (!$fp = fopen($path, 'w'))
+			return false;
+
+		flock($fp, LOCK_EX);
+		fwrite($fp, $data);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+
+		// Если размер файла превышает 50 МБ, создадим и упакованную gz-версию
+		if (filesize($path) > (50 * 1024 * 1024)) {
+			$data   = implode('', file($path));
+			$gzdata = gzencode($data, 9);
+			$fp     = fopen($path . '.gz', 'w');
+			fwrite($fp, $gzdata);
+			fclose($fp);
+
+			return true;
+		}
+
+		return false;
 	}
 }
