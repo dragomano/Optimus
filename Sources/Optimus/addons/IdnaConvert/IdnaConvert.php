@@ -46,6 +46,9 @@ class IdnaConvert
 	{
 		global $boardurl, $idn;
 
+		if (empty($common_rules))
+			return;
+
 		if (self::requiredIdnConvert()) {
 			foreach ($common_rules as $key => $rule) {
 				if (strpos($rule, $boardurl))
@@ -63,6 +66,9 @@ class IdnaConvert
 	public static function sitemap(&$links)
 	{
 		global $idn;
+
+		if (empty($links))
+			return;
 
 		if (self::requiredIdnConvert()) {
 			foreach ($links as $id => $entry)

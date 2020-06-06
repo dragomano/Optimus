@@ -22,20 +22,21 @@ class PrettyUrls
 	 *
 	 * @return void
 	 */
-	public static function meta()
+	public static function sitemapRewriteBuffer(&$content)
 	{
-		global $context, $sourcedir, $modSettings;
+		global $modSettings, $sourcedir, $context;
 
-		if ($context['current_action'] != 'sitemap')
+		if (empty($modSettings['optimus_sitemap_enable']) || empty($modSettings['pretty_enable_filters']))
 			return;
 
-		$pretty = $sourcedir . '/PrettyUrls-Filters.php';
-		if (file_exists($pretty) && !empty($modSettings['pretty_enable_filters'])) {
+		if (file_exists($pretty = $sourcedir . '/PrettyUrls-Filters.php')) {
 			if (!function_exists('pretty_rewrite_buffer'))
 				require_once($pretty);
 
 			$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
 			$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';
+
+			$content = pretty_rewrite_buffer($content);
 		}
 	}
 }
