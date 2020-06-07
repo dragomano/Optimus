@@ -56,7 +56,7 @@ class Settings
 	{
 		global $context, $txt, $sourcedir, $smcFunc, $scripturl;
 
-		$context['page_title'] = $txt['optimus_main'];
+		$context['page_title'] = OP_NAME;
 
 		// Подключаем файл шаблона вместе с таблицами стилей
 		loadTemplate('Optimus', array('admin', 'optimus/optimus'));

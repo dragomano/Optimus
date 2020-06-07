@@ -7,7 +7,6 @@
  * @author Bugo https://dragomano.ru/mods/optimus
  */
 
-$txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'Optimización de motores de búsqueda';
 
 $txt['optimus_base_title'] = 'Base de ceonfiguración';

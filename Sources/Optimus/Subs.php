@@ -274,7 +274,7 @@ class Subs
 		if (!allowedTo('view_attachments') || !empty($context['optimus_og_image']))
 			return;
 
-		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) == null) {
+		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'], 360)) === null) {
 			$request = $smcFunc['db_query']('', '
 				SELECT COALESCE(id_attach, 0) AS id
 				FROM {db_prefix}attachments
@@ -368,7 +368,7 @@ class Subs
 		if (empty($modSettings['optimus_sitemap_enable']) || !isset($txt['optimus_sitemap_title']))
 			return;
 
-		if (cache_get_data('optimus_sitemap_counter', OP_SITEMAP_CACHE_TTL) == null) {
+		if (cache_get_data('optimus_sitemap_counter', OP_SITEMAP_CACHE_TTL) === null) {
 			array_map("unlink", glob($boarddir . "/sitemap*.xml*"));
 			require_once($sourcedir . '/Optimus/Sitemap.php');
 			Sitemap::getXml();
@@ -410,7 +410,7 @@ class Subs
 
 		$addon_dir = $sourcedir . '/Optimus/addons';
 
-		if (($optimus_addons = cache_get_data('optimus_addons', 3600)) == null) {
+		if (($optimus_addons = cache_get_data('optimus_addons', 3600)) === null) {
 			foreach (glob($addon_dir . '/*.php') as $filename) {
 				$filename = basename($filename);
 				if ($filename !== 'index.php')

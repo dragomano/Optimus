@@ -7,7 +7,6 @@
  * @author Bugo https://dragomano.ru/mods/optimus
  */
 
-$txt['optimus_main']  = 'Optimus';
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_base_title'] = 'Base settings';
