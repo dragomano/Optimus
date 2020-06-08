@@ -337,7 +337,9 @@ class Settings
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
 
-			file_put_contents($robots_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING), LOCK_EX);
+			if (is_writable($root))
+				file_put_contents($robots_path, filter_input(INPUT_POST, 'robots', FILTER_SANITIZE_STRING), LOCK_EX);
+
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
 

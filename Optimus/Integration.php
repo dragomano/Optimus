@@ -41,7 +41,7 @@ class Integration
 	public static function loadTheme()
 	{
 		define('OP_NAME', 'Optimus');
-		define('OP_VERSION', '2.6.1');
+		define('OP_VERSION', '2.6.2');
 		define('OP_SITEMAP_CACHE_TTL', 24 * 60 * 60);
 
 		loadLanguage('Optimus/');

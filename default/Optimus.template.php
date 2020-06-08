@@ -217,9 +217,10 @@ function template_metatags()
 					</tr>';
 	}
 
-	foreach ($meta as $name => $value) {
-		if (!in_array($name, $engines)) {
-			echo '
+	if (!empty($meta)) {
+		foreach ($meta as $name => $value) {
+			if (!in_array($name, $engines)) {
+				echo '
 					<tr>
 						<td>', $txt['optimus_meta_customtag'], '</td>
 						<td>
@@ -229,6 +230,7 @@ function template_metatags()
 							<input type="text" name="custom_tag_value[]" size="40" value="', $value, '" />
 						</td>
 					</tr>';
+			}
 		}
 	}
 

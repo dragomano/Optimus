@@ -3,15 +3,15 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>2.6.1 [07.06.20]</version>
+	<version>2.6.2 [08.06.20]</version>
 	<type>modification</type>
 
 	<install for="2.0 - 2.0.99">
 		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<readme parsebbc="true">readme/readme.txt</readme>
-		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
-		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
+		<require-dir name="Optimus" destination="$sourcedir">Core files</require-dir>
+		<require-dir name="default" destination="$themes_dir">Template &amp; Language files</require-dir>
 		<code>hooks.php</code>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
