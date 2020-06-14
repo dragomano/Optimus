@@ -5,7 +5,7 @@
 * **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** SMF 2.0.17+
-* **Tested on:** PHP 5.6, 7.3.18 / MariaDB 10.4.13
+* **Tested on:** PHP 5.6.40, 7.3.18 / MariaDB 10.4.13 (test db: 160k topics, 2.5 mln messages)
 * **Hooks only:** Yes
 * **Languages:** Dutch, English, French, Russian, Spanish
 
