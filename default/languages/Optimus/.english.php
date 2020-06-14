@@ -87,7 +87,7 @@ $txt['optimus_robots_hint'] = 'Here you can insert your own rules or modify exis
 $txt['optimus_useful']      = '';
 
 $txt['optimus_sitemap_title'] = 'Sitemap';
-$txt['optimus_sitemap_desc']  = 'Optimus can generate a XML-map for forums of any size. It is updated once a day.';
+$txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated depending on settings in the <a href="%1$s">Task Manager</a>.';
 
 $txt['optimus_sitemap_enable']                  = 'Activate the Sitemap area';
 $txt['optimus_sitemap_link']                    = 'Show the Sitemap link on the footer';
@@ -97,5 +97,7 @@ $txt['optimus_sitemap_boards']                  = 'Add links to boards to the si
 $txt['optimus_sitemap_boards_subtext']          = 'Boards that closed to guests will NOT be added.';
 $txt['optimus_sitemap_topics_num_replies']      = 'Add to the sitemap only those topics that have the number of replies is more than';
 $txt['optimus_sitemap_items_display']           = 'Maximum number of items per page';
-$txt['optimus_sitemap_all_topic_pages']         = 'Add ALL topic pages to the sitemap';
-$txt['optimus_sitemap_all_topic_pages_subtext'] = 'If not checked, only the first pages of topics will be added to the sitemap.';
+
+// Task Manager
+$txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Generation';
+$txt['scheduled_task_desc_optimus_sitemap'] = 'You can set the frequency of the sitemap\'s creation.';

@@ -88,7 +88,7 @@ $txt['optimus_robots_hint'] = 'Сюда можно вставить собственные правила или измен
 $txt['optimus_useful']      = '<a class="bbc_link" href="https://dragomano.ru/articles/pravilnyj-robotstxt-dlja-smf" target="_blank">Правильный robots.txt для SMF</a>';
 
 $txt['optimus_sitemap_title'] = 'Карта форума';
-$txt['optimus_sitemap_desc']  = 'Optimus умеет создавать XML-карту для форумов любого размера. Она обновляется раз в сутки.';
+$txt['optimus_sitemap_desc']  = 'Optimus умеет генерировать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a>.';
 
 $txt['optimus_sitemap_enable']                  = 'Активировать карту форума';
 $txt['optimus_sitemap_link']                    = 'Показывать ссылку на карту в подвале';
@@ -98,5 +98,7 @@ $txt['optimus_sitemap_boards']                  = 'Добавлять в карту ссылки на р
 $txt['optimus_sitemap_boards_subtext']          = 'Разделы, закрытые для гостей, добавлены НЕ будут.';
 $txt['optimus_sitemap_topics_num_replies']      = 'Добавлять в карту только темы с количеством ответов более';
 $txt['optimus_sitemap_items_display']           = 'Максимальное количество элементов на странице';
-$txt['optimus_sitemap_all_topic_pages']         = 'Добавлять в карту ВСЕ страницы тем';
-$txt['optimus_sitemap_all_topic_pages_subtext'] = 'Если не отмечено, в карту будут добавляться только первые страницы тем.';
+
+// Диспетчер задач
+$txt['scheduled_task_optimus_sitemap']      = 'Генерация XML-карты форума';
+$txt['scheduled_task_desc_optimus_sitemap'] = 'Настройте периодичность создания карты, если хотите.';

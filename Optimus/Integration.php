@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6
+ * @version 2.6.3
  */
 
 if (!defined('SMF'))
@@ -40,9 +40,8 @@ class Integration
 	 */
 	public static function loadTheme()
 	{
-		define('OP_NAME', 'Optimus');
-		define('OP_VERSION', '2.6.2');
-		define('OP_SITEMAP_CACHE_TTL', 24 * 60 * 60);
+		defined('OP_NAME') or define('OP_NAME', 'Optimus');
+		defined('OP_VERSION') or define('OP_VERSION', '2.6.3');
 
 		loadLanguage('Optimus/');
 

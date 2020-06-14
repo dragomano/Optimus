@@ -22,7 +22,7 @@ class PrettyUrls
 	 *
 	 * @return void
 	 */
-	public static function sitemapRewriteBuffer(&$content)
+	public static function sitemapRewriteContent(&$content)
 	{
 		global $modSettings, $sourcedir, $context;
 

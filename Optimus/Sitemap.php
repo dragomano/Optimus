@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6
+ * @version 2.6.3
  */
 
 if (!defined('SMF'))
@@ -30,18 +30,16 @@ class Sitemap
 	public static $max_items = 50000;
 
 	/**
-	 * Show sitemap XML
+	 * Create sitemap XML
 	 *
-	 * @return void
+	 * @return bool
 	 */
-	public static function getXml()
+	public static function createXml()
 	{
 		global $modSettings, $context, $scripturl, $boardurl, $boarddir;
 
 		if (@ini_get('memory_limit') < 128)
 			@ini_set('memory_limit', '128M');
-
-		@set_time_limit(600);
 
 		$items     = [];
 		$max_items = $modSettings['optimus_sitemap_items_display'] ?: self::$max_items;
@@ -49,7 +47,7 @@ class Sitemap
 
 		$links = self::getLinks();
 		if (empty($links))
-			return;
+			return false;
 
 		foreach ($links as $counter => $entry) {
 			if (!empty($counter) && $counter % $max_items == 0)
@@ -83,7 +81,7 @@ class Sitemap
 				template_sitemap_xml();
 				$content = ob_get_clean();
 
-				Subs::runAddons('sitemapRewriteBuffer', array(&$content));
+				Subs::runAddons('sitemapRewriteContent', array(&$content));
 
 				$gz_maps[$number] = self::createFile($boarddir . '/sitemap_' . $number . '.xml', $content);
 			}
@@ -104,12 +102,12 @@ class Sitemap
 			template_sitemap_xml();
 			$content = ob_get_clean();
 
-			Subs::runAddons('sitemapRewriteBuffer', array(&$content));
+			Subs::runAddons('sitemapRewriteContent', array(&$content));
 
 			self::createFile($boarddir . '/sitemap.xml', $content);
 		}
 
-		cache_put_data('optimus_sitemap_counter', $sitemap_counter, OP_SITEMAP_CACHE_TTL);
+		return true;
 	}
 
 	/**
@@ -150,7 +148,7 @@ class Sitemap
 
 		$boards = self::getBoardLinks();
 		$topics = self::getTopicLinks();
-		$links  = !empty($boards) || !empty($topics) ? array_merge($boards, $topics) : [];
+		$links  = !empty($modSettings['optimus_sitemap_boards']) ? array_merge($boards, $topics) : $topics;
 
 		// Adding the main page
 		$home = array(
@@ -175,9 +173,6 @@ class Sitemap
 	{
 		global $modSettings, $smcFunc, $context, $scripturl;
 
-		if (empty($modSettings['optimus_sitemap_boards']))
-			return [];
-
 		$request = $smcFunc['db_query']('', '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
@@ -192,21 +187,16 @@ class Sitemap
 			)
 		);
 
-		$boards = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request))
-			$boards[] = $row;
+		$context['optimus_open_boards'] = $links = [];
+		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			$context['optimus_open_boards'][] = $row['id_board'];
+			$links[] = array(
+				'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $row['id_board'] . '.0.html' : $scripturl . '?board=' . $row['id_board'] . '.0',
+				'lastmod' => $row['last_date']
+			);
+		}
 
 		$smcFunc['db_free_result']($request);
-
-		$links = [];
-		if (!empty($boards)) {
-			foreach ($boards as $entry)	{
-				$links[] = array(
-					'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $entry['id_board'] . '.0.html' : $scripturl . '?board=' . $entry['id_board'] . '.0',
-					'lastmod' => $entry['last_date']
-				);
-			}
-		}
 
 		return $links;
 	}
@@ -218,70 +208,41 @@ class Sitemap
 	 */
 	public static function getTopicLinks()
 	{
-		global $smcFunc, $modSettings, $context, $scripturl;
+		global $modSettings, $smcFunc, $context, $scripturl, $txt;
 
-		$request = $smcFunc['db_query']('', '
-			SELECT t.id_topic, m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date, t.num_replies' . (!empty($modSettings['optimus_sitemap_all_topic_pages']) ? '
-			FROM {db_prefix}messages AS m
-				INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)' : '
-			FROM {db_prefix}topics AS t
-				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)') . '
-				INNER JOIN {db_prefix}boards AS b ON (b.id_board = t.id_board)
-			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($context['optimus_ignored_boards']) ? '
-				AND b.id_board NOT IN ({array_int:ignored_boards})' : '') . '
-				AND t.num_replies > {int:num_replies}
-				AND t.approved = {int:is_approved}
-			ORDER BY t.id_topic, m.id_msg',
-			array(
-				'ignored_boards' => $context['optimus_ignored_boards'],
-				'num_replies'    => !empty($modSettings['optimus_sitemap_topics_num_replies']) ? (int) $modSettings['optimus_sitemap_topics_num_replies'] : -1,
-				'is_approved'    => 1
-			)
-		);
-
-		$topics = [];
-		$max_messages = (int) $modSettings['defaultMaxMessages'];
-
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			if (!empty($modSettings['optimus_sitemap_all_topic_pages'])) {
-				$total_pages = ceil($row['num_replies'] / $max_messages);
-				$start = 0;
-
-				if (empty($total_pages)) {
-					$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
-				} else {
-					for ($i = 0; $i <= $total_pages; $i++) {
-						$topics[$row['id_topic']][$start][$row['id_msg']] = $row['last_date'];
-
-						if (count($topics[$row['id_topic']][$start]) <= $max_messages)
-							break;
-
-						$topics[$row['id_topic']][$start] = array_slice($topics[$row['id_topic']][$start], 0, $max_messages, true);
-						$start += $max_messages;
-					}
-				}
-			} else {
-				$topics[$row['id_topic']] = $row['last_date'];
-			}
-		}
-
-		$smcFunc['db_free_result']($request);
+		$start = 0;
+		$limit = 1000;
 
 		$links = [];
-		foreach ($topics as $id_topic => $data) {
-			if (!empty($modSettings['optimus_sitemap_all_topic_pages'])) {
-				foreach ($data as $start => $dump) {
-					$links[] = array(
-						'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $id_topic . '.' . $start . '.html' : $scripturl . '?topic=' . $id_topic . '.' . $start,
-						'lastmod' => max($dump)
-					);
-				}
-			} else {
+		while ($start < $modSettings['totalTopics']) {
+			$request = $smcFunc['db_query']('', '
+				SELECT t.id_topic, m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date, t.num_replies
+				FROM {db_prefix}topics AS t
+					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
+				WHERE t.id_board IN ({array_int:open_boards})
+					AND t.num_replies > {int:num_replies}
+					AND t.approved = {int:is_approved}
+				ORDER BY t.id_topic, m.id_msg
+				LIMIT {int:start}, {int:limit}',
+				array(
+					'open_boards' => $context['optimus_open_boards'],
+					'num_replies' => !empty($modSettings['optimus_sitemap_topics_num_replies']) ? (int) $modSettings['optimus_sitemap_topics_num_replies'] : -1,
+					'is_approved' => 1,
+					'start'       => $start,
+					'limit'       => $limit
+				)
+			);
+
+			while ($row = $smcFunc['db_fetch_assoc']($request)) {
 				$links[] = array(
-					'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $id_topic . '.0.html' : $scripturl . '?topic=' . $id_topic . '.0',
-					'lastmod' => $data
+					'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $row['id_topic'] . '.0.html' : $scripturl . '?topic=' . $row['id_topic'] . '.0',
+					'lastmod' => $row['last_date']
 				);
 			}
+
+			$smcFunc['db_free_result']($request);
+
+			$start = $start + $limit;
 		}
 
 		return $links;
@@ -349,7 +310,7 @@ class Sitemap
 	 *
 	 * @param string $path — путь к файлу
 	 * @param string $data — содержимое
-	 * @return bool if true then we have gz-verstion, else - simple
+	 * @return bool if true then we have gz-version
 	 */
 	private static function createFile($path, $data)
 	{
@@ -361,7 +322,7 @@ class Sitemap
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
-		// Если размер файла превышает 50 МБ, создадим и упакованную gz-версию
+		// Если размер файла превышает 50 МБ, создадим упакованную gz-версию
 		if (filesize($path) > (50 * 1024 * 1024)) {
 			$data   = implode('', file($path));
 			$gzdata = gzencode($data, 9);

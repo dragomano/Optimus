@@ -54,7 +54,7 @@ class Settings
 	 */
 	public static function settingActions()
 	{
-		global $context, $txt, $sourcedir, $smcFunc, $scripturl;
+		global $context, $sourcedir, $txt, $smcFunc, $scripturl;
 
 		$context['page_title'] = OP_NAME;
 
@@ -98,7 +98,7 @@ class Settings
 					'description' => $txt['optimus_robots_desc'],
 				),
 				'sitemap' => array(
-					'description' => $txt['optimus_sitemap_desc'],
+					'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
 				)
 			),
 		);
@@ -353,31 +353,55 @@ class Settings
 	 */
 	public static function sitemapSettings()
 	{
-		global $context, $txt, $scripturl, $modSettings;
+		global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 		$context['settings_title'] = $txt['optimus_sitemap_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
+		if (!isset($modSettings['optimus_sitemap_topics_num_replies']))
+			updateSettings(array('optimus_sitemap_topics_num_replies' => 1));
 		if (!isset($modSettings['optimus_sitemap_items_display']))
-			updateSettings(array('optimus_sitemap_items_display' => 100));
+			updateSettings(array('optimus_sitemap_items_display' => 10000));
 
 		$config_vars = array(
 			array('check', 'optimus_sitemap_enable'),
 			array('check', 'optimus_sitemap_link'),
 			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
 			array('check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']),
-			array('int', 'optimus_sitemap_topics_num_replies', 'min' => 0),
-			array('int', 'optimus_sitemap_items_display', 'max' => 50000, 'min' => 1),
-			array('check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext'])
+			array('int', 'optimus_sitemap_topics_num_replies'),
+			array('int', 'optimus_sitemap_items_display')
 		);
 
 		if (isset($_GET['save'])) {
 			checkSession();
 
+			if ($_POST['optimus_sitemap_topics_num_replies'] < 0)
+				$_POST['optimus_sitemap_topics_num_replies'] = 0;
+
+			if ($_POST['optimus_sitemap_items_display'] > 50000)
+				$_POST['optimus_sitemap_items_display'] = 50000;
+			elseif ($_POST['optimus_sitemap_items_display'] < 1)
+				$_POST['optimus_sitemap_items_display'] = 1;
+
+			// Обновляем запись в Диспетчере задач
+			$smcFunc['db_query']('', '
+				UPDATE {db_prefix}scheduled_tasks
+				SET disabled = {int:disabled}
+				WHERE task = {string:task}',
+				array(
+					'disabled' => !empty($_POST['optimus_sitemap_enable']) ? 0 : 1,
+					'task'     => 'optimus_sitemap'
+				)
+			);
+
+			if (!empty($_POST['optimus_sitemap_enable'])) {
+				require_once($sourcedir . '/ScheduledTasks.php');
+				CalculateNextTrigger('optimus_sitemap');
+			}
+
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
-			cache_put_data('optimus_sitemap_counter', null);
 
 			redirectexit('action=admin;area=optimus;sa=sitemap');
 		}
