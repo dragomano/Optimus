@@ -1,45 +1,37 @@
-dl.settings {
-	margin: 0;
-}
-
-dl.settings dt, dl.settings dd {
-	width: 50%;
-}
-
-.windowbg2 {
-	margin-bottom: 6px;
-}
-
-.block_code {
-	width: 90%;
-}
-
-.content {
-	padding: 1em 2em;
-}
-
 .content textarea[name*="robots"] {
 	width: 90%;
 	font-size: .9em;
 }
 
-.content ul {
-	margin: 0;
-	padding-left: 30px;
-	text-align: left;
+.metatags td {
+	text-align: center;
+}
+
+.metatags td input {
+	width: 100%;
 }
 
 @media screen and (max-width:720px) {
-	th, td:first-child {
+	.metatags th,
+	.metatags td:first-child {
 		display: none;
 	}
 
-	td input {
+	.metatags td input {
 		display: block;
 		width: 100%;
 	}
 
-	input[name^=custom_tag_] {
+	input[name^=custom_tag_],
+	.block_code {
+		width: 100%;
+	}
+
+	#robots_area_form .modblock_left,
+	#robots_area_form .modblock_right,
+	#robots_area_form dt,
+	#robots_area_form dd {
+		float: none !important;
 		width: 100%;
 	}
 }

@@ -50,8 +50,8 @@ function template_base()
 						<span><label>', $txt['optimus_' . $name . '_tpl'], '</label></span>
 					</dt>
 					<dd>
-						<input type="text" class="input_text" value="', isset($templates[$name]['name']) ? $templates[$name]['name'] : $template[0], '" name="', $name, '_name" />&nbsp;
-						<input type="text" class="input_text" value="', isset($templates[$name]['page']) ? $templates[$name]['page'] : $template[1], '" name="', $name, '_page" />&nbsp;
+						<input type="text" class="input_text" value="', isset($templates[$name]['name']) ? $templates[$name]['name'] : $template[0], '" name="', $name, '_name" />
+						<input type="text" class="input_text" value="', isset($templates[$name]['page']) ? $templates[$name]['page'] : $template[1], '" name="', $name, '_page" />
 						<input type="text" class="input_text" value="', isset($templates[$name]['site']) ? $templates[$name]['site'] : $template[2], '" name="', $name, '_site" />
 					</dd>';
 	}
@@ -189,15 +189,16 @@ function template_metatags()
 			<h3 class="catbg">', $txt['optimus_meta_title'], '</h3>
 		</div>
 		<p class="description centertext">', $txt['optimus_meta_info'], '</p>
-		<div class="windowbg2">
-			<span class="topslice"><span></span></span>
-			<div class="topic_table content centertext">
-				<table>
-					<tr>
-						<th>', $txt['optimus_meta_tools'], '</th>
-						<th>', $txt['optimus_meta_name'], '</th>
-						<th>', $txt['optimus_meta_content'], '</th>
-					</tr>';
+		<div class="flow_hidden">
+			<table class="table_grid metatags centertext" style="width: 100%">
+				<thead>
+					<tr class="catbg">
+						<th class="first_th" scope="col">', $txt['optimus_meta_tools'], '</th>
+						<th scope="col">', $txt['optimus_meta_name'], '</th>
+						<th class="last_th" scope="col">', $txt['optimus_meta_content'], '</th>
+					</tr>
+				</thead>
+				<tbody>';
 
 	$meta = !empty($modSettings['optimus_meta']) ? unserialize($modSettings['optimus_meta']) : '';
 	$engines = array();
@@ -206,7 +207,7 @@ function template_metatags()
 		$engines[] = $data[0];
 
 		echo '
-					<tr>
+					<tr class="windowbg">
 						<td>', $engine, ' (<strong>', $data[1], '</strong>)</td>
 						<td>
 							<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '" />
@@ -221,7 +222,7 @@ function template_metatags()
 		foreach ($meta as $name => $value) {
 			if (!in_array($name, $engines)) {
 				echo '
-					<tr>
+					<tr class="windowbg">
 						<td>', $txt['optimus_meta_customtag'], '</td>
 						<td>
 							<input type="text" name="custom_tag_name[]" size="24" value="', $name, '" />
@@ -235,25 +236,28 @@ function template_metatags()
 	}
 
 	echo '
-				</table>
+				</tbody>
+			</table>
+			<span class="upperframe"><span></span></span>
+			<div class="roundframe">
 				<noscript>
-					<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /></div>
+					<div><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /></div>
 				</noscript>
 				<div id="moreTags"></div>
-				<div style="margin-top: 1ex; display: none;" id="newtag_link">
+				<div class="centertext" style="display: none;" id="newtag_link">
 					<a href="#" onclick="addNewTag(); return false;">', $txt['optimus_meta_addtag'], '</a>
 				</div>
 				<script type="text/javascript"><!-- // --><![CDATA[
 					document.getElementById("newtag_link").style.display = "";
 					function addNewTag() {
-						setOuterHTML(document.getElementById("moreTags"), \'<div style="margin-top: 1ex;"><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /><\' + \'/div><div id="moreTags"><\' + \'/div>\');
+						setOuterHTML(document.getElementById("moreTags"), \'<div class="centertext" style="margin-bottom: 1px"><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /><\' + \'/div><div id="moreTags"><\' + \'/div>\');
 					}
 				// ]]></script>
 				<hr class="hrcolor clear" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
 			</div>
-			<span class="botslice"><span></span></span>
+			<span class="lowerframe"><span></span></span>
 		</div>
 	</form>
 	<br class="clear" />';
@@ -300,7 +304,7 @@ function template_robots()
 	global $context, $txt, $modSettings;
 
 	echo '
-	<form action="', $context['post_url'], '" method="post">
+	<form id="robots_area_form" action="', $context['post_url'], '" method="post">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['optimus_manage'], '</h3>
 		</div>
@@ -312,7 +316,7 @@ function template_robots()
 						<span><label for="optimus_root_path">', $txt['optimus_root_path'], '</label></span>
 					</dt>
 					<dd>
-						<input name="optimus_root_path" id="optimus_root_path" value="', !empty($modSettings['optimus_root_path']) ? $modSettings['optimus_root_path'] : '', '" class="input_text" type="text" size="80" />
+						<input name="optimus_root_path" id="optimus_root_path" value="', !empty($modSettings['optimus_root_path']) ? $modSettings['optimus_root_path'] : '', '" class="input_text" type="text" size="60" />
 					</dd>
 				</dl>
 			</div>
