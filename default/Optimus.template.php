@@ -381,10 +381,10 @@ function template_403()
 
 function template_sitemap_xml()
 {
-	global $settings, $context;
+	global $boardurl, $context;
 
 	echo '<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="' . $settings['default_theme_url'] . '/css/optimus/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="', $boardurl, '/Themes/default/css/optimus/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
 	foreach ($context['sitemap']['items'] as $item)
@@ -402,10 +402,10 @@ function template_sitemap_xml()
 
 function template_sitemapindex_xml()
 {
-	global $settings, $context;
+	global $boardurl, $context;
 
 	echo '<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="' . $settings['default_theme_url'] . '/css/optimus/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="', $boardurl, '/Themes/default/css/optimus/sitemap.xsl"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
 	foreach ($context['sitemap']['items'] as $item)

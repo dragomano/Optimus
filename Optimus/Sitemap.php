@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.3
+ * @version 2.6.4
  */
 
 if (!defined('SMF'))
@@ -40,6 +40,11 @@ class Sitemap
 
 		if (@ini_get('memory_limit') < 128)
 			@ini_set('memory_limit', '128M');
+
+		// Might take some time.
+		@set_time_limit(1800);
+
+		$modSettings['disableQueryCheck'] = true;
 
 		$items     = [];
 		$max_items = $modSettings['optimus_sitemap_items_display'] ?: self::$max_items;
