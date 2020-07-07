@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Subs.php
  *
- * @package Optimus
+ * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.4
+ * @version 2.6.5
  */
 
 if (!defined('SMF'))
@@ -242,15 +242,8 @@ class Subs
 			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
 
 			$row['body'] = self::getTeaser($row['body']);
-			$row['body'] = str_replace($txt['quote'], '', $row['body']);
 
-			$context['optimus_description'] = explode('&nbsp;', $row['body'])[0];
-
-			if ($smcFunc['strlen']($context['optimus_description']) > 130)
-				$context['optimus_description'] = $smcFunc['substr']($context['optimus_description'], 0, 127) . '...';
-
-			$context['optimus_description'] = !empty($context['topic_description']) ? $context['topic_description'] : $context['optimus_description'];
-
+			$context['optimus_description'] = str_replace($txt['quote'], '', $row['body']);
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['poster_time']);
 
 			if (!empty($row['modified_time']))
@@ -306,7 +299,10 @@ class Subs
 	 */
 	public static function getTeaser($text, $num_sentences = 2)
 	{
+		global $smcFunc;
+
 		$body = preg_replace('/\s+/', ' ', strip_tags($text));
+		$body = strtr($body, array('&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''));
 		$sentences = preg_split('/(\.|\?|\!)(\s)/', $body);
 
 		if (count($sentences) <= $num_sentences)
@@ -314,31 +310,14 @@ class Subs
 
 		$stopAt = 0;
 		foreach ($sentences as $i => $sentence) {
-			$stopAt += strlen($sentence);
+			$stopAt += $smcFunc['strlen']($sentence);
 			if ($i >= $num_sentences - 1)
 				break;
 		}
 
 		$stopAt += ($num_sentences * 2);
 
-		return trim(substr($body, 0, $stopAt));
-	}
-
-	/**
-	 * Добавление канонического адреса при использовании некоторых модов порталов
-	 *
-	 * @return void
-	 */
-	public static function addCanonicalFix()
-	{
-		global $modSettings, $context, $mbname, $boardurl;
-
-		if (!empty($modSettings['optimus_portal_compat'])) {
-			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action'])) {
-				$context['linktree'][0]['name'] = $mbname;
-				$context['canonical_url'] = $boardurl . '/';
-			}
-		}
+		return trim($smcFunc['substr']($body, 0, $stopAt));
 	}
 
 	/**
@@ -361,7 +340,7 @@ class Subs
 	 *
 	 * @return void
 	 */
-	public static function addSitemap()
+	public static function addSitemapLink()
 	{
 		global $modSettings, $txt, $forum_copyright, $boardurl;
 

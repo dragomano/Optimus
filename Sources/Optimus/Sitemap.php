@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Sitemap.php
  *
- * @package Optimus
+ * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.4
+ * @version 2.6.5
  */
 
 if (!defined('SMF'))
@@ -38,15 +38,16 @@ class Sitemap
 	{
 		global $modSettings, $context, $scripturl, $boardurl, $boarddir;
 
-		if (@ini_get('memory_limit') < 128)
-			@ini_set('memory_limit', '128M');
+		if (@ini_get('memory_limit') < 256)
+			@ini_set('memory_limit', '256M');
 
-		// Might take some time.
-		@set_time_limit(1800);
+		ignore_user_abort(true);
+		@set_time_limit(600);
 
 		$modSettings['disableQueryCheck'] = true;
+		$modSettings['pretty_bufferusecache'] = false;
 
-		$items     = [];
+		$items = [];
 		$max_items = $modSettings['optimus_sitemap_items_display'] ?: self::$max_items;
 		$sitemap_counter = 0;
 
@@ -112,6 +113,8 @@ class Sitemap
 			self::createFile($boarddir . '/sitemap.xml', $content);
 		}
 
+		ignore_user_abort(false);
+
 		return true;
 	}
 
@@ -144,16 +147,16 @@ class Sitemap
 	{
 		global $context, $modSettings, $boardurl;
 
-		$context['optimus_ignored_boards'] = [];
+		if (!isset($context['optimus_ignored_boards']))
+			$context['optimus_ignored_boards'] = [];
 
 		if (!empty($modSettings['recycle_board']))
 			$context['optimus_ignored_boards'][] = (int) $modSettings['recycle_board'];
 
-		Subs::runAddons('ignoredBoards');
+		$links = [];
 
-		$boards = self::getBoardLinks();
-		$topics = self::getTopicLinks();
-		$links  = !empty($modSettings['optimus_sitemap_boards']) ? array_merge($boards, $topics) : $topics;
+		// Possibility for the mod authors to add their own links or process them
+		Subs::runAddons('sitemap', array(&$links));
 
 		// Adding the main page
 		$home = array(
@@ -162,93 +165,6 @@ class Sitemap
 		);
 
 		array_unshift($links, $home);
-
-		// Possibility for the mod authors to add their own links or process them
-		Subs::runAddons('sitemap', array(&$links));
-
-		return $links;
-	}
-
-	/**
-	 * Get an array of forum boards ([] = array('url' => link, 'date' => date))
-	 *
-	 * @return array
-	 */
-	public static function getBoardLinks()
-	{
-		global $modSettings, $smcFunc, $context, $scripturl;
-
-		$request = $smcFunc['db_query']('', '
-			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
-			FROM {db_prefix}boards AS b
-				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
-			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($context['optimus_ignored_boards']) ? '
-				AND b.id_board NOT IN ({array_int:ignored_boards})' : '') . '
-				AND b.num_posts > {int:num_posts}
-			ORDER BY b.id_board',
-			array(
-				'ignored_boards' => $context['optimus_ignored_boards'],
-				'num_posts'      => 0
-			)
-		);
-
-		$context['optimus_open_boards'] = $links = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$context['optimus_open_boards'][] = $row['id_board'];
-			$links[] = array(
-				'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/board,' . $row['id_board'] . '.0.html' : $scripturl . '?board=' . $row['id_board'] . '.0',
-				'lastmod' => $row['last_date']
-			);
-		}
-
-		$smcFunc['db_free_result']($request);
-
-		return $links;
-	}
-
-	/**
-	 * Get an array of forum topics ([] = array('url' => link, 'date' => date))
-	 *
-	 * @return array
-	 */
-	public static function getTopicLinks()
-	{
-		global $modSettings, $smcFunc, $context, $scripturl, $txt;
-
-		$start = 0;
-		$limit = 1000;
-
-		$links = [];
-		while ($start < $modSettings['totalTopics']) {
-			$request = $smcFunc['db_query']('', '
-				SELECT t.id_topic, m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date, t.num_replies
-				FROM {db_prefix}topics AS t
-					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
-				WHERE t.id_board IN ({array_int:open_boards})
-					AND t.num_replies > {int:num_replies}
-					AND t.approved = {int:is_approved}
-				ORDER BY t.id_topic, m.id_msg
-				LIMIT {int:start}, {int:limit}',
-				array(
-					'open_boards' => $context['optimus_open_boards'],
-					'num_replies' => !empty($modSettings['optimus_sitemap_topics_num_replies']) ? (int) $modSettings['optimus_sitemap_topics_num_replies'] : -1,
-					'is_approved' => 1,
-					'start'       => $start,
-					'limit'       => $limit
-				)
-			);
-
-			while ($row = $smcFunc['db_fetch_assoc']($request)) {
-				$links[] = array(
-					'loc'     => !empty($modSettings['queryless_urls']) ? $scripturl . '/topic,' . $row['id_topic'] . '.0.html' : $scripturl . '?topic=' . $row['id_topic'] . '.0',
-					'lastmod' => $row['last_date']
-				);
-			}
-
-			$smcFunc['db_free_result']($request);
-
-			$start = $start + $limit;
-		}
 
 		return $links;
 	}

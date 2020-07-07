@@ -7,7 +7,7 @@ use Bugo\Optimus\Subs;
 /**
  * TinyPortal.php
  *
- * @package Optimus
+ * @package SMF Optimus
  *
  */
 
@@ -26,7 +26,7 @@ class TinyPortal
 	 */
 	private static function isInstalled()
 	{
-		return class_exists('TPortal_Integrate');
+		return function_exists('TPortal_init');
 	}
 
 	/**
@@ -36,12 +36,9 @@ class TinyPortal
 	 */
 	public static function meta()
 	{
-		global $modSettings, $smcFunc, $txt, $context, $scripturl;
+		global $smcFunc, $txt, $context, $scripturl;
 
 		if (!isset($_GET['page']) || empty(self::isInstalled()))
-			return;
-
-		if (empty($modSettings['optimus_portal_compat']) || $modSettings['optimus_portal_compat'] != 3)
 			return;
 
 		$page_is_num = is_numeric($_GET['page']);
@@ -70,20 +67,18 @@ class TinyPortal
 				$intro = $row['type'] == 'bbc' ? parse_bbc($row['intro'], false) : ($row['type'] == 'php' ? '<?php' . $row['intro'] : $row['intro']);
 				$intro = Subs::getTeaser($intro);
 				$intro = explode('&nbsp;', $intro)[0];
-				$intro = shorten_subject($intro, 130);
+				$intro = shorten_subject(trim($intro), 130);
 			} else {
 				$body = Subs::getTeaser($body);
 				$body = str_replace($txt['quote'], '', $body);
 				$body = explode('&nbsp;', $body)[0];
-				$body = shorten_subject($body, 130);
+				$body = shorten_subject(trim($body), 130);
 			}
 
 			// If there is an intro, use it as a description, otherwise - an excerpt from the text of the page
 			$context['optimus_description'] = !empty($intro) ? $intro : $body;
-
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['date']);
 			$context['optimus_og_type']['article']['section'] = $row['cat_name'];
-
 			$context['canonical_url'] = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 		}
 
@@ -110,7 +105,7 @@ class TinyPortal
 			WHERE a.approved = {int:approved}
 				AND a.off = {int:off_status}
 				AND {int:guests} IN (v.value3)
-			ORDER BY a.id',
+			ORDER BY a.id DESC',
 			array(
 				'approved'   => 1, // The article must be approved
 				'off_status' => 0, // The article must be active
@@ -118,11 +113,16 @@ class TinyPortal
 			)
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			$url = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
+
+			Subs::runAddons('createSefUrl', array(&$url));
+
 			$links[] = array(
-				'loc'     => $scripturl . '?page=' . ($row['shortname'] ?: $row['id']),
+				'loc'     => $url,
 				'lastmod' => $row['date']
 			);
+		}
 
 		$smcFunc['db_free_result']($request);
 	}

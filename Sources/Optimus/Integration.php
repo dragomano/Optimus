@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Integration.php
  *
- * @package Optimus
+ * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.4
+ * @version 2.6.5
  */
 
 if (!defined('SMF'))
@@ -40,8 +40,8 @@ class Integration
 	 */
 	public static function loadTheme()
 	{
-		defined('OP_NAME') or define('OP_NAME', 'Optimus');
-		defined('OP_VERSION') or define('OP_VERSION', '2.6.4');
+		defined('OP_NAME') or define('OP_NAME', 'SMF Optimus');
+		defined('OP_VERSION') or define('OP_VERSION', '2.6.5');
 
 		loadLanguage('Optimus/');
 
@@ -57,12 +57,11 @@ class Integration
 	 */
 	public static function menuButtons()
 	{
-		Subs::addCanonicalFix();
 		Subs::addMainPageDescription();
 		Subs::processPageTemplates();
 		Subs::processErrorCodes();
 		Subs::runAddons();
-		Subs::addSitemap();
+		Subs::addSitemapLink();
 		Subs::addCredits();
 	}
 
@@ -74,15 +73,12 @@ class Integration
 	 */
 	public static function buffer($buffer)
 	{
-		global $context, $modSettings, $mbname, $txt;
+		global $context, $modSettings, $txt;
 
 		if (isset($_REQUEST['xml']) || !empty($context['robot_no_index']))
 			return $buffer;
 
 		$replacements = [];
-
-		if (@ini_get('memory_limit') < 128)
-			@ini_set('memory_limit', '128M');
 
 		// Description
 		if (!empty($context['optimus_description'])) {
@@ -151,7 +147,7 @@ class Integration
 
 			$open_graph .= '
 	<meta property="og:description" content="' . (!empty($context['optimus_description']) ? $context['optimus_description'] : $context['page_title_html_safe']) . '" />
-	<meta property="og:site_name" content="' . $mbname . '" />';
+	<meta property="og:site_name" content="' . $context['forum_name_html_safe'] . '" />';
 
 			if (!empty($modSettings['optimus_fb_appid'])) {
 				$open_graph .= '

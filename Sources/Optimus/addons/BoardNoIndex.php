@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons;
 /**
  * BoardNoIndex.php
  *
- * @package Optimus
+ * @package SMF Optimus
  *
  */
 
@@ -22,9 +22,12 @@ class BoardNoIndex
 	 *
 	 * @return void
 	 */
-	public static function ignoredBoards()
+	public static function meta()
 	{
-		global $modSettings, $context;
+		global $context, $modSettings;
+
+		if (!isset($context['optimus_ignored_boards']))
+			$context['optimus_ignored_boards'] = [];
 
 		if (!empty($modSettings['BoardNoIndex_enabled']) && !empty($modSettings['BoardNoIndex_select_boards']))
 			$context['optimus_ignored_boards'] += unserialize($modSettings['BoardNoIndex_select_boards']);

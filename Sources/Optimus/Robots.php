@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Robots.php
  *
- * @package Optimus
+ * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.4
+ * @version 2.6.5
  */
 
 if (!defined('SMF'))
@@ -76,7 +76,7 @@ class Robots
 		clearstatcache();
 
 		$this->setUrlPath(parse_url($boardurl, PHP_URL_PATH));
-		$this->rules[] = "User-agent: *";
+		$this->rules[] = 'User-agent: *';
 
 		self::sefRules();
 
@@ -93,7 +93,7 @@ class Robots
 				$new_robots[] = $line;
 		}
 
-		$new_robots = implode("<br>", str_replace("|", "", $new_robots));
+		$new_robots = implode('<br>', str_replace("|", '', $new_robots));
 		$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
 	}
 
@@ -107,32 +107,32 @@ class Robots
 		global $modSettings, $sourcedir;
 
 		// Is any SEF mod enabled?
-		$pretty_urls = !empty($modSettings['pretty_enable_filters']) && file_exists($sourcedir . '/PrettyUrls-Filters.php');
-		$simplesef   = !empty($modSettings['simplesef_enable']) && file_exists($sourcedir . '/SimpleSEF.php');
+		$pretty_urls = ! empty($modSettings['pretty_enable_filters']) && is_file($sourcedir . '/PrettyUrls-Filters.php');
+		$simplesef   = ! empty($modSettings['simplesef_enable']) && is_file($sourcedir . '/SimpleSEF.php');
 		$sef_enabled = $pretty_urls || $simplesef;
 
 		if ($sef_enabled) {
 			foreach ($this->actions as $action)
-				$this->rules[] = "Disallow: " . $this->getUrlPath() . '/' . $action . '/';
+				$this->rules[] = 'Disallow: ' . $this->getUrlPath() . '/' . $action . '/';
 		} else
-			$this->rules[] = "Disallow: " . $this->getUrlPath() . "/*action";
+			$this->rules[] = 'Disallow: ' . $this->getUrlPath() . '/*action';
 
-		if (!empty($modSettings['queryless_urls']) || $sef_enabled)
-			$this->rules[] = "";
+		if (! empty($modSettings['queryless_urls']) || $sef_enabled)
+			$this->rules[] = '';
 		else
-			$this->rules[] = "Disallow: " . $this->getUrlPath() . "/*topic=*.msg\nDisallow: " . $this->getUrlPath() . "/*topic=*.new";
+			$this->rules[] = 'Disallow: ' . $this->getUrlPath() . "/*topic=*.msg\nDisallow: " . $this->getUrlPath() . '/*topic=*.new';
 
-		$this->rules[] = "Disallow: " . $this->getUrlPath() . "/*PHPSESSID";
-		$this->rules[] = $sef_enabled ? "" : "Disallow: " . $this->getUrlPath() . "/*;";
+		$this->rules[] = 'Disallow: ' . $this->getUrlPath() . '/*PHPSESSID';
+		$this->rules[] = $sef_enabled ? '' : 'Disallow: ' . $this->getUrlPath() . '/*;';
 
 		// Front page
-		$this->rules[] = "Allow: " . $this->getUrlPath() . "/$";
+		$this->rules[] = 'Allow: ' . $this->getUrlPath() . '/$';
 
 		// Content
-		if (!empty($modSettings['queryless_urls']))
-			$this->rules[] = ($sef_enabled ? "" : "Allow: " . $this->getUrlPath() . "/*board*.html$\nAllow: " . $this->getUrlPath() . "/*topic*.html$");
+		if (! empty($modSettings['queryless_urls']))
+			$this->rules[] = ($sef_enabled ? '' : 'Allow: ' . $this->getUrlPath() . "/*board*.html$\nAllow: " . $this->getUrlPath() . '/*topic*.html$');
 		else
-			$this->rules[] = ($sef_enabled ? "" : "Allow: " . $this->getUrlPath() . "/*board\nAllow: " . $this->getUrlPath() . "/*topic");
+			$this->rules[] = ($sef_enabled ? '' : 'Allow: ' . $this->getUrlPath() . "/*board\nAllow: " . $this->getUrlPath() . '/*topic');
 	}
 
 	/**
@@ -144,7 +144,7 @@ class Robots
 	{
 		global $modSettings;
 
-		$this->rules[] = !empty($modSettings['xmlnews_enable']) ? "Allow: " . $this->getUrlPath() . "/*.xml" : "";
+		$this->rules[] = !empty($modSettings['xmlnews_enable']) ? 'Allow: ' . $this->getUrlPath() . '/*.xml' : '';
 	}
 
 	/**
@@ -177,16 +177,16 @@ class Robots
 		$map_gz      = $temp_map_gz ? $path_map_gz : '';
 
 		if (!empty($map) || !empty($map_gz) || $sitemap) {
-			$this->rules[] = "Allow: " . $this->getUrlPath() . "/*sitemap";
-			$this->rules[] = "|";
+			$this->rules[] = 'Allow: ' . $this->getUrlPath() . '/*sitemap';
+			$this->rules[] = '|';
 		}
 
 		if ($sitemap)
-			$this->rules[] = "Sitemap: " . $scripturl . "?action=sitemap;xml";
+			$this->rules[] = 'Sitemap: ' . $scripturl . '?action=sitemap;xml';
 
 		if (!empty($map_gz))
-			$this->rules[] = "Sitemap: " . $map_gz;
+			$this->rules[] = 'Sitemap: ' . $map_gz;
 		elseif (!empty($map))
-			$this->rules[] = "Sitemap: " . $map;
+			$this->rules[] = 'Sitemap: ' . $map;
 	}
 }

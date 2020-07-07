@@ -2,10 +2,12 @@
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Subs;
+
 /**
  * SimplePortal.php
  *
- * @package Optimus
+ * @package SMF Optimus
  *
  */
 
@@ -34,14 +36,14 @@ class SimplePortal
 	 */
 	public static function meta()
 	{
-		global $modSettings, $context, $mbname, $scripturl;
+		global $modSettings, $context, $scripturl;
 
 		if (empty(self::isInstalled()))
 			return;
 
 		if (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1) {
 			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))
-				$context['forum_name'] = $mbname . ' - ' . $modSettings['optimus_portal_index'];
+				$context['forum_name'] = $context['forum_name'] . ' - ' . $modSettings['optimus_portal_index'];
 		}
 
 		if ($context['current_action'] == 'forum' && !empty($modSettings['sp_portal_mode']))
@@ -91,7 +93,7 @@ class SimplePortal
 			FROM {db_prefix}sp_pages
 			WHERE status = {int:status}
 				AND (permission_set IN ({array_int:permissions}) OR permission_set = 0 AND {int:guests} IN (groups_allowed))
-			ORDER BY id_page',
+			ORDER BY id_page DESC',
 			array(
 				'status'      => 1, // The page must be active
 				'permissions' => array(1, 3), // The page must be available to guests
@@ -99,11 +101,16 @@ class SimplePortal
 			)
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request))
+		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			$url = $scripturl . '?page=' . $row['namespace'];
+
+			Subs::runAddons('createSefUrl', array(&$url));
+
 			$links[] = array(
-				'loc'     => $scripturl . '?page=' . $row['namespace'],
+				'loc'     => $url,
 				'lastmod' => time()
 			);
+		}
 
 		$smcFunc['db_free_result']($request);
 	}

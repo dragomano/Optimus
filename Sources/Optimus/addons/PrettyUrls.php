@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons;
 /**
  * PrettyUrls.php
  *
- * @package Optimus
+ * @package SMF Optimus
  *
  */
 
@@ -18,18 +18,16 @@ if (!defined('SMF'))
 class PrettyUrls
 {
 	/**
-	 * Replace sitemap links on displaying
+	 * Make SEF url from string
 	 *
 	 * @return void
 	 */
 	public static function sitemapRewriteContent(&$content)
 	{
-		global $modSettings, $sourcedir, $context;
+		global $sourcedir, $modSettings, $context;
 
-		if (empty($modSettings['optimus_sitemap_enable']) || empty($modSettings['pretty_enable_filters']))
-			return;
-
-		if (file_exists($pretty = $sourcedir . '/PrettyUrls-Filters.php')) {
+		$pretty = $sourcedir . '/PrettyUrls-Filters.php';
+		if (file_exists($pretty) && !empty($modSettings['pretty_enable_filters'])) {
 			if (!function_exists('pretty_rewrite_buffer'))
 				require_once($pretty);
 

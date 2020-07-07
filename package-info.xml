@@ -2,28 +2,28 @@
 <!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
-	<name>Optimus</name>
-	<version>2.6.4 [27.06.20]</version>
+	<name>SMF Optimus</name>
+	<version>2.6.5 [7.07.20]</version>
 	<type>modification</type>
 
 	<install for="2.0 - 2.0.99">
 		<readme parsebbc="true" lang="russian-utf8">readme/russian-utf8.txt</readme>
 		<readme parsebbc="true" lang="russian">readme/russian.txt</readme>
 		<readme parsebbc="true">readme/readme.txt</readme>
-		<require-dir name="Optimus" destination="$sourcedir">Core files</require-dir>
-		<require-dir name="default" destination="$themes_dir">Template &amp; Language files</require-dir>
+		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
+		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
 		<code>hooks.php</code>
 		<database>settings.php</database>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 
 	<uninstall for="2.0 - 2.0.99">
-		<code>uninstall.php</code>
 		<code>hooks.php</code>
-		<remove-dir name="$languagedir/Optimus" />
-		<remove-file name="$themedir/Optimus.template.php" />
-		<remove-dir name="$themedir/css/optimus" />
+		<code>uninstall.php</code>
 		<remove-dir name="$sourcedir/Optimus" />
+		<remove-dir name="$languagedir/Optimus" />
+		<remove-dir name="$themedir/css/optimus" />
+		<remove-file name="$themedir/Optimus.template.php" />
 		<redirect url="?action=admin;area=packages;sa=browse" timeout="1000" />
 	</uninstall>
 

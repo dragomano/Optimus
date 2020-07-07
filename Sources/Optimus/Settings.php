@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Settings.php
  *
- * @package Optimus
+ * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.4
+ * @version 2.6.5
  */
 
 if (!defined('SMF'))
@@ -360,7 +360,7 @@ class Settings
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
 		if (!isset($modSettings['optimus_sitemap_topics_num_replies']))
-			updateSettings(array('optimus_sitemap_topics_num_replies' => 1));
+			updateSettings(array('optimus_sitemap_topics_num_replies' => 5));
 		if (!isset($modSettings['optimus_sitemap_items_display']))
 			updateSettings(array('optimus_sitemap_items_display' => 10000));
 

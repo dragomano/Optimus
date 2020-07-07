@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons;
 /**
  * PortaMx.php
  *
- * @package Optimus
+ * @package SMF Optimus
  *
  */
 
@@ -24,18 +24,13 @@ class PortaMx
 	 */
 	public static function meta()
 	{
-		global $modSettings, $context, $mbname, $scripturl;
+		global $context, $modSettings, $scripturl;
 
 		if (!function_exists('PortaMx'))
 			return;
 
 		if (in_array($context['current_action'], array('forum', 'community')) && !empty($modSettings['pmx_frontmode']))
 			$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
-
-		if (!empty($modSettings['optimus_sitemap_enable'])) {
-			global $PortaMxSEF;
-			$PortaMxSEF['ignoreactions'][] = 'sitemap';
-		}
 	}
 
 	/**
@@ -55,5 +50,19 @@ class PortaMx
 		$portamx_forum_alias = !empty($modSettings['pmxsef_aliasactions']) && strpos($modSettings['pmxsef_aliasactions'], 'forum');
 		$common_rules[] = $portamx && $portamx_forum_alias ? "Allow: " . $url_path . "/*forum$" : "";
 		$common_rules[] = $portamx && !$portamx_forum_alias ? "Allow: " . $url_path . "/*community$" : "";
+	}
+
+	/**
+	 * Make SEF url from string
+	 *
+	 * @param string $url
+	 * @return void
+	 */
+	public static function createSefUrl(&$url)
+	{
+		if (!function_exists('PortaMx') || !function_exists('create_sefurl'))
+			return;
+
+		$url = create_sefurl($url);
 	}
 }
