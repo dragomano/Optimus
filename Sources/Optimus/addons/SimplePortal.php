@@ -107,8 +107,7 @@ class SimplePortal
 			Subs::runAddons('createSefUrl', array(&$url));
 
 			$links[] = array(
-				'loc'     => $url,
-				'lastmod' => time()
+				'loc' => $url
 			);
 		}
 

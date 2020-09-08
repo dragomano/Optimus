@@ -89,14 +89,15 @@ $txt['optimus_useful']      = '';
 $txt['optimus_sitemap_title'] = 'Sitemap';
 $txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated depending on settings in the <a href="%1$s">Task Manager</a>.';
 
-$txt['optimus_sitemap_enable']                  = 'Activate the Sitemap area';
-$txt['optimus_sitemap_link']                    = 'Show the Sitemap link on the footer';
-$txt['optimus_main_page_frequency']             = 'The update frequency of the main page';
-$txt['optimus_main_page_frequency_set']         = array('Constant (always)', 'Depending on the date of the last message');
-$txt['optimus_sitemap_boards']                  = 'Add links to boards to the sitemap';
-$txt['optimus_sitemap_boards_subtext']          = 'Boards that closed to guests will NOT be added.';
-$txt['optimus_sitemap_topics_num_replies']      = 'Add to the sitemap only those topics that have the number of replies is more than';
-$txt['optimus_sitemap_items_display']           = 'Maximum number of items per page';
+$txt['optimus_sitemap_enable']             = 'Activate the Sitemap area';
+$txt['optimus_sitemap_link']               = 'Show the Sitemap link on the footer';
+$txt['optimus_remove_previous_xml_files']  = 'Remove previously generated sitemap*.xml files';
+$txt['optimus_main_page_frequency']        = 'The update frequency of the main page';
+$txt['optimus_main_page_frequency_set']    = array('Constant (always)', 'Depending on the date of the last message');
+$txt['optimus_sitemap_boards']             = 'Add links to boards to the sitemap';
+$txt['optimus_sitemap_boards_subtext']     = 'Boards that closed to guests will NOT be added.';
+$txt['optimus_sitemap_topics_num_replies'] = 'Add to the sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_items_display']      = 'Maximum number of items per page';
 
 // Task Manager
 $txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML Generation';

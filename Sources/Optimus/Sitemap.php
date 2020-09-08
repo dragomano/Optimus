@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.5
+ * @version 2.6.6
  */
 
 if (!defined('SMF'))
@@ -175,11 +175,13 @@ class Sitemap
 	 * @param int $timestamp
 	 * @return string
 	 */
-	private static function getDate($time = 0)
+	private static function getDate($timestamp = 0)
 	{
-		$timestamp = $time ?: time();
-		$gmt       = substr(date("O", $timestamp), 0, 3) . ':00';
-		$result    = date('Y-m-d\TH:i:s', $timestamp) . $gmt;
+		if (empty($timestamp))
+			return '';
+
+		$gmt    = substr(date("O", $timestamp), 0, 3) . ':00';
+		$result = date('Y-m-d\TH:i:s', $timestamp) . $gmt;
 
 		return $result;
 	}
@@ -187,12 +189,12 @@ class Sitemap
 	/**
 	 * Determine the frequency of updates
 	 *
-	 * @param int $time
+	 * @param int $timestamp
 	 * @return string
 	 */
-	private static function getFrequency($time)
+	private static function getFrequency($timestamp)
 	{
-		$frequency = time() - $time;
+		$frequency = time() - $timestamp;
 
 		if ($frequency < (24 * 60 * 60))
 			return 'hourly';
@@ -209,12 +211,12 @@ class Sitemap
 	/**
 	 * Determine the priority of indexing
 	 *
-	 * @param int $time
+	 * @param int $timestamp
 	 * @return string
 	 */
-	private static function getPriority($time)
+	private static function getPriority($timestamp)
 	{
-		$diff = floor((time() - $time) / 60 / 60 / 24);
+		$diff = floor((time() - $timestamp) / 60 / 60 / 24);
 
 		if ($diff <= 30)
 			return '0.8';

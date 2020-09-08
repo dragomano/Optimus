@@ -32,10 +32,12 @@ class BoardLinks
 				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
 			WHERE FIND_IN_SET(-1, b.member_groups) != 0' . (!empty($context['optimus_ignored_boards']) ? '
 				AND b.id_board NOT IN ({array_int:ignored_boards})' : '') . '
+				AND b.redirect = {string:empty_string}
 				AND b.num_posts > {int:num_posts}
 			ORDER BY b.id_board DESC',
 			array(
 				'ignored_boards' => $context['optimus_ignored_boards'],
+				'empty_string'   => '',
 				'num_posts'      => 0
 			)
 		);

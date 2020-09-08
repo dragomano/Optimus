@@ -387,14 +387,26 @@ function template_sitemap_xml()
 <?xml-stylesheet type="text/xsl" href="', $boardurl, '/Themes/default/css/optimus/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
-	foreach ($context['sitemap']['items'] as $item)
+	foreach ($context['sitemap']['items'] as $item) {
 		echo '
 	<url>
-		<loc>', $item['loc'], '</loc>
-		<lastmod>', $item['lastmod'], '</lastmod>
-		<changefreq>', $item['changefreq'], '</changefreq>
-		<priority>', $item['priority'], '</priority>
+		<loc>', $item['loc'], '</loc>';
+
+		if (!empty($item['lastmod']))
+			echo '
+		<lastmod>', $item['lastmod'], '</lastmod>';
+
+		if (!empty($item['changefreq']))
+			echo '
+		<changefreq>', $item['changefreq'], '</changefreq>';
+
+		if (!empty($item['priority']))
+			echo '
+		<priority>', $item['priority'], '</priority>';
+
+		echo '
 	</url>';
+	}
 
 	echo '
 </urlset>';

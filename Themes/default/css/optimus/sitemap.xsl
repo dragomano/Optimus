@@ -13,93 +13,87 @@
 <html>
 <head>
 	<style type="text/css">
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+		html {
+			background: #3e5a78;
+			padding: 5px;
+		}
 		body {
-			width: 90%;
-			background: #ccc;
-			margin: 1em auto;
-			font-family: 'Trebuchet MS', 'Lucida Sans', Arial;
-			font-size: 14px;
-			color: #444;
-		}
-
-		h1, h3 {text-align: center}
-
-		table {
-			*border-collapse: collapse;
-			background: #fff;
-			border-spacing: 0;
-			width: 100%;
-			border: solid #ccc 1px;
+			background: #e9eef2;
+			font: 83.33%/150% "Segoe UI", "Helvetica Neue", "Nimbus Sans L", Arial, "Liberation Sans", sans-serif;
+			color: #4d4d4d;
+			min-height: 100vh;
 			border-radius: 6px;
-			box-shadow: 0 1px 1px #ccc;
+			padding: 1em;
 		}
-
-		tr:hover {
-			background: #fbf8e9;
-			-o-transition: all 0.1s ease-in-out;
-			-webkit-transition: all 0.1s ease-in-out;
-			-moz-transition: all 0.1s ease-in-out;
-			-ms-transition: all 0.1s ease-in-out;
-			transition: all 0.1s ease-in-out;
+		h1, h3 {
+			text-align: center;
+			margin: .6em;
 		}
-
-		td, th {
-			border-left: 1px solid #ccc;
-			border-top: 1px solid #ccc;
+		table.table_grid {
+			border-collapse: collapse;
+			margin: 1px 0 5px 0;
+			width: 100%;
+			text-align: center;
+			empty-cells: show;
+		}
+		.roundframe {
+			margin: 10px 0 0 0;
+			padding: 12px 16px;
+			background: #f8f8f8;
+			border: 1px solid #c5c5c5;
+			border-radius: 7px;
+			box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1);
+			overflow: auto;
+		}
+		.windowbg {
+			background: #f0f4f7;
+			margin: 12px 0 0 0;
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			box-shadow: none;
+			overflow: auto;
+		}
+		.windowbg:nth-of-type(even) {
+			background: #f0f4f7;
+		}
+		.windowbg:nth-of-type(odd) {
+			background: #fdfdfd;
+		}
+		tr.windowbg:hover {
+			background: #e2eef8;
+		}
+		th, td {
+			padding: 4px 8px;
+			word-break: break-all;
+		}
+		.footer {
+			font-size: 0.9em;
+			color: #fff;
+			margin: 1em;
+			border-radius: 6px;
+			background-color: #3e5a78;
 			padding: 10px;
 			text-align: center;
 		}
-
-		th {
-			background-color: #dce9f9;
-			background-image: -webkit-gradient(linear, left top, left bottom, from(#ebf3fc), to(#dce9f9));
-			background-image: -webkit-linear-gradient(top, #ebf3fc, #dce9f9);
-			background-image:    -moz-linear-gradient(top, #ebf3fc, #dce9f9);
-			background-image:     -ms-linear-gradient(top, #ebf3fc, #dce9f9);
-			background-image:      -o-linear-gradient(top, #ebf3fc, #dce9f9);
-			background-image:         linear-gradient(top, #ebf3fc, #dce9f9);
-			box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
-			border-top: none;
-			text-shadow: 0 1px 0 rgba(255,255,255,.5);
-		}
-
-		td:first-child, th:first-child {
-			border-left: none;
-		}
-
-		th:first-child {
-			border-radius: 6px 0 0 0;
-		}
-
-		th:last-child {
-			border-radius: 0 6px 0 0;
-		}
-
-		tr:last-child td:first-child {
-			border-radius: 0 0 0 6px;
-		}
-
-		tr:last-child td:last-child {
-			border-radius: 0 0 6px 0;
-		}
-
-		tbody tr:nth-child(even) {
-			background: #f5f5f5;
-			box-shadow: 0 1px 0 rgba(255,255,255,.8) inset;
-		}
-
-		span {
-			display: block;
-			margin: 1em;
-			border-radius: 6px;
-			background-color:#F1F1F1;
-			padding:10px;
-			text-align:center
-		}
-
-		@media (max-width: 960px) {
-			th:nth-child(4), td:nth-child(4), th:nth-child(5), td:nth-child(5) {
+		@media (max-width: 720px) {
+			table {
+				margin-top: 1em !important;
+			}
+			tr {
+				display: block;
+				margin: 1px !important;
+			}
+			th, td:first-child {
 				display: none;
+			}
+			td {
+				display: flex;
+				justify-content: center;
 			}
 		}
 	</style>
@@ -109,18 +103,19 @@
 	<h1>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></h1>
 	<h3><xsl:choose><xsl:when test="sm:sitemapindex">Total files: <xsl:value-of select="count(sm:sitemapindex/sm:sitemap)"/></xsl:when><xsl:otherwise>Total URLs: <xsl:value-of select="count(sm:urlset/sm:url)"/></xsl:otherwise></xsl:choose></h3>
 	<xsl:apply-templates/>
-	<span>Powered by Optimus</span>
+	<div class="footer">Powered by SMF Optimus</div>
 </body>
 </html>
 </xsl:template>
 <xsl:template match="sm:sitemapindex">
-	<table>
+	<div class="roundframe">
+	<table class="table_grid">
 		<tr>
-			<th></th>
+			<th>*</th>
 			<th>URL</th>
 		</tr>
 		<xsl:for-each select="sm:sitemap">
-		<tr>
+		<tr class="windowbg">
 			<xsl:variable name="loc"><xsl:value-of select="sm:loc"/></xsl:variable>
 			<xsl:variable name="pno"><xsl:value-of select="position()"/></xsl:variable>
 			<td><xsl:value-of select="$pno"/></td>
@@ -129,11 +124,13 @@
 		</tr>
 		</xsl:for-each>
 	</table>
+	</div>
 </xsl:template>
 <xsl:template match="sm:urlset">
-	<table>
+	<div class="roundframe">
+	<table class="table_grid">
 		<tr>
-			<th></th>
+			<th>*</th>
 			<th>URL</th>
 			<xsl:if test="sm:url/sm:lastmod"><th>Last Modified</th></xsl:if>
 			<xsl:if test="sm:url/sm:changefreq"><th>Frequency</th></xsl:if>
@@ -145,7 +142,7 @@
 			<xsl:if test="sm:url/video:video/video:title"><th>Caption</th></xsl:if>
 		</tr>
 		<xsl:for-each select="sm:url">
-		<tr>
+		<tr class="windowbg">
 			<xsl:variable name="loc"><xsl:value-of select="sm:loc"/></xsl:variable>
 			<xsl:variable name="pno"><xsl:value-of select="position()"/></xsl:variable>
 			<td><xsl:value-of select="$pno"/></td>
@@ -156,6 +153,7 @@
 		</tr>
 		</xsl:for-each>
 	</table>
+	</div>
 </xsl:template>
 <xsl:template match="sm:loc|image:loc|video:content_loc|video:*">
 </xsl:template>

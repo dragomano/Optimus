@@ -90,14 +90,15 @@ $txt['optimus_useful']      = '<a class="bbc_link" href="https://dragomano.ru/ar
 $txt['optimus_sitemap_title'] = 'Карта форума';
 $txt['optimus_sitemap_desc']  = 'Optimus умеет генерировать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a>.';
 
-$txt['optimus_sitemap_enable']                  = 'Активировать карту форума';
-$txt['optimus_sitemap_link']                    = 'Показывать ссылку на карту в подвале';
-$txt['optimus_main_page_frequency']             = 'Частота изменения главной страницы';
-$txt['optimus_main_page_frequency_set']         = array('Постоянная (always)', 'В зависимости от даты последнего сообщения');
-$txt['optimus_sitemap_boards']                  = 'Добавлять в карту ссылки на разделы форума';
-$txt['optimus_sitemap_boards_subtext']          = 'Разделы, закрытые для гостей, добавлены НЕ будут.';
-$txt['optimus_sitemap_topics_num_replies']      = 'Добавлять в карту только темы с количеством ответов более';
-$txt['optimus_sitemap_items_display']           = 'Максимальное количество элементов на странице';
+$txt['optimus_sitemap_enable']             = 'Активировать карту форума';
+$txt['optimus_sitemap_link']               = 'Показывать ссылку на карту в подвале';
+$txt['optimus_remove_previous_xml_files']  = 'Удалять ранее созданные файлы sitemap*.xml';
+$txt['optimus_main_page_frequency']        = 'Частота изменения главной страницы';
+$txt['optimus_main_page_frequency_set']    = array('Постоянная (always)', 'В зависимости от даты последнего сообщения');
+$txt['optimus_sitemap_boards']             = 'Добавлять в карту ссылки на разделы форума';
+$txt['optimus_sitemap_boards_subtext']     = 'Разделы, закрытые для гостей, добавлены НЕ будут.';
+$txt['optimus_sitemap_topics_num_replies'] = 'Добавлять в карту только темы с количеством ответов более';
+$txt['optimus_sitemap_items_display']      = 'Максимальное количество элементов на странице';
 
 // Диспетчер задач
 $txt['scheduled_task_optimus_sitemap']      = 'Генерация XML-карты форума';

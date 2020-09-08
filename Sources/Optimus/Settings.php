@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.5
+ * @version 2.6.6
  */
 
 if (!defined('SMF'))
@@ -367,6 +367,7 @@ class Settings
 		$config_vars = array(
 			array('check', 'optimus_sitemap_enable'),
 			array('check', 'optimus_sitemap_link'),
+			array('check', 'optimus_remove_previous_xml_files'),
 			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
 			array('check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']),
 			array('int', 'optimus_sitemap_topics_num_replies'),
