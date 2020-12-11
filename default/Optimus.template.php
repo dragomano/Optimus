@@ -9,7 +9,7 @@
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.3
+ * @version 0.4
  */
 
 function template_favicon()
@@ -253,33 +253,4 @@ function template_robots()
 		<span class="botslice"><span></span></span>
 	</form>
 	<br class="clear">';
-}
-
-function template_donate()
-{
-	global $txt, $language, $scripturl;
-
-	echo '
-	<div id="admin_form_wrapper">
-		<h3 class="category_header">', $txt['optimus_donate_title'], '</h3>';
-
-	if (in_array($language, array('russian', 'ukrainian')))
-		echo '
-		<div class="content centertext">
-			<iframe src="https://money.yandex.ru/embed/donate.xml?account=410011113366680&quickpay=donate&payment-type-choice=on&mobile-payment-type-choice=on&default-sum=100&targets=%D0%9D%D0%B0+%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D0%B5+%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0&target-visibility=on&project-name=%D0%9B%D0%BE%D0%B3%D0%BE%D0%B2%D0%BE+%D0%BC%D0%B5%D0%B4%D0%B2%D0%B5%D0%B4%D1%8F&project-site=https%3A%2F%2Fdragomano.ru&button-text=05&successURL=" width="508" height="117" style="border:none;"></iframe>
-		</div>';
-	else
-		echo '
-		<div class="content centertext">
-			<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-				<input type="hidden" name="cmd" value="_s-xclick">
-				<input type="hidden" name="hosted_button_id" value="K2AVLACFRVJN6">
-				<input type="hidden" name="return" value="', $scripturl, '?action=admin;area=optimus;sa=donate">
-				<input type="hidden" name="cancel_return" value="', $scripturl, '">
-				<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
-			</form>
-		</div>';
-
-	echo '
-	</div>';
 }

@@ -9,7 +9,7 @@
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.3
+ * @version 0.4
  */
 
 if (!defined('ELK'))
@@ -287,7 +287,7 @@ class Optimus
 		}';
 
 			if (!empty($list_item))
-				$context['insert_after_template'] .= implode($list_item, ',');
+				$context['insert_after_template'] .= implode(',', $list_item);
 
 			$context['insert_after_template'] .= ']
 	}
@@ -328,7 +328,7 @@ class Optimus
 	 */
 	public static function credits(&$credits)
 	{
-		$credits['credits_addons'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;2020, Bugo';
+		$credits['credits_addons'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank" rel="noopener">Optimus</a> &copy; 2010&ndash;2020, Bugo';
 	}
 
 	/**
@@ -409,7 +409,7 @@ class Optimus
 		$replacements[$head_op] = $op_head;
 
 		if (!empty($modSettings['optimus_tw_cards'])) {
-			$twitter = '<meta name="twitter:card" content="summary" />
+			$twitter = '<meta name="twitter:card" content="summary">
 	<meta name="twitter:site" content="@' . $modSettings['optimus_tw_cards'] . '" />';
 
 			if (!empty($context['optimus_og_image']))
@@ -448,8 +448,7 @@ class Optimus
 				'metatags' => array($txt['optimus_meta_title']),
 				'counters' => array($txt['optimus_counters']),
 				'robots'   => array($txt['optimus_robots_title']),
-				'sitemap'  => array($txt['optimus_sitemap_title']),
-				'donate'   => array($txt['optimus_donate_title'])
+				'sitemap'  => array($txt['optimus_sitemap_title'])
 			)
 		);
 	}

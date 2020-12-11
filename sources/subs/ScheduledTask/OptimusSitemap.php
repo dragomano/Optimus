@@ -1,5 +1,7 @@
 <?php
 
+namespace ElkArte\sources\subs\ScheduledTask;
+
 /**
  * OptimusSitemap.php
  *
@@ -9,58 +11,48 @@
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.3
+ * @version 0.4
  */
-
-namespace ElkArte\sources\subs\ScheduledTask;
-
 
 /**
  * Вызов генерации карты через Диспетчер задач
- *
- * @return void
  */
 class Optimus_Sitemap implements Scheduled_Task_Interface
 {
-	public function run()
-	{
-		return (new OP_Sitemap())->create();
-	}
-}
-
-/**
- * Класс генерации XML-карты
- */
-class OP_Sitemap
-{
-	private $t     = "\t";
-	private $n     = "\n";
-	private $count = 50000;
-	private $xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9';
-
-	private $custom_links = array();
+	/**
+	 * Tab character
+	 *
+	 * @var string
+	 */
+	private $t = "\t";
 
 	/**
-	 * Class constructor
+	 * Break
 	 *
-	 * @param string $xmlns
-	 * @param array $urls
+	 * @var string
 	 */
-	public function __construct($xmlns = '', $urls = [])
-	{
-		if (!empty($xmlns))
-			$this->xmlns = (string) $xmlns;
+	private $n = "\n";
 
-		if (!empty($urls) && is_array($urls))
-			$this->custom_links = $urls;
-	}
+	/**
+	 * Max number of links
+	 *
+	 * @var int
+	 */
+	private $count = 50000;
+
+	/**
+	 * Sitemap XML Namespace
+	 *
+	 * @var string
+	 */
+	private $xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 
 	/**
 	 * Генерация карты форума
 	 *
 	 * @return bool
 	 */
-	public function create()
+	public function run()
 	{
 		global $modSettings, $boardurl, $scripturl, $boarddir;
 
@@ -69,6 +61,12 @@ class OP_Sitemap
 			return;
 
 		clearstatcache();
+
+		if (@ini_get('memory_limit') < 256)
+			@ini_set('memory_limit', '256M');
+
+		ignore_user_abort(true);
+		@set_time_limit(600);
 
 		$url_list    = array();
 		$base_links  = array();
@@ -211,9 +209,7 @@ class OP_Sitemap
 			}
 		}
 
-		// Есть массив с дополнительными ссылками?
-		if (!empty($this->custom_links))
-			$url_list = array_merge($url_list, $this->custom_links);
+		call_integration_hook('integrate_optimus_sitemap_links', array(&$url_list));
 
 		// Обработаем все ссылки
 		$one_file = '';
@@ -269,6 +265,8 @@ class OP_Sitemap
 			self::createFile($sitemap, $one_file);
 		}
 
+		ignore_user_abort(false);
+
 		return true;
 	}
 
@@ -304,14 +302,14 @@ class OP_Sitemap
 	/**
 	 * Обработка дат
 	 *
-	 * @param int $timestamp
+	 * @param int $time
 	 * @return string
 	 */
-	private static function getSitemapDate($timestamp = 0)
+	private static function getSitemapDate($time = 0)
 	{
-		$timestamp = empty($timestamp) ? time() : $timestamp;
-		$gmt       = substr(date("O", $timestamp), 0, 3) . ':00';
-		$result    = date('Y-m-d\TH:i:s', $timestamp) . $gmt;
+		$time   = empty($time) ? time() : $time;
+		$gmt    = substr(date("O", $time), 0, 3) . ':00';
+		$result = date('Y-m-d\TH:i:s', $time) . $gmt;
 
 		return $result;
 	}

@@ -9,7 +9,7 @@
  * @copyright 2010-2020 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.3
+ * @version 0.4
  */
 
 if (!defined('ELK'))
@@ -17,9 +17,6 @@ if (!defined('ELK'))
 
 class ManageOptimus_Controller extends Action_Controller
 {
-	protected $fields = array();
-	protected $values = array();
-
 	/**
 	 * Ключевая функция, подключающая все остальные при их вызове
 	 *
@@ -42,8 +39,7 @@ class ManageOptimus_Controller extends Action_Controller
 			'metatags' => array($this, 'metatagsSettings'),
 			'counters' => array($this, 'counterSettings'),
 			'robots'   => array($this, 'robotsSettings'),
-			'sitemap'  => array($this, 'sitemapSettings'),
-			'donate'   => array($this, 'donateSettings')
+			'sitemap'  => array($this, 'sitemapSettings')
 		);
 
 		// Запускаем контроллер
@@ -53,30 +49,27 @@ class ManageOptimus_Controller extends Action_Controller
 			'title' => $txt['optimus_title'],
 			'tabs' => array(
 				'base' => array(
-					'description' => $txt['optimus_base_desc'],
+					'description' => $txt['optimus_base_desc']
 				),
 				'extra' => array(
-					'description' => $txt['optimus_extra_desc'],
+					'description' => $txt['optimus_extra_desc']
 				),
 				'favicon' => array(
-					'description' => $txt['optimus_favicon_desc'],
+					'description' => $txt['optimus_favicon_desc']
 				),
 				'metatags' => array(
-					'description' => $txt['optimus_meta_desc'],
+					'description' => $txt['optimus_meta_desc']
 				),
 				'counters' => array(
-					'description' => $txt['optimus_counters_desc'],
+					'description' => $txt['optimus_counters_desc']
 				),
 				'robots' => array(
-					'description' => $txt['optimus_robots_desc'],
+					'description' => $txt['optimus_robots_desc']
 				),
 				'sitemap' => array(
-					'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id']),
-				),
-				'donate' => array(
-					'description' => $txt['optimus_donate_desc'],
-				),
-			),
+					'description' => sprintf($txt['optimus_sitemap_desc'], $scripturl . '?action=admin;area=scheduledtasks;' . $context['session_var'] . '=' . $context['session_id'])
+				)
+			)
 		);
 
 		// Устанавливаем вкладку по умолчанию
@@ -369,19 +362,6 @@ class ManageOptimus_Controller extends Action_Controller
 		}
 
 		$settingsForm->prepare();
-	}
-
-	/**
-	 * Страница пожертвований
-	 *
-	 * @return void
-	 */
-	public function donateSettings()
-	{
-		global $context, $txt;
-
-		$context['page_title']  .= ' - ' . $txt['optimus_donate_title'];
-		$context['sub_template'] = 'donate';
 	}
 
 	/**

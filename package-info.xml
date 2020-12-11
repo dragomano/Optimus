@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:smf="http://www.elkarte.net/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.3</version>
+	<version>0.4</version>
 	<type>addon</type>
 
 	<install for="1.1 - 1.1.99">
@@ -28,6 +28,7 @@
 		<code>uninstall.php</code>
 		<remove-file name="THEMEDIR/Optimus.template.php" />
 		<remove-file name="THEMEDIR/css/optimus.css" />
+		<remove-file name="THEMEDIR/css/sitemap.xsl" />
 		<remove-file name="ADMINDIR/ManageOptimus.controller.php" />
 		<remove-file name="SUBSDIR/Optimus.class.php" />
 		<remove-file name="SUBSDIR/ScheduledTask/OptimusSitemap.php" />

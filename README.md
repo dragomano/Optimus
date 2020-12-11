@@ -7,7 +7,7 @@
 * **Author:** Bugo [dragomano.ru](https://dragomano.ru/mods/optimus)
 * **License:** [Artistic License 2.0](https://opensource.org/licenses/artistic-license-2.0)
 * **Compatible with:** ElkArte 1.1.x
-* **Tested on:** PHP 7.3.16 / MariaDB 10.4.12
+* **Tested on:** PHP 7.3.25 / MariaDB 10.5.6
 * **Hooks only:** Yes
 * **Languages:** Russian, English
 
