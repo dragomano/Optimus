@@ -10,6 +10,7 @@
 $txt['optimus_title'] = 'Zoekmachine Optimalisatie';
 
 $txt['optimus_base_title'] = 'Algemene instellingen';
+$txt['optimus_base_desc']  = 'Versie van de Mod: <strong>%1$s</strong>, PHP versie: <strong>%2$s</strong>, %3$s versie: <strong>%4$s</strong>.<br>Bugs en features van de mod kunnen besproken worden op <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.com</a>.<br>Je kunt ook <a class="bbc_link" href="https://www.patreon.com/bugo">een sponsor worden op Patreon</a>, of <a class="bbc_link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SJLXR6X7XGEDC">een eenmalige donatie doen via PayPal</a>.';
 
 $txt['optimus_main_page']   = 'Homepage';
 $txt['optimus_base_info']   = 'Inhoud van de \'description tag\' kan worden gebruikt door een robot om te bepalen of een pagina aan de zoektermen voldoet.';
@@ -61,15 +62,15 @@ $txt['optimus_name']           = 'Naam';
 $txt['optimus_content']        = 'Inhoud';
 $txt['optimus_meta_info']      = 'Gebruik alleen de waarden van de <strong>inhoud</strong> parameter van de meta tags.<br />Bijvoorbeeld: <span class="smalltext">&lt;meta naam="google-site-verification" inhoud="<strong>WAARDE DIE IN DE RECHTER KOLOM MOET STAAN</strong>" /&gt;</span>';
 $txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','<a class="bbc_link" href="http://www.google.com/webmasters/tools" target="_blank">Google Search Console</a>'),
-	'Yandex' => array('yandex-verification','<a class="bbc_link" href="http://webmaster.yandex.com/"                target="_blank">Yandex.Webmaster</a>'),
+	'Google' => array('google-site-verification','<a class="bbc_link" href="https://www.google.com/webmasters/tools/" target="_blank">Google Search Console</a>'),
+	'Yandex' => array('yandex-verification', '<a class="bbc_link" href="https://webmaster.yandex.com/" target="_blank">Yandex.Webmaster</a>'),
 	'Bing'   => array('msvalidate.01', '<a class="bbc_link" href="https://www.bing.com/toolbox/webmaster/" target="_blank">Bing Webmaster</a>')
 );
 
 $txt['optimus_counters']      = 'Counters';
 $txt['optimus_counters_desc'] = 'Voor het bijhouden van bezoeken aan je forum is het mogelijk een varieteit aan counters in te voeren.';
 
-$txt['optimus_head_code']       = 'Onzichtbare counters die geladen worden in de <strong>head</strong> sectie (<a class="bbc_link" href="http://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
+$txt['optimus_head_code']       = 'Onzichtbare counters die geladen worden in de <strong>head</strong> sectie (<a class="bbc_link" href="https://www.google.com/analytics/sign_up.html" target="_blank">Google Analytics</a>)';
 $txt['optimus_stat_code']       = 'Andere onzichtbare counters';
 $txt['optimus_count_code']      = 'Zichtbare counters';
 $txt['optimus_counters_css']    = 'Weergave van zichtbare counters (CSS code)';
@@ -85,9 +86,18 @@ $txt['optimus_robots_hint'] = 'Hier kun je eigen regels invoeren of bestaande re
 $txt['optimus_useful']      = '';
 
 $txt['optimus_sitemap_title'] = 'Optimus Sitemap';
-$txt['optimus_sitemap_desc']  = 'Wil je een eenvoudige sitemap aanmaken? Optimus kan het sitemap.xml aanmaken voor minder omvangrijke fora.';
+$txt['optimus_sitemap_desc']  = 'Wil je een eenvoudige sitemap aanmaken? Optimus kan het sitemap.xml aanmaken voor minder omvangrijke fora. Activeer hiervoor onderstaande optie. De sitempa zal wordne bijgewerkt volgens de instellingen in de <a href="%1$s">Geplande taken</a>.';
 
-$txt['optimus_sitemap_enable'] = 'Maak het Sitemap XML-file en werk deze periodiek bij';
-$txt['optimus_sitemap_link']   = 'Laat een Sitemap XML-link zien in de footer';
-$txt['optimus_sitemap_boards'] = 'Voeg links naar de boards toe aan de sitemap<br /><span class="smalltext error">Boards die zijn gesloten voor gasten zullen NIET toegevoegd worden.</span>';
-$txt['optimus_sitemap_topics'] = 'Voeg alleen topics aan de sitemap toe die meer dan zoveel reacties hebben';
+$txt['optimus_sitemap_enable'] = 'Activeer de Sitemap instellingen';
+$txt['optimus_sitemap_link']   = 'Toon een link naar de Sitemap in de footer';
+$txt['optimus_remove_previous_xml_files']  = 'Verwijder eerder aangemaakte sitemap*.xml bestanden';
+$txt['optimus_main_page_frequency']        = 'De vernieuwings frequentie van de hoofd pagina';
+$txt['optimus_main_page_frequency_set']    = array('Direct (voortdurend)', 'Afhankelijk van de datum van het nieuwste bericht');
+$txt['optimus_sitemap_boards']             = 'Neem links naar de boards op in de sitemap';
+$txt['optimus_sitemap_boards_subtext']     = 'Boards die niet toegankelijk zijn voor gasten worden NIET opgenomen.';
+$txt['optimus_sitemap_topics_num_replies'] = 'Voeg alleen topics aan de sitemap toe die meer dan zoveel reacties hebben';
+$txt['optimus_sitemap_items_display']      = 'Maximum aantal items per pagina';
+
+// Task Manager
+$txt['scheduled_task_optimus_sitemap']      = 'Sitemap XML verversen';
+$txt['scheduled_task_desc_optimus_sitemap'] = 'Je kunt de frequentie voor het verversen van de sitemap opgeven.';
