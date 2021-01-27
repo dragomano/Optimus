@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.6
+ * @version 2.6.7
  */
 
 if (!defined('SMF'))
@@ -40,8 +40,8 @@ class Integration
 	 */
 	public static function loadTheme()
 	{
-		defined('OP_NAME') or define('OP_NAME', 'SMF Optimus');
-		defined('OP_VERSION') or define('OP_VERSION', '2.6.6');
+		defined('OP_NAME') or define('OP_NAME', 'Optimus');
+		defined('OP_VERSION') or define('OP_VERSION', '2.6.7');
 
 		loadLanguage('Optimus/');
 

@@ -10,7 +10,7 @@
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_base_title'] = 'Base settings';
-$txt['optimus_base_desc']  = 'The mod version: <strong>%1$s</strong>, PHP version: <strong>%2$s</strong>, %3$s version: <strong>%4$s</strong>.<br>One can discuss bugs and features of the mod at <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.com</a>.<br>You can also <a class="bbc_link" href="https://www.patreon.com/bugo">become a sponsor on Patreon</a>, or <a class="bbc_link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SJLXR6X7XGEDC">make one-time donation via PayPal</a>.';
+$txt['optimus_base_desc']  = 'The mod version: <strong>%1$s</strong>, PHP version: <strong>%2$s</strong>, %3$s version: <strong>%4$s</strong>.<br>One can discuss bugs and features of the mod at <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.com</a>.<br>You can also <a class="bbc_link" href="https://www.patreon.com/bugo">become a sponsor on Patreon</a> or <a class="bbc_link" href="https://ko-fi.com/U7U41XD2G">buy a cup of coffee as a thank</a>.';
 
 $txt['optimus_main_page']   = 'Homepage';
 $txt['optimus_base_info']   = 'Well, the description tag\'s content may be taken into account when the robot determines if a page matches a search query.';

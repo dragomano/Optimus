@@ -11,6 +11,8 @@ if (version_compare(PHP_VERSION, '5.6', '<'))
 if ((SMF == 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
 
+$smcFunc['db_query']('', "DELETE FROM {db_prefix}settings WHERE variable LIKE 'op_%' OR variable LIKE 'optimus_%'");
+
 // Scheduled Tasks
 if (empty($context['uninstalling'])) {
 	$smcFunc['db_insert']('ignore',

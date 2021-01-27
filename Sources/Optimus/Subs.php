@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package SMF Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.6
+ * @version 2.6.7
  */
 
 if (!defined('SMF'))
@@ -419,6 +419,6 @@ class Subs
 		global $context;
 
 		if ($context['current_action'] == 'credits')
-			$context['copyrights']['mods'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank">Optimus</a> &copy; 2010&ndash;2020, Bugo';
+			$context['copyrights']['mods'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank" rel="noopener">Optimus</a> &copy; 2010&ndash;2021, Bugo';
 	}
 }
