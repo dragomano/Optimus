@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Robots.php
  *
- * @package SMF Optimus
+ * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.6
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -34,7 +34,7 @@ class Robots
 	 *
 	 * @var array
 	 */
-	public $rules = [];
+	public $rules = array();
 
 	/**
 	 * Action list
@@ -87,7 +87,7 @@ class Robots
 		self::assetsRules();
 		self::sitemapRules();
 
-		$new_robots = [];
+		$new_robots = array();
 		foreach ($this->rules as $line) {
 			if (!empty($line))
 				$new_robots[] = $line;

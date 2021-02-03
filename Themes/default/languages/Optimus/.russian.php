@@ -10,7 +10,7 @@
 $txt['optimus_title'] = 'Поисковая оптимизация';
 
 $txt['optimus_base_title'] = 'Общие настройки';
-$txt['optimus_base_desc']  = 'Версия мода: <strong>%1$s</strong>, версия PHP: <strong>%2$s</strong>, версия %3$s: <strong>%4$s</strong>.<br>Обсудить баги и фичи мода можно на <a class="bbc_link" href="https://dragomano.ru/forum/index.php?topic=7.0">форуме разработчика</a>.<br>Вы также можете <a class="bbc_link" href="https://boosty.to/bugo">стать спонсором на Boosty.to</a> или <a class="bbc_link" href="https://ko-fi.com/U7U41XD2G">купить разработчику чашку кофе</a>.';
+$txt['optimus_base_desc']  = 'Версия мода: <strong>%1$s</strong>, версия PHP: <strong>%2$s</strong>, версия %3$s: <strong>%4$s</strong>.<br>Обсудить баги и фичи мода можно на <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">официальном сайте</a>.<br>Вы также можете <a class="bbc_link" href="https://boosty.to/bugo">стать спонсором на Boosty.to</a> или <a class="bbc_link" href="https://ko-fi.com/U7U41XD2G">купить разработчику чашку кофе</a>.';
 
 $txt['optimus_main_page']   = 'Главная страница';
 $txt['optimus_base_info']   = 'Содержание мета-тега description может использоваться в сниппетах на странице результатов поиска.';
@@ -35,11 +35,12 @@ $txt['optimus_404_h3']            = 'Извините, но такой страницы здесь нет.';
 $txt['optimus_403_page_title']    = '403 - Доступ запрещён';
 $txt['optimus_403_h2']            = 'Ошибка 403';
 $txt['optimus_403_h3']            = 'Извините, но у вас нет доступа к этой странице.';
+$txt['optimus_board_index']       = 'Список разделов';
 
 $txt['optimus_extra_title'] = 'Микроразметка';
-$txt['optimus_extra_desc']  = 'Некоторые экспериментальные фиксы, а также активация поддержки Open Graph. Наслаждайтесь!';
+$txt['optimus_extra_desc']  = 'Здесь можно включить поддержку Open Graph и карточек Twitter. Наслаждайтесь!';
 
-$txt['optimus_open_graph'] = 'Мета-теги <a class="bbc_link" href="http://ruogp.me/" target="_blank">Open Graph</a> для страниц форума';
+$txt['optimus_open_graph'] = 'Мета-теги <a class="bbc_link" href="https://ruogp.me/" target="_blank">Open Graph</a> для страниц форума';
 $txt['optimus_og_image']   = 'Ссылка на изображение по умолчанию для Open Graph<br /><span class="smalltext">В темах будет использоваться вложение из первого сообщения (если есть).</span>';
 $txt['optimus_fb_appid']   = '<a class="bbc_link" href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (ID приложения) <a class="bbc_link" href="https://www.facebook.com/" target="_blank">Facebook</a> (если есть)';
 $txt['optimus_tw_cards']   = 'Имя аккаунта в <a class="bbc_link" href="https://twitter.com/" target="_blank">Twitter</a> (укажите, чтобы включить поддержку <a class="bbc_link" href="https://dev.twitter.com/cards/overview" target="_blank">карточек</a>)';
@@ -50,7 +51,7 @@ $txt['optimus_favicon_desc']  = 'Создайте свой значок для форума. Он будет отобр
 $txt['optimus_favicon_create']  = 'Создать иконку для сайта';
 $txt['optimus_favicon_api_key'] = 'Ключ API для работы с генератором иконки (<a class="bbc_link" href="https://realfavicongenerator.net/api/#register_key" target="_blank">Получить</a>)';
 $txt['optimus_favicon_text']    = 'Код для вставки favicon';
-$txt['optimus_favicon_help']    = 'Сгенерируйте свою уникальную иконку, например, <a class="bbc_link" href="http://www.favicomatic.com/" target="_blank">здесь</a>, или воспользуйтесь генератором, указав ключ API в поле выше.<br />Затем загрузите файлы иконки в корень форума, а предложенный на сайте код сохраните в поле справа.<br />Этот код будет загружаться в верхней части страниц, между тегами &lt;<strong>head</strong>&gt;&lt;/<strong>head</strong>&gt;.';
+$txt['optimus_favicon_help']    = 'Сгенерируйте свою уникальную иконку, например, <a class="bbc_link" href="https://www.favicomatic.com/" target="_blank">здесь</a>, или воспользуйтесь генератором, указав ключ API в поле выше.<br />Затем загрузите файлы иконки в корень форума, а предложенный на сайте код сохраните в поле справа.<br />Этот код будет загружаться в верхней части страниц, между тегами &lt;<strong>head</strong>&gt;&lt;/<strong>head</strong>&gt;.';
 
 $txt['optimus_meta_title'] = 'Мета-теги';
 $txt['optimus_meta_desc']  = 'Добавление в код страниц форума дополнительных мета-тегов, например, для подтверждения права собственности на сайт.';

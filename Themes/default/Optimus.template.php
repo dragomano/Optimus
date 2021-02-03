@@ -347,7 +347,7 @@ function template_robots()
 
 function template_404()
 {
-	global $txt;
+	global $txt, $scripturl;
 
 	echo '
 	<div class="centertext" style="width: 60%">
@@ -358,6 +358,9 @@ function template_404()
 			<span class="topslice"><span></span></span>
 			<div class="content">', $txt['optimus_404_h3'], '</div>
 			<span class="botslice"><span></span></span>
+		</div>
+		<div class="centertext">
+			<a href="', $scripturl, '?action=forum">', $txt['optimus_board_index'], '</a>
 		</div>
 	</div>';
 }

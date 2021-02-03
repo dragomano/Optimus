@@ -7,7 +7,7 @@ use Bugo\Optimus\Subs;
 /**
  * TinyPortal.php
  *
- * @package SMF Optimus
+ * @package Optimus
  *
  */
 
@@ -15,7 +15,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 /**
- * TinyPortal addon for Optimus
+ * TinyPortal addon for Optimus (requires TP 2+)
  */
 class TinyPortal
 {
@@ -26,7 +26,7 @@ class TinyPortal
 	 */
 	private static function isInstalled()
 	{
-		return function_exists('TPortal_init');
+		return class_exists('\TinyPortal\Integrate');
 	}
 
 	/**
@@ -83,6 +83,21 @@ class TinyPortal
 		}
 
 		$smcFunc['db_free_result']($request);
+	}
+
+	/**
+	 * Make rules for robots.txt
+	 *
+	 * @param string $common_rules
+	 * @param string $url_path
+	 * @return void
+	 */
+	public static function robots(&$common_rules, $url_path)
+	{
+		if (empty(self::isInstalled()))
+			return;
+
+		$common_rules[] = "Allow: " . $url_path . "/*page=*";
 	}
 
 	/**

@@ -35,6 +35,7 @@ $txt['optimus_404_h3']            = 'Sorry, but the requested page does not exis
 $txt['optimus_403_page_title']    = '403 - Access forbidden';
 $txt['optimus_403_h2']            = 'Error 403';
 $txt['optimus_403_h3']            = 'Sorry, but you have no access to this page.';
+$txt['optimus_board_index']       = 'Board index';
 
 $txt['optimus_favicon_title'] = 'Favicon';
 $txt['optimus_favicon_desc']  = 'Create your own forum icon. It will be displayed by the browser in the tab before the page name, as well as an image next to the open tab and other interface elements.';
@@ -42,12 +43,12 @@ $txt['optimus_favicon_desc']  = 'Create your own forum icon. It will be displaye
 $txt['optimus_favicon_create']  = 'Create the favicon';
 $txt['optimus_favicon_api_key'] = 'API key to work with Favicon Generator (<a class="bbc_link" href="https://realfavicongenerator.net/api/#register_key" target="_blank">Get API key</a>)';
 $txt['optimus_favicon_text']    = 'The favicon code';
-$txt['optimus_favicon_help']    = 'Generate your own favicon <a class="bbc_link" href="http://www.favicomatic.com/" target="_blank">here</a>, or use a special generator (it needs to enter the API key on the field above).<br />Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br />This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
+$txt['optimus_favicon_help']    = 'Generate your own favicon <a class="bbc_link" href="https://www.favicomatic.com/" target="_blank">here</a>, or use a special generator (it needs to enter the API key on the field above).<br />Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br />This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
 
 $txt['optimus_extra_title'] = 'Metadata';
-$txt['optimus_extra_desc']  = 'Here you can find some fixes for your forum. Additionally you can enable Open Graph and JSON-LD support. Enjoy!';
+$txt['optimus_extra_desc']  = 'Here you can enable Open Graph and Twitter Cards support. Enjoy!';
 
-$txt['optimus_open_graph'] = '<a class="bbc_link" href="http://ogp.me/" target="_blank">Open Graph</a> meta tags for forum pages';
+$txt['optimus_open_graph'] = '<a class="bbc_link" href="https://ogp.me/" target="_blank">Open Graph</a> meta tags for forum pages';
 $txt['optimus_og_image']   = 'Link to your default Open Graph image<br /><span class="smalltext">It will be replaced by the attachment of the first message in topics (if exists).</span>';
 $txt['optimus_fb_appid']   = '<a class="bbc_link" href="https://developers.facebook.com/apps" target="_blank">APP ID</a> (Application ID) <a class="bbc_link" href="https://www.facebook.com/" target="_blank">Facebook</a>';
 $txt['optimus_tw_cards']   = '<a class="bbc_link" href="https://twitter.com/" target="_blank">Twitter</a> account name (specify to enable <a class="bbc_link" href="https://dev.twitter.com/cards/overview" target="_blank">Twitter Cards</a>)';

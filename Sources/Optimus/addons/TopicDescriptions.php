@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons;
 /**
  * TopicDescriptions.php
  *
- * @package SMF Optimus
+ * @package Optimus
  *
  */
 

@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons;
 /**
  * SimpleSEF.php
  *
- * @package SMF Optimus
+ * @package Optimus
  *
  */
 

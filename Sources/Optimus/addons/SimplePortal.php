@@ -7,7 +7,7 @@ use Bugo\Optimus\Subs;
 /**
  * SimplePortal.php
  *
- * @package SMF Optimus
+ * @package Optimus
  *
  */
 
@@ -26,28 +26,7 @@ class SimplePortal
 	 */
 	public static function isInstalled()
 	{
-		return function_exists('sportal_actions');
-	}
-
-	/**
-	 * Add title and canonical url
-	 *
-	 * @return void
-	 */
-	public static function meta()
-	{
-		global $modSettings, $context, $scripturl;
-
-		if (empty(self::isInstalled()))
-			return;
-
-		if (!empty($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 1) {
-			if (empty($context['current_board']) && empty($context['current_topic']) && empty($_REQUEST['action']))
-				$context['forum_name'] = $context['forum_name'] . ' - ' . $modSettings['optimus_portal_index'];
-		}
-
-		if ($context['current_action'] == 'forum' && !empty($modSettings['sp_portal_mode']))
-			$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
+		return function_exists('sportal_init');
 	}
 
 	/**
@@ -72,7 +51,7 @@ class SimplePortal
 		if (isset($modSettings['sp_portal_mode']) && $modSettings['sp_portal_mode'] == 3 && file_exists($boarddir . $simple_portal_standalone))
 			$common_rules[] = "Allow: " . $url_path . $simple_portal_standalone;
 
-		$common_rules[] = $simple_portal ? "Allow: " . $url_path . "/*page=page*" : "";
+		$common_rules[] = $simple_portal ? "Allow: " . $url_path . "/*page=*" : "";
 	}
 
 	/**

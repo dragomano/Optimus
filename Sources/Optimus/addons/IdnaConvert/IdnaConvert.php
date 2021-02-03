@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons\IdnaConvert;
 /**
  * IdnaConvert.php
  *
- * @package SMF Optimus
+ * @package Optimus
  *
  */
 

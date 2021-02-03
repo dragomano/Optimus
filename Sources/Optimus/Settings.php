@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Settings.php
  *
- * @package SMF Optimus
+ * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.6
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -119,7 +119,7 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_base_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=basic;save';
 
-		$add_settings = [];
+		$add_settings = array();
 		if (!isset($modSettings['optimus_forum_index']))
 			$add_settings['optimus_forum_index'] = $smcFunc['substr']($txt['forum_index'], 7);
 		if (!isset($modSettings['optimus_no_first_number']))
@@ -136,7 +136,7 @@ class Settings
 			array('check', 'optimus_404_status')
 		);
 
-		$templates = [];
+		$templates = array();
 		foreach ($txt['optimus_templates'] as $name => $template) {
 			$templates[$name] = array(
 				'name' => isset($_POST['' . $name . '_name']) ? $_POST['' . $name . '_name'] : '',
@@ -147,6 +147,12 @@ class Settings
 
 		if (isset($_GET['save'])) {
 			checkSession();
+
+			if (isset($_POST['optimus_forum_index']))
+				$_POST['optimus_forum_index'] = $smcFunc['htmlspecialchars']($_POST['optimus_forum_index']);
+
+			if (isset($_POST['optimus_description']))
+				$_POST['optimus_description'] = $smcFunc['htmlspecialchars']($_POST['optimus_description']);
 
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
@@ -238,9 +244,9 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_meta_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
-		$config_vars = [];
+		$config_vars = array();
 
-		$meta = [];
+		$meta = array();
 		if (isset($_POST['custom_tag_name'])) {
 			foreach ($_POST['custom_tag_name'] as $key => $value) {
 				if (empty($value))
@@ -276,7 +282,7 @@ class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_counters'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=counters;save';
 
-		$add_settings = [];
+		$add_settings = array();
 		if (!isset($modSettings['optimus_counters_css']))
 			$add_settings['optimus_counters_css'] = '.copyright a>img {opacity: 0.3} .copyright a:hover>img {opacity: 1.0}';
 		if (!isset($modSettings['optimus_ignored_actions']))

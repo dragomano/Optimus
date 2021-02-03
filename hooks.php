@@ -13,8 +13,7 @@ if ((SMF == 'SSI') && !$user_info['is_admin'])
 
 // Hooks
 $hooks = array(
-	'integrate_pre_include' => '$sourcedir/Optimus/Integration.php',
-	'integrate_pre_load'    => 'Bugo\Optimus\Integration::hooks'
+	'integrate_pre_include' => '$sourcedir/Optimus/app.php'
 );
 
 if (!empty($context['uninstalling']))
@@ -24,16 +23,6 @@ else
 
 foreach ($hooks as $hook => $function)
 	$call($hook, $function);
-
-if (!empty($context['uninstalling']))
-	remove_integration_function('integrate_pre_include', '$sourcedir/Optimus/Subs.php');
-else
-	add_integration_function('integrate_pre_include', '$sourcedir/Optimus/Subs.php');
-
-if (!empty($context['uninstalling']))
-	remove_integration_function('integrate_pre_include', '$sourcedir/Optimus/Task.php');
-else
-	add_integration_function('integrate_pre_include', '$sourcedir/Optimus/Task.php');
 
 if (SMF == 'SSI')
 	echo 'Database changes are complete! Please wait...';

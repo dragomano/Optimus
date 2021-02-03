@@ -5,13 +5,13 @@ namespace Bugo\Optimus;
 /**
  * Subs.php
  *
- * @package SMF Optimus
+ * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
  * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.6.7
+ * @version 2.7
  */
 
 if (!defined('SMF'))
@@ -30,6 +30,7 @@ class Subs
 
 		// Forum
 		$txt['forum_index'] = '%1$s';
+
 		if (!empty($modSettings['optimus_forum_index']))
 			$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
 	}
@@ -58,6 +59,9 @@ class Subs
 	public static function addCounters()
 	{
 		global $modSettings, $context, $forum_copyright;
+
+		if (isset($_REQUEST['xml']))
+			return;
 
 		$ignored_actions = !empty($modSettings['optimus_ignored_actions']) ? explode(",", $modSettings['optimus_ignored_actions']) : array();
 
@@ -358,7 +362,7 @@ class Subs
 	 * @param array $ret
 	 * @return array
 	 */
-	public static function getNestedDirs($path, $nested_dirs = [])
+	public static function getNestedDirs($path, $nested_dirs = array())
 	{
 		$dirs = glob(rtrim($path, "/") . "/*", GLOB_ONLYDIR) or array();
 
@@ -377,7 +381,7 @@ class Subs
 	 * @param array $vars
 	 * @return void
 	 */
-	public static function runAddons($type = 'meta', $vars = [])
+	public static function runAddons($type = 'meta', $vars = array())
 	{
 		global $sourcedir;
 
@@ -418,7 +422,9 @@ class Subs
 	{
 		global $context;
 
+		$link = in_array($context['user']['language'], array('russian','russian-utf8')) ? 'https://dragomano.ru/mods/optimus' : 'https://custom.simplemachines.org/mods/index.php?mod=2659';
+
 		if ($context['current_action'] == 'credits')
-			$context['copyrights']['mods'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank" rel="noopener">Optimus</a> &copy; 2010&ndash;2021, Bugo';
+			$context['copyrights']['mods'][] = '<a href="' . $link . '" target="_blank" rel="noopener">' . OP_NAME . '</a> &copy; 2010&ndash;2021, Bugo';
 	}
 }

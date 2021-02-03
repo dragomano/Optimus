@@ -5,7 +5,7 @@ namespace Bugo\Optimus\Addons;
 /**
  * PortaMx.php
  *
- * @package SMF Optimus
+ * @package Optimus
  *
  */
 
