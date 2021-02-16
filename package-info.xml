@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus for SMF</name>
-	<version>2.7 [03.02.21]</version>
+	<version>2.7.1 [16.02.21]</version>
 	<type>modification</type>
 
 	<install for="2.0 - 2.0.99">

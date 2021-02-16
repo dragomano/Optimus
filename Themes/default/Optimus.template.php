@@ -393,19 +393,19 @@ function template_sitemap_xml()
 	foreach ($context['sitemap']['items'] as $item) {
 		echo '
 	<url>
-		<loc>', $item['loc'], '</loc>';
+		<loc><![CDATA[', $item['loc'], ']]></loc>';
 
 		if (!empty($item['lastmod']))
 			echo '
-		<lastmod>', $item['lastmod'], '</lastmod>';
+		<lastmod><![CDATA[', $item['lastmod'], ']]></lastmod>';
 
 		if (!empty($item['changefreq']))
 			echo '
-		<changefreq>', $item['changefreq'], '</changefreq>';
+		<changefreq><![CDATA[', $item['changefreq'], ']]></changefreq>';
 
 		if (!empty($item['priority']))
 			echo '
-		<priority>', $item['priority'], '</priority>';
+		<priority><![CDATA[', $item['priority'], ']]></priority>';
 
 		echo '
 	</url>';
@@ -426,7 +426,7 @@ function template_sitemapindex_xml()
 	foreach ($context['sitemap']['items'] as $item)
 		echo '
 	<sitemap>
-		<loc>', $item['loc'], '</loc>
+		<loc><![CDATA[', $item['loc'], ']]></loc>
 	</sitemap>';
 
 	echo '

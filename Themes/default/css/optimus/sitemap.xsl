@@ -19,8 +19,7 @@
 			padding: 0;
 		}
 		html {
-			background: #3e5a78;
-			padding: 5px;
+			height: 100%;
 		}
 		body {
 			background: #e9eef2;
@@ -29,6 +28,8 @@
 			min-height: 100vh;
 			border-radius: 6px;
 			padding: 1em;
+			display: flex;
+			flex-direction: column;
 		}
 		h1, h3 {
 			text-align: center;
@@ -40,6 +41,7 @@
 			width: 100%;
 			text-align: center;
 			empty-cells: show;
+			word-break: break-all;
 		}
 		.roundframe {
 			margin: 10px 0 0 0;
@@ -71,6 +73,12 @@
 			padding: 4px 8px;
 			word-break: break-all;
 		}
+		.header {
+			flex: 0 0 auto;
+		}
+		.content {
+			flex: 1 0 auto;
+		}
 		.footer {
 			font-size: 0.9em;
 			color: #fff;
@@ -79,6 +87,7 @@
 			background-color: #3e5a78;
 			padding: 10px;
 			text-align: center;
+			flex: 0 0 auto;
 		}
 		@media (max-width: 720px) {
 			table {
@@ -100,9 +109,13 @@
 	<title>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></title>
 </head>
 <body>
-	<h1>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></h1>
-	<h3><xsl:choose><xsl:when test="sm:sitemapindex">Total files: <xsl:value-of select="count(sm:sitemapindex/sm:sitemap)"/></xsl:when><xsl:otherwise>Total URLs: <xsl:value-of select="count(sm:urlset/sm:url)"/></xsl:otherwise></xsl:choose></h3>
-	<xsl:apply-templates/>
+	<div class="header">
+		<h1>Sitemap<xsl:if test="sm:urlset/sm:url/mobile:mobile"> - Mobile</xsl:if><xsl:if test="sm:urlset/sm:url/image:image"> - Images</xsl:if><xsl:if test="sm:urlset/sm:url/news:news">News</xsl:if><xsl:if test="sm:urlset/sm:url/video:video"> - Video</xsl:if><xsl:if test="sm:sitemapindex"> - Index</xsl:if></h1>
+		<h3><xsl:choose><xsl:when test="sm:sitemapindex">Total files: <xsl:value-of select="count(sm:sitemapindex/sm:sitemap)"/></xsl:when><xsl:otherwise>Total URLs: <xsl:value-of select="count(sm:urlset/sm:url)"/></xsl:otherwise></xsl:choose></h3>
+	</div>
+	<div class="content">
+		<xsl:apply-templates/>
+	</div>
 	<div class="footer">Powered by Optimus for SMF</div>
 </body>
 </html>

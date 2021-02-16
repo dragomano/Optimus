@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7
+ * @version 2.7.1
  */
 
 if (!defined('SMF'))
@@ -61,9 +61,9 @@ class Sitemap
 
 			$items[$sitemap_counter][] = array(
 				'loc'        => $entry['loc'],
-				'lastmod'    => self::getDate($entry['lastmod']),
-				'changefreq' => self::getFrequency($entry['lastmod']),
-				'priority'   => self::getPriority($entry['lastmod'])
+				'lastmod'    => !empty($entry['lastmod']) ? self::getDate($entry['lastmod']) : null,
+				'changefreq' => !empty($entry['lastmod']) ? self::getFrequency($entry['lastmod']) : null,
+				'priority'   => !empty($entry['lastmod']) ? self::getPriority($entry['lastmod']) : null
 			);
 		}
 
