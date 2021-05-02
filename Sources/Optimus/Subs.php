@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.1
+ * @version 2.7.2
  */
 
 if (!defined('SMF'))
@@ -239,15 +239,12 @@ class Subs
 		while ($row = $smcFunc['db_fetch_assoc']($request))	{
 			censorText($row['body']);
 
-			$row['body'] = parse_bbc($row['body'], false);
-
 			// Ищем изображение в тексте сообщения
-			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
+			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', parse_bbc($row['body'], false), $value);
 			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
 
-			$row['body'] = self::getTeaser($row['body']);
+			$context['optimus_description'] = self::getTeaser($row['body']);
 
-			$context['optimus_description'] = str_replace($txt['quote'], '', $row['body']);
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['poster_time']);
 
 			if (!empty($row['modified_time']))
@@ -298,30 +295,51 @@ class Subs
 	 * Получаем выдержку текста для создания описания страницы
 	 *
 	 * @param string $text — текст для обработки
-	 * @param integer $num_sentences — количество предложений, которые нужно взять из текста
+	 * @param int $num_sentences — количество предложений, которые нужно взять из текста
+	 * @param bool $parse_bbc — флаг, парсить или нет ББ-код
 	 * @return string
 	 */
-	public static function getTeaser($text, $num_sentences = 2)
+	public static function getTeaser($text, $num_sentences = 2, $parse_bbc = true)
 	{
 		global $smcFunc;
 
-		$body = preg_replace('/\s+/', ' ', strip_tags($text));
-		$body = strtr($body, array('&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''));
-		$sentences = preg_split('/(\.|\?|\!)(\s)/', $body);
+		if ($parse_bbc) {
+			$text = preg_replace('~\[spoiler.*].*?\[/spoiler]~Usi', '', $text);
+			$text = preg_replace('~\[quote.*].*?\[/quote]~Usi', '', $text);
+			$text = preg_replace('~\[table.*].*?\[/table]~Usi', '', $text);
+			$text = preg_replace('~\[code.*].*?\[/code]~Usi', '', $text);
+			$text = parse_bbc($text, false);
+		}
+
+		$text = preg_replace('/<\/?(?:p|br|hr|li|div|blockquote|code|td)\b[^>]*>/i', ' ', $text);
+
+		$text = trim(str_replace(chr(194) . chr(160), ' ', html_entity_decode($text, ENT_QUOTES)));
+
+		// Replace all <br> with spaces
+		$text = strip_tags(str_replace('<br>', ' ', $text));
+
+		// Replace all duplicate spaces
+		$text = preg_replace('~\s+~', ' ', $text);
+
+		// Remove all urls
+		$text = preg_replace('~http(s)?://(.*)\s~U', '', $text);
+
+		// Prepare sentences
+		$sentences = preg_split('/(\.|\?|\!)(\s)/', $text);
 
 		if (count($sentences) <= $num_sentences)
-			return $body;
+			return $text;
 
-		$stopAt = 0;
+		$stop_at = 0;
 		foreach ($sentences as $i => $sentence) {
-			$stopAt += $smcFunc['strlen']($sentence);
+			$stop_at += $smcFunc['strlen']($sentence);
 			if ($i >= $num_sentences - 1)
 				break;
 		}
 
-		$stopAt += ($num_sentences * 2);
+		$stop_at += $num_sentences * 2;
 
-		return trim($smcFunc['substr']($body, 0, $stopAt));
+		return trim($smcFunc['substr']($text, 0, $stop_at));
 	}
 
 	/**

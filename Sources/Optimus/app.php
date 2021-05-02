@@ -9,14 +9,14 @@
  * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.1
+ * @version 2.7.2
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
 defined('OP_NAME') || define('OP_NAME', 'Optimus');
-defined('OP_VERSION') || define('OP_VERSION', '2.7.1');
+defined('OP_VERSION') || define('OP_VERSION', '2.7.2');
 
 function optimus_autoloader($classname)
 {

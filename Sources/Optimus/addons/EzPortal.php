@@ -36,7 +36,7 @@ class EzPortal
 	 */
 	public static function meta()
 	{
-		global $smcFunc, $context, $txt, $ezpSettings, $boardurl, $scripturl;
+		global $smcFunc, $context, $ezpSettings, $boardurl, $scripturl;
 
 		if (!isset($_GET['p']) || empty(self::isInstalled()))
 			return;
@@ -60,14 +60,7 @@ class EzPortal
 			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $content, $value);
 			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
 
-			$body = strip_tags($row['description'] ?: $content);
-			$body = Subs::getTeaser($body);
-			$body = str_replace($txt['quote'], '', $body);
-			$body = explode('&nbsp;', $body)[0];
-			$body = shorten_subject(trim($body), 130);
-
-			// If there is an intro, use it as a description, otherwise - an excerpt from the text of the page
-			$context['optimus_description'] = $body;
+			$context['optimus_description'] = Subs::getTeaser($row['description'] ?: $content);
 			$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $row['date']);
 
 			if (!empty($ezpSettings['ezp_pages_seourls']))

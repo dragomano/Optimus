@@ -247,12 +247,12 @@ function template_metatags()
 				<div class="centertext" style="display: none;" id="newtag_link">
 					<a href="#" onclick="addNewTag(); return false;">', $txt['optimus_meta_addtag'], '</a>
 				</div>
-				<script type="text/javascript"><!-- // --><![CDATA[
+				<script type="text/javascript">
 					document.getElementById("newtag_link").style.display = "";
 					function addNewTag() {
 						setOuterHTML(document.getElementById("moreTags"), \'<div class="centertext" style="margin-bottom: 1px"><input type="text" name="custom_tag_name[]" size="24" class="input_text" /> => <input type="text" name="custom_tag_value[]" size="40" class="input_text" /><\' + \'/div><div id="moreTags"><\' + \'/div>\');
 					}
-				// ]]></script>
+				</script>
 				<hr class="hrcolor clear" />
 				<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 				<div class="righttext"><input type="submit" class="button_submit" value="', $txt['save'], '" /></div>
@@ -393,19 +393,19 @@ function template_sitemap_xml()
 	foreach ($context['sitemap']['items'] as $item) {
 		echo '
 	<url>
-		<loc><![CDATA[', $item['loc'], ']]></loc>';
+		<loc>', $item['loc'], '</loc>';
 
 		if (!empty($item['lastmod']))
 			echo '
-		<lastmod><![CDATA[', $item['lastmod'], ']]></lastmod>';
+		<lastmod>', $item['lastmod'], '</lastmod>';
 
 		if (!empty($item['changefreq']))
 			echo '
-		<changefreq><![CDATA[', $item['changefreq'], ']]></changefreq>';
+		<changefreq>', $item['changefreq'], '</changefreq>';
 
 		if (!empty($item['priority']))
 			echo '
-		<priority><![CDATA[', $item['priority'], ']]></priority>';
+		<priority>', $item['priority'], '</priority>';
 
 		echo '
 	</url>';
@@ -426,7 +426,7 @@ function template_sitemapindex_xml()
 	foreach ($context['sitemap']['items'] as $item)
 		echo '
 	<sitemap>
-		<loc><![CDATA[', $item['loc'], ']]></loc>
+		<loc>', $item['loc'], '</loc>
 	</sitemap>';
 
 	echo '

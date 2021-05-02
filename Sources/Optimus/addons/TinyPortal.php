@@ -36,7 +36,7 @@ class TinyPortal
 	 */
 	public static function meta()
 	{
-		global $smcFunc, $txt, $context, $scripturl;
+		global $smcFunc, $context, $txt, $scripturl;
 
 		if (!isset($_GET['page']) || empty(self::isInstalled()))
 			return;
@@ -57,22 +57,16 @@ class TinyPortal
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			censorText($row['body']);
 
-			$body = $row['type'] == 'bbc' ? parse_bbc($row['body'], false) : ($row['type'] == 'php' ? '<?php' . $row['body'] : $row['body']);
+			$body = $row['type'] == 'bbc' ? parse_bbc($row['body'], false) : ($row['type'] == 'php' ? 'PHP ' . $txt['code'] : $row['body']);
 
 			// Looking for an image in the text of the page
 			$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $body, $value);
 			$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
 
 			if ($row['useintro'] && !empty($row['intro'])) {
-				$intro = $row['type'] == 'bbc' ? parse_bbc($row['intro'], false) : ($row['type'] == 'php' ? '<?php' . $row['intro'] : $row['intro']);
-				$intro = Subs::getTeaser($intro);
-				$intro = explode('&nbsp;', $intro)[0];
-				$intro = shorten_subject(trim($intro), 130);
+				$intro = $row['type'] == 'bbc' ? Subs::getTeaser($row['intro']) : ($row['type'] == 'php' ? 'PHP ' . $txt['code'] : Subs::getTeaser($row['intro'], 2, false));
 			} else {
-				$body = Subs::getTeaser($body);
-				$body = str_replace($txt['quote'], '', $body);
-				$body = explode('&nbsp;', $body)[0];
-				$body = shorten_subject(trim($body), 130);
+				$body = Subs::getTeaser($body, 2, false);
 			}
 
 			// If there is an intro, use it as a description, otherwise - an excerpt from the text of the page
