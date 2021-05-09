@@ -90,8 +90,8 @@ $txt['optimus_useful']      = '';
 $txt['optimus_sitemap_title'] = 'Sitemap';
 $txt['optimus_sitemap_desc']  = 'Do you want a simple sitemap? Optimus can generate sitemap.xml for small forums. Just enable this option below. This sitemap will be updated depending on settings in the <a href="%1$s">Task Manager</a>.';
 
-$txt['optimus_sitemap_enable']             = 'Activate the Sitemap area';
-$txt['optimus_sitemap_link']               = 'Show the Sitemap link on the footer';
+$txt['optimus_sitemap_enable']             = 'Activate the Sitemap';
+$txt['optimus_sitemap_link']               = 'Show the Sitemap link on the footer (if the sitemap.xml is exist)';
 $txt['optimus_remove_previous_xml_files']  = 'Remove previously generated sitemap*.xml files';
 $txt['optimus_main_page_frequency']        = 'The update frequency of the main page';
 $txt['optimus_main_page_frequency_set']    = array('Constant (always)', 'Depending on the date of the last message');

@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.2
+ * @version 2.7.3
  */
 
 if (!defined('SMF'))
@@ -364,12 +364,12 @@ class Subs
 	 */
 	public static function addSitemapLink()
 	{
-		global $modSettings, $txt, $forum_copyright, $boardurl;
+		global $modSettings, $txt, $boarddir, $forum_copyright, $boardurl;
 
 		if (empty($modSettings['optimus_sitemap_enable']) || !isset($txt['optimus_sitemap_title']))
 			return;
 
-		if (!empty($modSettings['optimus_sitemap_link']))
+		if (!empty($modSettings['optimus_sitemap_link']) && is_file($boarddir . '/sitemap.xml'))
 			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';
 	}
 
@@ -377,7 +377,7 @@ class Subs
 	 * Получаем все вложенные директории по указанному пути
 	 *
 	 * @param string $path
-	 * @param array $ret
+	 * @param array $nested_dirs
 	 * @return array
 	 */
 	public static function getNestedDirs($path, $nested_dirs = array())

@@ -92,7 +92,7 @@ $txt['optimus_sitemap_title'] = 'Карта форума';
 $txt['optimus_sitemap_desc']  = 'Optimus умеет генерировать простую xml-карту, для небольших форумов. Обновляться такая карта будет в зависимости от настроек в <a href="%1$s">Диспетчере задач</a>.';
 
 $txt['optimus_sitemap_enable']             = 'Активировать карту форума';
-$txt['optimus_sitemap_link']               = 'Показывать ссылку на карту в подвале';
+$txt['optimus_sitemap_link']               = 'Показывать ссылку на карту в подвале (если файл sitemap.xml существует)';
 $txt['optimus_remove_previous_xml_files']  = 'Удалять ранее созданные файлы sitemap*.xml';
 $txt['optimus_main_page_frequency']        = 'Частота изменения главной страницы';
 $txt['optimus_main_page_frequency_set']    = array('Постоянная (always)', 'В зависимости от даты последнего сообщения');
