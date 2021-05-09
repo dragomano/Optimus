@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2021 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7
+ * @version 2.7.3
  */
 
 if (!defined('SMF'))
@@ -359,7 +359,7 @@ class Settings
 	 */
 	public static function sitemapSettings()
 	{
-		global $context, $txt, $scripturl, $modSettings, $smcFunc, $sourcedir;
+		global $context, $txt, $scripturl, $modSettings, $smcFunc;
 
 		$context['page_title'] .= ' - ' . $txt['optimus_sitemap_title'];
 		$context['settings_title'] = $txt['optimus_sitemap_title'];
@@ -403,7 +403,8 @@ class Settings
 			);
 
 			if (!empty($_POST['optimus_sitemap_enable'])) {
-				require_once($sourcedir . '/ScheduledTasks.php');
+				scheduled_optimus_sitemap();
+
 				CalculateNextTrigger('optimus_sitemap');
 			}
 
