@@ -250,7 +250,7 @@ class Subs
 			if (!empty($row['modified_time']))
 				$context['optimus_og_type']['article']['modified_time'] = date('Y-m-d\TH:i:s', $row['modified_time']);
 
-			$context['optimus_og_type']['article']['section'] = $board_info['name'];
+			$context['optimus_og_type']['article']['section'] = htmlspecialchars(strtr(strip_tags($board_info['name']), array('&amp;' => '&')));
 		}
 
 		$smcFunc['db_free_result']($request);
