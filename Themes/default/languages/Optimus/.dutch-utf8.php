@@ -10,7 +10,7 @@
 $txt['optimus_title'] = 'Zoekmachine Optimalisatie';
 
 $txt['optimus_base_title'] = 'Algemene instellingen';
-$txt['optimus_base_desc']  = 'Versie van de Mod: <strong>%1$s</strong>, PHP versie: <strong>%2$s</strong>, %3$s versie: <strong>%4$s</strong>.<br>Bugs en features van de mod kunnen besproken worden op <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.com</a>.<br>Je kunt ook <a class="bbc_link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SJLXR6X7XGEDC">een eenmalige donatie doen via PayPal</a>.';
+$txt['optimus_base_desc']  = 'Versie van de Mod: <strong>%1$s</strong>, PHP versie: <strong>%2$s</strong>, %3$s versie: <strong>%4$s</strong>.<br>Bugs en features van de mod kunnen besproken worden op <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.org</a>.<br>Je kunt ook <a class="bbc_link" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SJLXR6X7XGEDC">een eenmalige donatie doen via PayPal</a>.';
 
 $txt['optimus_main_page']   = 'Homepage';
 $txt['optimus_base_info']   = 'Inhoud van de \'description tag\' kan worden gebruikt door een robot om te bepalen of een pagina aan de zoektermen voldoet.';
