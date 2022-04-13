@@ -1,0 +1,8 @@
+[center][color=red][size=16pt][b]Optimus[/b][/size][/color]
+
+[color=green]Перед вами мод, который, возможно, поможет вам решить ряд проблем, связанных с индексацией форума в поисковиках.[/color][/center][hr]Мод распространяется по лицензии [url=https://opensource.org/licenses/artistic-license-2.0]Artistic License 2.0[/url]
+
+Сторонние используемые скрипты:
+[list]
+[li][url=https://github.com/select2/select2]Select2[/url], jQuery-компонент для полей списков, лицензия [url=https://github.com/select2/select2/blob/develop/LICENSE.md]MIT[/url][/li]
+[/list]

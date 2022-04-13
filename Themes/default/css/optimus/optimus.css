@@ -1,0 +1,9 @@
+.optimus textarea {width:100%}
+td > input {width: 100%}
+@media screen and (max-width:720px) {
+	.metatags th:first-child, .metatags td:first-child {display:none}
+	td input {display:block;width:100%}
+	input[name^=custom_tag_] {width:100%}
+	#optimus_favicon_api_key {width:100%}
+	#form_button {float:none!important;margin-left:0;width:100%}
+}

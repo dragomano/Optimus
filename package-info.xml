@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Bugo:Optimus</id>
+	<name>Optimus</name>
+	<version>2.10.5 [12.04.22]</version>
+	<type>modification</type>
+
+	<install for="2.1.*">
+		<readme parsebbc="true" type="file">readme/english.txt</readme>
+		<readme parsebbc="true" type="file" lang="russian">readme/russian.txt</readme>
+		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
+		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
+		<hook hook="integrate_pre_include" file="$sourcedir/Optimus/app.php" />
+		<database>database.php</database>
+		<redirect url="?action=admin;area=optimus" timeout="1000" />
+	</install>
+
+	<uninstall for="2.1.*">
+		<hook hook="integrate_pre_include" file="$sourcedir/Optimus/app.php" reverse="true" />
+		<code>uninstall.php</code>
+		<remove-file name="$themedir/Optimus.template.php" />
+		<remove-file name="$themedir/images/optimus.png" />
+		<remove-file name="$themedir/images/optimus_large.png" />
+		<remove-file name="$themedir/scripts/optimus_apache.js" />
+		<remove-dir name="$themedir/css/optimus" />
+		<remove-dir name="$sourcedir/Optimus" />
+		<remove-dir name="$languagedir/Optimus" />
+	</uninstall>
+
+</package-info>
