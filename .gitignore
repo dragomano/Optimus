@@ -1,1 +1,5 @@
 .idea/
+.vscode/
+Themes/**/Optimus.dutch.php
+Themes/**/Optimus.turkish.php
+Themes/**/Optimus.russian.php

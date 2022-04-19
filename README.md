@@ -3,8 +3,9 @@
 ![License](https://img.shields.io/github/license/dragomano/optimus)
 ![Hooks only: Yes](https://img.shields.io/badge/Hooks%20only-YES-blue)
 ![PHP](https://img.shields.io/badge/PHP-^7.4-blue.svg?style=flat)
+[![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
 
-* **Tested on:** PHP 7.4.28 / MariaDB 10.6.5
+* **Tested on:** PHP 7.4.29 / MariaDB 10.6.5
 * **Languages:** English, Russian, Dutch, Turkish
 
 ## Description

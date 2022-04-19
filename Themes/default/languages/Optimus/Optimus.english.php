@@ -22,7 +22,7 @@ $txt['optimus_board_extend_title'] = 'Add forum name to board titles';
 $txt['optimus_board_extend_title_set'] = array('None', 'Before board title', 'After board title');
 $txt['optimus_topic_extend_title'] = 'Add title of section and forum to topic titles';
 $txt['optimus_topic_extend_title_set'] = array('None', 'Before topic title', 'After topic title');
-$txt['optimus_topic_description'] = 'Display the topic first message snippet as the meta-tag <strong>description</strong><br><span class="smalltext">Use <a href="https://custom.simplemachines.org/mods/index.php?mod=3012" target="_blank" rel="noopener">Topic Descriptions mod</a> to create short descriptions for topics.</span>';
+$txt['optimus_topic_description'] = 'Display the topic first message snippet as the meta-tag <strong>description</strong>';
 $txt['optimus_allow_change_topic_desc'] = 'Allow a separate field for the topic description';
 $txt['optimus_allow_change_topic_desc_subtext'] = 'It is displayed when editing a topic.';
 $txt['optimus_allow_change_topic_keywords'] = 'Allow a separate field for the topic keywords';
@@ -67,7 +67,7 @@ $txt['optimus_meta_info'] = 'Please use only the values from <strong>content</st
 $txt['optimus_search_engines'] = array(
 	'Google' => array('google-site-verification','https://www.google.com/webmasters/tools/', 'Google Search Console'),
 	'Bing' => array('msvalidate.01', 'https://www.bing.com/toolbox/webmaster/', 'Bing Webmaster'),
-	'Yandex' => array('yandex-verification', 'https://webmaster.yandex.com/', 'Yandex.Webmaster')
+	'Yandex' => array('yandex-verification', 'https://webmaster.yandex.com/', 'Yandex.Webmaster'),
 );
 
 
@@ -83,18 +83,14 @@ $txt['optimus_counters_css'] = 'Appearance for visible counters (CSS)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 $txt['optimus_ignored_actions_subtext'] = 'Counters will not be loaded on these areas!';
 
-$txt['optimus_robots_title'] = 'Customizing a robots.txt';
+$txt['optimus_robots_title'] = 'Manage robots.txt';
 $txt['optimus_robots_desc'] = 'The rule generator is updated depending on the installed mods and some settings of your SMF.';
 
-$txt['optimus_manage'] = 'Manage robots.txt';
 $txt['optimus_rules'] = 'Rule generator';
 $txt['optimus_rules_hint'] = 'You can use these rules as an example for your robots.txt (on the right textarea):';
 $txt['optimus_links_title'] = 'Useful links';
-$txt['optimus_links'] = array(
-	'Create a robots.txt file' => 'https://support.google.com/webmasters/answer/6062596?hl=en',
-	'Using robots.txt' => 'https://yandex.com/support/webmaster/controlling-robot/robots-txt.html?lang=en',
-	'Technical audit of the entire website' => 'https://goo.gl/itx8Fp'
-);
+$txt['optimus_links'][0] = array('Create a robots.txt file', 'https://support.google.com/webmasters/answer/6062596?hl=en');
+$txt['optimus_links'][1] = array('Using robots.txt', 'https://yandex.com/support/webmaster/controlling-robot/robots-txt.html?lang=en');
 
 $txt['optimus_htaccess_title'] = 'Manage .htaccess';
 $txt['optimus_htaccess_desc'] = 'Here you can modify the .htaccess file for your forum. Be careful!';

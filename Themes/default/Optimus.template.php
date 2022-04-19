@@ -223,7 +223,7 @@ function template_robots()
 	echo '
 	<form action="', $context['post_url'], '" method="post">
 		<div class="cat_bar">
-			<h3 class="catbg">', $txt['optimus_manage'], '</h3>
+			<h3 class="catbg">', $txt['optimus_robots_title'], '</h3>
 		</div>
 		<div class="optimus roundframe">
 			<div class="half_content">
@@ -240,9 +240,9 @@ function template_robots()
 				<div class="inner">
 					<ul class="bbc_list">';
 
-	foreach ($txt['optimus_links'] as $ankor => $url) {
+	foreach ($txt['optimus_links'] as $link) {
 		echo '
-							<li><a href="', $url, '" target="_blank">', $ankor, '</a></li>';
+							<li><a href="', $link[1], '" target="_blank">', $link[0], '</a></li>';
 	}
 
 	echo '
