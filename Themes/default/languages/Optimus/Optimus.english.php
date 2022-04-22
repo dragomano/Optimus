@@ -71,15 +71,15 @@ $txt['optimus_search_engines'] = array(
 );
 
 
-$txt['optimus_counters'] = 'Counters';
-$txt['optimus_counters_desc'] = 'You can add and change any counters in this section to log visits of your forum.';
+$txt['optimus_counters'] = 'AdSense/JS code';
+$txt['optimus_counters_desc'] = 'You can add and change any JS code in this section to log stats/visits of your forum.';
 
-$txt['optimus_head_code'] = 'Invisible counters with loading in the <strong>head</strong> section';
-$txt['optimus_head_code_subtext'] = 'For example, <a href="https://www.google.com/analytics/sign_up.html" target="_blank" rel="noopener" class="bbc_link">Google Analytics</a>';
-$txt['optimus_stat_code'] = 'Invisible counters with loading in the <strong>body</strong> section';
+$txt['optimus_head_code'] = 'Invisible JS with loading in the <strong>head</strong> section';
+$txt['optimus_head_code_subtext'] = 'For example, <a href="https://www.google.com/analytics/sign_up.html" target="_blank" rel="noopener" class="bbc_link">Google Analytics</a>, or <a href="https://www.google.com/adsense/start/" target="_blank" rel="noopener" class="bbc_link">Google AdSense</a>';
+$txt['optimus_stat_code'] = 'Invisible JS with loading in the <strong>body</strong> section';
 $txt['optimus_stat_code_subtext'] = 'For example, <a href="https://matomo.org/" target="_blank" rel="noopener" class="bbc_link">Matomo</a> etc';
-$txt['optimus_count_code'] = 'Visible counters';
-$txt['optimus_counters_css'] = 'Appearance for visible counters (CSS)';
+$txt['optimus_count_code'] = 'Visible JS (image counters, banners, etc)';
+$txt['optimus_counters_css'] = 'Appearance for visible counters (CSS code)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 $txt['optimus_ignored_actions_subtext'] = 'Counters will not be loaded on these areas!';
 
