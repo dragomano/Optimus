@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Bugo\Optimus;
 
@@ -678,7 +678,7 @@ final class Keywords
 
 		// Check if the keywords have been changed
 		$this->displayTopic();
-		$current_keywords = array_values($context['optimus_keywords']);
+		$current_keywords = empty($context['optimus_keywords']) ? [] : array_values($context['optimus_keywords']);
 
 		if ($keywords == $current_keywords)
 			return;
