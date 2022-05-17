@@ -8,10 +8,8 @@ elseif(!defined('SMF'))
 if (version_compare(PHP_VERSION, '7.4', '<'))
 	die('This mod needs PHP 7.4 or greater. You will not be able to install/use this mod, contact your host and ask for a php upgrade.');
 
-if ((SMF == 'SSI') && !$user_info['is_admin'])
+if ((SMF === 'SSI') && !$user_info['is_admin'])
 	die('Admin privileges required.');
-
-db_extend('packages');
 
 $tables[] = array(
 	'name'    => 'optimus_keywords',
@@ -104,8 +102,10 @@ $tables[] = array(
 	)
 );
 
+db_extend('packages');
+
 foreach($tables as $table)
-	$smcFunc['db_create_table']('{db_prefix}' . $table['name'], $table['columns'], $table['indexes'], array(), 'ignore');
+	$smcFunc['db_create_table']('{db_prefix}' . $table['name'], $table['columns'], $table['indexes']);
 
 // Optimus description for topics table
 $smcFunc['db_add_column'](
@@ -135,5 +135,5 @@ $smcFunc['db_add_column'](
 
 updateSettings(array('optimus_sitemap_enable' => 0));
 
-if (SMF == 'SSI')
+if (SMF === 'SSI')
 	echo 'Database changes are complete! Please wait...';
