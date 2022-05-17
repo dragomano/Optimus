@@ -19,9 +19,9 @@ $txt['optimus_description_subtext'] = 'It will be used as content of the meta-ta
 
 $txt['optimus_all_pages'] = 'Topic & board pages';
 $txt['optimus_board_extend_title'] = 'Add forum name to board titles';
-$txt['optimus_board_extend_title_set'] = array('None', 'Before board title', 'After board title');
+$txt['optimus_board_extend_title_set'] = array('Don\'t add', 'Before board title', 'After board title');
 $txt['optimus_topic_extend_title'] = 'Add title of section and forum to topic titles';
-$txt['optimus_topic_extend_title_set'] = array('None', 'Before topic title', 'After topic title');
+$txt['optimus_topic_extend_title_set'] = array('Don\'t add', 'Before topic title', 'After topic title');
 $txt['optimus_topic_description'] = 'Display the topic first message snippet as the meta-tag <strong>description</strong>';
 $txt['optimus_allow_change_topic_desc'] = 'Allow a separate field for the topic description';
 $txt['optimus_allow_change_topic_desc_subtext'] = 'It is displayed when editing a topic.';
@@ -60,7 +60,7 @@ $txt['optimus_meta_desc'] = 'On this page you can add any regular/verification c
 
 $txt['optimus_meta_addtag'] = 'Click here to add a new tag';
 $txt['optimus_meta_customtag'] = 'Custom meta tag';
-$txt['optimus_meta_tools'] = 'Search engine (Tools)';
+$txt['optimus_meta_tools'] = 'Search engine (Tool)';
 $txt['optimus_meta_name'] = 'Name';
 $txt['optimus_meta_content'] = 'Content';
 $txt['optimus_meta_info'] = 'Please use only the values from <strong>content</strong> parameter of the meta tags.<br>Example: <span class="smalltext">&lt;meta name="<strong>NAME</strong>" content="<strong>VALUE</strong>"&gt;</span>';
