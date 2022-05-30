@@ -9,18 +9,7 @@ function template_favicon()
 		<h3 class="catbg">', $txt['optimus_favicon_title'], '</h3>
 	</div>
 	<div class="optimus windowbg noup">
-		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">';
-
-	if (op_server('SERVER_ADDR') !== '127.0.0.1') {
-		echo '
-			<div class="title_bar centertext">', $txt['optimus_current_icon'], '</div>
-			<div class="descbox centertext">
-				<div class="half_content">Google -> <img class="centericon" src="https://www.google.com/s2/favicons?domain=', op_server('HTTP_HOST'), '" alt="Google"></div>
-				<div class="half_content">Yandex -> <img class="centericon" src="https://favicon.yandex.net/favicon/', op_server('HTTP_HOST'), '" alt="Yandex"></div>
-			</div>';
-	}
-
-	echo '
+		<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
 			<div class="title_bar centertext">
 				<label for="optimus_favicon_text">', $txt['optimus_favicon_text'], '</label>
 			</div>
