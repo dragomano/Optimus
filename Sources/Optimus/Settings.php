@@ -357,7 +357,7 @@ final class Settings
 
 		$config_vars = [];
 
-		$robots_path = (op_server('DOCUMENT_ROOT') ?: $boarddir) . '/robots.txt';
+		$robots_path = (op_server('document_root') ?: $boarddir) . '/robots.txt';
 		$context['robots_content'] = is_writable($robots_path) ? file_get_contents($robots_path) : '';
 
 		(new Robots())->generate();
@@ -386,7 +386,7 @@ final class Settings
 
 		$config_vars = [];
 
-		$htaccess_path = (op_server('DOCUMENT_ROOT') ?: $boarddir) . '/.htaccess';
+		$htaccess_path = (op_server('document_root') ?: $boarddir) . '/.htaccess';
 		$context['htaccess_content'] = is_writable($htaccess_path) ? file_get_contents($htaccess_path) : '';
 
 		if (op_is_get('save')) {

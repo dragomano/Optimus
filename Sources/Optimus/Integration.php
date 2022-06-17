@@ -234,7 +234,7 @@ final class Integration
 	{
 		global $context;
 
-		if (empty($context['current_action']) && empty(op_server('QUERY_STRING')) && empty(op_server('argv')) && is_on('optimus_description')) {
+		if (empty($context['current_action']) && empty(op_server('query_string')) && empty(op_server('argv')) && is_on('optimus_description')) {
 			$context['meta_description'] = op_xss(op_config('optimus_description'));
 		}
 	}

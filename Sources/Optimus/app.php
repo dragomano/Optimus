@@ -52,8 +52,13 @@ if (! function_exists('op_global')) {
 }
 
 if (! function_exists('op_server')) {
-	function op_server($name)
+	function op_server($name = '')
 	{
+		if (empty($name))
+			return $_SERVER;
+
+		$name = strtoupper($name);
+
 		return $_SERVER[$name] ?? getenv($name) ?? null;
 	}
 }
