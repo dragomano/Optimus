@@ -385,21 +385,31 @@ final class Sitemap
 
 	private static function createFile(string $path, string $data): bool
 	{
-		if (! $fp = fopen($path, 'w'))
+		fclose(fopen($path, "a+b"));
+
+		if (! $fp = fopen($path, "r+b"))
 			return false;
 
 		flock($fp, LOCK_EX);
 		fwrite($fp, $data);
+		fflush($fp);
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
-		// If filesize > 50MB, then create gz version | Если размер файла превышает 50 МБ, создадим упакованную gz-версию
+		// If filesize > 50MB, then create gz version
 		if (filesize($path) > (50 * 1024 * 1024)) {
-			$data   = implode('', file($path));
+			fclose(fopen($path . '.gz', "a+b"));
+
+			if (! $fpgz = fopen($path . '.gz', 'r+b'))
+				return false;
+
+			flock($fpgz, LOCK_EX);
+			$data = implode('', file($path));
 			$gzdata = gzencode($data, 9);
-			$fp     = fopen($path . '.gz', 'w');
-			fwrite($fp, $gzdata);
-			fclose($fp);
+			fwrite($fpgz, $gzdata);
+			fflush($fpgz);
+			flock($fpgz, LOCK_UN);
+			fclose($fpgz);
 
 			return true;
 		}
