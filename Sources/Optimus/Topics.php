@@ -192,7 +192,7 @@ final class Topics
 			SET optimus_description = {string:description}
 			WHERE id_topic = {int:current_topic}',
 			array(
-				'description'   => shorten_subject($description, 252),
+				'description'   => shorten_subject($description, 200),
 				'current_topic' => $topic
 			)
 		);
