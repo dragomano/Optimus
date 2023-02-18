@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.elkarte.net/site/package-info" xmlns:smf="http://www.elkarte.net/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>0.4</version>
+	<version>0.5</version>
 	<type>addon</type>
 
 	<install for="1.1 - 1.1.99">
@@ -14,7 +14,7 @@
 		<require-file name="sources/subs/Optimus.class.php" destination="SUBSDIR" />
 		<require-file name="sources/subs/ScheduledTask/OptimusSitemap.php" destination="SUBSDIR/ScheduledTask" />
 		<require-dir name="default" destination="BOARDDIR/themes">Template &amp; Language files</require-dir>
-		<database>settings.php</database>
+		<database>install.php</database>
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 

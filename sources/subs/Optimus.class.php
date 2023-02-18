@@ -6,14 +6,11 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.4
+ * @version 0.5
  */
-
-if (!defined('ELK'))
-	die('Hacking attempt...');
 
 class Optimus
 {
@@ -24,11 +21,11 @@ class Optimus
 	 */
 	public static function hooks()
 	{
-		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false);
-		add_integration_function('integrate_credits', __CLASS__ . '::credits', false);
-		add_integration_function('integrate_buffer', __CLASS__ . '::buffer', false);
-		add_integration_function('integrate_admin_areas', __CLASS__ . '::adminAreas', false);
+		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', __FILE__, false);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', __FILE__, false);
+		add_integration_function('integrate_credits', __CLASS__ . '::credits', __FILE__, false);
+		add_integration_function('integrate_buffer', __CLASS__ . '::buffer', __FILE__, false);
+		add_integration_function('integrate_admin_areas', __CLASS__ . '::adminAreas', __FILE__, false);
 	}
 
 	/**
@@ -45,6 +42,12 @@ class Optimus
 		// Front page title
 		if (!empty($modSettings['optimus_forum_index']))
 			$txt['forum_index'] = $modSettings['optimus_forum_index'];
+
+		// Front page description
+		if (empty($context['current_action']) || in_array($context['current_action'], array('forum', 'community'))) {
+			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']) && !empty($modSettings['optimus_description']))
+				$context['page_description'] = Util::htmlspecialchars($modSettings['optimus_description']);
+		}
 
 		// Favicon
 		if (!empty($modSettings['optimus_favicon_text'])) {
@@ -91,6 +94,51 @@ class Optimus
 			if (!empty($modSettings['optimus_count_code']) && !empty($modSettings['optimus_counters_css']))
 				$context['html_headers'] .= "\n\t" . '<style>' . $modSettings['optimus_counters_css'] . '</style>';
 		}
+	}
+
+	/**
+	 * Добавляем различные скрипты в код страниц, меняем переменные, подключаем копирайт
+	 *
+	 * @return void
+	 */
+	public static function menuButtons()
+	{
+		global $modSettings, $context, $boarddir, $forum_copyright, $boardurl, $txt;
+
+		// JSON-LD
+		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
+			$context['insert_after_template'] .= '
+	<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "BreadcrumbList",
+		"itemListElement": [';
+
+			$i = 1;
+			foreach ($context['linktree'] as $id => $data)
+				$list_item[$id] = '{
+			"@type": "ListItem",
+			"position": ' . $i++ . ',
+			"item": {
+				"@id": "' . (isset($data['url']) ? $data['url'] : '') . '",
+				"name": "' . $data['name'] . '"
+			}
+		}';
+
+			if (!empty($list_item))
+				$context['insert_after_template'] .= implode(',', $list_item);
+
+			$context['insert_after_template'] .= ']
+	}
+	</script>';
+		}
+
+		self::processExtendTitles();
+		self::processErrorCodes();
+
+		// XML sitemap link
+		if (!empty($modSettings['optimus_sitemap_link']) && file_exists($boarddir . '/sitemap.xml'))
+			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_xml_link'] . '</a>';
 	}
 
 	/**
@@ -162,165 +210,6 @@ class Optimus
 	}
 
 	/**
-	 * Создаем описание страницы из первого сообщения
-	 *
-	 * @return void
-	 */
-	public static function getDescription()
-	{
-		global $context, $modSettings, $txt, $board_info;
-
-		if (empty($context['first_message']))
-			return;
-
-		$db = database();
-
-		$request = $db->query('substring', '
-			SELECT body, poster_time, modified_time
-			FROM {db_prefix}messages
-			WHERE id_msg = {int:id_msg}
-			LIMIT 1',
-			array(
-				'id_msg' => $context['first_message']
-			)
-		);
-
-		while ($row = $db->fetch_assoc($request))	{
-			censorText($row['body']);
-
-			$row['body'] = parse_bbc($row['body'], false);
-
-			// Ищем изображение в тексте сообщения
-			if (!empty($modSettings['optimus_og_image'])) {
-				$first_post_image = preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $row['body'], $value);
-				$context['optimus_og_image'] = $first_post_image ? array_pop($value) : null;
-			}
-
-			$row['body'] = explode("<br />", $row['body'])[0];
-			$row['body'] = explode("<hr />", $row['body'])[0];
-			$row['body'] = strip_tags($row['body']);
-			$row['body'] = str_replace($txt['quote'], '', $row['body']);
-
-			if (Util::strlen($row['body']) > 130)
-				$row['body'] = Util::substr($row['body'], 0, 127) . '...';
-
-			$context['optimus_description'] = $row['body'];
-
-			$context['optimus_og_type']['article'] = array(
-				'published_time' => date('Y-m-d\TH:i:s', $row['poster_time']),
-				'modified_time'  => !empty($row['modified_time']) ? date('Y-m-d\TH:i:s', $row['modified_time']) : null,
-				'section'        => $board_info['name']
-			);
-		}
-
-		$db->free_result($request);
-	}
-
-	/**
-	 * Достаем URL вложения из первого сообщения темы
-	 *
-	 * @return void
-	 */
-	public static function getOgImage()
-	{
-		global $modSettings, $context, $scripturl;
-
-		if (!allowedTo('view_attachments') || empty($modSettings['optimus_og_image']))
-			return;
-
-		$temp_image = $context['optimus_og_image'];
-
-		$db = database();
-
-		if (($context['optimus_og_image'] = cache_get_data('og_image_' . $context['current_topic'])) == null) {
-			$request = $db->query('', '
-				SELECT COALESCE(id_attach, 0) AS id
-				FROM {db_prefix}attachments
-				WHERE id_msg = {int:msg}
-					AND width > 0
-					AND height > 0
-				LIMIT 1',
-				array(
-					'msg' => $context['first_message']
-				)
-			);
-
-			list ($image_id) = $db->fetch_row($request);
-			$db->free_result($request);
-
-			if (!empty($image_id))
-				$context['optimus_og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . $image_id . ';image';
-			else
-				$context['optimus_og_image'] = $temp_image;
-
-			cache_put_data('og_image_' . $context['current_topic'], $context['optimus_og_image'], 360);
-		}
-	}
-
-	/**
-	 * Добавляем различные скрипты в код страниц, меняем переменные, подключаем копирайт
-	 *
-	 * @return void
-	 */
-	public static function menuButtons()
-	{
-		global $modSettings, $context, $boarddir, $forum_copyright, $boardurl, $txt;
-
-		// JSON-LD
-		if (!empty($modSettings['optimus_json_ld']) && empty($context['robot_no_index'])) {
-			$context['insert_after_template'] .= '
-	<script type="application/ld+json">
-	{
-		"@context": "http://schema.org",
-		"@type": "BreadcrumbList",
-		"itemListElement": [';
-
-			$i = 1;
-			foreach ($context['linktree'] as $id => $data)
-				$list_item[$id] = '{
-			"@type": "ListItem",
-			"position": ' . $i++ . ',
-			"item": {
-				"@id": "' . (isset($data['url']) ? $data['url'] : '') . '",
-				"name": "' . $data['name'] . '"
-			}
-		}';
-
-			if (!empty($list_item))
-				$context['insert_after_template'] .= implode(',', $list_item);
-
-			$context['insert_after_template'] .= ']
-	}
-	</script>';
-		}
-
-		// Front page description
-		if (empty($context['current_action']) || in_array($context['current_action'], array('forum', 'community'))) {
-			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']) && !empty($modSettings['optimus_description']))
-				$context['optimus_description'] = Util::htmlspecialchars($modSettings['optimus_description']);
-		}
-
-		self::processExtendTitles();
-		self::processErrorCodes();
-
-		// description & og:image
-		if (!empty($context['first_message'])) {
-			if (!empty($modSettings['optimus_topic_description'])) {
-				if (!empty($context['topic_description']))
-					$context['optimus_description'] = $context['topic_description'];
-				else
-					self::getDescription();
-			}
-
-			self::getOgImage();
-		}
-
-		// XML sitemap link
-		if (!empty($modSettings['optimus_sitemap_link']) && file_exists($boarddir . '/sitemap.xml'))
-			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_xml_link'] . '</a>';
-	}
-
-	/**
 	 * Выводим копирайты (куда без них)
 	 *
 	 * @param array $credits
@@ -328,7 +217,7 @@ class Optimus
 	 */
 	public static function credits(&$credits)
 	{
-		$credits['credits_addons'][] = '<a href="https://dragomano.ru/mods/optimus" target="_blank" rel="noopener">Optimus</a> &copy; 2010&ndash;2020, Bugo';
+		$credits['credits_addons'][] = '<a href="https://addons.elkarte.net/feature/Optimus.html" target="_blank" rel="noopener">Optimus</a> &copy; 2010&ndash;' . date('Y') . ' Bugo';
 	}
 
 	/**
@@ -346,11 +235,13 @@ class Optimus
 
 		$replacements = array();
 
-		// Description
-		if (!empty($context['optimus_description'])) {
-			$desc_old = '<meta name="description" content="' . $context['page_title_html_safe'] . '" />';
-			$desc_new = '<meta name="description" content="' . $context['optimus_description'] . '" />';
-			$replacements[$desc_old] = $desc_new;
+		// Description of the main forum page
+		if (empty($context['current_action']) || in_array($context['current_action'], array('forum', 'community'))) {
+			if (empty($_REQUEST['topic']) && empty($_REQUEST['board']) && !empty($modSettings['optimus_description'])) {
+				$desc_old = '<meta name="description" content="' . $context['page_title_html_safe'] . '" />';
+				$desc_new = '<meta name="description" content="' . $modSettings['optimus_description'] . '" />';
+				$replacements[$desc_old] = $desc_new;
+			}
 		}
 
 		// Metatags
@@ -375,46 +266,17 @@ class Optimus
 		$new_xmlns = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '">';
 		$replacements[$xmlns] = $new_xmlns;
 
-		$open_graph = '<meta property="og:title" content="' . (!empty($context['subject']) ? $context['subject'] : $context['page_title_html_safe']) . '" />';
+		if (!empty($modSettings['optimus_fb_appid'])) {
+			$facebook = '<meta property="fb:app_id" name="app_id" content="' . $modSettings['optimus_fb_appid'] . '" />';
 
-		$open_graph .= '
-	<meta property="og:type" content="' . $type . '" />';
-
-		if (!empty($context['optimus_og_type'])) {
-			$og_type = $context['optimus_og_type'][$type];
-			foreach ($og_type as $t_key => $t_value) {
-				$open_graph .= '
-	<meta property="' . $type . ':' . $t_key . '" content="' . $t_value . '" />';
-			}
+			$head_op = '<meta name="viewport"';
+			$op_head = $facebook . "\n\t" . $head_op;
+			$replacements[$head_op] = $op_head;
 		}
-
-		if (!empty($context['canonical_url']))
-			$open_graph .= '
-	<meta property="og:url" content="' . $context['canonical_url'] . '" />';
-
-		if (!empty($context['optimus_og_image']))
-			$open_graph .= '
-	<meta property="og:image" content="' . $context['optimus_og_image'] . '" />';
-
-		$open_graph .= '
-	<meta property="og:description" content="' . (!empty($context['optimus_description']) ? $context['optimus_description'] : $context['page_title_html_safe']) . '" />
-	<meta property="og:site_name" content="' . $mbname . '" />';
-
-		if (!empty($modSettings['optimus_fb_appid']))
-			$open_graph .= '
-	<meta property="fb:app_id" name="app_id" content="' . $modSettings['optimus_fb_appid'] . '" />';
-
-		$head_op = '<meta name="viewport"';
-		$op_head = $open_graph . "\n\t" . $head_op;
-		$replacements[$head_op] = $op_head;
 
 		if (!empty($modSettings['optimus_tw_cards'])) {
 			$twitter = '<meta name="twitter:card" content="summary">
 	<meta name="twitter:site" content="@' . $modSettings['optimus_tw_cards'] . '" />';
-
-			if (!empty($context['optimus_og_image']))
-				$twitter .= '
-	<meta name="twitter:image" content="' . $context['optimus_og_image'] . '" />';
 
 			$head_tw = '<meta name="description"';
 			$tw_head = $twitter . "\n\t" . $head_tw;

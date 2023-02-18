@@ -1,18 +1,18 @@
 <?php
 
-namespace ElkArte\sources\subs\ScheduledTask;
-
 /**
  * OptimusSitemap.php
  *
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.4
+ * @version 0.5
  */
+
+namespace ElkArte\sources\subs\ScheduledTask;
 
 /**
  * Вызов генерации карты через Диспетчер задач

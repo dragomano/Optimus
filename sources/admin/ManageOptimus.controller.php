@@ -6,14 +6,11 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.4
+ * @version 0.5
  */
-
-if (!defined('ELK'))
-	die('Hacking attempt...');
 
 class ManageOptimus_Controller extends Action_Controller
 {
@@ -104,7 +101,6 @@ class ManageOptimus_Controller extends Action_Controller
 			array('title', 'optimus_all_pages'),
 			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
 			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
-			array('check', 'optimus_topic_description'),
 			array('check', 'optimus_404_status')
 		);
 
@@ -138,7 +134,6 @@ class ManageOptimus_Controller extends Action_Controller
 
 		$config_vars = array(
 			array('title', 'optimus_extra_title'),
-			array('check',  'optimus_og_image', 50),
 			array('text', 'optimus_fb_appid', 40),
 			array('text', 'optimus_tw_cards', 40, 'preinput' => '@'),
 			array('check', 'optimus_json_ld')
@@ -148,7 +143,7 @@ class ManageOptimus_Controller extends Action_Controller
 		$settingsForm->setConfigVars($config_vars);
 
 		if (isset($this->_req->query->save)) {
-			$_POST['optimus_tw_cards'] = str_replace('@', '', $_POST['optimus_tw_cards']);
+			$this->_req->post['optimus_tw_cards'] = str_replace('@', '', $this->_req->post['optimus_tw_cards']);
 
 			checkSession();
 
@@ -209,20 +204,20 @@ class ManageOptimus_Controller extends Action_Controller
 
 		$config_vars = array();
 
-		$meta = array();
-		if (isset($_POST['custom_tag_name'])) {
-			foreach ($_POST['custom_tag_name'] as $key => $value) {
-				if (empty($value))
-					unset($_POST['custom_tag_name'][$key], $_POST['custom_tag_value'][$key]);
-				else
-					$meta[$_POST['custom_tag_name'][$key]] = $_POST['custom_tag_value'][$key];
-			}
-		}
-
 		$settingsForm = new Settings_Form(Settings_Form::DB_ADAPTER);
 		$settingsForm->setConfigVars($config_vars);
 
 		if (isset($this->_req->query->save)) {
+			$meta = array();
+			if (isset($this->_req->post['custom_tag_name'])) {
+				foreach ($this->_req->post['custom_tag_name'] as $key => $value) {
+					if (empty($value))
+						unset($this->_req->post['custom_tag_name'][$key], $this->_req->post['custom_tag_value'][$key]);
+					else
+						$meta[$this->_req->post['custom_tag_name'][$key]] = $this->_req->post['custom_tag_value'][$key];
+				}
+			}
+
 			checkSession();
 
 			$settingsForm->setConfigValues((array) $this->_req->post);
@@ -289,7 +284,7 @@ class ManageOptimus_Controller extends Action_Controller
 		$context['sub_template'] = 'robots';
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=robots;save';
 
-		$common_rules_path = (isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : '') . "/robots.txt";
+		$common_rules_path = (isset($_SERVER['DOCUMENT_ROOT']) ? $_SERVER['DOCUMENT_ROOT'] : '') . '/robots.txt';
 
 		clearstatcache();
 
@@ -301,10 +296,8 @@ class ManageOptimus_Controller extends Action_Controller
 		if (isset($this->_req->query->save)) {
 			checkSession();
 
-			if (isset($_POST['robots'])) {
-				$common_rules = stripslashes($_POST['robots']);
-				file_put_contents($common_rules_path, $common_rules);
-			}
+			$common_rules = stripslashes($this->_req->post['robots']);
+			file_put_contents($common_rules_path, $common_rules);
 
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
@@ -429,7 +422,7 @@ class ManageOptimus_Controller extends Action_Controller
 				$new_robots[] = $line;
 		}
 
-		$new_robots = implode("<br>", str_replace("|", "", $new_robots));
+		$new_robots = implode('<br>', str_replace('|', '', $new_robots));
 		$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
 	}
 }

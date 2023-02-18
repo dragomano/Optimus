@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://addons.elkarte.net/feature/Optimus.html
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2020 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 0.4
+ * @version 0.5
  */
 
 function template_favicon()
@@ -229,21 +229,6 @@ function template_robots()
 				<div class="content">
 					<h4>', $context['robots_txt_exists'] ? '<a href="/robots.txt">robots.txt</a>' : 'robots.txt', '</h4>
 					<textarea rows="22" name="robots">', $context['robots_content'], '</textarea>
-				</div>
-			</div>
-			<hr class="clear">
-			<div class="min">
-				<div class="content">
-					<h4>', $txt['optimus_links_title'], '</h4>
-					<ul class="smalltext">';
-
-	foreach ($txt['optimus_links'] as $ankor => $url) {
-		echo '
-						<li><a href="', $url, '" target="_blank">', $ankor, '</a></li>';
-	}
-
-	echo '
-					</ul>
 				</div>
 			</div>
 			<hr class="clear">
