@@ -170,6 +170,7 @@ final class Settings
 			array('check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']),
 			array('check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']),
 			array('check', 'optimus_show_keywords_block'),
+			array('check', 'optimus_allow_keyword_phrases', 'disabled' => empty($modSettings['optimus_show_keywords_block'])),
 			array('check', 'optimus_correct_http_status'),
 			array('title', 'optimus_extra_settings'),
 			array('check', 'optimus_log_search'),

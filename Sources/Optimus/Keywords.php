@@ -96,7 +96,7 @@ final class Keywords
 
 	public function postEnd()
 	{
-		global $context, $txt;
+		global $context, $txt, $modSettings;
 
 		if (! $this->canChange())
 			return;
@@ -149,7 +149,7 @@ final class Keywords
 				cache: true,
 				tags: true,' . ($context['right_to_left'] ? '
 				dir: "rtl",' : '') . '
-				tokenSeparators: [",", " "],
+				tokenSeparators: [","' . (empty($modSettings['optimus_allow_keyword_phrases']) ? ', " "' : '') . '],
 				ajax: {
 					url: smf_scripturl + "?action=keywords;sa=search",
 					type: "POST",
