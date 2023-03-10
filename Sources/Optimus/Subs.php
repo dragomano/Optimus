@@ -26,7 +26,7 @@ abstract class Subs
 	 *
 	 * Получаем отрывок текста (по умолчанию 2 предложения)
 	 */
-	public static function getTeaser(string $text, int $num_sentences = 2): string
+	public static function getTeaser(string $text, int $num_sentences = 2, int $length = 252): string
 	{
 		global $smcFunc;
 
@@ -42,6 +42,9 @@ abstract class Subs
 		$text = strtr($text, array('&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''));
 
 		$sentences = preg_split('/(\.|\?|\!)(\s)/', $text);
+
+		// Limit given text
+		$text = shorten_subject($text, $length);
 
 		if (count($sentences) <= $num_sentences)
 			return trim($text);
