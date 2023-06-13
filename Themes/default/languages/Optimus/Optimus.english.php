@@ -1,12 +1,5 @@
 <?php
 
-/**
- * english language file
- *
- * @package Optimus
- * @author Bugo https://dragomano.ru/mods/optimus
- */
-
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_basic_title'] = 'Base settings';
@@ -27,7 +20,8 @@ $txt['optimus_allow_change_topic_desc'] = 'Allow a separate field for the topic 
 $txt['optimus_allow_change_topic_desc_subtext'] = 'It is displayed when editing a topic.';
 $txt['optimus_allow_change_topic_keywords'] = 'Allow a separate field for the topic keywords';
 $txt['optimus_allow_change_topic_keywords_subtext'] = 'It is displayed when editing a topic.';
-$txt['optimus_show_keywords_block'] = 'Show a block with keywords above the first post of the topic';
+$txt['optimus_show_keywords_block'] = 'Display a block with keywords above the first post of the topic';
+$txt['optimus_show_keywords_on_message_index'] = 'Display keywords in topic lists within boards';
 $txt['optimus_allow_keyword_phrases'] = 'Allow to add entire key phrases';
 $txt['optimus_correct_http_status'] = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener" class="bbc_link">403/404 code</a> depending on the requested page\'s status';
 
@@ -41,7 +35,7 @@ $txt['optimus_extra_info'] = 'Use <a href="https://webmaster.yandex.ru/tools/mic
 
 $txt['optimus_og_image'] = 'Use the image from the first topic message in the meta tag <strong>og:image</strong>';
 $txt['optimus_og_image_subtext'] = 'By default, the image specified in <a href="%s" class="bbc_link">current theme settings</a> is used.';
-$txt['optimus_og_image_help'] = 'If enabled, the <strong>og:image</strong> meta tag will include a link to the first image attached to the first topic message. If there are no any attachment, and the image inside the <strong>img</strong> tag is found in the message text, it is used.';
+$txt['optimus_og_image_help'] = 'If enabled, the <strong>og:image</strong> meta tag will include a link to the first image attached to the first topic message. If there aren\'t any attachment, and the image inside the <strong>img</strong> tag is found in the message text, it is used.';
 $txt['optimus_allow_change_board_og_image'] = 'Allow a separate field for the board <strong>OG Image</strong>';
 $txt['optimus_allow_change_board_og_image_subtext'] = 'It is displayed when editing a board.';
 $txt['optimus_fb_appid'] = 'Facebook Application ID (if you have)';

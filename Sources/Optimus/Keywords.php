@@ -13,7 +13,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.10
+ * @version 2.12
  */
 
 if (! defined('SMF'))
@@ -27,6 +27,7 @@ final class Keywords
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
 		add_integration_function('integrate_current_action', __CLASS__ . '::currentAction', false, __FILE__, true);
 		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions', false, __FILE__, true);
+		add_integration_function('integrate_messageindex_buttons', __CLASS__ . '::messageindexButtons', false, __FILE__, true);
 		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic', false, __FILE__, true);
 		add_integration_function('integrate_prepare_display_context', __CLASS__ . '::prepareDisplayContext', false, __FILE__, true);
 		add_integration_function('integrate_create_topic', __CLASS__ . '::createTopic', false, __FILE__, true);
@@ -38,7 +39,7 @@ final class Keywords
 	public function actions(array &$actions)
 	{
 		if (is_on('optimus_allow_change_topic_keywords') || is_on('optimus_show_keywords_block'))
-			$actions['keywords'] = array('Optimus/Keywords.php', array($this, 'showTheSame'));
+			$actions['keywords'] = array(false, array($this, 'showTheSame'));
 	}
 
 	public function menuButtons(array &$buttons)
@@ -63,6 +64,22 @@ final class Keywords
 			$permissionList['membergroup']['optimus_add_keywords'] = array(true, 'general', 'view_basic_info');
 	}
 
+	public function messageindexButtons()
+	{
+		global $modSettings, $context;
+
+		if (empty($modSettings['optimus_show_keywords_on_message_index']) || empty($context['topics']))
+			return;
+
+		foreach ($context['topics'] as $topic => &$data) {
+			$keywords = $this->getKeywords()[$topic] ?? [];
+
+			foreach ($keywords as $id => $key) {
+				$data['first_post']['link'] .= ' <span class="amt" style="background-color: ' . $this->getRandomColor($key) . '">' . $key . '</span>';
+			}
+		}
+	}
+
 	public function prepareDisplayContext(array &$output, array &$message, int $counter)
 	{
 		global $context, $options, $txt, $scripturl;
@@ -75,8 +92,9 @@ final class Keywords
 		if ($current_counter == $output['counter'] && empty($context['start'])) {
 			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="windowbg" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
 
-			foreach ($context['optimus_keywords'] as $id => $keyword)
-				$keywords .= '<a class="button" href="' . $scripturl . '?action=keywords;id=' . $id . '">' . $keyword . '</a>';
+			foreach ($context['optimus_keywords'] as $id => $keyword) {
+				$keywords .= '<a class="descbox" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px; background-color: ' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
+			}
 
 			$keywords .= '</fieldset>';
 
@@ -136,6 +154,7 @@ final class Keywords
 		}
 
 		// Select2 https://select2.github.io/select2/
+		// Doesn't work? See https://developers.cloudflare.com/fundamentals/speed/rocket-loader/
 		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', array('external' => true));
 		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js', array('external' => true));
 		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js', array('external' => true));
@@ -553,13 +572,26 @@ final class Keywords
 
 	public function displayTopic()
 	{
-		global $context, $smcFunc, $modSettings;
+		global $context, $modSettings;
 
 		if (is_off('optimus_show_keywords_block'))
 			return;
 
 		if (empty($context['current_topic']) || ! empty($context['optimus']['keywords']))
 			return;
+
+		$keywords = $this->getKeywords();
+
+		$context['optimus_keywords'] = [];
+		if (! empty($keywords[$context['current_topic']])) {
+			$context['optimus_keywords']  = $keywords[$context['current_topic']];
+			$modSettings['meta_keywords'] = implode(', ', $context['optimus_keywords']);
+		}
+	}
+
+	private function getKeywords(): array
+	{
+		global $smcFunc;
 
 		if (($keywords = cache_get_data('optimus_topic_keywords', 3600)) === null) {
 			$request = $smcFunc['db_query']('', '
@@ -579,11 +611,16 @@ final class Keywords
 			cache_put_data('optimus_topic_keywords', $keywords, 3600);
 		}
 
-		$context['optimus_keywords'] = [];
-		if (! empty($keywords[$context['current_topic']])) {
-			$context['optimus_keywords']  = $keywords[$context['current_topic']];
-			$modSettings['meta_keywords'] = implode(', ', $context['optimus_keywords']);
-		}
+		return $keywords;
+	}
+
+	private function getRandomColor(string $key): string
+	{
+		$hash = -105;
+		for ($i = 0; $i < strlen($key); $i++)
+			$hash += ord($key[$i]);
+
+		return 'hsl(' . (($hash * 57) % 360) . ', 70%, 40%)';
 	}
 
 	private function add(array $keywords, int $topic, int $user)

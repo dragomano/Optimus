@@ -13,7 +13,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.10
+ * @version 2.12
  */
 
 if (! defined('SMF'))
@@ -170,7 +170,8 @@ final class Settings
 			array('check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']),
 			array('check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']),
 			array('check', 'optimus_show_keywords_block'),
-			array('check', 'optimus_allow_keyword_phrases', 'disabled' => empty($modSettings['optimus_show_keywords_block'])),
+			array('check', 'optimus_show_keywords_on_message_index'),
+			array('check', 'optimus_allow_keyword_phrases'),
 			array('check', 'optimus_correct_http_status'),
 			array('title', 'optimus_extra_settings'),
 			array('check', 'optimus_log_search'),
