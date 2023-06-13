@@ -5,7 +5,7 @@
 ![PHP](https://img.shields.io/badge/PHP-^7.4-blue.svg?style=flat)
 [![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
 
-* **Tested on:** PHP 8.0.24 / MariaDB 10.6.7
+* **Tested on:** PHP 8.2.6 / MariaDB 10.6.7
 * **Languages:** English, Russian, Dutch, Turkish, Spanish
 
 ## Description
