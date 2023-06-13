@@ -13,7 +13,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.10
+ * @version 2.12
  */
 
 if (! defined('SMF'))
@@ -51,7 +51,7 @@ final class Integration
 
 	public function preLogStats(array &$no_stat_actions)
 	{
-		$no_stat_actions[] = 'sitemap_xsl';
+		$no_stat_actions['sitemap_xsl'] = true;
 	}
 
 	public function loadTheme()
