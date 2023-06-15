@@ -50,7 +50,7 @@ $txt['optimus_favicon_text'] = 'The favicon code';
 $txt['optimus_favicon_help'] = 'Generate your own favicon <a href="https://www.favicomatic.com/" target="_blank" rel="noopener" class="bbc_link">here</a>, or <a href="https://digitalagencyrankings.com/iconogen/" target="_blank" rel="noopener" class="bbc_link">here</a>.<br>Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br>This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
 
 $txt['optimus_meta_title'] = 'Meta tags';
-$txt['optimus_meta_desc'] = 'On this page you can add any regular/verification code(s) from list below.';
+$txt['optimus_meta_desc'] = 'On this page you can add any regular/verification code(s) from the list below.';
 
 $txt['optimus_meta_addtag'] = 'Click here to add a new tag';
 $txt['optimus_meta_customtag'] = 'Custom meta tag';
@@ -99,7 +99,7 @@ $txt['optimus_remove_previous_xml_files'] = 'Remove previously generated sitemap
 $txt['optimus_main_page_frequency'] = 'The update frequency of the main page';
 $txt['optimus_main_page_frequency_set'] = array('Constant (always)', 'Depending on the date of the last message');
 $txt['optimus_sitemap_boards'] = 'Add links to boards to the Sitemap';
-$txt['optimus_sitemap_boards_subtext'] = 'Boards that closed to guests will NOT be added.';
+$txt['optimus_sitemap_boards_subtext'] = 'Boards that are closed to guests will NOT be added.';
 $txt['optimus_sitemap_topics_num_replies'] = 'Add links to topics that have the number of replies >=';
 $txt['optimus_sitemap_items_display'] = 'Maximum number of items per page';
 $txt['optimus_sitemap_all_topic_pages'] = 'Add ALL topic pages to the sitemap';
