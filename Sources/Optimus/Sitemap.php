@@ -13,7 +13,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.10
+ * @version 2.12
  */
 
 if (! defined('SMF'))
@@ -387,7 +387,7 @@ final class Sitemap
 	{
 		fclose(fopen($path, "a+b"));
 
-		if (! $fp = fopen($path, "r+b"))
+		if (! $fp = fopen($path, "w+b"))
 			return false;
 
 		flock($fp, LOCK_EX);
@@ -400,7 +400,7 @@ final class Sitemap
 		if (filesize($path) > (50 * 1024 * 1024)) {
 			fclose(fopen($path . '.gz', "a+b"));
 
-			if (! $fpgz = fopen($path . '.gz', 'r+b'))
+			if (! $fpgz = fopen($path . '.gz', 'w+b'))
 				return false;
 
 			flock($fpgz, LOCK_EX);
