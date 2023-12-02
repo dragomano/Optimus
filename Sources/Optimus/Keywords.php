@@ -66,7 +66,7 @@ final class Keywords
 
 	public function messageindexButtons()
 	{
-		global $modSettings, $context;
+		global $modSettings, $context, $scripturl;
 
 		if (empty($modSettings['optimus_show_keywords_on_message_index']) || empty($context['topics']))
 			return;
@@ -75,7 +75,7 @@ final class Keywords
 			$keywords = $this->getKeywords()[$topic] ?? [];
 
 			foreach ($keywords as $id => $key) {
-				$data['first_post']['link'] .= ' <span class="amt" style="background-color: ' . $this->getRandomColor($key) . '">' . $key . '</span>';
+				$data['first_post']['link'] .= ' <a class="amt" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="background-color: ' . $this->getRandomColor($key) . '">' . $key . '</a>';
 			}
 		}
 	}
