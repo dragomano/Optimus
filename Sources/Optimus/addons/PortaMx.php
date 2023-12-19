@@ -6,7 +6,6 @@ namespace Bugo\Optimus\Addons;
  * PortaMx.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
@@ -17,11 +16,6 @@ if (!defined('SMF'))
  */
 class PortaMx
 {
-	/**
-	 * Various fixes
-	 *
-	 * @return void
-	 */
 	public static function meta()
 	{
 		global $context, $modSettings, $scripturl;
@@ -33,14 +27,7 @@ class PortaMx
 			$context['canonical_url'] = $scripturl . '?action=' . $context['current_action'];
 	}
 
-	/**
-	 * Make PortaMx rules for robots.txt
-	 *
-	 * @param string $common_rules
-	 * @param string $url_path
-	 * @return void
-	 */
-	public static function robots(&$common_rules, $url_path)
+	public static function robots(array &$common_rules, string $url_path)
 	{
 		global $modSettings;
 
@@ -52,13 +39,7 @@ class PortaMx
 		$common_rules[] = $portamx && !$portamx_forum_alias ? "Allow: " . $url_path . "/*community$" : "";
 	}
 
-	/**
-	 * Make SEF url from string
-	 *
-	 * @param string $url
-	 * @return void
-	 */
-	public static function createSefUrl(&$url)
+	public static function createSefUrl(string &$url)
 	{
 		if (!function_exists('PortaMx') || !function_exists('create_sefurl'))
 			return;

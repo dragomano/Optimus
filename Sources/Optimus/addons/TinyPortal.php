@@ -8,7 +8,6 @@ use Bugo\Optimus\Subs;
  * TinyPortal.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
@@ -19,21 +18,11 @@ if (!defined('SMF'))
  */
 class TinyPortal
 {
-	/**
-	 * Let's check if the portal installed
-	 *
-	 * @return boolean
-	 */
-	private static function isInstalled()
+	private static function isInstalled(): bool
 	{
 		return class_exists('\TinyPortal\Integrate');
 	}
 
-	/**
-	 * The description and canonical url of the portal article
-	 *
-	 * @return void
-	 */
 	public static function meta()
 	{
 		global $smcFunc, $context, $txt, $scripturl;
@@ -43,7 +32,7 @@ class TinyPortal
 
 		$page_is_num = is_numeric($_GET['page']);
 
-		$request = $smcFunc['db_query']('substring', '
+		$request = $smcFunc['db_query']('substring', /** @lang text */ '
 			SELECT a.id, a.date, a.body, a.intro, a.useintro, a.shortname, a.type, v.value1 AS cat_name
 			FROM {db_prefix}tp_articles AS a
 				INNER JOIN {db_prefix}tp_variables AS v ON (v.id = a.category)
@@ -79,14 +68,7 @@ class TinyPortal
 		$smcFunc['db_free_result']($request);
 	}
 
-	/**
-	 * Make rules for robots.txt
-	 *
-	 * @param string $common_rules
-	 * @param string $url_path
-	 * @return void
-	 */
-	public static function robots(&$common_rules, $url_path)
+	public static function robots(array &$common_rules, string $url_path)
 	{
 		if (empty(self::isInstalled()))
 			return;
@@ -94,13 +76,7 @@ class TinyPortal
 		$common_rules[] = "Allow: " . $url_path . "/*page=*";
 	}
 
-	/**
-	 * Get an array of portal articles ([] = array('url' => link, 'date' => date))
-	 *
-	 * @param array $links
-	 * @return void
-	 */
-	public static function sitemap(&$links)
+	public static function sitemap(array &$links)
 	{
 		global $smcFunc, $scripturl;
 

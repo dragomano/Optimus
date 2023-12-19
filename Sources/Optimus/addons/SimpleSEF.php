@@ -6,7 +6,6 @@ namespace Bugo\Optimus\Addons;
  * SimpleSEF.php
  *
  * @package Optimus
- *
  */
 
 if (! defined('SMF'))
@@ -17,13 +16,7 @@ if (! defined('SMF'))
  */
 class SimpleSEF
 {
-	/**
-	 * Make SEF url from string
-	 *
-	 * @param string $url
-	 * @return void
-	 */
-	public static function createSefUrl(&$url)
+	public static function createSefUrl(string &$url)
 	{
 		global $modSettings;
 

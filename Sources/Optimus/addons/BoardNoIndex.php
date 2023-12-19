@@ -6,7 +6,6 @@ namespace Bugo\Optimus\Addons;
  * BoardNoIndex.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
@@ -17,11 +16,6 @@ if (!defined('SMF'))
  */
 class BoardNoIndex
 {
-	/**
-	 * Добавляем разделы, которые отмечены как неиндексируемые, в игнорируемые
-	 *
-	 * @return void
-	 */
 	public static function meta()
 	{
 		global $context, $modSettings;

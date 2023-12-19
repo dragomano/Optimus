@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2021 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.3
+ * @version 2.7.5
  */
 
 if (!defined('SMF'))
@@ -19,27 +19,16 @@ if (!defined('SMF'))
 
 class Subs
 {
-	/**
-	 * Меняем заголовок форума
-	 *
-	 * @return void
-	 */
 	public static function changeForumTitle()
 	{
 		global $txt, $modSettings;
 
-		// Forum
 		$txt['forum_index'] = '%1$s';
 
 		if (!empty($modSettings['optimus_forum_index']))
 			$txt['forum_index'] = '%1$s - ' . $modSettings['optimus_forum_index'];
 	}
 
-	/**
-	 * Добавляем иконку сайта
-	 *
-	 * @return void
-	 */
 	public static function addFavicon()
 	{
 		global $modSettings, $context;
@@ -51,11 +40,6 @@ class Subs
 		}
 	}
 
-	/**
-	 * Добавляем коды счётчиков в тело страниц
-	 *
-	 * @return void
-	 */
 	public static function addCounters()
 	{
 		global $modSettings, $context, $forum_copyright;
@@ -90,17 +74,14 @@ class Subs
 		}
 	}
 
-	/**
-	 * Обрабатываем шаблоны заголовков страниц
-	 *
-	 * @return void
-	 */
 	public static function processPageTemplates()
 	{
 		global $modSettings, $txt, $context, $board_info, $smcFunc;
 
 		if (SMF == 'SSI' || empty($modSettings['optimus_templates']))
 			return;
+
+		$board_page_tpl = $topic_page_tpl = $topic_name_tpl = $topic_site_tpl = $board_name_tpl = $board_site_tpl = '';
 
 		if (strpos($modSettings['optimus_templates'], 'board') && strpos($modSettings['optimus_templates'], 'topic')) {
 			$templates = unserialize($modSettings['optimus_templates']);
@@ -181,11 +162,6 @@ class Subs
 		}
 	}
 
-	/**
-	 * Возвращаемые статусы страниц разделов и тем
-	 *
-	 * @return void
-	 */
 	public static function processErrorCodes()
 	{
 		global $modSettings, $board_info, $context, $txt;
@@ -193,7 +169,6 @@ class Subs
 		if (empty($modSettings['optimus_404_status']) || empty($board_info['error']))
 			return;
 
-		// Страница не существует? Does not exist?
 		if ($board_info['error'] == 'exist') {
 			header('HTTP/1.1 404 Not Found');
 
@@ -203,7 +178,6 @@ class Subs
 			$context['page_title']   = $txt['optimus_404_page_title'];
 		}
 
-		// Нет доступа? No access?
 		if ($board_info['error'] == 'access') {
 			header('HTTP/1.1 403 Forbidden');
 
@@ -214,14 +188,9 @@ class Subs
 		}
 	}
 
-	/**
-	 * Создаем описание страницы из первого сообщения
-	 *
-	 * @return void
-	 */
 	private static function getDescription()
 	{
-		global $context, $smcFunc, $txt, $board_info;
+		global $context, $smcFunc, $board_info;
 
 		if (empty($context['first_message']))
 			return;
@@ -256,11 +225,6 @@ class Subs
 		$smcFunc['db_free_result']($request);
 	}
 
-	/**
-	 * Достаем URL вложения из первого сообщения темы
-	 *
-	 * @return void
-	 */
 	private static function getOgImage()
 	{
 		global $context, $smcFunc, $scripturl;
@@ -291,15 +255,7 @@ class Subs
 		}
 	}
 
-	/**
-	 * Получаем выдержку текста для создания описания страницы
-	 *
-	 * @param string $text — текст для обработки
-	 * @param int $num_sentences — количество предложений, которые нужно взять из текста
-	 * @param bool $parse_bbc — флаг, парсить или нет ББ-код
-	 * @return string
-	 */
-	public static function getTeaser($text, $num_sentences = 2, $parse_bbc = true)
+	public static function getTeaser(string $text, int $num_sentences = 2, bool $parse_bbc = true): string
 	{
 		global $smcFunc;
 
@@ -325,7 +281,7 @@ class Subs
 		$text = preg_replace('~http(s)?://(.*)\s~U', '', $text);
 
 		// Prepare sentences
-		$sentences = preg_split('/(\.|\?|\!)(\s)/', $text);
+		$sentences = preg_split('/([.?!])(\s)/', $text);
 
 		if (count($sentences) <= $num_sentences)
 			return $text;
@@ -342,11 +298,6 @@ class Subs
 		return trim($smcFunc['substr']($text, 0, $stop_at));
 	}
 
-	/**
-	 * Добавляем описание для главной страницы
-	 *
-	 * @return void
-	 */
 	public static function addMainPageDescription()
 	{
 		global $context, $modSettings, $smcFunc;
@@ -357,11 +308,6 @@ class Subs
 		}
 	}
 
-	/**
-	 * Добавляем ссылку на карту форума в подвале
-	 *
-	 * @return void
-	 */
 	public static function addSitemapLink()
 	{
 		global $modSettings, $txt, $boarddir, $forum_copyright, $boardurl;
@@ -373,16 +319,9 @@ class Subs
 			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';
 	}
 
-	/**
-	 * Получаем все вложенные директории по указанному пути
-	 *
-	 * @param string $path
-	 * @param array $nested_dirs
-	 * @return array
-	 */
-	public static function getNestedDirs($path, $nested_dirs = array())
+	public static function getNestedDirs(string $path, array $nested_dirs = array()): array
 	{
-		$dirs = glob(rtrim($path, "/") . "/*", GLOB_ONLYDIR) or array();
+		$dirs = glob(rtrim($path, "/") . "/*", GLOB_ONLYDIR);
 
 		foreach ($dirs as $path) {
 			$nested_dirs[] = $path;
@@ -392,14 +331,7 @@ class Subs
 		return $nested_dirs;
 	}
 
-	/**
-	 * Подключаем аддоны
-	 *
-	 * @param string $type
-	 * @param array $vars
-	 * @return void
-	 */
-	public static function runAddons($type = 'meta', $vars = array())
+	public static function runAddons(string $type = 'meta', array $vars = array())
 	{
 		global $sourcedir;
 
@@ -431,18 +363,11 @@ class Subs
 		}
 	}
 
-	/**
-	 * Добавляем информацию об авторских правах
-	 *
-	 * @return void
-	 */
 	public static function addCredits()
 	{
 		global $context;
 
-		$link = in_array($context['user']['language'], array('russian','russian-utf8')) ? 'https://dragomano.ru/mods/optimus' : 'https://custom.simplemachines.org/mods/index.php?mod=2659';
-
 		if ($context['current_action'] == 'credits')
-			$context['copyrights']['mods'][] = '<a href="' . $link . '" target="_blank" rel="noopener">' . OP_NAME . '</a> &copy; 2010&ndash;2021, Bugo';
+			$context['copyrights']['mods'][] = '<a href="https://github.com/dragomano/Optimus/releases" target="_blank" rel="noopener">' . OP_NAME . '</a> &copy; 2010&ndash;2023, Bugo';
 	}
 }

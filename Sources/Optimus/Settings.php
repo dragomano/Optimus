@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2021 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.3
+ * @version 2.7.5
  */
 
 if (!defined('SMF'))
@@ -20,12 +20,9 @@ if (!defined('SMF'))
 class Settings
 {
 	/**
-	 * Прописываем менюшку с настройками мода в админке
-	 *
-	 * @param array $admin_areas
-	 * @return void
+	 * @hook integrate_admin_areas
 	 */
-	public static function adminAreas(&$admin_areas)
+	public static function adminAreas(array &$admin_areas)
 	{
 		global $txt;
 
@@ -47,18 +44,12 @@ class Settings
 		);
 	}
 
-	/**
-	 * Ключевая функция, подключающая все остальные при их вызове
-	 *
-	 * @return void
-	 */
 	public static function settingActions()
 	{
 		global $context, $sourcedir, $txt, $smcFunc, $scripturl;
 
 		$context['page_title'] = OP_NAME;
 
-		// Подключаем файл шаблона вместе с таблицами стилей
 		loadTemplate('Optimus', array('admin', 'optimus/optimus'));
 
 		$subActions = array(
@@ -106,11 +97,6 @@ class Settings
 		call_user_func(__CLASS__ . '::' . $subActions[$_REQUEST['sa']]);
 	}
 
-	/**
-	 * Основные настройки мода
-	 *
-	 * @return void
-	 */
 	public static function basicSettings()
 	{
 		global $context, $txt, $scripturl, $modSettings, $smcFunc;
@@ -139,9 +125,9 @@ class Settings
 		$templates = array();
 		foreach ($txt['optimus_templates'] as $name => $template) {
 			$templates[$name] = array(
-				'name' => isset($_POST['' . $name . '_name']) ? $_POST['' . $name . '_name'] : '',
-				'page' => isset($_POST['' . $name . '_page']) ? $_POST['' . $name . '_page'] : '',
-				'site' => isset($_POST['' . $name . '_site']) ? $_POST['' . $name . '_site'] : ''
+				'name' => $_POST['' . $name . '_name'] ?? '',
+				'page' => $_POST['' . $name . '_page'] ?? '',
+				'site' => $_POST['' . $name . '_site'] ?? ''
 			);
 		}
 
@@ -164,11 +150,6 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Страница с настройками микроразметки
-	 *
-	 * @return void
-	 */
 	public static function extraSettings()
 	{
 		global $context, $txt, $scripturl, $settings, $modSettings;
@@ -182,8 +163,8 @@ class Settings
 		$config_vars = array(
 			array('title', 'optimus_extra_title'),
 			array('check', 'optimus_open_graph'),
-			array('text',  'optimus_og_image', 50, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
-			array('text', 'optimus_fb_appid', 40, 'disabled' => !empty($modSettings['optimus_open_graph']) ? false : true),
+			array('text',  'optimus_og_image', 50, 'disabled' => empty($modSettings['optimus_open_graph'])),
+			array('text', 'optimus_fb_appid', 40, 'disabled' => empty($modSettings['optimus_open_graph'])),
 			array('text', 'optimus_tw_cards', 40, 'preinput' => '@')
 		);
 
@@ -201,11 +182,6 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Управление фавиконкой форума
-	 *
-	 * @return void
-	 */
 	public static function faviconSettings()
 	{
 		global $context, $txt, $scripturl;
@@ -215,7 +191,6 @@ class Settings
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=favicon;save';
 
 		$config_vars = array(
-			array('text', 'optimus_favicon_api_key'),
 			array('large_text', 'optimus_favicon_text')
 		);
 
@@ -231,11 +206,6 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Управление мета-тегами
-	 *
-	 * @return void
-	 */
 	public static function metatagsSettings()
 	{
 		global $context, $txt, $scripturl;
@@ -269,11 +239,6 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Управление счетчиками
-	 *
-	 * @return void
-	 */
 	public static function counterSettings()
 	{
 		global $context, $txt, $scripturl, $modSettings;
@@ -310,11 +275,6 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Страница для изменения robots.txt
-	 *
-	 * @return void
-	 */
 	public static function robotsSettings()
 	{
 		global $context, $txt, $scripturl, $boarddir, $modSettings, $sourcedir;
@@ -352,11 +312,6 @@ class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	/**
-	 * Страница с настройками карты форума
-	 *
-	 * @return void
-	 */
 	public static function sitemapSettings()
 	{
 		global $context, $txt, $scripturl, $modSettings, $smcFunc;
@@ -383,15 +338,16 @@ class Settings
 		if (isset($_GET['save'])) {
 			checkSession();
 
-			if ($_POST['optimus_sitemap_topics_num_replies'] < 0)
-				$_POST['optimus_sitemap_topics_num_replies'] = 0;
+			$_POST['optimus_sitemap_topics_num_replies'] = (int) $_POST['optimus_sitemap_topics_num_replies'];
+
+			if ($_POST['optimus_sitemap_topics_num_replies'] < -1)
+				$_POST['optimus_sitemap_topics_num_replies'] = -1;
 
 			if ($_POST['optimus_sitemap_items_display'] > 50000)
 				$_POST['optimus_sitemap_items_display'] = 50000;
 			elseif ($_POST['optimus_sitemap_items_display'] < 1)
 				$_POST['optimus_sitemap_items_display'] = 1;
 
-			// Обновляем запись в Диспетчере задач
 			$smcFunc['db_query']('', '
 				UPDATE {db_prefix}scheduled_tasks
 				SET disabled = {int:disabled}

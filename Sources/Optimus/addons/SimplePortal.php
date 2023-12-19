@@ -8,7 +8,6 @@ use Bugo\Optimus\Subs;
  * SimplePortal.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
@@ -19,24 +18,12 @@ if (!defined('SMF'))
  */
 class SimplePortal
 {
-	/**
-	 * Let's check if the portal installed
-	 *
-	 * @return boolean
-	 */
-	public static function isInstalled()
+	public static function isInstalled(): bool
 	{
 		return function_exists('sportal_init');
 	}
 
-	/**
-	 * Make rules for robots.txt
-	 *
-	 * @param string $common_rules
-	 * @param string $url_path
-	 * @return void
-	 */
-	public static function robots(&$common_rules, $url_path)
+	public static function robots(array &$common_rules, string $url_path)
 	{
 		global $modSettings, $boardurl, $boarddir;
 
@@ -54,13 +41,7 @@ class SimplePortal
 		$common_rules[] = $simple_portal ? "Allow: " . $url_path . "/*page=*" : "";
 	}
 
-	/**
-	 * Get an array of portal pages ([] = array('url' => link, 'date' => date))
-	 *
-	 * @param array $links
-	 * @return void
-	 */
-	public static function sitemap(&$links)
+	public static function sitemap(array &$links)
 	{
 		global $smcFunc, $scripturl;
 

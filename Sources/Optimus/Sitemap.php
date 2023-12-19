@@ -8,35 +8,22 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2021 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.1
+ * @version 2.7.5
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/**
- * Map generation class
- */
 class Sitemap
 {
-	/**
-	 * The maximum number of items per page
-	 *
-	 * @var int
-	 */
-	public static $max_items = 50000;
+	public static int $max_items = 50000;
 
-	/**
-	 * Create sitemap XML
-	 *
-	 * @return bool
-	 */
-	public static function createXml()
+	public static function createXml(): bool
 	{
-		global $modSettings, $context, $scripturl, $boardurl, $boarddir;
+		global $modSettings, $context, $boardurl, $boarddir;
 
 		if (@ini_get('memory_limit') < 256)
 			@ini_set('memory_limit', '256M');
@@ -61,19 +48,17 @@ class Sitemap
 
 			$items[$sitemap_counter][] = array(
 				'loc'        => $entry['loc'],
-				'lastmod'    => !empty($entry['lastmod']) ? self::getDate($entry['lastmod']) : null,
-				'changefreq' => !empty($entry['lastmod']) ? self::getFrequency($entry['lastmod']) : null,
-				'priority'   => !empty($entry['lastmod']) ? self::getPriority($entry['lastmod']) : null
+				'lastmod'    => !empty($entry['lastmod']) ? self::getDate((int) $entry['lastmod']) : null,
+				'changefreq' => !empty($entry['lastmod']) ? self::getFrequency((int) $entry['lastmod']) : null,
+				'priority'   => !empty($entry['lastmod']) ? self::getPriority((int) $entry['lastmod']) : null
 			);
 		}
 
 		unset($links);
 
-		// The update frequency of the main page
 		if (empty($modSettings['optimus_main_page_frequency']))
 			$items[0][0]['changefreq'] = 'always';
 
-		// The priority of the main page
 		$items[0][0]['priority'] = '1.0';
 
 		loadTemplate('Optimus');
@@ -99,8 +84,6 @@ class Sitemap
 			ob_start();
 			template_sitemapindex_xml();
 			$content = ob_get_clean();
-
-			self::createFile($boarddir . '/sitemap.xml', $content);
 		} else {
 			$context['sitemap']['items'] = $items[0];
 
@@ -109,22 +92,16 @@ class Sitemap
 			$content = ob_get_clean();
 
 			Subs::runAddons('sitemapRewriteContent', array(&$content));
-
-			self::createFile($boarddir . '/sitemap.xml', $content);
 		}
+
+		self::createFile($boarddir . '/sitemap.xml', $content);
 
 		ignore_user_abort(false);
 
 		return true;
 	}
 
-	/**
-	 * Find the most recent date in the array of links for the map
-	 *
-	 * @param array $links
-	 * @return null|int
-	 */
-	public static function getLastDate($links)
+	public static function getLastDate(array $links): ?int
 	{
 		if (empty($links))
 			return null;
@@ -138,12 +115,7 @@ class Sitemap
 		return max($dates);
 	}
 
-	/**
-	 * Get an array of forum links to create a Sitemap
-	 *
-	 * @return array
-	 */
-	public static function getLinks()
+	public static function getLinks(): array
 	{
 		global $context, $modSettings, $boardurl;
 
@@ -169,17 +141,11 @@ class Sitemap
 		return $links;
 	}
 
-	/**
-	 * Get an array of forum boards ([] = array('url' => link, 'date' => date))
-	 *
-	 * @param array $links
-	 * @return array
-	 */
-	private static function getBoardLinks()
+	private static function getBoardLinks(): array
 	{
 		global $smcFunc, $context, $modSettings, $scripturl;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db_query']('', /** @lang text */ '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}messages AS m ON (m.id_msg = b.id_last_msg)
@@ -219,20 +185,13 @@ class Sitemap
 		return $links;
 	}
 
-	/**
-	 * Get an array of forum topics ([] = array('url' => link, 'date' => date))
-	 *
-	 * @param array $links
-	 * @return array
-	 */
-	private static function getTopicLinks()
+	private static function getTopicLinks(): array
 	{
 		global $db_temp_cache, $db_cache, $modSettings, $smcFunc, $context, $scripturl;
 
 		$start = 0;
 		$limit = 1000;
 
-		// Don't allow the cache to get too full
 		$db_temp_cache = $db_cache;
 		$db_cache = array();
 
@@ -254,7 +213,7 @@ class Sitemap
 				LIMIT {int:start}, {int:limit}',
 				array(
 					'open_boards' => $context['optimus_open_boards'],
-					'num_replies' => !empty($modSettings['optimus_sitemap_topics_num_replies']) ? (int) $modSettings['optimus_sitemap_topics_num_replies'] : -1,
+					'num_replies' => (int) ($modSettings['optimus_sitemap_topics_num_replies'] ?? 0),
 					'is_approved' => 1,
 					'start'       => $start,
 					'limit'       => $limit
@@ -280,36 +239,22 @@ class Sitemap
 			$start = $start + $limit;
 		}
 
-		// Restore the cache
 		$db_cache = $db_temp_cache;
 
 		return $links;
 	}
 
-	/**
-	 * Date processing
-	 *
-	 * @param int $timestamp
-	 * @return string
-	 */
-	private static function getDate($timestamp = 0)
+	private static function getDate(int $timestamp = 0): string
 	{
 		if (empty($timestamp))
 			return '';
 
-		$gmt    = substr(date("O", $timestamp), 0, 3) . ':00';
-		$result = date('Y-m-d\TH:i:s', $timestamp) . $gmt;
+		$gmt = substr(date("O", $timestamp), 0, 3) . ':00';
 
-		return $result;
+		return date('Y-m-d\TH:i:s', $timestamp) . $gmt;
 	}
 
-	/**
-	 * Determine the frequency of updates
-	 *
-	 * @param int $timestamp
-	 * @return string
-	 */
-	private static function getFrequency($timestamp)
+	private static function getFrequency(int $timestamp): string
 	{
 		$frequency = time() - $timestamp;
 
@@ -325,13 +270,7 @@ class Sitemap
 		return 'yearly';
 	}
 
-	/**
-	 * Determine the priority of indexing
-	 *
-	 * @param int $timestamp
-	 * @return string
-	 */
-	private static function getPriority($timestamp)
+	private static function getPriority(int $timestamp): string
 	{
 		$diff = floor((time() - $timestamp) / 60 / 60 / 24);
 
@@ -345,14 +284,7 @@ class Sitemap
 		return '0.2';
 	}
 
-	/**
-	 * Создаем файл карты
-	 *
-	 * @param string $path — путь к файлу
-	 * @param string $data — содержимое
-	 * @return bool if true then we have gz-version
-	 */
-	private static function createFile($path, $data)
+	private static function createFile(string $path, string $data): bool
 	{
 		if (!$fp = fopen($path, 'w'))
 			return false;
@@ -362,7 +294,6 @@ class Sitemap
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
-		// Если размер файла превышает 50 МБ, создадим упакованную gz-версию
 		if (filesize($path) > (50 * 1024 * 1024)) {
 			$data   = implode('', file($path));
 			$gzdata = gzencode($data, 9);

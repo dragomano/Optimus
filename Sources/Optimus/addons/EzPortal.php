@@ -8,7 +8,6 @@ use Bugo\Optimus\Subs;
  * EzPortal.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
@@ -19,21 +18,11 @@ if (!defined('SMF'))
  */
 class EzPortal
 {
-	/**
-	 * Let's check if the portal installed
-	 *
-	 * @return boolean
-	 */
-	private static function isInstalled()
+	private static function isInstalled(): bool
 	{
 		return function_exists('EzPortalMain');
 	}
 
-	/**
-	 * The description and canonical url of the portal article
-	 *
-	 * @return void
-	 */
 	public static function meta()
 	{
 		global $smcFunc, $context, $ezpSettings, $boardurl, $scripturl;
@@ -72,14 +61,7 @@ class EzPortal
 		$smcFunc['db_free_result']($request);
 	}
 
-	/**
-	 * Make rules for robots.txt
-	 *
-	 * @param string $common_rules
-	 * @param string $url_path
-	 * @return void
-	 */
-	public static function robots(&$common_rules, $url_path)
+	public static function robots(array &$common_rules, string $url_path)
 	{
 		global $ezpSettings;
 
@@ -92,13 +74,7 @@ class EzPortal
 			$common_rules[] = "Allow: " . $url_path . "/*ezportal;sa=page;p=*";
 	}
 
-	/**
-	 * Get an array of portal articles ([] = array('url' => link, 'date' => date))
-	 *
-	 * @param array $links
-	 * @return void
-	 */
-	public static function sitemap(&$links)
+	public static function sitemap(array &$links)
 	{
 		global $smcFunc, $ezpSettings, $boardurl, $scripturl;
 

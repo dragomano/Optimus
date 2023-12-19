@@ -50,9 +50,9 @@ function template_base()
 						<span><label>', $txt['optimus_' . $name . '_tpl'], '</label></span>
 					</dt>
 					<dd>
-						<input type="text" class="input_text" value="', isset($templates[$name]['name']) ? $templates[$name]['name'] : $template[0], '" name="', $name, '_name" />
-						<input type="text" class="input_text" value="', isset($templates[$name]['page']) ? $templates[$name]['page'] : $template[1], '" name="', $name, '_page" />
-						<input type="text" class="input_text" value="', isset($templates[$name]['site']) ? $templates[$name]['site'] : $template[2], '" name="', $name, '_site" />
+						<input type="text" class="input_text" value="', $templates[$name]['name'] ?? $template[0], '" name="', $name, '_name" />
+						<input type="text" class="input_text" value="', $templates[$name]['page'] ?? $template[1], '" name="', $name, '_page" />
+						<input type="text" class="input_text" value="', $templates[$name]['site'] ?? $template[2], '" name="', $name, '_site" />
 					</dd>';
 	}
 
@@ -104,34 +104,17 @@ function template_base()
 
 function template_favicon()
 {
-	global $txt, $modSettings, $context, $boardurl;
+	global $txt, $modSettings, $context;
 
 	echo '
 	<div class="cat_bar">
 		<h3 class="catbg">', $txt['optimus_favicon_title'], '</h3>
-	</div>';
-
-	if (!empty($modSettings['optimus_favicon_api_key']))
-		echo '
-	<div class="description centertext">
-		<form id="favicon_form" method="post" action="https://realfavicongenerator.net/api/favicon_generator" id="favicon_form" target="_blank">
-			<input type="hidden" name="json_params" id="json_params"/>
-			<button type="submit" id="form_button" class="button_submit">', $txt['optimus_favicon_create'], '</button>
-		</form>
-	</div>';
-
-	echo '
+	</div>
 	<div class="windowbg2">
 		<span class="topslice"><span></span></span>
 		<div class="content">
 			<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
 				<dl class="settings">
-					<dt>
-						<span><label for="optimus_favicon_api_key">', $txt['optimus_favicon_api_key'], '</label></span>
-					</dt>
-					<dd>
-						<input name="optimus_favicon_api_key" id="optimus_favicon_api_key" value="', !empty($modSettings['optimus_favicon_api_key']) ? $modSettings['optimus_favicon_api_key'] : '', '" class="input_text" type="text" size="50">
-					</dd>
 					<dt>
 						<span>
 							<label for="optimus_favicon_text">', $txt['optimus_favicon_text'], '</label><br />
@@ -148,34 +131,7 @@ function template_favicon()
 			</form>
 		</div>
 		<span class="botslice"><span></span></span>
-	</div>';
-
-	// https://realfavicongenerator.net/api/interactive_api
-	if (!empty($modSettings['optimus_favicon_api_key']))
-		echo '
-	<script type="text/javascript">window.jQuery || document.write(unescape(\'%3Cscript src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"%3E%3C/script%3E\'))</script>
-	<script type="text/javascript">
-		function computeJson() {
-			var params = { favicon_generation: {
-				callback: {},
-				master_picture: {},
-				files_location: {},
-				api_key: $("#optimus_favicon_api_key").val()
-			}};
-			params.favicon_generation.master_picture.type = "no_picture";
-			params.favicon_generation.files_location.type = "path";
-			params.favicon_generation.files_location.path = "' . parse_url($boardurl, PHP_URL_PATH) . '/";
-			params.favicon_generation.callback.type = "none";
-			return params;
-		}
-		jQuery(document).ready(function($) {
-			$("#favicon_form").submit(function(e) {
-				$("#json_params").val(JSON.stringify(computeJson()));
-			});
-		});
-	</script>';
-
-	echo '
+	</div>
 	<br class="clear" />';
 }
 
@@ -213,7 +169,7 @@ function template_metatags()
 							<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '" />
 						</td>
 						<td>
-							<input type="text" name="custom_tag_value[]" size="40" value="', isset($meta[$data[0]]) ? $meta[$data[0]] : '', '" />
+							<input type="text" name="custom_tag_value[]" size="40" value="', $meta[$data[0]] ?? '', '" />
 						</td>
 					</tr>';
 	}

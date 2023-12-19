@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2021 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.3
+ * @version 2.7.5
  */
 
 if (!defined('SMF'))
@@ -19,11 +19,6 @@ if (!defined('SMF'))
 
 class Integration
 {
-	/**
-	 * Подключаем используемые хуки
-	 *
-	 * @return void
-	 */
 	public static function hooks()
 	{
 		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false);
@@ -34,9 +29,7 @@ class Integration
 	}
 
 	/**
-	 * Подключаем языковой файл, проводим различные операции и пр.
-	 *
-	 * @return void
+	 * @hook integrate_load_theme
 	 */
 	public static function loadTheme()
 	{
@@ -48,10 +41,8 @@ class Integration
 	}
 
 	/**
-	 * Запускаем различные функции
-	 *
-	 * @return void
-	 */
+     * @hook integrate_menu_buttons
+     */
 	public static function menuButtons()
 	{
 		Subs::addMainPageDescription();
@@ -63,12 +54,9 @@ class Integration
 	}
 
 	/**
-	 * Различные замены вывода в коде страниц форума
-	 *
-	 * @param array $buffer
-	 * @return array
-	 */
-	public static function buffer($buffer)
+     * @hook integrate_buffer
+     */
+	public static function buffer(string $buffer): string
 	{
 		global $context, $modSettings, $txt;
 
@@ -84,7 +72,7 @@ class Integration
 			$replacements[$desc_old] = $desc_new;
 		}
 
-		// Metatags
+		// Meta tags
 		if (!empty($modSettings['optimus_meta'])) {
 			$meta = '';
 			$test = unserialize($modSettings['optimus_meta']);
@@ -107,16 +95,12 @@ class Integration
 
 			$type = !empty($context['optimus_og_type']) ? key($context['optimus_og_type']) : 'website';
 			$xmlns = 'html xmlns="http://www.w3.org/1999/xhtml"';
-			$new_xmlns = 'html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang="' . $txt['lang_dictionary'] . '"';
+			$new_xmlns = 'html prefix="og: https://ogp.me/ns#' . ($type == 'article' ? ' article: https://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: https://ogp.me/ns/fb#' : '') . '" lang="' . $txt['lang_dictionary'] . '"';
 			$replacements[$xmlns] = $new_xmlns;
 
 			$xmlns1 = '<html lang';
-			$new_xmlns1 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang';
+			$new_xmlns1 = '<html prefix="og: https://ogp.me/ns#' . ($type == 'article' ? ' article: https://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: https://ogp.me/ns/fb#' : '') . '" lang';
 			$replacements[$xmlns1] = $new_xmlns1;
-
-			$xmlns2 = '<html>';
-			$new_xmlns2 = '<html prefix="og: http://ogp.me/ns#' . ($type == 'article' ? ' article: http://ogp.me/ns/article#' : '') . (!empty($modSettings['optimus_fb_appid']) ? ' fb: http://ogp.me/ns/fb#' : '') . '" lang="' . $txt['lang_dictionary'] . '">';
-			$replacements[$xmlns2] = $new_xmlns2;
 
 			$open_graph = '<meta property="og:title" content="' . (!empty($context['subject']) ? $context['subject'] : $context['page_title_html_safe']) . '" />';
 

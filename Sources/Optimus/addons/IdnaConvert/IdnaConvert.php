@@ -6,7 +6,6 @@ namespace Bugo\Optimus\Addons\IdnaConvert;
  * IdnaConvert.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
@@ -17,12 +16,7 @@ if (!defined('SMF'))
  */
 class IdnaConvert
 {
-	/**
-	 * Check if conversion is needed
-	 *
-	 * @return boolean
-	 */
-	private static function requiredIdnConvert()
+	private static function requiredIdnConvert(): bool
 	{
 		global $sourcedir, $idn, $boardurl;
 
@@ -36,13 +30,7 @@ class IdnaConvert
 		return false;
 	}
 
-	/**
-	 * Convert robots.txt links if Cyrillic domain is used
-	 *
-	 * @param string $common_rules
-	 * @return void
-	 */
-	public static function robots(&$common_rules)
+	public static function robots(array &$common_rules)
 	{
 		global $boardurl, $idn;
 
@@ -57,13 +45,7 @@ class IdnaConvert
 		}
 	}
 
-	/**
-	 * Get converted links for Cyrillic domain
-	 *
-	 * @param array $links
-	 * @return void
-	 */
-	public static function sitemap(&$links)
+	public static function sitemap(array &$links)
 	{
 		global $idn;
 
@@ -72,7 +54,7 @@ class IdnaConvert
 
 		if (self::requiredIdnConvert()) {
 			foreach ($links as $id => $entry)
-				$links[$id]['loc'] = $idn->encode($links[$id]['loc']);
+				$links[$id]['loc'] = $idn->encode($entry['loc']);
 		}
 	}
 }

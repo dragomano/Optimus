@@ -8,74 +8,40 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2021 Bugo
+ * @copyright 2010-2023 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7
+ * @version 2.7.5
  */
 
 if (!defined('SMF'))
 	die('Hacking attempt...');
 
-/**
- * The class to work with robots.txt
- */
 class Robots
 {
-	/**
-	 * Root dir url
-	 *
-	 * @var string
-	 */
-	private $url_path = '';
+	private string $url_path = '';
 
-	/**
-	 * Rules
-	 *
-	 * @var array
-	 */
-	public $rules = array();
+	public array $rules = array();
 
-	/**
-	 * Action list
-	 *
-	 * @var array
-	 */
-	public $actions = ['msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all'];
+	public array $actions = ['msg','profile','help','search','mlist','sort','recent','register','groups','stats','unread','topicseen','showtopic','prev_next','imode','wap','all'];
 
-	/**
-	 * Setter for $url_path var
-	 *
-	 * @param string $value
-	 * @return void
-	 */
-	protected function setUrlPath($value)
+	protected function setUrlPath(string $value)
 	{
 		$this->url_path = $value;
 	}
 
-	/**
-	 * Getter for $url_path var
-	 *
-	 * @return void
-	 */
-	protected function getUrlPath()
+	protected function getUrlPath(): string
 	{
 		return $this->url_path;
 	}
 
-	/**
-	 * Generation of robots.txt
-	 *
-	 * @return bool
-	 */
-	public function generate()
+	public function generate(): bool
 	{
-		global $modSettings, $boardurl, $context;
+		global $boardurl, $context;
 
 		clearstatcache();
 
-		$this->setUrlPath(parse_url($boardurl, PHP_URL_PATH));
+		$this->setUrlPath(parse_url($boardurl, PHP_URL_PATH) ?? '');
 		$this->rules[] = 'User-agent: *';
 
 		self::sefRules();
@@ -95,13 +61,10 @@ class Robots
 
 		$new_robots = implode('<br>', str_replace("|", '', $new_robots));
 		$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
+
+		return true;
 	}
 
-	/**
-	 * Special rules for Pretty URLs or SimpleSEF and also $modSettings['queryless_urls'] option
-	 *
-	 * @return void
-	 */
 	private function sefRules()
 	{
 		global $modSettings, $sourcedir;
@@ -135,11 +98,6 @@ class Robots
 			$this->rules[] = ($sef_enabled ? '' : 'Allow: ' . $this->getUrlPath() . "/*board\nAllow: " . $this->getUrlPath() . '/*topic');
 	}
 
-	/**
-	 * RSS rules
-	 *
-	 * @return void
-	 */
 	private function rssRules()
 	{
 		global $modSettings;
@@ -147,24 +105,14 @@ class Robots
 		$this->rules[] = !empty($modSettings['xmlnews_enable']) ? 'Allow: ' . $this->getUrlPath() . '/*.xml' : '';
 	}
 
-	/**
-	 * We have nothing to hide ;)
-	 *
-	 * @return void
-	 */
 	private function assetsRules()
 	{
 		$this->rules[] = "Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$";
 	}
 
-	/**
-	 * Sitemap rules
-	 *
-	 * @return void
-	 */
 	private function sitemapRules()
 	{
-		global $sourcedir, $modSettings, $boardurl, $boarddir, $scripturl;
+		global $sourcedir, $boardurl, $boarddir, $scripturl;
 
 		$sitemap     = file_exists($sourcedir . '/Sitemap.php');
 		$map         = 'sitemap.xml';

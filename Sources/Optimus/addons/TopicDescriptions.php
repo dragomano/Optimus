@@ -6,7 +6,6 @@ namespace Bugo\Optimus\Addons;
  * TopicDescriptions.php
  *
  * @package Optimus
- *
  */
 
 if (!defined('SMF'))
