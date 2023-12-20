@@ -361,7 +361,7 @@ final class Integration
 		foreach ($context['meta_tags'] as $key => $value) {
 			foreach ($value as $k => $v) {
 				if ($k === 'property' && in_array($v, $meta))
-					$context['meta_tags'][$key] = array_merge(array('prefix' => 'og: http://ogp.me/ns#'), $value);
+					$context['meta_tags'][$key] = array_merge(array('prefix' => 'og: https://ogp.me/ns#'), $value);
 
 				if ($v == 'og:image') {
 					$og_image_key = $key;
@@ -379,13 +379,13 @@ final class Integration
 			$context['meta_tags'] = array_merge(
 				array_slice($context['meta_tags'], 0, $og_image_key + 1, true),
 				array(
-					array('prefix' => 'og: http://ogp.me/ns#', 'property' => 'og:image:type', 'content' => $image_data['mime'])
+					array('prefix' => 'og: https://ogp.me/ns#', 'property' => 'og:image:type', 'content' => $image_data['mime'])
 				),
 				array(
-					array('prefix' => 'og: http://ogp.me/ns#', 'property' => 'og:image:width', 'content' => $image_data[0])
+					array('prefix' => 'og: https://ogp.me/ns#', 'property' => 'og:image:width', 'content' => $image_data[0])
 				),
 				array(
-					array('prefix' => 'og: http://ogp.me/ns#', 'property' => 'og:image:height', 'content' => $image_data[1])
+					array('prefix' => 'og: https://ogp.me/ns#', 'property' => 'og:image:height', 'content' => $image_data[1])
 				),
 				array_slice($context['meta_tags'], $og_image_key + 1, null, true)
 			);
@@ -394,22 +394,22 @@ final class Integration
 		// Various types
 		if (! empty($context['optimus_og_type'])) {
 			$type = key($context['optimus_og_type']);
-			$context['meta_tags'][] = array('prefix' => 'og: http://ogp.me/ns#', 'property' => 'og:type', 'content' => $type);
+			$context['meta_tags'][] = array('prefix' => 'og: https://ogp.me/ns#', 'property' => 'og:type', 'content' => $type);
 			$optimus_custom_types = array_filter($context['optimus_og_type'][$type]);
 
 			foreach ($optimus_custom_types as $property => $content) {
 				if (is_array($content)) {
 					foreach ($content as $value) {
-						$context['meta_tags'][] = array('prefix' => $type . ': http://ogp.me/ns/' . $type . '#', 'property' => $type . ':' . $property, 'content' => $value);
+						$context['meta_tags'][] = array('prefix' => $type . ': https://ogp.me/ns/' . $type . '#', 'property' => $type . ':' . $property, 'content' => $value);
 					}
 				} else {
-					$context['meta_tags'][] = array('prefix' => $type . ': http://ogp.me/ns/' . $type . '#', 'property' => $type . ':' . $property, 'content' => $content);
+					$context['meta_tags'][] = array('prefix' => $type . ': https://ogp.me/ns/' . $type . '#', 'property' => $type . ':' . $property, 'content' => $content);
 				}
 			}
 		}
 
 		if ($context['current_action'] == 'profile' && op_is_request('u')) {
-			$context['meta_tags'][] = array('prefix' => 'og: http://ogp.me/ns#', 'property' => 'og:type', 'content' => 'profile');
+			$context['meta_tags'][] = array('prefix' => 'og: https://ogp.me/ns#', 'property' => 'og:type', 'content' => 'profile');
 		}
 
 		// Twitter cards
@@ -423,7 +423,7 @@ final class Integration
 
 		// Facebook
 		if (is_on('optimus_fb_appid'))
-			$context['meta_tags'][] = array('prefix' => 'fb: http://ogp.me/ns/fb#', 'property' => 'fb:app_id', 'content' => op_config('optimus_fb_appid'));
+			$context['meta_tags'][] = array('prefix' => 'fb: https://ogp.me/ns/fb#', 'property' => 'fb:app_id', 'content' => op_config('optimus_fb_appid'));
 
 		// Metatags
 		if (is_on('optimus_meta')) {
