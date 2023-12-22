@@ -24,27 +24,8 @@ function template_favicon()
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<input type="submit" class="button" value="', $txt['save'], '">
 			</div>
-		</form>';
-
-	if (empty($modSettings['optimus_disable_syntax_highlighting']))
-		echo '
-		<script>
-			let cmTextarea = new CodeMirror.fromTextArea(document.getElementById("optimus_favicon_text"), {
-				lineNumbers: true,
-				mode: "text/html",
-				firstLineNumber: 1,
-				lineWrapping: true,
-				direction: "' . ($context['right_to_left'] ? 'rtl' : 'ltr') . '",
-				styleActiveLine: true,
-				matchBrackets: true,
-				scrollbarStyle: "simple"
-			});
-		</script>';
-
-	echo '
+		</form>
 	</div>';
-
-	show_cm_switcher();
 }
 
 function template_metatags()
@@ -247,27 +228,6 @@ function template_counters()
 			<input type="submit" class="button" value="', $txt['save'], '">
 		</div>
 	</form>';
-
-	if (empty($modSettings['optimus_disable_syntax_highlighting']))
-		echo '
-	<script>
-		const textareas = ["optimus_head_code", "optimus_stat_code", "optimus_count_code", "optimus_counters_css"];
-		let cmArea = {};
-		textareas.forEach(function (el, i) {
-			cmArea[`obj${i}`] = CodeMirror.fromTextArea(document.getElementById(el), {
-				lineNumbers: true,
-				mode: el === "optimus_counters_css" ? "text/css" : "text/html",
-				firstLineNumber: 1,
-				lineWrapping: true,
-				direction: "' . ($context['right_to_left'] ? 'rtl' : 'ltr') . '",
-				styleActiveLine: true,
-				matchBrackets: true,
-				scrollbarStyle: "simple"
-			})
-		});
-	</script>';
-
-	show_cm_switcher();
 }
 
 function template_robots()
@@ -319,28 +279,11 @@ function template_robots()
 			</div>
 		</div>
 	</form>';
-
-	if (empty($modSettings['optimus_disable_syntax_highlighting']))
-		echo '
-	<script>
-		let cmTextarea = new CodeMirror.fromTextArea(document.getElementById("optimus_robots"), {
-			lineNumbers: true,
-			mode: "message/http",
-			firstLineNumber: 1,
-			lineWrapping: true,
-			direction: "' . ($context['right_to_left'] ? 'rtl' : 'ltr') . '",
-			styleActiveLine: true,
-			matchBrackets: true,
-			scrollbarStyle: "simple"
-		});
-	</script>';
-
-	show_cm_switcher();
 }
 
 function template_htaccess()
 {
-	global $txt, $context, $modSettings;
+	global $txt, $context;
 
 	echo '
 	<div class="cat_bar">
@@ -356,27 +299,8 @@ function template_htaccess()
 				<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
 				<input type="submit" class="button" value="', $txt['save'], '">
 			</div>
-		</form>';
-
-	if (empty($modSettings['optimus_disable_syntax_highlighting']))
-		echo '
-		<script>
-			let cmTextarea = new CodeMirror.fromTextArea(document.getElementById("optimus_htaccess"), {
-				lineNumbers: true,
-				mode: "apache",
-				firstLineNumber: 1,
-				lineWrapping: true,
-				direction: "' . ($context['right_to_left'] ? 'rtl' : 'ltr') . '",
-				styleActiveLine: true,
-				matchBrackets: true,
-				scrollbarStyle: "simple"
-			});
-		</script>';
-
-	echo '
+		</form>
 	</div>';
-
-	show_cm_switcher();
 }
 
 function template_footer_counters_above()
@@ -535,37 +459,4 @@ function template_search_terms_above()
 
 function template_search_terms_below()
 {
-}
-
-function show_cm_switcher()
-{
-	global $modSettings, $txt;
-
-	if (! empty($modSettings['optimus_disable_syntax_highlighting']))
-		return;
-
-	echo '
-	<script>
-		document.querySelector("#op_settings_footer").insertAdjacentHTML("beforeEnd", \'<span><label>' . $txt['theme'] . '</label> <select id="cmThemeChanger"><option value="3024-day">3024 Day</option><option value="3024-night">3024 Night</option><option value="abcdef">Abcdef</option><option value="ambiance">Ambiance</option><option value="base16-dark">Base16 Dark</option><option value="base16-light">Base16 Light</option><option value="bespin">Bespin</option><option value="blackboard">Blackboard</option><option value="cobalt">Cobalt</option><option value="default">Default</option><option value="colorforth">Colorforth</option><option value="darcula">Darcula</option><option value="dracula">Dracula</option><option value="duotone-dark">Duotone Dark</option><option value="duotone-light">Duotone Light</option><option value="eclipse">Eclipse</option><option value="elegant">Elegant</option><option value="erlang-dark">Erlang Dark</option><option value="gruvbox-dark">Gruvbox Dark</option><option value="hopscotch">Hopscotch</option><option value="icecoder">Icecoder</option><option value="idea">Idea</option><option value="isotope">Isotope</option><option value="lesser-dark">Lesser Dark</option><option value="liquibyte">Liquibyte</option><option value="lucario">Lucario</option><option value="material">Material</option><option value="mbo">Mbo</option><option value="mdn-like">Mdn Like</option><option value="midnight">Midnight</option><option value="monokai">Monokai</option><option value="neat">Neat</option><option value="neo">Neo</option><option value="night">Night</option><option value="nord">Nord</option><option value="oceanic-next">Oceanic Next</option><option value="panda-syntax">Panda Syntax</option><option value="paraiso-dark">Paraiso Dark</option><option value="paraiso-light">Paraiso Light</option><option value="pastel-on-dark">Pastel On Dark</option><option value="railscasts">Railscasts</option><option value="rubyblue">Rubyblue</option><option value="seti">Seti</option><option value="shadowfox">Shadowfox</option><option value="solarized">Solarized</option><option value="ssms">Ssms</option><option value="the-matrix">The Matrix</option><option value="tomorrow-night-bright">Tomorrow Night Bright</option><option value="tomorrow-night-eighties">Tomorrow Night Eighties</option><option value="ttcn">Ttcn</option><option value="twilight">Twilight</option><option value="vibrant-ink">Vibrant Ink</option><option value="xq-dark">Xq Dark</option><option value="xq-light">Xq Light</option><option value="yeti">Yeti</option><option value="yonce">Yonce</option><option value="zenburn">Zenburn</option></select></span>\');
-		let data = localStorage.getItem("cmTheme"),
-			themeChanger = document.getElementById("cmThemeChanger");
-		if (data !== null) {
-			themeChanger.value = data;
-			if (typeof cmTextarea !== "undefined") {
-				cmTextarea.setOption("theme", data);
-			} else if (typeof cmArea !== "undefined") {
-				Object.values(cmArea).forEach(el => el.setOption("theme", data));
-			}
-		} else {
-			themeChanger.querySelector(\'option[value="default"]\').selected = true;
-		}
-		themeChanger.addEventListener("change", function () {
-			if (typeof cmTextarea !== "undefined") {
-				cmTextarea.setOption("theme", this.value);
-			} else if (typeof cmArea !== "undefined") {
-				Object.values(cmArea).forEach(el => el.setOption("theme", this.value));
-			}
-			localStorage.setItem("cmTheme", this.value);
-		});
-	</script>';
 }

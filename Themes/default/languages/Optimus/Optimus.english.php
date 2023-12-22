@@ -27,7 +27,6 @@ $txt['optimus_correct_http_status'] = 'Return <a href="https://en.wikipedia.org/
 
 $txt['optimus_extra_settings'] = 'Additional settings';
 $txt['optimus_log_search'] = 'Enable logging of search terms';
-$txt['optimus_disable_syntax_highlighting'] = 'Disable syntax highlighting in text areas';
 
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc'] = 'Here you can add an additional <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">markup</a> for forum pages.';

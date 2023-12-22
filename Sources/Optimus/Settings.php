@@ -60,8 +60,6 @@ final class Settings
 		if (op_request('area') === 'optimus')
 			loadCSSFile('optimus/optimus.css');
 
-		$this->loadCodemirrorAssets();
-
 		$admin_areas['config']['areas']['optimus'] = array(
 			'label' => $txt['optimus_title'],
 			'function' => array($this, 'actions'),
@@ -182,7 +180,6 @@ final class Settings
 			array('check', 'optimus_correct_http_status'),
 			array('title', 'optimus_extra_settings'),
 			array('check', 'optimus_log_search'),
-			array('check', 'optimus_disable_syntax_highlighting')
 		);
 
 		// Mod authors can add own options
@@ -534,36 +531,5 @@ final class Settings
 		}
 
 		updateSettings($vars);
-	}
-
-	private function loadCodemirrorAssets()
-	{
-		global $modSettings, $context;
-
-		if (! empty($modSettings['optimus_disable_syntax_highlighting']))
-			return;
-
-		loadCSSFile('https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.min.css', array('external' => true));
-		loadCSSFile('https://cdn.jsdelivr.net/npm/codemirror@5/addon/scroll/simplescrollbars.min.css', array('external' => true));
-
-		$context['html_headers'] .= "\n\t" . '<link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/npm/codemirror@5/theme/3024-day.min.css,npm/codemirror@5/theme/3024-night.min.css,npm/codemirror@5/theme/abcdef.min.css,npm/codemirror@5/theme/ambiance.min.css,npm/codemirror@5/theme/ayu-dark.min.css,npm/codemirror@5/theme/ayu-mirage.min.css,npm/codemirror@5/theme/base16-dark.min.css,npm/codemirror@5/theme/base16-light.min.css,npm/codemirror@5/theme/bespin.min.css,npm/codemirror@5/theme/blackboard.min.css,npm/codemirror@5/theme/cobalt.min.css,npm/codemirror@5/theme/colorforth.min.css,npm/codemirror@5/theme/darcula.min.css,npm/codemirror@5/theme/dracula.min.css,npm/codemirror@5/theme/duotone-dark.min.css,npm/codemirror@5/theme/duotone-light.min.css,npm/codemirror@5/theme/eclipse.min.css,npm/codemirror@5/theme/elegant.min.css,npm/codemirror@5/theme/erlang-dark.min.css,npm/codemirror@5/theme/gruvbox-dark.min.css,npm/codemirror@5/theme/hopscotch.min.css,npm/codemirror@5/theme/icecoder.min.css,npm/codemirror@5/theme/idea.min.css,npm/codemirror@5/theme/isotope.min.css,npm/codemirror@5/theme/lesser-dark.min.css,npm/codemirror@5/theme/liquibyte.min.css,npm/codemirror@5/theme/lucario.min.css,npm/codemirror@5/theme/material.min.css,npm/codemirror@5/theme/material-darker.min.css,npm/codemirror@5/theme/material-ocean.min.css,npm/codemirror@5/theme/material-palenight.min.css,npm/codemirror@5/theme/mbo.min.css,npm/codemirror@5/theme/mdn-like.min.css,npm/codemirror@5/theme/midnight.min.css,npm/codemirror@5/theme/monokai.min.css,npm/codemirror@5/theme/moxer.min.css,npm/codemirror@5/theme/neat.min.css,npm/codemirror@5/theme/neo.min.css,npm/codemirror@5/theme/night.min.css,npm/codemirror@5/theme/nord.min.css,npm/codemirror@5/theme/oceanic-next.min.css,npm/codemirror@5/theme/panda-syntax.min.css,npm/codemirror@5/theme/paraiso-dark.min.css,npm/codemirror@5/theme/paraiso-light.min.css,npm/codemirror@5/theme/pastel-on-dark.min.css,npm/codemirror@5/theme/railscasts.min.css,npm/codemirror@5/theme/rubyblue.min.css,npm/codemirror@5/theme/seti.min.css,npm/codemirror@5/theme/shadowfox.min.css,npm/codemirror@5/theme/solarized.min.css,npm/codemirror@5/theme/ssms.min.css,npm/codemirror@5/theme/the-matrix.min.css,npm/codemirror@5/theme/tomorrow-night-bright.min.css,npm/codemirror@5/theme/tomorrow-night-eighties.min.css,npm/codemirror@5/theme/ttcn.min.css,npm/codemirror@5/theme/twilight.min.css,npm/codemirror@5/theme/vibrant-ink.min.css,npm/codemirror@5/theme/xq-dark.min.css,npm/codemirror@5/theme/xq-light.min.css,npm/codemirror@5/theme/yeti.min.css,npm/codemirror@5/theme/yonce.min.css,npm/codemirror@5/theme/zenburn.min.css">';
-
-		addInlineCss('.CodeMirror {max-height: 24em; font-size: 1.4em; border: 1px solid #C5C5C5}');
-
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.min.js', array('external' => true));
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/addon/selection/active-line.min.js', array('external' => true));
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/addon/edit/matchbrackets.min.js', array('external' => true));
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/addon/scroll/simplescrollbars.min.js', array('external' => true));
-
-		if (in_array($context['current_subaction'], ['favicon', 'counters'])) {
-			loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/mode/xml/xml.min.js', array('external' => true));
-			loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/mode/javascript/javascript.min.js', array('external' => true));
-			loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/mode/css/css.min.js', array('external' => true));
-			loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/mode/htmlmixed/htmlmixed.min.js', array('external' => true));
-		} elseif ($context['current_subaction'] === 'robots') {
-			loadJavaScriptFile('https://cdn.jsdelivr.net/npm/codemirror@5/mode/http/http.min.js', array('external' => true));
-		} elseif ($context['current_subaction'] === 'htaccess') {
-			loadJavaScriptFile('optimus_apache.js', array());
-		}
 	}
 }
