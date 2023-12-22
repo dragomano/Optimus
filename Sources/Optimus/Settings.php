@@ -289,11 +289,13 @@ final class Settings
 
 	public function metatagsTabSettings()
 	{
-		global $context, $txt, $scripturl;
+		global $context, $txt, $scripturl, $modSettings;
 
 		$context['sub_template'] = 'metatags';
 		$context['page_title'] .= ' - ' . $txt['optimus_meta_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=metatags;save';
+
+		$context['optimus_metatags_rules'] = empty($modSettings['optimus_meta']) ? [] : unserialize($modSettings['optimus_meta']);
 
 		$config_vars = [];
 

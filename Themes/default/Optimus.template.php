@@ -30,62 +30,67 @@ function template_favicon()
 
 function template_metatags()
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt;
 
 	echo '
 	<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['optimus_meta_title'], '</h3>
 		</div>
-		<div class="information centertext">', $txt['optimus_meta_info'], '</div>
-		<table class="table_grid metatags centertext">
-			<thead>
-				<tr class="title_bar">
-					<th>', $txt['optimus_meta_tools'], '</th>
-					<th>', $txt['optimus_meta_name'], '</th>
-					<th>', $txt['optimus_meta_content'], '</th>
-				</tr>
-			</thead>
-			<tbody>';
+		<div class="information centertext">', $txt['optimus_meta_info'], '</div>';
 
-	$metatags = !empty($modSettings['optimus_meta']) ? unserialize($modSettings['optimus_meta']) : '';
-	$engines  = array();
-
-	foreach ($txt['optimus_search_engines'] as $engine => $data) {
-		$engines[] = $data[0];
-
+	if (! empty($context['optimus_metatags_rules'])) {
 		echo '
-				<tr class="windowbg">
-					<td>', $engine, ' (<strong><a class="bbc_link" href="', $data[1], '" target="_blank" rel="noopener">', $data[2], '</a></strong>)</td>
-					<td>
-						<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '">
-					</td>
-					<td>
-						<input type="text" name="custom_tag_value[]" size="40" value="', $metatags[$data[0]] ?? '', '">
-					</td>
-				</tr>';
-	}
+		<div class="windowbg">
+			<table class="table_grid metatags centertext">
+				<thead>
+					<tr class="title_bar">
+						<th>', $txt['optimus_meta_tools'], '</th>
+						<th>', $txt['optimus_meta_name'], '</th>
+						<th>', $txt['optimus_meta_content'], '</th>
+					</tr>
+				</thead>
+				<tbody>';
 
-	if (!empty($metatags)) {
-		foreach ($metatags as $name => $value) {
-			if (!in_array($name, $engines)) {
+		$engines  = [];
+
+		foreach ($txt['optimus_search_engines'] as $engine => $data) {
+			$engines[] = $data[0];
+
+			echo '
+					<tr class="windowbg">
+						<td>', $engine, ' (<strong><a class="bbc_link" href="', $data[1], '" target="_blank" rel="noopener">', $data[2], '</a></strong>)</td>
+						<td>
+							<input type="text" name="custom_tag_name[]" size="24" value="', $data[0], '">
+						</td>
+						<td>
+							<input type="text" name="custom_tag_value[]" size="40" value="', $context['optimus_metatags_rules'][$data[0]] ?? '', '">
+						</td>
+					</tr>';
+		}
+
+		foreach ($context['optimus_metatags_rules'] as $name => $value) {
+			if (! in_array($name, $engines)) {
 				echo '
-				<tr class="windowbg">
-					<td>', $txt['optimus_meta_customtag'], '</td>
-					<td>
-						<input type="text" name="custom_tag_name[]" size="24" value="', $name, '">
-					</td>
-					<td>
-						<input type="text" name="custom_tag_value[]" size="40" value="', $value, '">
-					</td>
-				</tr>';
+					<tr class="windowbg">
+						<td>', $txt['optimus_meta_customtag'], '</td>
+						<td>
+							<input type="text" name="custom_tag_name[]" size="24" value="', $name, '">
+						</td>
+						<td>
+							<input type="text" name="custom_tag_value[]" size="40" value="', $value, '">
+						</td>
+					</tr>';
 			}
 		}
+
+		echo '
+				</tbody>
+			</table>
+		</div>';
 	}
 
 	echo '
-			</tbody>
-		</table>
 		<div class="windowbg centertext">
 			<noscript>
 				<div style="margin-top: 1ex">
