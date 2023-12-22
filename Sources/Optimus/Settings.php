@@ -71,6 +71,7 @@ final class Settings
 				'extra'    => array($txt['optimus_extra_title']),
 				'favicon'  => array($txt['optimus_favicon_title']),
 				'metatags' => array($txt['optimus_meta_title']),
+				'redirect' => array($txt['optimus_redirect_title']),
 				'counters' => array($txt['optimus_counters']),
 				'robots'   => array($txt['optimus_robots_title']),
 				'htaccess' => array($txt['optimus_htaccess_title']),
@@ -101,6 +102,7 @@ final class Settings
 			'extra'    => 'extraTabSettings',
 			'favicon'  => 'faviconTabSettings',
 			'metatags' => 'metatagsTabSettings',
+			'redirect' => 'redirectTabSettings',
 			'counters' => 'counterTabSettings',
 			'robots'   => 'robotsTabSettings',
 			'htaccess' => 'htaccessTabSettings',
@@ -127,6 +129,9 @@ final class Settings
 				),
 				'metatags' => array(
 					'description' => $txt['optimus_meta_desc']
+				),
+				'redirect' => array(
+					'description' => $txt['optimus_redirect_desc']
 				),
 				'counters' => array(
 					'description' => $txt['optimus_counters_desc']
@@ -311,6 +316,41 @@ final class Settings
 
 			updateSettings(['optimus_meta' => serialize($meta)]);
 			redirectexit('action=admin;area=optimus;sa=metatags');
+		}
+
+		prepareDBSettingContext($config_vars);
+	}
+
+	public function redirectTabSettings()
+	{
+		global $context, $txt, $scripturl, $modSettings;
+
+		$context['sub_template'] = 'redirect';
+		$context['page_title'] .= ' - ' . $txt['optimus_redirect_title'];
+		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=redirect;save';
+
+		$context['optimus_redirect_rules'] = empty($modSettings['optimus_redirect']) ? [] : unserialize($modSettings['optimus_redirect']);
+
+		$config_vars = [];
+
+		if (op_is_get('save')) {
+			checkSession();
+
+			$save_vars = $config_vars;
+			saveDBSettings($save_vars);
+
+			$redirect = [];
+			if (op_is_post('custom_redirect_from') && op_is_post('custom_redirect_to')) {
+				$custom_redirect = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+				$custom_redirect['custom_redirect_from'] = array_filter($custom_redirect['custom_redirect_from']);
+
+				foreach ($custom_redirect['custom_redirect_from'] as $to => $from) {
+					$redirect[$from] = $custom_redirect['custom_redirect_to'][$to];
+				}
+			}
+
+			updateSettings(['optimus_redirect' => serialize($redirect)]);
+			redirectexit('action=admin;area=optimus;sa=redirect');
 		}
 
 		prepareDBSettingContext($config_vars);

@@ -46,7 +46,25 @@ final class Integration
 
 	public function actions(array &$actions)
 	{
+		global $scripturl;
+
 		$actions['sitemap_xsl'] = array(false, array($this, 'xsl'));
+
+		// Redirects
+		$redirects = is_on('optimus_redirect') ? unserialize(op_config('optimus_redirect')) : [];
+
+		if (empty($redirects))
+			return;
+
+		if (isset($_SERVER['QUERY_STRING']) && isset($redirects[$_SERVER['QUERY_STRING']])) {
+			$url = $scripturl . '?';
+			$to = $redirects[$_SERVER['QUERY_STRING']];
+
+			if (strpos($to, 'http') === 0)
+				$url = '';
+
+			header('location: ' . $url . $to, true, 302);
+		}
 	}
 
 	public function preLogStats(array &$no_stat_actions)
@@ -363,7 +381,7 @@ final class Integration
 				if ($k === 'property' && in_array($v, $meta))
 					$context['meta_tags'][$key] = array_merge(array('prefix' => 'og: https://ogp.me/ns#'), $value);
 
-				if ($v == 'og:image') {
+				if ($v === 'og:image') {
 					$og_image_key = $key;
 
 					if (! empty($context['optimus_og_image'])) {

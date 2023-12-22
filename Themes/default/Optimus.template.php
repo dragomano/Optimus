@@ -128,6 +128,71 @@ function template_metatags()
 	</form>';
 }
 
+function template_redirect()
+{
+	global $context, $txt;
+
+	echo '
+	<form action="', $context['post_url'], '" method="post" accept-charset="', $context['character_set'], '">
+		<div class="cat_bar">
+			<h3 class="catbg">', $txt['optimus_redirect_title'], '</h3>
+		</div>
+		<div class="information centertext">', $txt['optimus_redirect_info'], '</div>';
+
+	if (! empty($context['optimus_redirect_rules'])) {
+		echo '
+		<div class="windowbg">
+			<table class="table_grid centertext">
+				<thead>
+					<tr class="title_bar">
+						<th>', $txt['optimus_redirect_from'], '</th>
+						<th>', $txt['optimus_redirect_to'], '</th>
+					</tr>
+				</thead>
+				<tbody>';
+
+		foreach ($context['optimus_redirect_rules'] as $from => $to) {
+			echo '
+					<tr class="windowbg">
+						<td>
+							<input type="text" name="custom_redirect_from[]" value="', $from, '">
+						</td>
+						<td>
+							<input type="text" name="custom_redirect_to[]" value="', $to, '">
+						</td>
+					</tr>';
+		}
+
+		echo '
+				</tbody>
+			</table>
+		</div>';
+	}
+
+	echo '
+		<div class="windowbg centertext">
+			<noscript>
+				<div style="margin-top: 1ex">
+					<input type="text" name="custom_redirect_from[]" placeholder="action=mlist" size="40" class="input_text"> => <input type="text" name="custom_redirect_to[]" placeholder="action=help" size="40" class="input_text">
+				</div>
+			</noscript>
+			<div id="moreRedirects"></div>
+			<div style="margin-top: 1ex; display: none" id="new_redirect_link">
+				<a href="#" onclick="addNewRedirect(); return false;" class="bbc_link">', $txt['optimus_add_redirect'], '</a>
+			</div>
+			<script>
+				document.getElementById("new_redirect_link").style.display = "";
+				function addNewRedirect() {
+					setOuterHTML(document.getElementById("moreRedirects"), \'<div style="margin-top: 1ex"><input type="text" name="custom_redirect_from[]" placeholder="action=mlist" size="40" class="input_text"> => <input type="text" name="custom_redirect_to[]" placeholder="action=help" size="40" class="input_text"><\' + \'/div><div id="moreRedirects"><\' + \'/div>\');
+				}
+			</script>
+			<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '">
+			<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '">
+			<input type="submit" class="button" value="', $txt['save'], '">
+		</div>
+	</form>';
+}
+
 function template_counters()
 {
 	global $context, $txt, $modSettings;
@@ -400,7 +465,6 @@ function template_keywords_above()
 
 function template_keywords_below()
 {
-
 }
 
 function template_search_terms_above()

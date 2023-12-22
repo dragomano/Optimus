@@ -47,7 +47,7 @@ $txt['optimus_favicon_title'] = 'Favicon';
 $txt['optimus_favicon_desc'] = 'Create your own forum icon. It will be displayed by the browser as an image next to the open tab and other interface elements.';
 
 $txt['optimus_favicon_text'] = 'The favicon code';
-$txt['optimus_favicon_help'] = 'Generate your own favicon <a href="https://www.favicomatic.com/" target="_blank" rel="noopener" class="bbc_link">here</a>, or <a href="https://digitalagencyrankings.com/iconogen/" target="_blank" rel="noopener" class="bbc_link">here</a>.<br>Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br>This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
+$txt['optimus_favicon_help'] = 'Generate your own favicon <a href="https://www.favicomatic.com/" target="_blank" rel="noopener" class="bbc_link">here</a>.<br>Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br>This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
 
 $txt['optimus_meta_title'] = 'Meta tags';
 $txt['optimus_meta_desc'] = 'On this page you can add any regular/verification code(s) from the list below.';
@@ -64,6 +64,12 @@ $txt['optimus_search_engines'] = array(
 	'Yandex' => array('yandex-verification', 'https://webmaster.yandex.com/', 'Yandex.Webmaster'),
 );
 
+$txt['optimus_redirect_title'] = 'Redirect';
+$txt['optimus_redirect_desc'] = 'On this page you can add redirection rules for internal forum URLs.';
+$txt['optimus_redirect_info'] = 'You can specify either an internal address or an external link as the redirection "to" address.';
+$txt['optimus_redirect_from'] = 'From';
+$txt['optimus_redirect_to'] = 'To';
+$txt['optimus_add_redirect'] = 'Add a new redirect';
 
 $txt['optimus_counters'] = 'AdSense/JS code';
 $txt['optimus_counters_desc'] = 'You can add and change any JS code in this section to log stats/visits of your forum.';
