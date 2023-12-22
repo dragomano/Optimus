@@ -161,7 +161,9 @@ final class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_basic_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=basic;save';
 
-		op_set_settings(['optimus_forum_index' => sprintf($txt['forum_index'], $context['forum_name'])]);
+		$this->addDefaultSettings(
+			['optimus_forum_index' => sprintf($txt['forum_index'], $context['forum_name'])]
+		);
 
 		$config_vars = array(
 			array('title', 'optimus_main_page'),
@@ -364,7 +366,7 @@ final class Settings
 		$context['page_title'] .= ' - ' . $txt['optimus_counters'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=counters;save';
 
-		op_set_settings([
+		$this->addDefaultSettings([
 			'optimus_counters_css'    => '.counters {text-align: center}',
 			'optimus_ignored_actions' => 'admin,bookmarks,credits,helpadmin,pm,printpage'
 		]);
@@ -460,7 +462,7 @@ final class Settings
 		$context['settings_title'] = $txt['optimus_sitemap_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
-		op_set_settings([
+		$this->addDefaultSettings([
 			'optimus_sitemap_topics_num_replies' => 5,
 			'optimus_sitemap_items_display'      => 10000,
 			'optimus_start_year'                 => 1994,
@@ -516,6 +518,22 @@ final class Settings
 		}
 
 		prepareDBSettingContext($config_vars);
+	}
+
+	private function addDefaultSettings($settings)
+	{
+		global $modSettings;
+
+		if (empty($settings))
+			return;
+
+		$vars = [];
+		foreach ($settings as $key => $value) {
+			if (! isset($modSettings[$key]))
+				$vars[$key] = $value;
+		}
+
+		updateSettings($vars);
 	}
 
 	private function loadCodemirrorAssets()

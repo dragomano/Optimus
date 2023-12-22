@@ -148,22 +148,6 @@ if (! function_exists('op_config')) {
 	}
 }
 
-if (! function_exists('op_set_settings')) {
-	function op_set_settings($options)
-	{
-		if (empty($options))
-			return;
-
-		$vars = [];
-		foreach ($options as $key => $value) {
-			if (op_config($key) === null)
-				$vars[$key] = $value;
-		}
-
-		updateSettings($vars);
-	}
-}
-
 if (! function_exists('op_xss')) {
 	function op_xss($data)
 	{
