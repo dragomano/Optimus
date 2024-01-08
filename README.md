@@ -7,9 +7,13 @@
 [![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
 
 - **Tested on:** PHP 8.2.13 / MariaDB 10.11.6
-- **Languages:** English, Russian, Dutch, Turkish, Spanish
+- **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian
 
-### Features:
+### Reviews
+
+- [На русском](https://dragomano.ru/mods/optimus)
+
+### Features
 
 - Managing of title and description for the main forum page.
 - Managing of title, description, and keywords metatags for topic pages.
@@ -25,20 +29,3 @@
 - Generation of favicon.
 - Support of Cyrillic domains.
 - Statistics of search queries on the forum.
-
-### Особенности:
-
-- Изменение описания и заголовка главной страницы форума.
-- Управление заголовками страниц тем и разделов.
-- Мета-тег description для страниц разделов и тем.
-- Мета-тег keywords для тем форума (заполняются при создании/редактировании тем).
-- Поддержка тегов Open Graph и карточек Twitter.
-- Проверочные мета-теги при добавлении сайтов в Google, Яндекс, Mail, Bing (Инструменты вебмастера).
-- Пользовательские мета-теги.
-- Добавление счетчиков в код страниц без редактирования файлов движка.
-- Редактирование robots.txt и .htaccess из админки.
-- Генератор правил для robots.txt.
-- Создание простой XML-карты форума.
-- Генерация иконки сайта.
-- Поддержка кириллических доменов.
-- Статистика поисковых запросов на форуме.
