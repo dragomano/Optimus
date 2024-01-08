@@ -59,7 +59,7 @@ final class Topics
 		// Looking for an image in the text of the topic first message
 		if (empty($context['optimus_og_image']) && ! empty($context['topicinfo']['topic_first_message'])) {
 			$image = preg_match('/\[img.*]([^]\[]+)\[\/img]/U', $context['topicinfo']['topic_first_message'], $value);
-			$settings['og_image'] = $image ? array_pop($value) : null;
+			$settings['og_image'] = $image ? array_pop($value) : $settings['og_image'];
 		}
 	}
 
