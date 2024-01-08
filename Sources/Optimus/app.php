@@ -4,7 +4,7 @@ if (! defined('SMF'))
 	die('No direct access...');
 
 defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
-defined('OP_VERSION') || define('OP_VERSION', '2.12');
+defined('OP_VERSION') || define('OP_VERSION', '2.13');
 
 function optimus_autoloader($classname)
 {

@@ -3,12 +3,10 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>2.12</version>
+	<version>2.13</version>
 	<type>modification</type>
 
-	<install for="2.1 - 2.1.99">
-		<readme parsebbc="true" type="file">readme/english.txt</readme>
-		<readme parsebbc="true" type="file" lang="russian">readme/russian.txt</readme>
+	<install for="2.1.*">
 		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
 		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
 		<hook hook="integrate_pre_include" file="$sourcedir/Optimus/app.php" />
@@ -16,7 +14,7 @@
 		<redirect url="?action=admin;area=optimus" timeout="1000" />
 	</install>
 
-	<uninstall for="2.1 - 2.1.99">
+	<uninstall for="2.1.*">
 		<hook hook="integrate_pre_include" file="$sourcedir/Optimus/app.php" reverse="true" />
 		<code>uninstall.php</code>
 		<remove-file name="$themedir/Optimus.template.php" />
