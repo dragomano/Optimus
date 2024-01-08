@@ -20,7 +20,6 @@
 		<remove-file name="$themedir/Optimus.template.php" />
 		<remove-file name="$themedir/images/optimus.png" />
 		<remove-file name="$themedir/images/optimus_large.png" />
-		<remove-file name="$themedir/scripts/optimus_apache.js" />
 		<remove-dir name="$themedir/css/optimus" />
 		<remove-dir name="$sourcedir/Optimus" />
 		<remove-dir name="$languagedir/Optimus" />
