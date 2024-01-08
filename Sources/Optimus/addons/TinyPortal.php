@@ -18,9 +18,9 @@ class TinyPortal
 {
 	public function __construct()
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::prepareArticleMeta', false, __FILE__, true);
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots', false, __FILE__, true);
-		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::prepareArticleMeta#', false, __FILE__);
+		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
+		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap#', false, __FILE__);
 	}
 
 	public function prepareArticleMeta()

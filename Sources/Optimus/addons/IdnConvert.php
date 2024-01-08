@@ -23,8 +23,8 @@ class IdnConvert
 		if (iri_to_url($boardurl) === $boardurl)
 			return;
 
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots', false, __FILE__, true);
-		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap', false, __FILE__, true);
+		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
+		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap#', false, __FILE__);
 	}
 
 	public function optimusRobots()

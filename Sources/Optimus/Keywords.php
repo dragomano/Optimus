@@ -23,17 +23,17 @@ final class Keywords
 {
 	public function hooks()
 	{
-		add_integration_function('integrate_actions', __CLASS__ . '::actions', false, __FILE__, true);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
-		add_integration_function('integrate_current_action', __CLASS__ . '::currentAction', false, __FILE__, true);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions', false, __FILE__, true);
-		add_integration_function('integrate_messageindex_buttons', __CLASS__ . '::messageindexButtons', false, __FILE__, true);
-		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic', false, __FILE__, true);
-		add_integration_function('integrate_prepare_display_context', __CLASS__ . '::prepareDisplayContext', false, __FILE__, true);
-		add_integration_function('integrate_create_topic', __CLASS__ . '::createTopic', false, __FILE__, true);
-		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd', false, __FILE__, true);
-		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost', false, __FILE__, true);
-		add_integration_function('integrate_remove_topics', __CLASS__ . '::removeTopics', false, __FILE__, true);
+		add_integration_function('integrate_actions', __CLASS__ . '::actions#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
+		add_integration_function('integrate_current_action', __CLASS__ . '::currentAction#', false, __FILE__);
+		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_messageindex_buttons', __CLASS__ . '::messageindexButtons#', false, __FILE__);
+		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic#', false, __FILE__);
+		add_integration_function('integrate_prepare_display_context', __CLASS__ . '::prepareDisplayContext#', false, __FILE__);
+		add_integration_function('integrate_create_topic', __CLASS__ . '::createTopic#', false, __FILE__);
+		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd#', false, __FILE__);
+		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost#', false, __FILE__);
+		add_integration_function('integrate_remove_topics', __CLASS__ . '::removeTopics#', false, __FILE__);
 	}
 
 	public function actions(array &$actions)

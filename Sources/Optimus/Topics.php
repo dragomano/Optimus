@@ -23,13 +23,13 @@ final class Topics
 {
 	public function hooks()
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::prepareOgImage', false, __FILE__, true);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions', false, __FILE__, true);
-		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic', false, __FILE__, true);
-		add_integration_function('integrate_before_create_topic', __CLASS__ . '::beforeCreateTopic', false, __FILE__, true);
-		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost', false, __FILE__, true);
-		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::prepareOgImage#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
+		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic#', false, __FILE__);
+		add_integration_function('integrate_before_create_topic', __CLASS__ . '::beforeCreateTopic#', false, __FILE__);
+		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost#', false, __FILE__);
+		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd#', false, __FILE__);
 
 		(new Keywords)->hooks();
 	}

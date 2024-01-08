@@ -21,8 +21,8 @@ class EhPortal
 		if (! function_exists('sportal_actions'))
 			return;
 
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots', false, __FILE__, true);
-		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap', false, __FILE__, true);
+		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
+		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap#', false, __FILE__);
 	}
 
 	public function optimusRobots(array &$custom_rules, string $url_path)

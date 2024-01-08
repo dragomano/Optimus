@@ -34,14 +34,14 @@ final class Integration
 
 	private function hooks()
 	{
-		add_integration_function('integrate_actions', __CLASS__ . '::actions', false, __FILE__, true);
-		add_integration_function('integrate_pre_log_stats', __CLASS__ . '::preLogStats', false, __FILE__, true);
-		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme', false, __FILE__, true);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
-		add_integration_function('integrate_theme_context', __CLASS__ . '::themeContext', false, __FILE__, true);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions', false, __FILE__, true);
-		add_integration_function('integrate_search_params', __CLASS__ . '::searchParams', false, __FILE__, true);
-		add_integration_function('integrate_credits', __CLASS__ . '::credits', false, __FILE__, true);
+		add_integration_function('integrate_actions', __CLASS__ . '::actions#', false, __FILE__);
+		add_integration_function('integrate_pre_log_stats', __CLASS__ . '::preLogStats#', false, __FILE__);
+		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
+		add_integration_function('integrate_theme_context', __CLASS__ . '::themeContext#', false, __FILE__);
+		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_search_params', __CLASS__ . '::searchParams#', false, __FILE__);
+		add_integration_function('integrate_credits', __CLASS__ . '::credits#', false, __FILE__);
 	}
 
 	public function actions(array &$actions)

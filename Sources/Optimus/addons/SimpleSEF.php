@@ -21,9 +21,9 @@ class SimpleSEF
 		if (is_off('simplesef_enable'))
 			return;
 
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::makeCompatWithOptimus', false, __FILE__, true);
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots', false, __FILE__, true);
-		add_integration_function('integrate_optimus_create_sef_url', __CLASS__ . '::optimusCreateSefUrl', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::makeCompatWithOptimus#', false, __FILE__);
+		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
+		add_integration_function('integrate_optimus_create_sef_url', __CLASS__ . '::optimusCreateSefUrl#', false, __FILE__);
 	}
 
 	public function makeCompatWithOptimus()

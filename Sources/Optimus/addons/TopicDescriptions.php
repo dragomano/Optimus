@@ -18,7 +18,7 @@ class TopicDescriptions
 {
 	public function __construct()
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
 	}
 
 	public function menuButtons()

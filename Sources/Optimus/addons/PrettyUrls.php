@@ -18,9 +18,9 @@ class PrettyUrls
 {
 	public function __construct()
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::addSupportKeywordsAction', false, __FILE__, true);
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots', false, __FILE__, true);
-		add_integration_function('integrate_optimus_sitemap_rewrite_content', __CLASS__ . '::optimusSitemapRewriteContent', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', __CLASS__ . '::addSupportKeywordsAction#', false, __FILE__);
+		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
+		add_integration_function('integrate_optimus_sitemap_rewrite_content#', __CLASS__ . '::optimusSitemapRewriteContent', false, __FILE__);
 	}
 
 	public function addSupportKeywordsAction()
