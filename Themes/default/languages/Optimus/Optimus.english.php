@@ -158,3 +158,5 @@ $txt['optimus_frequency_column'] = 'Frequency';
 $txt['optimus_top_queries'] = 'Popular search queries';
 $txt['optimus_chart_title'] = 'Top %1$s';
 $txt['optimus_no_search_terms'] = 'Statistics are not yet available.';
+
+$txt['optimus_tags'] = 'Tags';

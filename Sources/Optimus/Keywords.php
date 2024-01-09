@@ -90,7 +90,7 @@ final class Keywords
 		$current_counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
 
 		if ($current_counter == $output['counter'] && empty($context['start'])) {
-			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="windowbg" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
+			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_tags'] . ' </legend>';
 
 			foreach ($context['optimus_keywords'] as $id => $keyword) {
 				$keywords .= '<a class="' . (is_off('optimus_use_color_tags') ? 'button' : 'descbox') . '" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px;' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
