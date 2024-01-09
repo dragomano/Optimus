@@ -75,7 +75,7 @@ final class Keywords
 			$keywords = $this->getKeywords()[$topic] ?? [];
 
 			foreach ($keywords as $id => $key) {
-				$data['first_post']['link'] .= ' <a class="amt" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="background-color: ' . $this->getRandomColor($key) . '">' . $key . '</a>';
+				$data['first_post']['link'] .= ' <a class="amt" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="' . $this->getRandomColor($key) . '">' . $key . '</a>';
 			}
 		}
 	}
@@ -93,7 +93,7 @@ final class Keywords
 			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="windowbg" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
 
 			foreach ($context['optimus_keywords'] as $id => $keyword) {
-				$keywords .= '<a class="descbox" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px; background-color: ' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
+				$keywords .= '<a class="' . (is_off('optimus_use_color_tags') ? 'button' : 'descbox') . '" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px;' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
 			}
 
 			$keywords .= '</fieldset>';
@@ -616,11 +616,16 @@ final class Keywords
 
 	private function getRandomColor(string $key): string
 	{
+		if (is_off('optimus_use_color_tags'))
+			return '';
+
 		$hash = -105;
 		for ($i = 0; $i < strlen($key); $i++)
 			$hash += ord($key[$i]);
 
-		return 'hsl(' . (($hash * 57) % 360) . ', 70%, 40%)';
+		$hsl = 'background-color: hsl(' . (($hash * 57) % 360) . ', 70%, 40%)';
+
+		return $hsl . '; color: #fff';
 	}
 
 	private function add(array $keywords, int $topic, int $user)

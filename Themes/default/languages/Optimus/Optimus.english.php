@@ -23,6 +23,7 @@ $txt['optimus_allow_change_topic_keywords_subtext'] = 'It is displayed when edit
 $txt['optimus_show_keywords_block'] = 'Display a block with keywords above the first post of the topic';
 $txt['optimus_show_keywords_on_message_index'] = 'Display keywords in topic lists within boards';
 $txt['optimus_allow_keyword_phrases'] = 'Allow to add entire key phrases';
+$txt['optimus_use_color_tags'] = 'Use color tags';
 $txt['optimus_correct_http_status'] = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener" class="bbc_link">403/404 code</a> depending on the requested page\'s status';
 
 $txt['optimus_extra_settings'] = 'Additional settings';
