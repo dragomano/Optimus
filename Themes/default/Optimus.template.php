@@ -37,10 +37,7 @@ function template_metatags()
 		<div class="cat_bar">
 			<h3 class="catbg">', $txt['optimus_meta_title'], '</h3>
 		</div>
-		<div class="information centertext">', $txt['optimus_meta_info'], '</div>';
-
-	if (! empty($context['optimus_metatags_rules'])) {
-		echo '
+		<div class="information centertext">', $txt['optimus_meta_info'], '</div>
 		<div class="windowbg">
 			<table class="table_grid metatags centertext">
 				<thead>
@@ -52,12 +49,12 @@ function template_metatags()
 				</thead>
 				<tbody>';
 
-		$engines  = [];
+	$engines  = [];
 
-		foreach ($txt['optimus_search_engines'] as $engine => $data) {
-			$engines[] = $data[0];
+	foreach ($txt['optimus_search_engines'] as $engine => $data) {
+		$engines[] = $data[0];
 
-			echo '
+		echo '
 					<tr class="windowbg">
 						<td>', $engine, ' (<strong><a class="bbc_link" href="', $data[1], '" target="_blank" rel="noopener">', $data[2], '</a></strong>)</td>
 						<td>
@@ -67,11 +64,11 @@ function template_metatags()
 							<input type="text" name="custom_tag_value[]" size="40" value="', $context['optimus_metatags_rules'][$data[0]] ?? '', '">
 						</td>
 					</tr>';
-		}
+	}
 
-		foreach ($context['optimus_metatags_rules'] as $name => $value) {
-			if (! in_array($name, $engines)) {
-				echo '
+	foreach ($context['optimus_metatags_rules'] as $name => $value) {
+		if (! in_array($name, $engines)) {
+			echo '
 					<tr class="windowbg">
 						<td>', $txt['optimus_meta_customtag'], '</td>
 						<td>
@@ -81,16 +78,13 @@ function template_metatags()
 							<input type="text" name="custom_tag_value[]" size="40" value="', $value, '">
 						</td>
 					</tr>';
-			}
 		}
-
-		echo '
-				</tbody>
-			</table>
-		</div>';
 	}
 
 	echo '
+				</tbody>
+			</table>
+		</div>
 		<div class="windowbg centertext">
 			<noscript>
 				<div style="margin-top: 1ex">
