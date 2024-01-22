@@ -45,11 +45,11 @@ final class TopicHandler
 		if (empty($modSettings['optimus_og_image']) || empty($context['topicinfo']['id_first_msg']))
 			return;
 
-		$first_message_id = $context['topicinfo']['id_first_msg'];
+		$firstMessageId = $context['topicinfo']['id_first_msg'];
 
 		// Looking for an image in attachments of the topic first message
-		if (! empty($context['loaded_attachments']) && isset($context['loaded_attachments'][$first_message_id])) {
-			$attachments = $context['loaded_attachments'][$first_message_id];
+		if (! empty($context['loaded_attachments']) && isset($context['loaded_attachments'][$firstMessageId])) {
+			$attachments = $context['loaded_attachments'][$firstMessageId];
 			$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . ($key = array_key_first($attachments)) . ';image';
 
 			$context['optimus_og_image'] = [
@@ -71,8 +71,9 @@ final class TopicHandler
 	{
 		global $modSettings;
 
-		if (! empty($modSettings['optimus_allow_change_topic_desc']))
+		if (! empty($modSettings['optimus_allow_change_topic_desc'])) {
 			$permissionList['membergroup']['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
+		}
 	}
 
 	public function displayTopic(array &$topic_selects): void
@@ -82,8 +83,12 @@ final class TopicHandler
 		if (! in_array('ms.modified_time AS topic_modified_time', $topic_selects))
 			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
 
-		if ((! empty($modSettings['optimus_topic_description']) || ! empty($modSettings['optimus_og_image'])) && ! in_array('ms.body AS topic_first_message', $topic_selects))
+		if (
+			(! empty($modSettings['optimus_topic_description']) || ! empty($modSettings['optimus_og_image']))
+			&& ! in_array('ms.body AS topic_first_message', $topic_selects)
+		) {
 			$topic_selects[] = 'ms.body AS topic_first_message';
+		}
 
 		if (! empty($modSettings['optimus_allow_change_topic_desc']))
 			$topic_selects[] = 't.optimus_description';
@@ -104,14 +109,14 @@ final class TopicHandler
 			$this->makeDescriptionFromFirstMessage();
 
 		// Use own description of topic
-		if (! empty($context['topicinfo']['optimus_description']))
+		if (! empty($context['topicinfo']['optimus_description'])) {
 			$context['meta_description'] = $context['topicinfo']['optimus_description'];
+		}
 
 		// Additional data
 		$context['optimus_og_type']['article'] = [
 			'published_time' => date('Y-m-d\TH:i:s', (int) $context['topicinfo']['topic_started_time']),
-			'modified_time'  => empty($context['topicinfo']['topic_modified_time']) ? null : date('Y-m-d\TH:i:s', (int)
-			$context['topicinfo']['topic_modified_time']),
+			'modified_time'  => empty($context['topicinfo']['topic_modified_time']) ? null : date('Y-m-d\TH:i:s', (int) $context['topicinfo']['topic_modified_time']),
 			'author'         => empty($context['topicinfo']['topic_started_name']) ? null : $context['topicinfo']['topic_started_name'],
 			'section'        => $board_info['name'],
 			'tag'            => $context['optimus_keywords'] ?? null,
@@ -176,8 +181,10 @@ final class TopicHandler
 	{
 		global $context;
 
-		if (empty($context['topicinfo']['topic_first_message']) || ! empty($context['topicinfo']['optimus_description']))
-			return;
+		if (
+			empty($context['topicinfo']['topic_first_message'])
+			|| ! empty($context['topicinfo']['optimus_description'])
+		) return;
 
 		$body = $context['topicinfo']['topic_first_message'];
 
@@ -210,11 +217,13 @@ final class TopicHandler
 	{
 		global $context, $topic, $modSettings;
 
-		if (! isset($context['user']['started']))
+		if (! isset($context['user']['started'])) {
 			$context['user']['started'] = empty($topic);
+		}
 
 		return ! empty($modSettings['optimus_allow_change_topic_desc']) && (
-			allowedTo('optimus_add_descriptions_any') || (! empty($context['user']['started']) && allowedTo('optimus_add_descriptions_own'))
+			allowedTo('optimus_add_descriptions_any')
+			|| (! empty($context['user']['started']) && allowedTo('optimus_add_descriptions_own'))
 		);
 	}
 }

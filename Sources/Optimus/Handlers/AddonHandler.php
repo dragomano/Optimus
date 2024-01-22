@@ -17,7 +17,6 @@ namespace Bugo\Optimus\Handlers;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\AddonListener;
 use Bugo\Optimus\Events\DispatcherFactory;
-use FilesystemIterator;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -25,6 +24,8 @@ if (! defined('SMF'))
 final class AddonHandler
 {
 	private static array $loaded = [];
+
+	private const TTL = 30 * 24 * 60 * 60;
 
 	public function __invoke(): void
 	{
@@ -38,14 +39,11 @@ final class AddonHandler
 		foreach ($addons as $addon) {
 			$this->loadLanguages($addon);
 
-			if (isset(self::$loaded[$addon])) {
+			if (isset(self::$loaded[$addon]))
 				continue;
-			}
-
-			$class = $this->getClassName($addon);
 
 			$dispatcher->subscribeTo($addon, new AddonListener());
-			$dispatcher->dispatch(new AddonEvent($addon, new $class));
+			$dispatcher->dispatch(new AddonEvent($addon, new $addon));
 
 			self::$loaded[$addon] = true;
 		}
@@ -53,46 +51,90 @@ final class AddonHandler
 
 	private function getAll(): ?array
 	{
-		if (! is_dir(dirname(__DIR__ ) . '/Addons'))
-			return [];
+		global $modSettings;
 
-		if (($addons = cache_get_data('optimus_addons', 3600)) === null) {
-			foreach ((new FilesystemIterator(dirname(__DIR__ ) . '/Addons')) as $object) {
-				$filename = $object->getBasename();
-				if ($object->isFile()) {
-					$addons[] = str_replace('.php', '', $filename);
-				}
+		if (empty($modSettings['cache_enable']))
+			return $this->getList();
 
-				if ($object->isDir() && is_file($object->getPathname() . '/' . $filename . '.php')) {
-					$addons[] = $filename . '|' . $filename;
-				}
-			}
-
-			$addons = array_diff($addons, ['AbstractAddon', 'index']);
-
-			cache_put_data('optimus_addons', $addons, 3600);
+		if (empty($modSettings['optimus_addons_hash'])) {
+			updateSettings(['optimus_addons_hash' => $this->hashDirectory(OP_ADDONS)]);
 		}
 
-		return $addons;
+		if (
+			$modSettings['optimus_addons_hash'] !== $this->hashDirectory(OP_ADDONS)
+			|| (cache_get_data('optimus_addons', self::TTL)) === null
+		) {
+			$addons = $this->getList();
+
+			cache_put_data('optimus_addons', $addons, self::TTL);
+
+			updateSettings(['optimus_addons_hash' => $this->hashDirectory(OP_ADDONS)]);
+
+			return $addons;
+		}
+
+		return cache_get_data('optimus_addons', self::TTL);
 	}
 
-	private function getClassName(string $addon): string
+	private function getList(): array
 	{
-		return '\Bugo\Optimus\Addons\\' . str_replace('|', '\\', $addon);
+		$files = array_merge(
+			glob(OP_ADDONS . '/*.php'),
+			glob(OP_ADDONS . '/*/*.php')
+		);
+
+		return array_filter(array_map('self::mapNamespace', $files), 'strlen');
+	}
+
+	private function mapNamespace(string $fileName): string
+	{
+		$fileName = str_replace(OP_ADDONS, '', $fileName);
+
+		if (str_ends_with($fileName, 'AbstractAddon.php') || str_ends_with($fileName, 'index.php'))
+			return '';
+
+		return '\Bugo\Optimus\Addons' . str_replace(['.php', '/'], ['', '\\'], $fileName);
+	}
+
+	private function hashDirectory(string $directory): string|false
+	{
+		if (! is_dir($directory))
+			return false;
+
+		$files = [];
+		$dir = dir($directory);
+
+		while (false !== ($file = $dir->read())) {
+			if ($file != '.' && $file != '..') {
+				if (is_dir($directory . '/' . $file)) {
+					$files[] = $this->hashDirectory($directory . '/' . $file);
+				} else {
+					$files[] = md5_file($directory . '/' . $file);
+				}
+			}
+		}
+
+		$dir->close();
+
+		return md5(implode('', $files));
 	}
 
 	private function loadLanguages(string $addon): void
 	{
-		global $user_info, $txt;
+		global $txt, $user_info;
 
 		if (empty($txt))
 			return;
 
+		$baseDir = OP_ADDONS . DIRECTORY_SEPARATOR . basename($addon);
+
+		if (! is_dir($baseDir))
+			return;
+
 		$languages = array_merge(['english'], [$user_info['language'] ?? null]);
-		$baseDir = dirname(__DIR__ ) . '/Addons/' . explode('|', $addon)[0] . '/langs/';
 
 		foreach ($languages as $lang) {
-			$langFile = $baseDir . $lang . '.php';
+			$langFile = $baseDir . '/langs/' . $lang . '.php';
 
 			if (is_file($langFile)) {
 				require_once $langFile;

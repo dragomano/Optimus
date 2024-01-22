@@ -91,10 +91,12 @@ final class SettingHandler
 	{
 		global $context, $txt, $sourcedir, $smcFunc;
 
+		isAllowedTo('admin_forum');
+
 		$context['page_title'] = OP_NAME;
 
-		loadTemplate('Optimus');
 		loadLanguage('ManageSettings');
+		loadTemplate('Optimus');
 
 		$subActions = [
 			'basic'    => 'basicTabSettings',
@@ -107,10 +109,6 @@ final class SettingHandler
 			'htaccess' => 'htaccessTabSettings',
 			'sitemap'  => 'sitemapTabSettings'
 		];
-
-		require_once($sourcedir . '/ManageSettings.php');
-
-		loadGeneralSettingParameters($subActions, 'basic');
 
 		db_extend();
 
@@ -152,6 +150,12 @@ final class SettingHandler
 				]
 			]
 		];
+
+		require_once $sourcedir . '/ManageServer.php';
+
+		$context['sub_template'] = 'show_settings';
+
+		$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : key($subActions);
 
 		$this->{$subActions[Input::request('sa')]}();
 	}
