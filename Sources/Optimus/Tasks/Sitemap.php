@@ -99,7 +99,7 @@ final class Sitemap extends SMF_BackgroundTask
 				'lastmod'    => empty($entry['lastmod']) ? null : $this->getDateIso8601($entry['lastmod']),
 				'changefreq' => empty($entry['lastmod']) ? null : $this->getFrequency($entry['lastmod']),
 				'priority'   => empty($entry['lastmod']) ? null : $this->getPriority($entry['lastmod']),
-				//'image'      => $entry['image'] ?? null
+				'image'      => empty($modSettings['optimus_sitemap_add_found_images']) ? null : $entry['image'] ?? null
 			];
 		}
 
@@ -281,16 +281,18 @@ final class Sitemap extends SMF_BackgroundTask
 			if (! empty($modSettings['optimus_sitemap_all_topic_pages'])) {
 				$request = $smcFunc['db_query']('', '
 					SELECT t.id_topic, t.num_replies,
-						m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date,
-						a.id_attach, a.filename
+						m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
+							empty($modSettings['optimus_sitemap_add_found_images']) ? '' : ',
+						a.id_attach, a.filename') . '
 					FROM {db_prefix}messages AS m
-						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
+						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)' . (
+							empty($modSettings['optimus_sitemap_add_found_images']) ? '' : '
 						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
 							AND a.attachment_type = 0
 							AND a.width <> 0
 							AND a.height <> 0
 							AND a.approved = 1
-						)
+						)') . '
 					WHERE t.id_board IN ({array_int:open_boards})
 						AND t.num_replies >= {int:num_replies}
 						AND t.approved = {int:is_approved}' . ($startYear ? '
@@ -334,16 +336,18 @@ final class Sitemap extends SMF_BackgroundTask
 				}
 			} else {
 				$request = $smcFunc['db_query']('', '
-					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date,
-						a.id_attach, a.filename
+					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
+						empty($modSettings['optimus_sitemap_add_found_images']) ? '' : ',
+						a.id_attach, a.filename') . '
 					FROM {db_prefix}topics AS t
-						INNER JOIN {db_prefix}messages AS m ON (t.id_last_msg = m.id_msg)
+						INNER JOIN {db_prefix}messages AS m ON (t.id_last_msg = m.id_msg)' . (
+							empty($modSettings['optimus_sitemap_add_found_images']) ? '' : '
 						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
 							AND a.attachment_type = 0
 							AND a.width <> 0
 							AND a.height <> 0
 							AND a.approved = 1
-						)
+						)') . '
 					WHERE t.id_board IN ({array_int:open_boards})
 						AND t.num_replies >= {int:num_replies}
 						AND t.approved = {int:is_approved}' . ($startYear ? '

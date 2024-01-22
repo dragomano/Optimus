@@ -317,11 +317,13 @@ function template_footer_counters_below(): void
 
 function template_sitemap_xml(): void
 {
-	global $scripturl, $context;
+	global $modSettings, $scripturl, $context;
+
+	$imageNamespace = empty($modSettings['optimus_sitemap_add_found_images']) ? '' : ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
 
 	echo /** @lang text */ '<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="' . $scripturl . '?action=sitemap_xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . $imageNamespace . '>';
 
 	foreach ($context['sitemap'] as $item) {
 		echo '

@@ -31,7 +31,7 @@ $txt['optimus_extra_settings'] = 'Additional settings';
 $txt['optimus_log_search'] = 'Enable logging of search terms';
 
 $txt['optimus_extra_title'] = 'Metadata';
-$txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages.';
+$txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages. <a href="https://developers.facebook.com/docs/sharing/webmasters" target="_blank" rel="noopener" class="bbc_link">A Guide to Sharing for Webmasters</a>.';
 /* Argument: $scripturl */
 $txt['optimus_extra_info'] = 'Use <a href="https://webmaster.yandex.ru/tools/microtest/" target="_blank" rel="noopener" class="bbc_link">structured data validator</a> (Yandex.Webmaster) or <a href="https://developers.facebook.com/tools/debug" target="_blank" rel="noopener" class="bbc_link">Facebook Sharing Debugger</a> to debug your Open Graph tags.<hr><strong>Note</strong>: Facebook caches images and other OG data. To reset the cache, in the repost debugger, type the page address with the parameter <em>fbrefresh</em>, i.e. %1$s?fbrefresh=reset.';
 
@@ -111,6 +111,7 @@ $txt['optimus_main_page_frequency_set'] = ['Constant (always)', 'Depending on th
 $txt['optimus_sitemap_boards'] = 'Add links to boards to the Sitemap';
 $txt['optimus_sitemap_boards_subtext'] = 'Boards that are closed to guests will NOT be added.';
 $txt['optimus_sitemap_topics_num_replies'] = 'Add links to topics that have the number of replies >=';
+$txt['optimus_sitemap_add_found_images'] = 'Add links to detected images to the Sitemap';
 $txt['optimus_sitemap_items_display'] = 'Maximum number of items per page';
 $txt['optimus_sitemap_all_topic_pages'] = 'Add ALL topic pages to the sitemap';
 $txt['optimus_sitemap_all_topic_pages_subtext'] = 'If not checked, only the first pages of topics will be added to the sitemap.';

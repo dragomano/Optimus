@@ -483,10 +483,13 @@ final class SettingHandler
 			['check', 'optimus_sitemap_enable', 'subtext' => $txt['optimus_sitemap_enable_subtext']],
 			['check', 'optimus_sitemap_link'],
 			['check', 'optimus_remove_previous_xml_files'],
+			'',
 			['select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']],
 			['check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']],
 			['check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext']],
 			['int', 'optimus_sitemap_topics_num_replies', 'min' => 0],
+			['check', 'optimus_sitemap_add_found_images'],
+			'',
 			['int', 'optimus_sitemap_items_display', 'min' => 1, 'max' => 50000],
 			['int', 'optimus_start_year', 'min' => 1994, 'max' => date('Y')],
 			['select', 'optimus_update_frequency', $txt['optimus_update_frequency_set']]
