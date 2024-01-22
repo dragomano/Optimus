@@ -49,21 +49,21 @@ class LightPortal extends AbstractAddon
 				AND permissions IN ({array_int:permissions})' . ($startYear ? '
 				AND YEAR(FROM_UNIXTIME(created_at)) >= {int:start_year}' : '') . '
 			ORDER BY page_id DESC',
-			array(
+			[
 				'status'       => 1, // The page must be active
 				'current_time' => time(),
-				'permissions'  => array(1, 3), // The page must be available to guests
+				'permissions'  => [1, 3], // The page must be available to guests
 				'start_year'   => $startYear
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?' . ($modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
 
-			$object->getTarget()->links[] = array(
+			$object->getTarget()->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date']
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);

@@ -29,9 +29,9 @@ final class Integration
 
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_load_theme', __CLASS__ . '::loadTheme#', false, __FILE__);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions#', false, __FILE__);
-		add_integration_function('integrate_credits', __CLASS__ . '::credits#', false, __FILE__);
+		add_integration_function('integrate_load_theme', self::class . '::loadTheme#', false, __FILE__);
+		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_credits', self::class . '::credits#', false, __FILE__);
 	}
 
 	public function loadTheme(): void
@@ -44,7 +44,7 @@ final class Integration
 		global $modSettings;
 
 		if (! empty($modSettings['optimus_log_search']))
-			$permissionList['membergroup']['optimus_view_search_terms'] = array(false, 'general', 'view_basic_info');
+			$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
 	}
 
 	public function credits(): void

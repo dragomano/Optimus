@@ -32,7 +32,7 @@ final class Str
 		$text = preg_replace('~http(s)?://(.*)\s~U', '', $text);
 
 		// Additional replacements
-		$text = strtr($text, array('&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''));
+		$text = strtr($text, ['&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => '']);
 
 		$sentences = preg_split('/([.?!])(\s)/', $text);
 

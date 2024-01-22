@@ -20,8 +20,8 @@ final class FrontPageHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_load_theme', __CLASS__ . '::changeTitle#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::addDescription#', false, __FILE__);
+		add_integration_function('integrate_load_theme', self::class . '::changeTitle#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::addDescription#', false, __FILE__);
 	}
 
 	public function changeTitle(): void

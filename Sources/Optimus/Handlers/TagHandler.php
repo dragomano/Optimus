@@ -24,17 +24,17 @@ final class TagHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_actions', __CLASS__ . '::actions#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
-		add_integration_function('integrate_current_action', __CLASS__ . '::currentAction#', false, __FILE__);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions#', false, __FILE__);
-		add_integration_function('integrate_messageindex_buttons', __CLASS__ . '::messageindexButtons#', false, __FILE__);
-		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic#', false, __FILE__);
-		add_integration_function('integrate_prepare_display_context', __CLASS__ . '::prepareDisplayContext#', false, __FILE__);
-		add_integration_function('integrate_create_topic', __CLASS__ . '::createTopic#', false, __FILE__);
-		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd#', false, __FILE__);
-		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost#', false, __FILE__);
-		add_integration_function('integrate_remove_topics', __CLASS__ . '::removeTopics#', false, __FILE__);
+		add_integration_function('integrate_actions', self::class . '::actions#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
+		add_integration_function('integrate_current_action', self::class . '::currentAction#', false, __FILE__);
+		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_messageindex_buttons', self::class . '::messageindexButtons#', false, __FILE__);
+		add_integration_function('integrate_display_topic', self::class . '::displayTopic#', false, __FILE__);
+		add_integration_function('integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false, __FILE__);
+		add_integration_function('integrate_create_topic', self::class . '::createTopic#', false, __FILE__);
+		add_integration_function('integrate_post_end', self::class . '::postEnd#', false, __FILE__);
+		add_integration_function('integrate_modify_post', self::class . '::modifyPost#', false, __FILE__);
+		add_integration_function('integrate_remove_topics', self::class . '::removeTopics#', false, __FILE__);
 	}
 
 	public function actions(array &$actions): void
@@ -42,7 +42,7 @@ final class TagHandler
 		global $modSettings;
 
 		if (! empty($modSettings['optimus_allow_change_topic_keywords']) || ! empty($modSettings['optimus_show_keywords_block']))
-			$actions['keywords'] = array(false, array($this, 'showTheSame'));
+			$actions['keywords'] = [false, [$this, 'showTheSame']];
 	}
 
 	public function menuButtons(array &$buttons): void
@@ -66,7 +66,7 @@ final class TagHandler
 		global $modSettings;
 
 		if (! empty($modSettings['optimus_allow_change_topic_keywords']))
-			$permissionList['membergroup']['optimus_add_keywords'] = array(true, 'general', 'view_basic_info');
+			$permissionList['membergroup']['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
 	}
 
 	public function messageindexButtons(): void
@@ -134,35 +134,35 @@ final class TagHandler
 		if (empty($context['is_first_post']))
 			return;
 
-		$context['posting_fields']['optimus_keywords'] = array(
-			'label' => array(
+		$context['posting_fields']['optimus_keywords'] = [
+			'label' => [
 				'text' => $txt['optimus_seo_keywords']
-			),
-			'input' => array(
+			],
+			'input' => [
 				'type' => 'select',
-				'attributes' => array(
+				'attributes' => [
 					'id'       => 'optimus_keywords',
 					'name'     => 'optimus_keywords[]',
 					'multiple' => true
-				),
-				'options' => array()
-			)
-		);
+				],
+				'options' => []
+			]
+		];
 
 		if (! empty($context['optimus']['keywords'])) {
 			foreach ($context['optimus']['keywords'] as $key) {
-				$context['posting_fields']['optimus_keywords']['input']['options'][$key] = array(
+				$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
 					'value'    => $key,
 					'selected' => true
-				);
+				];
 			}
 		}
 
 		// Select2 https://select2.github.io/select2/
 		// Doesn't work? See https://developers.cloudflare.com/fundamentals/speed/rocket-loader/
-		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', array('external' => true));
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js', array('external' => true));
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js', array('external' => true));
+		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
+		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js', ['external' => true]);
+		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js', ['external' => true]);
 		addInlineJavaScript('
 		jQuery(document).ready(function ($) {
 			$("#optimus_keywords").select2({
@@ -212,9 +212,9 @@ final class TagHandler
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE topic_id IN ({array_int:topics})',
-			array(
+			[
 				'topics' => $topics
-			)
+			]
 		);
 	}
 
@@ -251,80 +251,80 @@ final class TagHandler
 			send_http_status(404);
 		}
 
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'name' => $txt['optimus_all_keywords'],
 			'url'  => $scripturl . '?action=keywords'
-		);
+		];
 
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'name' => $context['page_title'],
 			'url'  => $context['canonical_url']
-		);
+		];
 
-		$listOptions = array(
+		$listOptions = [
 			'id'               => 'topics',
 			'items_per_page'   => 30,
 			'title'            => '',
 			'no_items_label'   => $txt['optimus_no_keywords'],
 			'base_href'        => $scripturl . '?action=keywords;id=' . $context['optimus_keyword_id'],
 			'default_sort_col' => 'topic',
-			'get_items' => array(
-				'function' => array($this, 'getAllByKeyId')
-			),
-			'get_count' => array(
-				'function' => array($this, 'getTotalCountByKeyId')
-			),
-			'columns' => array(
-				'topic' => array(
-					'header' => array(
+			'get_items' => [
+				'function' => [$this, 'getAllByKeyId']
+			],
+			'get_count' => [
+				'function' => [$this, 'getTotalCountByKeyId']
+			],
+			'columns' => [
+				'topic' => [
+					'header' => [
 						'value' => $txt['topic']
-					),
-					'data' => array(
+					],
+					'data' => [
 						'db' => 'topic'
-					),
-					'sort' => array(
+					],
+					'sort' => [
 						'default' => 't.id_topic DESC',
 						'reverse' => 't.id_topic'
-					)
-				),
-				'board' => array(
-					'header' => array(
+					]
+				],
+				'board' => [
+					'header' => [
 						'value' => $txt['board']
-					),
-					'data' => array(
+					],
+					'data' => [
 						'db'    => 'board',
 						'class' => 'centertext'
-					),
-					'sort' => array(
+					],
+					'sort' => [
 						'default' => 'b.id_board DESC',
 						'reverse' => 'b.id_board'
-					)
-				),
-				'author' => array(
-					'header' => array(
+					]
+				],
+				'author' => [
+					'header' => [
 						'value' => $txt['author']
-					),
-					'data' => array(
+					],
+					'data' => [
 						'db'    => 'author',
 						'class' => 'centertext'
-					),
-					'sort' => array(
+					],
+					'sort' => [
 						'default' => 'm.real_name DESC',
 						'reverse' => 'm.real_name'
-					)
-				)
-			),
-			'form' => array(
+					]
+				]
+			],
+			'form' => [
 				'href' => $scripturl . '?action=keywords;id=' . $context['optimus_keyword_id']
-			),
-			'additional_rows' => array(
-				array(
+			],
+			'additional_rows' => [
+				[
 					'position' => 'below_table_data',
 					'value'    => 'Powered by ' . Copyright::getLink(),
 					'class'    => 'smalltext centertext'
-				)
-			)
-		);
+				]
+			]
+		];
 
 		require_once($sourcedir . '/Subs-List.php');
 		createList($listOptions);
@@ -350,21 +350,21 @@ final class TagHandler
 				AND {query_wanna_see_board}
 			ORDER BY {raw:sort}, t.id_topic DESC
 			LIMIT {int:start}, {int:limit}',
-			array(
+			[
 				'keyword_id' => $context['optimus_keyword_id'],
 				'sort'       => $sort,
 				'start'      => $start,
 				'limit'      => $items_per_page
-			)
+			]
 		);
 
 		$topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$topics[] = array(
+			$topics[] = [
 				'topic'  => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 				'board'  => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
 				'author' => empty($row['real_name']) ? $txt['guest'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);
@@ -381,9 +381,9 @@ final class TagHandler
 			FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id = {int:keyword}
 			LIMIT 1',
-			array(
+			[
 				'keyword' => $context['optimus_keyword_id']
-			)
+			]
 		);
 
 		[$num] = $smcFunc['db_fetch_row']($request);
@@ -399,62 +399,62 @@ final class TagHandler
 		$context['page_title']    = $txt['optimus_all_keywords'];
 		$context['canonical_url'] = $scripturl . '?action=keywords';
 
-		$context['linktree'][] = array(
+		$context['linktree'][] = [
 			'name' => $context['page_title'],
 			'url'  => $context['canonical_url']
-		);
+		];
 
-		$listOptions = array(
+		$listOptions = [
 			'id'               => 'keywords',
 			'items_per_page'   => 30,
 			'title'            => '',
 			'no_items_label'   => '',
 			'base_href'        => $scripturl . '?action=keywords',
 			'default_sort_col' => 'frequency',
-			'get_items' => array(
-				'function' => array($this, 'getAll')
-			),
-			'get_count' => array(
-				'function' => array($this, 'getTotalCount')
-			),
-			'columns' => array(
-				'keyword' => array(
-					'header' => array(
+			'get_items' => [
+				'function' => [$this, 'getAll']
+			],
+			'get_count' => [
+				'function' => [$this, 'getTotalCount']
+			],
+			'columns' => [
+				'keyword' => [
+					'header' => [
 						'value' => $txt['optimus_keyword_column']
-					),
-					'data' => array(
+					],
+					'data' => [
 						'db' => 'keyword'
-					),
-					'sort' => array(
+					],
+					'sort' => [
 						'default' => 'ok.name DESC',
 						'reverse' => 'ok.name'
-					)
-				),
-				'frequency' => array(
-					'header' => array(
+					]
+				],
+				'frequency' => [
+					'header' => [
 						'value' => $txt['optimus_frequency_column']
-					),
-					'data' => array(
+					],
+					'data' => [
 						'db'    => 'frequency',
 						'class' => 'centertext'
-					),
-					'sort' => array(
+					],
+					'sort' => [
 						'default' => 'frequency DESC',
 						'reverse' => 'frequency'
-					)
-				)
-			),
-			'form' => array(
+					]
+				]
+			],
+			'form' => [
 				'href' => $scripturl . '?action=keywords'
-			),
-			'additional_rows' => array(
-				array(
+			],
+			'additional_rows' => [
+				[
 					'position' => 'below_table_data',
 					'value'    => 'Powered by ' . Copyright::getLink(),
 					'class'    => 'smalltext centertext',
-				)
-			)
-		);
+				]
+			]
+		];
 
 		require_once($sourcedir . '/Subs-List.php');
 		createList($listOptions);
@@ -477,19 +477,19 @@ final class TagHandler
 			GROUP BY ok.id, ok.name
 			ORDER BY {raw:sort}
 			LIMIT {int:start}, {int:limit}',
-			array(
+			[
 				'sort'  => $sort,
 				'start' => $start,
 				'limit' => $items_per_page
-			)
+			]
 		);
 
 		$keywords = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$keywords[] = array(
+			$keywords[] = [
 				'keyword'   => '<a href="' . $scripturl . '?action=keywords;id=' . $row['id'] . '">' . $row['name'] . '</a>',
 				'frequency' => $row['frequency']
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);
@@ -505,7 +505,7 @@ final class TagHandler
 			SELECT COUNT(id)
 			FROM {db_prefix}optimus_keywords
 			LIMIT 1',
-			array()
+			[]
 		);
 
 		[$num] = $smcFunc['db_fetch_row']($request);
@@ -526,9 +526,9 @@ final class TagHandler
 			FROM {db_prefix}optimus_keywords
 			WHERE id = {int:id}
 			LIMIT 1',
-			array(
+			[
 				'id' => $id
-			)
+			]
 		);
 
 		[$name] = $smcFunc['db_fetch_row']($request);
@@ -557,9 +557,9 @@ final class TagHandler
 			WHERE name LIKE {string:search}
 			ORDER BY name DESC
 			LIMIT 10',
-			array(
+			[
 				'search' => '%' . $query . '%'
-			)
+			]
 		);
 
 		$data = [];
@@ -604,7 +604,7 @@ final class TagHandler
 				FROM {db_prefix}optimus_keywords AS k
 					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
 				ORDER BY lk.topic_id, k.id',
-				array()
+				[]
 			);
 
 			$keywords = [];
@@ -661,9 +661,9 @@ final class TagHandler
 			FROM {db_prefix}optimus_keywords
 			WHERE name = {string:name}
 			LIMIT 1',
-			array(
+			[
 				'name' => $name
-			)
+			]
 		);
 
 		[$id] = $smcFunc['db_fetch_row']($request);
@@ -683,11 +683,11 @@ final class TagHandler
 
 		return $smcFunc['db_insert']('insert',
 			'{db_prefix}optimus_keywords',
-			array(
+			[
 				'name' => 'string-255'
-			),
-			array($keyword),
-			array('id'),
+			],
+			[$keyword],
+			['id'],
 			1
 		);
 	}
@@ -698,21 +698,21 @@ final class TagHandler
 
 		$smcFunc['db_insert']('replace',
 			'{db_prefix}optimus_log_keywords',
-			array(
+			[
 				'keyword_id' => 'int',
 				'topic_id'   => 'int',
 				'user_id'    => 'int'
-			),
-			array(
+			],
+			[
 				$keyword_id,
 				$topic,
 				$user
-			),
-			array(
+			],
+			[
 				'keyword_id',
 				'topic_id',
 				'user_id'
-			)
+			]
 		);
 	}
 
@@ -749,11 +749,14 @@ final class TagHandler
 		$request = $smcFunc['db_query']('', '
 			SELECT lk.keyword_id, lk.topic_id
 			FROM {db_prefix}optimus_log_keywords AS lk
-				INNER JOIN {db_prefix}optimus_keywords AS k ON (lk.keyword_id = k.id AND lk.topic_id = {int:current_topic} AND k.name IN ({array_string:keywords}))',
-			array(
+				INNER JOIN {db_prefix}optimus_keywords AS k ON (lk.keyword_id = k.id
+					AND lk.topic_id = {int:current_topic}
+					AND k.name IN ({array_string:keywords})
+				)',
+			[
 				'keywords'      => $keywords,
 				'current_topic' => $topic
-			)
+			]
 		);
 
 		$del_items = [];
@@ -770,16 +773,16 @@ final class TagHandler
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id IN ({array_int:keywords}) AND topic_id IN ({array_int:topics})',
-			array(
+			[
 				'keywords' => $del_items['keywords'],
 				'topics'   => $del_items['topics']
-			)
+			]
 		);
 
 		$smcFunc['db_query']('', /** @lang text */ '
 			DELETE FROM {db_prefix}optimus_keywords
 			WHERE id NOT IN (SELECT keyword_id FROM {db_prefix}optimus_log_keywords)',
-			array()
+			[]
 		);
 
 		clean_cache();
@@ -793,7 +796,8 @@ final class TagHandler
 			$context['user']['started'] = empty($topic);
 
 		return ! empty($modSettings['optimus_allow_change_topic_keywords']) && (
-			allowedTo('optimus_add_keywords_any') || (! empty($context['user']['started']) && allowedTo('optimus_add_keywords_own'))
+			allowedTo('optimus_add_keywords_any')
+			|| (! empty($context['user']['started']) && allowedTo('optimus_add_keywords_own'))
 		);
 	}
 }

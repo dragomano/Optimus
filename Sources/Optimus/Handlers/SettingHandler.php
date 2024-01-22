@@ -24,9 +24,9 @@ final class SettingHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_modify_basic_settings', __CLASS__ . '::modifyBasicSettings', false, __FILE__, true);
-		add_integration_function('integrate_admin_areas', __CLASS__ . '::adminAreas', false, __FILE__, true);
-		add_integration_function('integrate_admin_search', __CLASS__ . '::adminSearch', false, __FILE__, true);
+		add_integration_function('integrate_modify_basic_settings', self::class . '::modifyBasicSettings', false, __FILE__, true);
+		add_integration_function('integrate_admin_areas', self::class . '::adminAreas', false, __FILE__, true);
+		add_integration_function('integrate_admin_search', self::class . '::adminSearch', false, __FILE__, true);
 	}
 
 	/**
@@ -61,30 +61,30 @@ final class SettingHandler
 		if (Input::request('area') === 'optimus')
 			loadCSSFile('optimus/optimus.css');
 
-		$admin_areas['config']['areas']['optimus'] = array(
+		$admin_areas['config']['areas']['optimus'] = [
 			'label' => $txt['optimus_title'],
-			'function' => array($this, 'actions'),
+			'function' => [$this, 'actions'],
 			'icon' => 'optimus',
-			'subsections' => array(
-				'basic'    => array($txt['optimus_basic_title']),
-				'extra'    => array($txt['optimus_extra_title']),
-				'favicon'  => array($txt['optimus_favicon_title']),
-				'metatags' => array($txt['optimus_meta_title']),
-				'redirect' => array($txt['optimus_redirect_title']),
-				'counters' => array($txt['optimus_counters']),
-				'robots'   => array($txt['optimus_robots_title']),
-				'htaccess' => array($txt['optimus_htaccess_title']),
-				'sitemap'  => array($txt['optimus_sitemap_title'])
-			)
-		);
+			'subsections' => [
+				'basic'    => [$txt['optimus_basic_title']],
+				'extra'    => [$txt['optimus_extra_title']],
+				'favicon'  => [$txt['optimus_favicon_title']],
+				'metatags' => [$txt['optimus_meta_title']],
+				'redirect' => [$txt['optimus_redirect_title']],
+				'counters' => [$txt['optimus_counters']],
+				'robots'   => [$txt['optimus_robots_title']],
+				'htaccess' => [$txt['optimus_htaccess_title']],
+				'sitemap'  => [$txt['optimus_sitemap_title']]
+			]
+		];
 	}
 
 	public function adminSearch(array $language_files, array $include_files, array &$settings_search): void
 	{
-		$settings_search[] = array(array($this, 'basicTabSettings'), 'area=optimus;sa=basic');
-		$settings_search[] = array(array($this, 'extraTabSettings'), 'area=optimus;sa=extra');
-		$settings_search[] = array(array($this, 'faviconTabSettings'), 'area=optimus;sa=favicon');
-		$settings_search[] = array(array($this, 'sitemapTabSettings'), 'area=optimus;sa=sitemap');
+		$settings_search[] = [[$this, 'basicTabSettings'], 'area=optimus;sa=basic'];
+		$settings_search[] = [[$this, 'extraTabSettings'], 'area=optimus;sa=extra'];
+		$settings_search[] = [[$this, 'faviconTabSettings'], 'area=optimus;sa=favicon'];
+		$settings_search[] = [[$this, 'sitemapTabSettings'], 'area=optimus;sa=sitemap'];
 	}
 
 	public function actions(): void
@@ -96,7 +96,7 @@ final class SettingHandler
 		loadTemplate('Optimus');
 		loadLanguage('ManageSettings');
 
-		$subActions = array(
+		$subActions = [
 			'basic'    => 'basicTabSettings',
 			'extra'    => 'extraTabSettings',
 			'favicon'  => 'faviconTabSettings',
@@ -106,7 +106,7 @@ final class SettingHandler
 			'robots'   => 'robotsTabSettings',
 			'htaccess' => 'htaccessTabSettings',
 			'sitemap'  => 'sitemapTabSettings'
-		);
+		];
 
 		require_once($sourcedir . '/ManageSettings.php');
 
@@ -114,38 +114,44 @@ final class SettingHandler
 
 		db_extend();
 
-		$context[$context['admin_menu_name']]['tab_data'] = array(
+		$context[$context['admin_menu_name']]['tab_data'] = [
 			'title' => $txt['optimus_title'],
-			'tabs' => array(
-				'basic' => array(
-					'description' => sprintf($txt['optimus_basic_desc'], OP_VERSION, phpversion(), $smcFunc['db_title'], $smcFunc['db_get_version']())
-				),
-				'extra' => array(
+			'tabs' => [
+				'basic' => [
+					'description' => sprintf(
+						$txt['optimus_basic_desc'],
+						OP_VERSION,
+						phpversion(),
+						$smcFunc['db_title'],
+						$smcFunc['db_get_version']()
+					)
+				],
+				'extra' => [
 					'description' => $txt['optimus_extra_desc']
-				),
-				'favicon' => array(
+				],
+				'favicon' => [
 					'description' => $txt['optimus_favicon_desc']
-				),
-				'metatags' => array(
+				],
+				'metatags' => [
 					'description' => $txt['optimus_meta_desc']
-				),
-				'redirect' => array(
+				],
+				'redirect' => [
 					'description' => $txt['optimus_redirect_desc']
-				),
-				'counters' => array(
+				],
+				'counters' => [
 					'description' => $txt['optimus_counters_desc']
-				),
-				'robots' => array(
+				],
+				'robots' => [
 					'description' => $txt['optimus_robots_desc']
-				),
-				'htaccess' => array(
+				],
+				'htaccess' => [
 					'description' => $txt['optimus_htaccess_desc']
-				),
-				'sitemap' => array(
+				],
+				'sitemap' => [
 					'description' => sprintf($txt['optimus_sitemap_desc'], OP_NAME)
-				)
-			)
-		);
+				]
+			]
+		];
 
 		$this->{$subActions[Input::request('sa')]}();
 	}
@@ -188,7 +194,7 @@ final class SettingHandler
 		];
 
 		// Mod authors can add own options
-		call_integration_hook('integrate_optimus_basic_settings', array(&$config_vars));
+		call_integration_hook('integrate_optimus_basic_settings', [&$config_vars]);
 
 		if ($return_config)
 			return $config_vars;
@@ -226,17 +232,17 @@ final class SettingHandler
 		$txt['optimus_extra_info'] = sprintf($txt['optimus_extra_info'], $scripturl);
 		$og_image_option_link = $scripturl . '?action=admin;area=theme;sa=list;th=' . $settings['theme_id']  . '#options_og_image';
 
-		$config_vars = array(
-			array('title', 'optimus_extra_title'),
-			array('desc', 'optimus_extra_info'),
-			array('check', 'optimus_og_image', 'help' => 'optimus_og_image_help', 'subtext' => sprintf($txt['optimus_og_image_subtext'], $og_image_option_link)),
-			array('check', 'optimus_allow_change_board_og_image', 'subtext' => $txt['optimus_allow_change_board_og_image_subtext']),
-			array('text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'),
-			array('text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help')
-		);
+		$config_vars = [
+			['title', 'optimus_extra_title'],
+			['desc', 'optimus_extra_info'],
+			['check', 'optimus_og_image', 'help' => 'optimus_og_image_help', 'subtext' => sprintf($txt['optimus_og_image_subtext'], $og_image_option_link)],
+			['check', 'optimus_allow_change_board_og_image', 'subtext' => $txt['optimus_allow_change_board_og_image_subtext']],
+			['text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'],
+			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help']
+		];
 
 		// Mod authors can add own options
-		call_integration_hook('integrate_optimus_extra_settings', array(&$config_vars));
+		call_integration_hook('integrate_optimus_extra_settings', [&$config_vars]);
 
 		if ($return_config)
 			return $config_vars;
@@ -271,9 +277,9 @@ final class SettingHandler
 		$context['page_title'] .= ' - ' . $txt['optimus_favicon_title'];
 		$context['post_url'] = $scripturl . '?action=admin;area=optimus;sa=favicon;save';
 
-		$config_vars = array(
-			array('large_text', 'optimus_favicon_text')
-		);
+		$config_vars = [
+			['large_text', 'optimus_favicon_text']
+		];
 
 		if ($return_config)
 			return $config_vars;
@@ -375,13 +381,13 @@ final class SettingHandler
 			'optimus_ignored_actions' => 'admin,bookmarks,credits,helpadmin,pm,printpage'
 		]);
 
-		$config_vars = array(
-			array('large_text', 'optimus_head_code'),
-			array('large_text', 'optimus_stat_code'),
-			array('large_text', 'optimus_count_code'),
-			array('large_text', 'optimus_counters_css'),
-			array('text', 'optimus_ignored_actions')
-		);
+		$config_vars = [
+			['large_text', 'optimus_head_code'],
+			['large_text', 'optimus_stat_code'],
+			['large_text', 'optimus_count_code'],
+			['large_text', 'optimus_counters_css'],
+			['text', 'optimus_ignored_actions']
+		];
 
 		if (Input::isGet('save')) {
 			checkSession();
@@ -473,21 +479,21 @@ final class SettingHandler
 			'optimus_update_frequency'           => 1
 		]);
 
-		$config_vars = array(
-			array('check', 'optimus_sitemap_enable', 'subtext' => $txt['optimus_sitemap_enable_subtext']),
-			array('check', 'optimus_sitemap_link'),
-			array('check', 'optimus_remove_previous_xml_files'),
-			array('select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']),
-			array('check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']),
-			array('check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext']),
-			array('int', 'optimus_sitemap_topics_num_replies', 'min' => 0),
-			array('int', 'optimus_sitemap_items_display', 'min' => 1, 'max' => 50000),
-			array('int', 'optimus_start_year', 'min' => 1994, 'max' => date('Y')),
-			array('select', 'optimus_update_frequency', $txt['optimus_update_frequency_set'])
-		);
+		$config_vars = [
+			['check', 'optimus_sitemap_enable', 'subtext' => $txt['optimus_sitemap_enable_subtext']],
+			['check', 'optimus_sitemap_link'],
+			['check', 'optimus_remove_previous_xml_files'],
+			['select', 'optimus_main_page_frequency', $txt['optimus_main_page_frequency_set']],
+			['check', 'optimus_sitemap_boards', 'subtext' => $txt['optimus_sitemap_boards_subtext']],
+			['check', 'optimus_sitemap_all_topic_pages', 'subtext' => $txt['optimus_sitemap_all_topic_pages_subtext']],
+			['int', 'optimus_sitemap_topics_num_replies', 'min' => 0],
+			['int', 'optimus_sitemap_items_display', 'min' => 1, 'max' => 50000],
+			['int', 'optimus_start_year', 'min' => 1994, 'max' => date('Y')],
+			['select', 'optimus_update_frequency', $txt['optimus_update_frequency_set']]
+		];
 
 		// Mod authors can add own options
-		call_integration_hook('integrate_optimus_sitemap_settings', array(&$config_vars));
+		call_integration_hook('integrate_optimus_sitemap_settings', [&$config_vars]);
 
 		if ($return_config)
 			return $config_vars;
@@ -499,17 +505,17 @@ final class SettingHandler
 			$smcFunc['db_query']('', '
 				DELETE FROM {db_prefix}background_tasks
 				WHERE task_class = {string:task_class}',
-				array(
+				[
 					'task_class' => '\Bugo\Optimus\Tasks\Sitemap'
-				)
+				]
 			);
 
 			if (Input::isPost('optimus_sitemap_enable')) {
 				$smcFunc['db_insert']('insert',
 					'{db_prefix}background_tasks',
-					array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string'),
-					array('$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', ''),
-					array('id_task')
+					['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string'],
+					['$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', ''],
+					['id_task']
 				);
 			}
 

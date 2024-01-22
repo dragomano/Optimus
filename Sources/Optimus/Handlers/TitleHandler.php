@@ -18,7 +18,7 @@ final class TitleHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_theme_context', __CLASS__ . '::handle#', false, __FILE__);
+		add_integration_function('integrate_theme_context', self::class . '::handle#', false, __FILE__);
 	}
 
 	public function handle(): void

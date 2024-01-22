@@ -20,7 +20,7 @@ final class CounterHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_load_theme', __CLASS__ . '::addJavaScript#', false, __FILE__);
+		add_integration_function('integrate_load_theme', self::class . '::addJavaScript#', false, __FILE__);
 	}
 
 	public function addJavaScript(): void

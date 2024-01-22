@@ -48,9 +48,9 @@ class EzPortal extends AbstractAddon
 			FROM {db_prefix}ezp_page
 			WHERE {int:guests} IN (permissions)
 			ORDER BY id_page DESC',
-			array(
+			[
 				'guests' => -1 // The page must be available to guests
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
@@ -60,10 +60,10 @@ class EzPortal extends AbstractAddon
 				$url = $scripturl . '?action=ezportal;sa=page;p=' . $row['id_page'];
 			}
 
-			$object->getTarget()->links[] = array(
+			$object->getTarget()->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date']
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);

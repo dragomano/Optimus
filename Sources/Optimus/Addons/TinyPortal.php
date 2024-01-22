@@ -72,21 +72,21 @@ class TinyPortal extends AbstractAddon
 				AND {int:guests} IN (v.value3)' . ($startYear ? '
 				AND YEAR(FROM_UNIXTIME(a.date)) >= {int:start_year}' : '') . '
 			ORDER BY a.id DESC',
-			array(
+			[
 				'approved'   => 1, // The article must be approved
 				'off_status' => 0, // The article must be active
 				'guests'     => -1, // The article category must be available to guests
 				'start_year' => $startYear
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 
-			$object->getTarget()->links[] = array(
+			$object->getTarget()->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date']
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);

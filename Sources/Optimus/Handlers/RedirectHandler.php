@@ -18,7 +18,7 @@ final class RedirectHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_actions', __CLASS__ . '::handle#', false, __FILE__);
+		add_integration_function('integrate_actions', self::class . '::handle#', false, __FILE__);
 	}
 
 	public function handle(): void

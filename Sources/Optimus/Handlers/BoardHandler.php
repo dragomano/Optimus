@@ -28,13 +28,13 @@ final class BoardHandler
 		if (empty($modSettings['optimus_allow_change_board_og_image']))
 			return;
 
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
-		add_integration_function('integrate_load_board', __CLASS__ . '::loadBoard', false, __FILE__, true);
-		add_integration_function('integrate_board_info', __CLASS__ . '::boardInfo', false, __FILE__, true);
-		add_integration_function('integrate_pre_boardtree', __CLASS__ . '::preBoardtree', false, __FILE__, true);
-		add_integration_function('integrate_boardtree_board', __CLASS__ . '::boardtreeBoard', false, __FILE__, true);
-		add_integration_function('integrate_edit_board', __CLASS__ . '::editBoard', false, __FILE__, true);
-		add_integration_function('integrate_modify_board', __CLASS__ . '::modifyBoard', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons', false, __FILE__, true);
+		add_integration_function('integrate_load_board', self::class . '::loadBoard', false, __FILE__, true);
+		add_integration_function('integrate_board_info', self::class . '::boardInfo', false, __FILE__, true);
+		add_integration_function('integrate_pre_boardtree', self::class . '::preBoardtree', false, __FILE__, true);
+		add_integration_function('integrate_boardtree_board', self::class . '::boardtreeBoard', false, __FILE__, true);
+		add_integration_function('integrate_edit_board', self::class . '::editBoard', false, __FILE__, true);
+		add_integration_function('integrate_modify_board', self::class . '::modifyBoard', false, __FILE__, true);
 	}
 
 	/**
@@ -97,15 +97,15 @@ final class BoardHandler
 		loadLanguage('Themes');
 
 		$context['custom_board_settings'] = array_merge(
-			array(
-				array(
+			[
+				[
 					'dt' => '
 						<strong>' . $txt['og_image'] . ':</strong><br>
 						<span class="smalltext">' . $txt['og_image_desc'] . '</span><br>',
 					'dd' => '
 						<input type="url" name="optimus_og_image" id="optimus_og_image" value="' . ($context['board']['optimus_og_image'] ?? '') . '" style="width: 100%">',
-				)
-			),
+				]
+			],
 			$context['custom_board_settings'] ?? []
 		);
 	}

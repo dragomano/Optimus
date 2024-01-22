@@ -62,9 +62,9 @@ final class Sitemap extends SMF_BackgroundTask
 
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}background_tasks',
-			array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'),
-			array('$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', '', time() + ($frequency * 24 * 60 * 60)),
-			array('id_task')
+			['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'],
+			['$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', '', time() + ($frequency * 24 * 60 * 60)],
+			['id_task']
 		);
 
 		return true;
@@ -94,13 +94,13 @@ final class Sitemap extends SMF_BackgroundTask
 
 			$entry['lastmod'] = (int) $entry['lastmod'];
 
-			$items[$sitemapCounter][] = array(
+			$items[$sitemapCounter][] = [
 				'loc'        => $entry['loc'],
 				'lastmod'    => empty($entry['lastmod']) ? null : $this->getDateIso8601($entry['lastmod']),
 				'changefreq' => empty($entry['lastmod']) ? null : $this->getFrequency($entry['lastmod']),
 				'priority'   => empty($entry['lastmod']) ? null : $this->getPriority($entry['lastmod']),
 				//'image'      => $entry['image'] ?? null
-			);
+			];
 		}
 
 		if (empty($items))
@@ -187,10 +187,10 @@ final class Sitemap extends SMF_BackgroundTask
 		$this->dispatcher->dispatch(new AddonEvent('sitemap.links', $this));
 
 		// Adding the main page
-		$home = array(
+		$home = [
 			'loc'     => $boardurl . '/',
 			'lastmod' => empty($modSettings['optimus_main_page_frequency']) ? time() : $this->getLastDate($this->links)
-		);
+		];
 
 		// Modders can process links with SEF handler
 		$this->dispatcher->dispatch(new AddonEvent('sitemap.sef_links', $this));
@@ -216,18 +216,18 @@ final class Sitemap extends SMF_BackgroundTask
 					WHERE bpv.id_group = -1
 						AND bpv.deny = 0
 						AND bpv.id_board = b.id_board
-				)' . (! empty($context['optimus_ignored_boards']) ? '
-				AND b.id_board NOT IN ({array_int:ignored_boards})' : '') . '
+				)' . (empty($context['optimus_ignored_boards']) ? '' : '
+				AND b.id_board NOT IN ({array_int:ignored_boards})') . '
 				AND b.redirect = {string:empty_string}
 				AND b.num_posts > {int:num_posts}' . ($startYear ? '
 				AND YEAR(FROM_UNIXTIME(m.poster_time)) >= {int:start_year}' : '') . '
 			ORDER BY b.id_board DESC',
-			array(
+			[
 				'ignored_boards' => $context['optimus_ignored_boards'],
 				'empty_string'   => '',
 				'num_posts'      => 0,
 				'start_year'     => $startYear
-			)
+			]
 		);
 
 		$context['optimus_open_boards'] = $links = [];
@@ -240,10 +240,10 @@ final class Sitemap extends SMF_BackgroundTask
 				if (! empty($modSettings['queryless_urls']))
 					$boardUrl = $scripturl . '/board,' . $row['id_board'] . '.0.html';
 
-				$links[] = array(
+				$links[] = [
 					'loc'     => $boardUrl,
 					'lastmod' => $row['last_date']
-				);
+				];
 			}
 		}
 
@@ -280,24 +280,31 @@ final class Sitemap extends SMF_BackgroundTask
 
 			if (! empty($modSettings['optimus_sitemap_all_topic_pages'])) {
 				$request = $smcFunc['db_query']('', '
-					SELECT t.id_topic, t.num_replies, m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date, a.id_attach, a.filename
+					SELECT t.id_topic, t.num_replies,
+						m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date,
+						a.id_attach, a.filename
 					FROM {db_prefix}messages AS m
 						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)
-						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg AND a.attachment_type = 0 AND a.width <> 0 AND a.height <> 0 AND a.approved = 1)
+						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
+							AND a.attachment_type = 0
+							AND a.width <> 0
+							AND a.height <> 0
+							AND a.approved = 1
+						)
 					WHERE t.id_board IN ({array_int:open_boards})
 						AND t.num_replies >= {int:num_replies}
 						AND t.approved = {int:is_approved}' . ($startYear ? '
 						AND YEAR(FROM_UNIXTIME(GREATEST(m.poster_time, m.modified_time))) >= {int:start_year}' : '') . '
 					ORDER BY t.id_topic DESC, last_date
 					LIMIT {int:start}, {int:limit}',
-					array(
+					[
 						'open_boards' => $context['optimus_open_boards'],
 						'num_replies' => $num_replies,
 						'is_approved' => 1,
 						'start_year'  => $startYear,
 						'start'       => $start,
 						'limit'       => $limit
-					)
+					]
 				);
 
 				while ($row = $smcFunc['db_fetch_assoc']($request)) {
@@ -327,24 +334,30 @@ final class Sitemap extends SMF_BackgroundTask
 				}
 			} else {
 				$request = $smcFunc['db_query']('', '
-					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date, a.id_attach, a.filename
+					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date,
+						a.id_attach, a.filename
 					FROM {db_prefix}topics AS t
 						INNER JOIN {db_prefix}messages AS m ON (t.id_last_msg = m.id_msg)
-						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg AND a.attachment_type = 0 AND a.width <> 0 AND a.height <> 0 AND a.approved = 1)
+						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
+							AND a.attachment_type = 0
+							AND a.width <> 0
+							AND a.height <> 0
+							AND a.approved = 1
+						)
 					WHERE t.id_board IN ({array_int:open_boards})
 						AND t.num_replies >= {int:num_replies}
 						AND t.approved = {int:is_approved}' . ($startYear ? '
 						AND YEAR(FROM_UNIXTIME(GREATEST(m.poster_time, m.modified_time))) >= {int:start_year}' : '') . '
 					ORDER BY t.id_topic DESC, last_date DESC
 					LIMIT {int:start}, {int:limit}',
-					array(
+					[
 						'open_boards' => $context['optimus_open_boards'],
 						'num_replies' => $num_replies,
 						'is_approved' => 1,
 						'start_year'  => $startYear,
 						'start'       => $start,
 						'limit'       => $limit
-					)
+					]
 				);
 
 				while ($row = $smcFunc['db_fetch_assoc']($request)) {
@@ -360,11 +373,11 @@ final class Sitemap extends SMF_BackgroundTask
 						];
 					}
 
-					$links[$row['id_topic']] = array(
+					$links[$row['id_topic']] = [
 						'loc'     => $topicUrl,
 						'lastmod' => $row['last_date'],
 						'image'   => $images[$row['id_topic']] ?? []
-					);
+					];
 				}
 			}
 
@@ -377,11 +390,11 @@ final class Sitemap extends SMF_BackgroundTask
 			foreach ($topic_data as $pageStart => $dates) {
 				$topicUrl = empty($modSettings['queryless_urls']) ? $scripturl . '?topic=' . $topic_id . '.' . $pageStart : $scripturl . '/topic,' . $topic_id . '.' . $pageStart . '.html';
 
-				$links[] = array(
+				$links[] = [
 					'loc'     => $topicUrl,
 					'lastmod' => max($dates),
 					'image'   => $images[$topic_id] ?? []
-				);
+				];
 			}
 		}
 

@@ -42,19 +42,19 @@ class EhPortal extends AbstractAddon
 			WHERE status = {int:status}
 				AND (permission_set IN ({array_int:permissions}) OR (permission_set = 0 AND {int:guests} IN (groups_allowed)))
 			ORDER BY id_page DESC',
-			array(
+			[
 				'status'      => 1, // The page must be active
-				'permissions' => array(1, 3), // The page must be available to guests
+				'permissions' => [1, 3], // The page must be available to guests
 				'guests'      => -1
-			)
+			]
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?page=' . $row['namespace'];
 
-			$object->getTarget()->links[] = array(
+			$object->getTarget()->links[] = [
 				'loc' => $url
-			);
+			];
 		}
 
 		$smcFunc['db_free_result']($request);

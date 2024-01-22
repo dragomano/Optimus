@@ -18,7 +18,7 @@ final class FaviconHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::handle#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::handle#', false, __FILE__);
 	}
 
 	public function handle(): void

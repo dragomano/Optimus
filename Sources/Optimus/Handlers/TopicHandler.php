@@ -29,13 +29,13 @@ final class TopicHandler
 
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::prepareOgImage#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
-		add_integration_function('integrate_load_permissions', __CLASS__ . '::loadPermissions#', false, __FILE__);
-		add_integration_function('integrate_display_topic', __CLASS__ . '::displayTopic#', false, __FILE__);
-		add_integration_function('integrate_before_create_topic', __CLASS__ . '::beforeCreateTopic#', false, __FILE__);
-		add_integration_function('integrate_modify_post', __CLASS__ . '::modifyPost#', false, __FILE__);
-		add_integration_function('integrate_post_end', __CLASS__ . '::postEnd#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::prepareOgImage#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
+		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_display_topic', self::class . '::displayTopic#', false, __FILE__);
+		add_integration_function('integrate_before_create_topic', self::class . '::beforeCreateTopic#', false, __FILE__);
+		add_integration_function('integrate_modify_post', self::class . '::modifyPost#', false, __FILE__);
+		add_integration_function('integrate_post_end', self::class . '::postEnd#', false, __FILE__);
 	}
 
 	public function prepareOgImage(): void
@@ -52,12 +52,12 @@ final class TopicHandler
 			$attachments = $context['loaded_attachments'][$first_message_id];
 			$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . ($key = array_key_first($attachments)) . ';image';
 
-			$context['optimus_og_image'] = array(
+			$context['optimus_og_image'] = [
 				'url'    => $settings['og_image'],
 				'width'  => $attachments[$key]['width'],
 				'height' => $attachments[$key]['height'],
 				'mime'   => $attachments[$key]['mime_type'],
-			);
+			];
 		}
 
 		// Looking for an image in the text of the topic first message
@@ -72,7 +72,7 @@ final class TopicHandler
 		global $modSettings;
 
 		if (! empty($modSettings['optimus_allow_change_topic_desc']))
-			$permissionList['membergroup']['optimus_add_descriptions'] = array(true, 'general', 'view_basic_info');
+			$permissionList['membergroup']['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
 	}
 
 	public function displayTopic(array &$topic_selects): void
@@ -108,14 +108,14 @@ final class TopicHandler
 			$context['meta_description'] = $context['topicinfo']['optimus_description'];
 
 		// Additional data
-		$context['optimus_og_type']['article'] = array(
+		$context['optimus_og_type']['article'] = [
 			'published_time' => date('Y-m-d\TH:i:s', (int) $context['topicinfo']['topic_started_time']),
 			'modified_time'  => empty($context['topicinfo']['topic_modified_time']) ? null : date('Y-m-d\TH:i:s', (int)
 			$context['topicinfo']['topic_modified_time']),
 			'author'         => empty($context['topicinfo']['topic_started_name']) ? null : $context['topicinfo']['topic_started_name'],
 			'section'        => $board_info['name'],
 			'tag'            => $context['optimus_keywords'] ?? null,
-		);
+		];
 	}
 
 	public function beforeCreateTopic(array $msgOptions, array $topicOptions, array $posterOptions, array &$topic_columns, array &$topic_parameters): void
@@ -147,9 +147,9 @@ final class TopicHandler
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:id_topic}
 				LIMIT 1',
-				array(
+				[
 					'id_topic' => $context['current_topic'],
-				)
+				]
 			);
 
 			[$context['optimus']['description'], $topic_author] = $smcFunc['db_fetch_row']($request);
@@ -162,14 +162,14 @@ final class TopicHandler
 			return;
 
 		$context['posting_fields']['optimus_description']['label']['text'] = $txt['optimus_seo_description'];
-		$context['posting_fields']['optimus_description']['input'] = array(
+		$context['posting_fields']['optimus_description']['input'] = [
 			'type' => 'textarea',
-			'attributes' => array(
+			'attributes' => [
 				'id'        => 'optimus_description',
 				'maxlength' => 255,
 				'value'     => $context['optimus']['description'],
-			),
-		);
+			],
+		];
 	}
 
 	private function makeDescriptionFromFirstMessage(): void
@@ -199,10 +199,10 @@ final class TopicHandler
 			UPDATE {db_prefix}topics
 			SET optimus_description = {string:description}
 			WHERE id_topic = {int:current_topic}',
-			array(
+			[
 				'description'   => shorten_subject(strip_tags(parse_bbc($description)), 200),
 				'current_topic' => $topic,
-			)
+			]
 		);
 	}
 

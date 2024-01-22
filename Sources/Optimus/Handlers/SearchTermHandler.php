@@ -20,8 +20,8 @@ final class SearchTermHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::prepareSearchTerms#', false, __FILE__);
-		add_integration_function('integrate_search_params', __CLASS__ . '::searchParams#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::prepareSearchTerms#', false, __FILE__);
+		add_integration_function('integrate_search_params', self::class . '::searchParams#', false, __FILE__);
 	}
 
 	public function prepareSearchTerms(): void
@@ -44,11 +44,11 @@ final class SearchTermHandler
 				if ($scale < $row['hit'])
 					$scale = $row['hit'];
 
-				$context['search_terms'][] = array(
+				$context['search_terms'][] = [
 					'text'  => $row['phrase'],
 					'scale' => round(($row['hit'] * 100) / $scale),
 					'hit'   => $row['hit']
-				);
+				];
 			}
 
 			$smcFunc['db_free_result']($request);

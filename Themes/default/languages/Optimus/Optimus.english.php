@@ -3,6 +3,7 @@
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_basic_title'] = 'Base settings';
+/* Arguments: OP_VERSION, php_version(), $smcFunc['db_title'], $smcFunc['db_get_version']() */
 $txt['optimus_basic_desc'] = 'The mod version: <strong>%1$s</strong>, PHP version: <strong>%2$s</strong>, %3$s version: <strong>%4$s</strong>.<br>One can discuss bugs and features of the mod at <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.org</a>.';
 
 $txt['optimus_main_page'] = 'Homepage';
@@ -12,9 +13,9 @@ $txt['optimus_description_subtext'] = 'It will be used as content of the meta-ta
 
 $txt['optimus_all_pages'] = 'Topic & board pages';
 $txt['optimus_board_extend_title'] = 'Add forum name to board titles';
-$txt['optimus_board_extend_title_set'] = array('Don\'t add', 'Before board title', 'After board title');
+$txt['optimus_board_extend_title_set'] = ['Don\'t add', 'Before board title', 'After board title'];
 $txt['optimus_topic_extend_title'] = 'Add title of section and forum to topic titles';
-$txt['optimus_topic_extend_title_set'] = array('Don\'t add', 'Before topic title', 'After topic title');
+$txt['optimus_topic_extend_title_set'] = ['Don\'t add', 'Before topic title', 'After topic title'];
 $txt['optimus_topic_description'] = 'Display the topic first message snippet as the meta-tag <strong>description</strong>';
 $txt['optimus_allow_change_topic_desc'] = 'Allow a separate field for the topic description';
 $txt['optimus_allow_change_topic_desc_subtext'] = 'It is displayed when editing a topic.';
@@ -30,12 +31,14 @@ $txt['optimus_extra_settings'] = 'Additional settings';
 $txt['optimus_log_search'] = 'Enable logging of search terms';
 
 $txt['optimus_extra_title'] = 'Metadata';
-$txt['optimus_extra_desc'] = 'Here you can add an additional <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">markup</a> for forum pages.';
+$txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages.';
+/* Argument: $scripturl */
 $txt['optimus_extra_info'] = 'Use <a href="https://webmaster.yandex.ru/tools/microtest/" target="_blank" rel="noopener" class="bbc_link">structured data validator</a> (Yandex.Webmaster) or <a href="https://developers.facebook.com/tools/debug" target="_blank" rel="noopener" class="bbc_link">Facebook Sharing Debugger</a> to debug your Open Graph tags.<hr><strong>Note</strong>: Facebook caches images and other OG data. To reset the cache, in the repost debugger, type the page address with the parameter <em>fbrefresh</em>, i.e. %1$s?fbrefresh=reset.';
 
 $txt['optimus_og_image'] = 'Use the image from the first topic message in the meta tag <strong>og:image</strong>';
+/* Argument: $og_image_option_link */
 $txt['optimus_og_image_subtext'] = 'By default, the image specified in <a href="%s" class="bbc_link">current theme settings</a> is used.';
-$txt['optimus_og_image_help'] = 'If enabled, the <strong>og:image</strong> meta tag will include a link to the first image attached to the first topic message. If there aren\'t any attachment, and the image inside the <strong>img</strong> tag is found in the message text, it is used.';
+$txt['optimus_og_image_help'] = 'If enabled, the <strong>og:image</strong> meta tag will include a link to the first image attached to the first topic message. If there are not any attachment, and the image inside the <strong>img</strong> tag is found in the message text, it is used.';
 $txt['optimus_allow_change_board_og_image'] = 'Allow a separate field for the board <strong>OG Image</strong>';
 $txt['optimus_allow_change_board_og_image_subtext'] = 'It is displayed when editing a board.';
 $txt['optimus_fb_appid'] = 'Facebook Application ID (if you have)';
@@ -58,11 +61,11 @@ $txt['optimus_meta_tools'] = 'Search engine (Tool)';
 $txt['optimus_meta_name'] = 'Name';
 $txt['optimus_meta_content'] = 'Content';
 $txt['optimus_meta_info'] = 'Please use only the values from <strong>content</strong> parameter of the meta tags.<br>Example: <span class="smalltext">&lt;meta name="<strong>NAME</strong>" content="<strong>VALUE</strong>"&gt;</span>';
-$txt['optimus_search_engines'] = array(
-	'Google' => array('google-site-verification','https://www.google.com/webmasters/tools/', 'Google Search Console'),
-	'Bing' => array('msvalidate.01', 'https://www.bing.com/toolbox/webmaster/', 'Bing Webmaster'),
-	'Yandex' => array('yandex-verification', 'https://webmaster.yandex.com/', 'Yandex.Webmaster'),
-);
+$txt['optimus_search_engines'] = [
+	'Google' => ['google-site-verification', 'https://www.google.com/webmasters/tools/', 'Google Search Console'],
+	'Bing' => ['msvalidate.01', 'https://www.bing.com/toolbox/webmaster/', 'Bing Webmaster'],
+	'Yandex' => ['yandex-verification', 'https://webmaster.yandex.com/', 'Yandex.Webmaster'],
+];
 
 $txt['optimus_redirect_title'] = 'Redirect';
 $txt['optimus_redirect_desc'] = 'On this page you can add redirection rules for internal forum URLs.';
@@ -89,13 +92,14 @@ $txt['optimus_robots_desc'] = 'The rule generator is updated depending on the in
 $txt['optimus_rules'] = 'Rule generator';
 $txt['optimus_rules_hint'] = 'You can use these rules as an example for your robots.txt (on the right textarea):';
 $txt['optimus_links_title'] = 'Useful links';
-$txt['optimus_links'][0] = array('Create a robots.txt file', 'https://support.google.com/webmasters/answer/6062596?hl=en');
-$txt['optimus_links'][1] = array('Using robots.txt', 'https://yandex.com/support/webmaster/controlling-robot/robots-txt.html?lang=en');
+$txt['optimus_links'][0] = ['Create a robots.txt file', 'https://support.google.com/webmasters/answer/6062596?hl=en'];
+$txt['optimus_links'][1] = ['Using robots.txt', 'https://yandex.com/support/webmaster/controlling-robot/robots-txt.html?lang=en'];
 
 $txt['optimus_htaccess_title'] = 'Manage .htaccess';
 $txt['optimus_htaccess_desc'] = 'Here you can modify the .htaccess file for your forum. Be careful!';
 
 $txt['optimus_sitemap_title'] = 'Sitemap';
+/* Argument: OP_NAME */
 $txt['optimus_sitemap_desc'] = '%1$s can generate a simple XML map in accordance with the settings below.';
 
 $txt['optimus_sitemap_enable'] = 'Activate the Sitemap';
@@ -103,7 +107,7 @@ $txt['optimus_sitemap_enable_subtext'] = 'The map will be created/updated after 
 $txt['optimus_sitemap_link'] = 'Show the Sitemap link on the footer';
 $txt['optimus_remove_previous_xml_files'] = 'Remove previously generated sitemap*.xml files';
 $txt['optimus_main_page_frequency'] = 'The update frequency of the main page';
-$txt['optimus_main_page_frequency_set'] = array('Constant (always)', 'Depending on the date of the last message');
+$txt['optimus_main_page_frequency_set'] = ['Constant (always)', 'Depending on the date of the last message'];
 $txt['optimus_sitemap_boards'] = 'Add links to boards to the Sitemap';
 $txt['optimus_sitemap_boards_subtext'] = 'Boards that are closed to guests will NOT be added.';
 $txt['optimus_sitemap_topics_num_replies'] = 'Add links to topics that have the number of replies >=';
@@ -112,7 +116,7 @@ $txt['optimus_sitemap_all_topic_pages'] = 'Add ALL topic pages to the sitemap';
 $txt['optimus_sitemap_all_topic_pages_subtext'] = 'If not checked, only the first pages of topics will be added to the sitemap.';
 $txt['optimus_start_year'] = 'The Sitemap must contain entries starting from the specified year';
 $txt['optimus_update_frequency'] = 'How often the Sitemap is updated';
-$txt['optimus_update_frequency_set'] = array('Once a day', 'Every 3 days', 'Once a week', 'Every 2 weeks', 'Once a month');
+$txt['optimus_update_frequency_set'] = ['Once a day', 'Every 3 days', 'Once a week', 'Every 2 weeks', 'Once a month'];
 
 $txt['optimus_mobile'] = 'Mobile';
 $txt['optimus_images'] = 'Images';
@@ -141,14 +145,16 @@ $txt['permissionhelp_optimus_view_search_terms'] = 'Ability to view search stati
 
 $txt['optimus_404_page_title'] = '404 - Page not found';
 $txt['optimus_404_h2'] = 'Error 404';
-$txt['optimus_404_h3'] = 'Sorry, but the requested page does not exist.';
+$txt['optimus_404_h3'] = 'The requested page does not exist.';
 $txt['optimus_403_page_title'] = '403 - Access forbidden';
 $txt['optimus_403_h2'] = 'Error 403';
-$txt['optimus_403_h3'] = 'Sorry, but you have no access to this page.';
+$txt['optimus_403_h3'] = 'You have no access to this page.';
+/* Argument: $scripturl */
 $txt['optimus_goto_main_page'] = 'Go to the <a class="bbc_link" href="%1$s">main page</a>.';
 $txt['optimus_seo_description'] = 'Topic description [SEO]';
 $txt['optimus_seo_keywords'] = 'Topic keywords [SEO]';
 $txt['optimus_enter_keywords'] = 'Enter one or more keywords';
+/* Argument: $keyword_name */
 $txt['optimus_topics_with_keyword'] = 'Forum topics with keyword "%s"';
 $txt['optimus_keyword_id_not_found'] = 'The specified keyword ID was not found.';
 $txt['optimus_no_keywords'] = 'There is no information about this keyword identifier.';
@@ -156,6 +162,7 @@ $txt['optimus_all_keywords'] = 'All keywords in the forum topics';
 $txt['optimus_keyword_column'] = 'Keyword';
 $txt['optimus_frequency_column'] = 'Frequency';
 $txt['optimus_top_queries'] = 'Popular search queries';
+/* Argument: $i  */
 $txt['optimus_chart_title'] = 'Top %1$s';
 $txt['optimus_no_search_terms'] = 'Statistics are not yet available.';
 

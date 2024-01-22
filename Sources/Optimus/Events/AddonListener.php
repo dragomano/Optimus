@@ -16,10 +16,6 @@ namespace Bugo\Optimus\Events;
 
 final class AddonListener
 {
-	public function __construct()
-	{
-	}
-
 	public function __invoke(AddonEvent $event): void
 	{
 	}

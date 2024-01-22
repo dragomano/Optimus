@@ -31,7 +31,7 @@ class ExampleAddon extends AbstractAddon
 			return;
 
 		if ($context['topicinfo']['locked'] || $context['topicinfo']['num_replies'] < 2) {
-			$context['meta_tags'][] = array('name' => 'robots', 'content' => 'noindex,nofollow');
+			$context['meta_tags'][] = ['name' => 'robots', 'content' => 'noindex,nofollow'];
 		}
 	}
 }

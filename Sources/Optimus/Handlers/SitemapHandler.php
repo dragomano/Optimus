@@ -18,9 +18,9 @@ class SitemapHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_actions', __CLASS__ . '::actions#', false, __FILE__);
-		add_integration_function('integrate_pre_log_stats', __CLASS__ . '::preLogStats#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::addSitemapLink#', false, __FILE__);
+		add_integration_function('integrate_actions', self::class . '::actions#', false, __FILE__);
+		add_integration_function('integrate_pre_log_stats', self::class . '::preLogStats#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::addSitemapLink#', false, __FILE__);
 
 	}
 
@@ -44,7 +44,7 @@ class SitemapHandler
 
 		$content = file_get_contents($settings['default_theme_dir'] . '/css/optimus/sitemap.xsl');
 
-		$content = strtr($content, array(
+		$content = strtr($content, [
 			'{link}'          => $settings['theme_url'] . '/css/index.css',
 			'{sitemap}'       => $txt['optimus_sitemap_title'],
 			'{mobile}'        => $txt['optimus_mobile'],
@@ -62,7 +62,7 @@ class SitemapHandler
 			'{caption}'       => $txt['optimus_caption'],
 			'{thumbnail}'     => $txt['optimus_thumbnail'],
 			'{optimus}'       => OP_NAME
-		));
+		]);
 
 		echo $content;
 
@@ -76,17 +76,13 @@ class SitemapHandler
 
 	public function addSitemapLink(): void
 	{
-		global $modSettings, $txt, $boarddir, $forum_copyright, $boardurl, $context;
+		global $modSettings, $forum_copyright, $boardurl, $txt, $context;
 
-		if (
-			! empty($modSettings['optimus_sitemap_enable'])
-			&& ! empty($modSettings['optimus_sitemap_link'])
-			&& isset($txt['optimus_sitemap_title'])
-			&& is_file($boarddir . '/sitemap.xml')
-		) {
-			$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';
+		if (empty($modSettings['optimus_sitemap_link']))
+			return;
 
-			$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="' . $boardurl . '/sitemap.xml">';
-		}
+		$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';
+
+		$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="' . $boardurl . '/sitemap.xml">';
 	}
 }
