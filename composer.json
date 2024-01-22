@@ -1,0 +1,18 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Bugo\\Optimus\\": "Sources\\Optimus"
+    }
+  },
+  "require": {
+    "php": "^8.0",
+    "ext-dom": "*"
+  },
+  "require-dev": {
+    "rector/rector": "^0.19"
+  },
+  "minimum-stability": "alpha",
+  "scripts": {
+    "check": "vendor/bin/rector process --dry-run --clear-cache"
+  }
+}
