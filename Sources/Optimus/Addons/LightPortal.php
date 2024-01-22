@@ -1,12 +1,12 @@
 <?php
 
-namespace Bugo\Optimus\Addons;
-
 /**
  * LightPortal.php
  *
  * @package Optimus
  */
+
+namespace Bugo\Optimus\Addons;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -14,53 +14,53 @@ if (! defined('SMF'))
 /**
  * Support of LightPortal mod
  */
-class LightPortal
+class LightPortal extends AbstractAddon
 {
 	public function __construct()
 	{
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
-		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap#', false, __FILE__);
+		parent::__construct();
+
+		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
+		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
 	}
 
-	public function optimusRobots(array &$custom_rules, string $url_path)
+	public function changeRobots(object $object): void
 	{
 		if (! defined('LP_PAGE_PARAM'))
 			return;
 
-		$custom_rules[] = "Allow: " . $url_path . "/*" . LP_PAGE_PARAM;
+		$object->getTarget()->customRules[] = "Allow: " . $object->getTarget()->urlPath . "/*" . LP_PAGE_PARAM;
 	}
 
-	public function optimusSitemap(array &$links)
+	public function changeSitemap(object $object): void
 	{
-		global $smcFunc, $scripturl, $modSettings;
+		global $modSettings, $smcFunc, $scripturl;
 
 		if (! class_exists('\Bugo\LightPortal\Integration'))
 			return;
 
-		$start_year = (int) op_config('optimus_start_year', 0);
+		$startYear = (int) ($modSettings['optimus_start_year'] ?? 0);
 
 		$request = $smcFunc['db_query']('', '
 			SELECT page_id, alias, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
 				AND created_at <= {int:current_time}
-				AND permissions IN ({array_int:permissions})' . ($start_year ? '
+				AND permissions IN ({array_int:permissions})' . ($startYear ? '
 				AND YEAR(FROM_UNIXTIME(created_at)) >= {int:start_year}' : '') . '
 			ORDER BY page_id DESC',
 			array(
 				'status'       => 1, // The page must be active
 				'current_time' => time(),
 				'permissions'  => array(1, 3), // The page must be available to guests
-				'start_year'   => $start_year
+				'start_year'   => $startYear
 			)
 		);
 
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?' . ($modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
 
-			call_integration_hook('integrate_optimus_create_sef_url', array(&$url));
-
-			$links[] = array(
+			$object->getTarget()->links[] = array(
 				'loc'     => $url,
 				'lastmod' => $row['date']
 			);

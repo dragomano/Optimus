@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * app.php
+ * AddonListener.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -12,14 +12,15 @@
  * @version 3.0 Beta
  */
 
-use Bugo\Optimus\Integration;
+namespace Bugo\Optimus\Events;
 
-if (! defined('SMF'))
-	die('No direct access...');
+final class AddonListener
+{
+	public function __construct()
+	{
+	}
 
-defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
-defined('OP_VERSION') || define('OP_VERSION', '3.0 Beta');
-
-require_once __DIR__ . '/Libs/autoload.php';
-
-(new Integration())();
+	public function __invoke(AddonEvent $event): void
+	{
+	}
+}

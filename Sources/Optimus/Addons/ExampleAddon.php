@@ -1,12 +1,12 @@
 <?php
 
-namespace Bugo\Optimus\Addons;
-
 /**
  * ExampleAddon.php
  *
  * @package Optimus
  */
+
+namespace Bugo\Optimus\Addons;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -14,14 +14,16 @@ if (! defined('SMF'))
 /**
  * Simple example of your addon
  */
-class ExampleAddon
+class ExampleAddon extends AbstractAddon
 {
 	public function __construct()
 	{
-		//add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
+		parent::__construct();
+
+		//$this->hideLockedTopicsForSpiders();
 	}
 
-	public function menuButtons()
+	public function hideLockedTopicsForSpiders(): void
 	{
 		global $context;
 

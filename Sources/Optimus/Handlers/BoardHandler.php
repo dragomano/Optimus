@@ -1,11 +1,7 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Bugo\Optimus;
+<?php declare(strict_types=1);
 
 /**
- * Boards.php
+ * BoardHandler.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -13,17 +9,23 @@ namespace Bugo\Optimus;
  * @copyright 2010-2024 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.13
+ * @version 3.0 Beta
  */
+
+namespace Bugo\Optimus\Handlers;
+
+use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class Boards
+final class BoardHandler
 {
-	public function hooks()
+	public function __invoke(): void
 	{
-		if (is_off('optimus_allow_change_board_og_image'))
+		global $modSettings;
+
+		if (empty($modSettings['optimus_allow_change_board_og_image']))
 			return;
 
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons', false, __FILE__, true);
@@ -38,7 +40,7 @@ final class Boards
 	/**
 	 * Looking for an image of the current board
 	 */
-	public function menuButtons()
+	public function menuButtons(): void
 	{
 		global $board_info, $settings;
 
@@ -51,7 +53,7 @@ final class Boards
 	 *
 	 * Выбираем колонку optimus_og_image из таблицы boards
 	 */
-	public function loadBoard(array &$custom_column_selects)
+	public function loadBoard(array &$custom_column_selects): void
 	{
 		$custom_column_selects[] = 'b.optimus_og_image';
 	}
@@ -61,7 +63,7 @@ final class Boards
 	 *
 	 * Дополняем массив $board_info ключом og_image
 	 */
-	public function boardInfo(array &$board_info, array $row)
+	public function boardInfo(array &$board_info, array $row): void
 	{
 		$board_info['og_image'] = $row['optimus_og_image'];
 	}
@@ -71,7 +73,7 @@ final class Boards
 	 *
 	 * Добавляем запрос поля optimus_og_image при просмотре раздела
 	 */
-	public function preBoardtree(array &$boardColumns)
+	public function preBoardtree(array &$boardColumns): void
 	{
 		$boardColumns[] = 'b.optimus_og_image';
 	}
@@ -81,14 +83,14 @@ final class Boards
 	 *
 	 * Добавляем optimus_og_image в массив $boards
 	 */
-	public function boardtreeBoard(array $row)
+	public function boardtreeBoard(array $row): void
 	{
 		global $boards;
 
 		$boards[$row['id_board']]['optimus_og_image'] = $row['optimus_og_image'];
 	}
 
-	public function editBoard()
+	public function editBoard(): void
 	{
 		global $context, $txt;
 
@@ -113,11 +115,11 @@ final class Boards
 	 *
 	 * Обновляем значение optimus_og_image для раздела
 	 */
-	public function modifyBoard(int $id, array $boardOptions, array &$boardUpdates, array &$boardUpdateParameters)
+	public function modifyBoard(int $id, array $boardOptions, array &$boardUpdates, array &$boardUpdateParameters): void
 	{
-		if (op_is_post('optimus_og_image')) {
+		if (Input::isPost('optimus_og_image')) {
 			$boardUpdates[] = 'optimus_og_image = {string:og_image}';
-			$boardUpdateParameters['og_image'] = op_filter('optimus_og_image', 'url');
+			$boardUpdateParameters['og_image'] = Input::filter('optimus_og_image', 'url');
 		}
 	}
 }

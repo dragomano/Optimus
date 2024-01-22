@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * app.php
+ * AbstractAddon.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -12,14 +12,17 @@
  * @version 3.0 Beta
  */
 
-use Bugo\Optimus\Integration;
+namespace Bugo\Optimus\Addons;
 
-if (! defined('SMF'))
-	die('No direct access...');
+use Bugo\Optimus\Events\DispatcherFactory;
+use League\Event\EventDispatcher;
 
-defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
-defined('OP_VERSION') || define('OP_VERSION', '3.0 Beta');
+abstract class AbstractAddon
+{
+	protected EventDispatcher $dispatcher;
 
-require_once __DIR__ . '/Libs/autoload.php';
-
-(new Integration())();
+	public function __construct()
+	{
+		$this->dispatcher = (new DispatcherFactory())();
+	}
+}

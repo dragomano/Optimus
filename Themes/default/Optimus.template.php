@@ -1,6 +1,6 @@
 <?php
 
-function template_favicon()
+function template_favicon(): void
 {
 	global $txt, $context, $modSettings;
 
@@ -28,7 +28,7 @@ function template_favicon()
 	</div>';
 }
 
-function template_metatags()
+function template_metatags(): void
 {
 	global $context, $txt;
 
@@ -81,7 +81,7 @@ function template_metatags()
 		}
 	}
 
-	echo '
+	echo /** @lang text */ '
 				</tbody>
 			</table>
 		</div>
@@ -108,7 +108,7 @@ function template_metatags()
 	</form>';
 }
 
-function template_redirect()
+function template_redirect(): void
 {
 	global $context, $txt;
 
@@ -149,7 +149,7 @@ function template_redirect()
 		</div>';
 	}
 
-	echo '
+	echo /** @lang text */ '
 		<div class="windowbg centertext">
 			<noscript>
 				<div style="margin-top: 1ex">
@@ -173,7 +173,7 @@ function template_redirect()
 	</form>';
 }
 
-function template_counters()
+function template_counters(): void
 {
 	global $context, $txt, $modSettings;
 
@@ -229,9 +229,9 @@ function template_counters()
 	</form>';
 }
 
-function template_robots()
+function template_robots(): void
 {
-	global $context, $txt, $modSettings;
+	global $context, $txt;
 
 	echo '
 	<form action="', $context['post_url'], '" method="post">
@@ -280,7 +280,7 @@ function template_robots()
 	</form>';
 }
 
-function template_htaccess()
+function template_htaccess(): void
 {
 	global $txt, $context;
 
@@ -306,7 +306,7 @@ function template_footer_counters_above()
 {
 }
 
-function template_footer_counters_below()
+function template_footer_counters_below(): void
 {
 	global $modSettings;
 
@@ -315,11 +315,11 @@ function template_footer_counters_below()
 	<div class="counters">', $modSettings['optimus_count_code'], '</div>';
 }
 
-function template_sitemap_xml()
+function template_sitemap_xml(): void
 {
 	global $scripturl, $context;
 
-	echo '<?xml version="1.0" encoding="UTF-8"?>
+	echo /** @lang text */ '<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="' . $scripturl . '?action=sitemap_xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
 
@@ -356,7 +356,7 @@ function template_sitemap_xml()
 </urlset>';
 }
 
-function template_sitemapindex_xml()
+function template_sitemapindex_xml(): void
 {
 	global $scripturl, $context;
 
@@ -374,7 +374,7 @@ function template_sitemapindex_xml()
 </sitemapindex>';
 }
 
-function template_keywords_above()
+function template_keywords_above(): void
 {
 	global $context;
 
@@ -390,7 +390,7 @@ function template_keywords_below()
 {
 }
 
-function template_search_terms_above()
+function template_search_terms_above(): void
 {
 	global $txt, $context, $scripturl;
 
@@ -405,7 +405,7 @@ function template_search_terms_above()
 
 		$i = 0;
 		$rows = '';
-		foreach ($context['search_terms'] as $id => $data) {
+		foreach ($context['search_terms'] as $data) {
 			if ($data['hit'] > 10) {
 				$i++;
 				$rows .= '["' . $data['text'] . '",' . $data['hit'] . '],';
@@ -413,7 +413,7 @@ function template_search_terms_above()
 		}
 
 		if (!empty($rows)) {
-			echo '
+			echo /** @lang text */ '
 		<script src="https://www.gstatic.com/charts/loader.js"></script>
 		<script>
 			google.charts.load(\'current\', {\'packages\':[\'corechart\']});
@@ -422,7 +422,7 @@ function template_search_terms_above()
 				let data = new google.visualization.DataTable();
 				data.addColumn("string", "Query");
 				data.addColumn("number", "Hits");
-				data.addRows([', $rows, ']);
+				data.addRows([', $rows, /** @lang text */ ']);
 				let options = {"title":"' . sprintf($txt['optimus_chart_title'], $i) . '", "backgroundColor":"transparent", "width":"800"};
 				let chart = new google.visualization.PieChart(document.getElementById("chart_div"));
 				chart.draw(data, options);
@@ -434,7 +434,7 @@ function template_search_terms_above()
 		echo '
 		<dl class="stats">';
 
-		foreach ($context['search_terms'] as $id => $data) {
+		foreach ($context['search_terms'] as $data) {
 			if (!empty($data['text'])) {
 				echo '
 			<dt>

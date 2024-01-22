@@ -1,11 +1,7 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Bugo\Optimus;
+<?php declare(strict_types=1);
 
 /**
- * Settings.php
+ * SettingHandler.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -13,15 +9,20 @@ namespace Bugo\Optimus;
  * @copyright 2010-2024 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.13
+ * @version 3.0 Beta
  */
+
+namespace Bugo\Optimus\Handlers;
+
+use Bugo\Optimus\Utils\Input;
+use Bugo\Optimus\Utils\RobotsGenerator;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class Settings
+final class SettingHandler
 {
-	public function hooks()
+	public function __invoke(): void
 	{
 		add_integration_function('integrate_modify_basic_settings', __CLASS__ . '::modifyBasicSettings', false, __FILE__, true);
 		add_integration_function('integrate_admin_areas', __CLASS__ . '::adminAreas', false, __FILE__, true);
@@ -33,7 +34,7 @@ final class Settings
 	 *
 	 * Удаляем настройку meta_keywords из её стандартного места и помещаем на страницу настроек Optimus
 	 */
-	public function modifyBasicSettings(array &$config_vars)
+	public function modifyBasicSettings(array &$config_vars): void
 	{
 		foreach ($config_vars as $key => $dump) {
 			if (isset($dump[1]) && $dump[1] == 'meta_keywords') {
@@ -42,7 +43,7 @@ final class Settings
 		}
 	}
 
-	public function adminAreas(array &$admin_areas)
+	public function adminAreas(array &$admin_areas): void
 	{
 		global $settings, $txt;
 
@@ -57,7 +58,7 @@ final class Settings
 			content: "\f717";
 		}');
 
-		if (op_request('area') === 'optimus')
+		if (Input::request('area') === 'optimus')
 			loadCSSFile('optimus/optimus.css');
 
 		$admin_areas['config']['areas']['optimus'] = array(
@@ -78,7 +79,7 @@ final class Settings
 		);
 	}
 
-	public function adminSearch(array &$language_files, array &$include_files, array &$settings_search)
+	public function adminSearch(array $language_files, array $include_files, array &$settings_search): void
 	{
 		$settings_search[] = array(array($this, 'basicTabSettings'), 'area=optimus;sa=basic');
 		$settings_search[] = array(array($this, 'extraTabSettings'), 'area=optimus;sa=extra');
@@ -86,7 +87,7 @@ final class Settings
 		$settings_search[] = array(array($this, 'sitemapTabSettings'), 'area=optimus;sa=sitemap');
 	}
 
-	public function actions()
+	public function actions(): void
 	{
 		global $context, $txt, $sourcedir, $smcFunc;
 
@@ -146,7 +147,7 @@ final class Settings
 			)
 		);
 
-		$this->{$subActions[op_request('sa')]}();
+		$this->{$subActions[Input::request('sa')]}();
 	}
 
 	/**
@@ -163,28 +164,28 @@ final class Settings
 			['optimus_forum_index' => sprintf($txt['forum_index'], $context['forum_name'])]
 		);
 
-		$config_vars = array(
-			array('title', 'optimus_main_page'),
-			array('text', 'optimus_forum_index', 80, 'value' => un_htmlspecialchars($modSettings['optimus_forum_index'] ?? '')),
-			array('large_text', 'optimus_description', 'value' => un_htmlspecialchars($modSettings['optimus_description'] ?? ''), 'subtext' => $txt['optimus_description_subtext']),
-			array('large_text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note']),
-			array('title', 'optimus_all_pages'),
-			array('select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']),
-			array('select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']),
+		$config_vars = [
+			['title', 'optimus_main_page'],
+			['text', 'optimus_forum_index', 80, 'value' => un_htmlspecialchars($modSettings['optimus_forum_index'] ?? '')],
+			['large_text', 'optimus_description', 'value' => un_htmlspecialchars($modSettings['optimus_description'] ?? ''), 'subtext' => $txt['optimus_description_subtext']],
+			['large_text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note']],
+			['title', 'optimus_all_pages'],
+			['select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']],
+			['select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']],
 			'',
-			array('check', 'optimus_topic_description'),
-			array('check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']),
+			['check', 'optimus_topic_description'],
+			['check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']],
 			'',
-			array('check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']),
-			array('check', 'optimus_show_keywords_block'),
-			array('check', 'optimus_show_keywords_on_message_index'),
-			array('check', 'optimus_allow_keyword_phrases'),
-			array('check', 'optimus_use_color_tags'),
+			['check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']],
+			['check', 'optimus_show_keywords_block'],
+			['check', 'optimus_show_keywords_on_message_index'],
+			['check', 'optimus_allow_keyword_phrases'],
+			['check', 'optimus_use_color_tags'],
 			'',
-			array('check', 'optimus_correct_http_status'),
-			array('title', 'optimus_extra_settings'),
-			array('check', 'optimus_log_search'),
-		);
+			['check', 'optimus_correct_http_status'],
+			['title', 'optimus_extra_settings'],
+			['check', 'optimus_log_search'],
+		];
 
 		// Mod authors can add own options
 		call_integration_hook('integrate_optimus_basic_settings', array(&$config_vars));
@@ -192,14 +193,14 @@ final class Settings
 		if ($return_config)
 			return $config_vars;
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
-			if (op_is_post('optimus_forum_index'))
-				$_POST['optimus_forum_index'] = op_filter('optimus_forum_index');
+			if (Input::isPost('optimus_forum_index'))
+				$_POST['optimus_forum_index'] = Input::filter('optimus_forum_index');
 
-			if (op_is_post('optimus_description'))
-				$_POST['optimus_description'] = op_filter('optimus_description');
+			if (Input::isPost('optimus_description'))
+				$_POST['optimus_description'] = Input::filter('optimus_description');
 
 			call_integration_hook('integrate_save_optimus_basic_settings');
 
@@ -240,14 +241,14 @@ final class Settings
 		if ($return_config)
 			return $config_vars;
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
-			if (op_is_post('optimus_fb_appid'))
-				$_POST['optimus_fb_appid'] = op_filter('optimus_fb_appid');
+			if (Input::isPost('optimus_fb_appid'))
+				$_POST['optimus_fb_appid'] = Input::filter('optimus_fb_appid');
 
-			if (op_is_post('optimus_tw_cards'))
-				$_POST['optimus_tw_cards'] = str_replace('@', '', op_filter('optimus_tw_cards'));
+			if (Input::isPost('optimus_tw_cards'))
+				$_POST['optimus_tw_cards'] = str_replace('@', '', Input::filter('optimus_tw_cards'));
 
 			call_integration_hook('integrate_save_optimus_extra_settings');
 
@@ -279,7 +280,7 @@ final class Settings
 
 		$context['sub_template'] = 'favicon';
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			$save_vars = $config_vars;
@@ -291,7 +292,7 @@ final class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	public function metatagsTabSettings()
+	public function metatagsTabSettings(): void
 	{
 		global $context, $txt, $scripturl, $modSettings;
 
@@ -303,15 +304,15 @@ final class Settings
 
 		$config_vars = [];
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
 
 			$meta = [];
-			if (op_is_post('custom_tag_name') && op_is_post('custom_tag_value')) {
-				$custom_tag = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+			if (Input::isPost('custom_tag_name') && Input::isPost('custom_tag_value')) {
+				$custom_tag = filter_input_array(INPUT_POST);
 				$custom_tag['custom_tag_name'] = array_filter($custom_tag['custom_tag_name']);
 
 				foreach ($custom_tag['custom_tag_name'] as $key => $value) {
@@ -326,7 +327,7 @@ final class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	public function redirectTabSettings()
+	public function redirectTabSettings(): void
 	{
 		global $context, $txt, $scripturl, $modSettings;
 
@@ -338,15 +339,15 @@ final class Settings
 
 		$config_vars = [];
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
 
 			$redirect = [];
-			if (op_is_post('custom_redirect_from') && op_is_post('custom_redirect_to')) {
-				$custom_redirect = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+			if (Input::isPost('custom_redirect_from') && Input::isPost('custom_redirect_to')) {
+				$custom_redirect = filter_input_array(INPUT_POST);
 				$custom_redirect['custom_redirect_from'] = array_filter($custom_redirect['custom_redirect_from']);
 
 				foreach ($custom_redirect['custom_redirect_from'] as $to => $from) {
@@ -361,7 +362,7 @@ final class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	public function counterTabSettings()
+	public function counterTabSettings(): void
 	{
 		global $context, $txt, $scripturl;
 
@@ -382,7 +383,7 @@ final class Settings
 			array('text', 'optimus_ignored_actions')
 		);
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			$save_vars = $config_vars;
@@ -394,7 +395,7 @@ final class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	public function robotsTabSettings()
+	public function robotsTabSettings(): void
 	{
 		global $context, $txt, $scripturl, $boarddir;
 
@@ -404,18 +405,18 @@ final class Settings
 
 		$config_vars = [];
 
-		$robots_path = (op_server('document_root') ?: $boarddir) . '/robots.txt';
+		$robots_path = (Input::server('document_root') ?: $boarddir) . '/robots.txt';
 		$context['robots_content'] = is_writable($robots_path) ? file_get_contents($robots_path) : '';
 
-		(new Robots())->generate();
+		(new RobotsGenerator)->generate();
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			$save_vars = $config_vars;
 			saveDBSettings($save_vars);
 
-			file_put_contents($robots_path, op_filter('optimus_robots'), LOCK_EX);
+			file_put_contents($robots_path, Input::filter('optimus_robots'), LOCK_EX);
 
 			redirectexit('action=admin;area=optimus;sa=robots');
 		}
@@ -423,7 +424,7 @@ final class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	public function htaccessTabSettings()
+	public function htaccessTabSettings(): void
 	{
 		global $context, $txt, $scripturl, $boarddir;
 
@@ -433,10 +434,10 @@ final class Settings
 
 		$config_vars = [];
 
-		$htaccess_path = (op_server('document_root') ?: $boarddir) . '/.htaccess';
+		$htaccess_path = (Input::server('document_root') ?: $boarddir) . '/.htaccess';
 		$context['htaccess_content'] = is_writable($htaccess_path) ? file_get_contents($htaccess_path) : '';
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			$save_vars = $config_vars;
@@ -491,7 +492,7 @@ final class Settings
 		if ($return_config)
 			return $config_vars;
 
-		if (op_is_get('save')) {
+		if (Input::isGet('save')) {
 			checkSession();
 
 			// Recreate a sitemap after save settings
@@ -499,15 +500,15 @@ final class Settings
 				DELETE FROM {db_prefix}background_tasks
 				WHERE task_class = {string:task_class}',
 				array(
-					'task_class' => '\Bugo\Optimus\Task'
+					'task_class' => '\Bugo\Optimus\Tasks\Sitemap'
 				)
 			);
 
-			if (op_is_post('optimus_sitemap_enable')) {
+			if (Input::isPost('optimus_sitemap_enable')) {
 				$smcFunc['db_insert']('insert',
 					'{db_prefix}background_tasks',
 					array('task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string'),
-					array('$sourcedir/Optimus/Task.php', '\Bugo\Optimus\Task', ''),
+					array('$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', ''),
 					array('id_task')
 				);
 			}
@@ -523,7 +524,7 @@ final class Settings
 		prepareDBSettingContext($config_vars);
 	}
 
-	private function addDefaultSettings($settings)
+	private function addDefaultSettings($settings): void
 	{
 		global $modSettings;
 

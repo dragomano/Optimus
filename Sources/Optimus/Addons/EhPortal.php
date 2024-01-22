@@ -1,36 +1,38 @@
 <?php
 
-namespace Bugo\Optimus\Addons;
-
 /**
  * EhPortal.php
  *
  * @package Optimus
  */
 
+namespace Bugo\Optimus\Addons;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
 /**
- * ExPortal pages for Sitemap
+ * EhPortal pages for Sitemap
  */
-class EhPortal
+class EhPortal extends AbstractAddon
 {
 	public function __construct()
 	{
+		parent::__construct();
+
 		if (! function_exists('sportal_actions'))
 			return;
 
-		add_integration_function('integrate_optimus_robots', __CLASS__ . '::optimusRobots#', false, __FILE__);
-		add_integration_function('integrate_optimus_sitemap', __CLASS__ . '::optimusSitemap#', false, __FILE__);
+		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
+		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
 	}
 
-	public function optimusRobots(array &$custom_rules, string $url_path)
+	public function changeRobots(object $object): void
 	{
-		$custom_rules[] = "Allow: " . $url_path . "/*page=*";
+		$object->getTarget()->customRules[] = "Allow: " . $object->getTarget()->urlPath . "/*page=*";
 	}
 
-	public function optimusSitemap(array &$links)
+	public function changeSitemap(object $object): void
 	{
 		global $smcFunc, $scripturl;
 
@@ -50,9 +52,7 @@ class EhPortal
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?page=' . $row['namespace'];
 
-			call_integration_hook('integrate_optimus_create_sef_url', array(&$url));
-
-			$links[] = array(
+			$object->getTarget()->links[] = array(
 				'loc' => $url
 			);
 		}

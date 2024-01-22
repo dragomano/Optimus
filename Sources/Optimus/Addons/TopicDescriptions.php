@@ -1,6 +1,4 @@
-<?php
-
-namespace Bugo\Optimus\Addons;
+<?php declare(strict_types=1);
 
 /**
  * TopicDescriptions.php
@@ -8,22 +6,21 @@ namespace Bugo\Optimus\Addons;
  * @package Optimus
  */
 
+namespace Bugo\Optimus\Addons;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
 /**
  * Work with Topic Descriptions mod
  */
-class TopicDescriptions
+class TopicDescriptions extends AbstractAddon
 {
 	public function __construct()
 	{
-		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
-	}
-
-	public function menuButtons()
-	{
 		global $context;
+
+		parent::__construct();
 
 		if (! empty($context['topic_description']))
 			$context['meta_description'] = $context['topic_description'];

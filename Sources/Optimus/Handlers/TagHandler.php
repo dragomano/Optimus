@@ -1,11 +1,7 @@
-<?php
-
-declare(strict_types=1);
-
-namespace Bugo\Optimus;
+<?php declare(strict_types=1);
 
 /**
- * Keywords.php
+ * TagHandler.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -13,15 +9,20 @@ namespace Bugo\Optimus;
  * @copyright 2010-2024 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.13
+ * @version 3.0 Beta
  */
+
+namespace Bugo\Optimus\Handlers;
+
+use Bugo\Optimus\Utils\Copyright;
+use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class Keywords
+final class TagHandler
 {
-	public function hooks()
+	public function __invoke(): void
 	{
 		add_integration_function('integrate_actions', __CLASS__ . '::actions#', false, __FILE__);
 		add_integration_function('integrate_menu_buttons', __CLASS__ . '::menuButtons#', false, __FILE__);
@@ -36,13 +37,15 @@ final class Keywords
 		add_integration_function('integrate_remove_topics', __CLASS__ . '::removeTopics#', false, __FILE__);
 	}
 
-	public function actions(array &$actions)
+	public function actions(array &$actions): void
 	{
-		if (is_on('optimus_allow_change_topic_keywords') || is_on('optimus_show_keywords_block'))
+		global $modSettings;
+
+		if (! empty($modSettings['optimus_allow_change_topic_keywords']) || ! empty($modSettings['optimus_show_keywords_block']))
 			$actions['keywords'] = array(false, array($this, 'showTheSame'));
 	}
 
-	public function menuButtons(array &$buttons)
+	public function menuButtons(array &$buttons): void
 	{
 		global $context;
 
@@ -50,7 +53,7 @@ final class Keywords
 			$buttons['home']['action_hook'] = true;
 	}
 
-	public function currentAction(string &$current_action)
+	public function currentAction(string &$current_action): void
 	{
 		global $context;
 
@@ -58,13 +61,15 @@ final class Keywords
 			$current_action = 'home';
 	}
 
-	public function loadPermissions(array &$permissionGroups, array &$permissionList)
+	public function loadPermissions(array $permissionGroups, array &$permissionList): void
 	{
-		if (is_on('optimus_allow_change_topic_keywords'))
+		global $modSettings;
+
+		if (! empty($modSettings['optimus_allow_change_topic_keywords']))
 			$permissionList['membergroup']['optimus_add_keywords'] = array(true, 'general', 'view_basic_info');
 	}
 
-	public function messageindexButtons()
+	public function messageindexButtons(): void
 	{
 		global $modSettings, $context, $scripturl;
 
@@ -80,11 +85,11 @@ final class Keywords
 		}
 	}
 
-	public function prepareDisplayContext(array &$output, array &$message, int $counter)
+	public function prepareDisplayContext(array $output, array $message, int $counter): void
 	{
-		global $context, $options, $txt, $scripturl;
+		global $context, $modSettings, $options, $txt, $scripturl;
 
-		if (empty($context['optimus_keywords']) || is_off('optimus_show_keywords_block'))
+		if (empty($context['optimus_keywords']) || empty($modSettings['optimus_show_keywords_block']))
 			return;
 
 		$current_counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
@@ -93,7 +98,7 @@ final class Keywords
 			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_tags'] . ' </legend>';
 
 			foreach ($context['optimus_keywords'] as $id => $keyword) {
-				$keywords .= '<a class="' . (is_off('optimus_use_color_tags') ? 'button' : 'descbox') . '" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px;' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
+				$keywords .= '<a class="' . (empty($modSettings['optimus_use_color_tags']) ? 'button' : 'descbox') . '" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px;' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
 			}
 
 			$keywords .= '</fieldset>';
@@ -102,17 +107,17 @@ final class Keywords
 		}
 	}
 
-	public function createTopic(array &$msgOptions, array &$topicOptions, array &$posterOptions)
+	public function createTopic(array $msgOptions, array $topicOptions, array $posterOptions): void
 	{
 		if (! $this->canChange())
 			return;
 
-		$keywords = op_xss(op_request('optimus_keywords', []));
+		$keywords = Input::xss(Input::request('optimus_keywords', []));
 
 		$this->add($keywords, $topicOptions['id'], $posterOptions['id']);
 	}
 
-	public function postEnd()
+	public function postEnd(): void
 	{
 		global $context, $txt, $modSettings;
 
@@ -120,7 +125,7 @@ final class Keywords
 			return;
 
 		if ($context['is_new_topic']) {
-			$context['optimus']['keywords'] = op_xss(op_request('optimus_keywords', ''));
+			$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', ''));
 		} else {
 			$this->displayTopic();
 			$context['optimus']['keywords'] = empty($context['optimus_keywords']) ? [] : array_values($context['optimus_keywords']);
@@ -189,7 +194,7 @@ final class Keywords
 		});', true);
 	}
 
-	public function modifyPost(array &$messages_columns, array &$update_parameters, array &$msgOptions, array &$topicOptions, array &$posterOptions)
+	public function modifyPost(array $messages_columns, array $update_parameters, array $msgOptions, array $topicOptions, array $posterOptions): void
 	{
 		if (empty($topicOptions['first_msg']) || $topicOptions['first_msg'] != $msgOptions['id'])
 			return;
@@ -197,7 +202,7 @@ final class Keywords
 		$this->modify($topicOptions['id'], $posterOptions['id']);
 	}
 
-	public function removeTopics(array $topics)
+	public function removeTopics(array $topics): void
 	{
 		global $smcFunc;
 
@@ -213,7 +218,7 @@ final class Keywords
 		);
 	}
 
-	public function showTheSame()
+	public function showTheSame(): void
 	{
 		global $context, $settings, $txt, $scripturl, $sourcedir;
 
@@ -227,7 +232,7 @@ final class Keywords
 			background:url(' . $settings['default_images_url'] . '/optimus.png) no-repeat 0 0 !important;
 		}');
 
-		$context['optimus_keyword_id'] = (int) op_request('id', 0);
+		$context['optimus_keyword_id'] = (int) Input::request('id', 0);
 
 		loadTemplate('Optimus');
 		$context['template_layers'][] = 'keywords';
@@ -315,7 +320,7 @@ final class Keywords
 			'additional_rows' => array(
 				array(
 					'position' => 'below_table_data',
-					'value'    => 'Powered by ' . op_link(),
+					'value'    => 'Powered by ' . Copyright::getLink(),
 					'class'    => 'smalltext centertext'
 				)
 			)
@@ -387,7 +392,7 @@ final class Keywords
 		return (int) $num;
 	}
 
-	public function showAllWithFrequency()
+	public function showAllWithFrequency(): void
 	{
 		global $context, $txt, $scripturl, $sourcedir;
 
@@ -445,7 +450,7 @@ final class Keywords
 			'additional_rows' => array(
 				array(
 					'position' => 'below_table_data',
-					'value'    => 'Powered by ' . op_link(),
+					'value'    => 'Powered by ' . Copyright::getLink(),
 					'class'    => 'smalltext centertext',
 				)
 			)
@@ -454,7 +459,7 @@ final class Keywords
 		require_once($sourcedir . '/Subs-List.php');
 		createList($listOptions);
 
-		if (! empty($context['current_page']) && $context['current_page'] != (int) op_request('start'))
+		if (! empty($context['current_page']) && $context['current_page'] != (int) Input::request('start'))
 			send_http_status(404);
 
 		$context['sub_template'] = 'show_list';
@@ -496,7 +501,7 @@ final class Keywords
 	{
 		global $smcFunc;
 
-		$request = $smcFunc['db_query']('', '
+		$request = $smcFunc['db_query']('', /** @lang text */ '
 			SELECT COUNT(id)
 			FROM {db_prefix}optimus_keywords
 			LIMIT 1',
@@ -537,11 +542,11 @@ final class Keywords
 	 *
 	 * Запрашиваем из базы данных 10 наиболее похожих ключевых слов (когда добавляем новое)
 	 */
-	private function prepareSearchData()
+	private function prepareSearchData(): void
 	{
 		global $smcFunc;
 
-		$query = $smcFunc['htmltrim'](op_filter('q'));
+		$query = $smcFunc['htmltrim'](Input::filter('q'));
 
 		if (empty($query))
 			exit;
@@ -570,11 +575,11 @@ final class Keywords
 		exit(json_encode($data));
 	}
 
-	public function displayTopic()
+	public function displayTopic(): void
 	{
 		global $context, $modSettings;
 
-		if (is_off('optimus_show_keywords_block'))
+		if (empty($modSettings['optimus_show_keywords_block']))
 			return;
 
 		if (empty($context['current_topic']) || ! empty($context['optimus']['keywords']))
@@ -594,7 +599,7 @@ final class Keywords
 		global $smcFunc;
 
 		if (($keywords = cache_get_data('optimus_topic_keywords', 3600)) === null) {
-			$request = $smcFunc['db_query']('', '
+			$request = $smcFunc['db_query']('', /** @lang text */ '
 				SELECT k.id, k.name, lk.topic_id
 				FROM {db_prefix}optimus_keywords AS k
 					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
@@ -616,7 +621,9 @@ final class Keywords
 
 	private function getRandomColor(string $key): string
 	{
-		if (is_off('optimus_use_color_tags'))
+		global $modSettings;
+
+		if (empty($modSettings['optimus_use_color_tags']))
 			return '';
 
 		$hash = -105;
@@ -628,7 +635,7 @@ final class Keywords
 		return $hsl . '; color: #fff';
 	}
 
-	private function add(array $keywords, int $topic, int $user)
+	private function add(array $keywords, int $topic, int $user): void
 	{
 		if (empty($keywords) || empty($topic) || empty($user))
 			return;
@@ -685,7 +692,7 @@ final class Keywords
 		);
 	}
 
-	private function addNoteToLogTable(int $keyword_id, int $topic, int $user)
+	private function addNoteToLogTable(int $keyword_id, int $topic, int $user): void
 	{
 		global $smcFunc;
 
@@ -709,14 +716,14 @@ final class Keywords
 		);
 	}
 
-	private function modify(int $topic, int $user)
+	private function modify(int $topic, int $user): void
 	{
 		global $context;
 
 		if (! $this->canChange())
 			return;
 
-		$keywords = op_xss(op_request('optimus_keywords', []));
+		$keywords = Input::xss(Input::request('optimus_keywords', []));
 
 		// Check if the keywords have been changed
 		$this->displayTopic();
@@ -732,7 +739,7 @@ final class Keywords
 		$this->remove($del_keywords, $topic);
 	}
 
-	private function remove(array $keywords, int $topic)
+	private function remove(array $keywords, int $topic): void
 	{
 		global $smcFunc;
 
@@ -769,7 +776,7 @@ final class Keywords
 			)
 		);
 
-		$smcFunc['db_query']('', '
+		$smcFunc['db_query']('', /** @lang text */ '
 			DELETE FROM {db_prefix}optimus_keywords
 			WHERE id NOT IN (SELECT keyword_id FROM {db_prefix}optimus_log_keywords)',
 			array()
@@ -780,12 +787,12 @@ final class Keywords
 
 	private function canChange(): bool
 	{
-		global $context, $topic;
+		global $context, $topic, $modSettings;
 
 		if (! isset($context['user']['started']))
 			$context['user']['started'] = empty($topic);
 
-		return is_on('optimus_allow_change_topic_keywords') && (
+		return ! empty($modSettings['optimus_allow_change_topic_keywords']) && (
 			allowedTo('optimus_add_keywords_any') || (! empty($context['user']['started']) && allowedTo('optimus_add_keywords_own'))
 		);
 	}
