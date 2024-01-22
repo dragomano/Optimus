@@ -3,7 +3,7 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>Bugo:Optimus</id>
 	<name>Optimus</name>
-	<version>2.13</version>
+	<version>3.0 Beta</version>
 	<type>modification</type>
 
 	<install for="2.1.*">

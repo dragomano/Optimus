@@ -3,10 +3,11 @@
 [![SMF 2.1](https://img.shields.io/badge/SMF-2.1-ed6033.svg?style=flat)](https://github.com/SimpleMachines/SMF2.1)
 ![License](https://img.shields.io/github/license/dragomano/optimus)
 ![Hooks only: Yes](https://img.shields.io/badge/Hooks%20only-YES-blue)
-![PHP](https://img.shields.io/badge/PHP-^7.4-blue.svg?style=flat)
+[![Total Downloads](https://img.shields.io/github/downloads/dragomano/Optimus/total.svg)](https://github.com/dragomano/Optimus/releases)
+![PHP](https://img.shields.io/badge/PHP-^8.0-blue.svg?style=flat)
 [![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
 
-- **Tested on:** PHP 8.2.13 / MariaDB 10.11.6
+- **Tested on:** PHP 8.0.30 / MariaDB 10.11.6
 - **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian
 
 ### Reviews
