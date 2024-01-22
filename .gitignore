@@ -1,5 +1,7 @@
 .idea/
 .vscode/
+/**/Libs/
+/**/composer.lock
 
 Themes/default/languages/Optimus/*
 Themes/default/languages/Optimus/index.php
