@@ -38,8 +38,8 @@ final class AddonHandler implements ListenerRegistry
 		if (empty($addons))
 			return;
 
-		$this->registry = new PrioritizedListenerRegistry();
 		$dispatcher = (new DispatcherFactory())();
+		$dispatcher->subscribeListenersFrom($this);
 
 
 		foreach ($addons as $addon) {
