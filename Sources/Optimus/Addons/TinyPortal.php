@@ -24,7 +24,7 @@ use Bugo\Optimus\Utils\Str;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class TinyPortal extends AbstractAddon
+final class TinyPortal extends AbstractAddon
 {
 	public const PACKAGE_ID = 'bloc:tinyportal';
 

@@ -25,6 +25,8 @@ final class AddonHandler implements ListenerSubscriber
 {
 	private static bool $hasSubscribed = false;
 
+	private const TTL = 24 * 60 * 60;
+
 	public function __invoke(): void
 	{
 		if (self::$hasSubscribed)
@@ -35,26 +37,7 @@ final class AddonHandler implements ListenerSubscriber
 
 	public function subscribeListeners(ListenerRegistry $acceptor): void
 	{
-		global $smcFunc;
-
-		$result = $smcFunc['db_query']('', /** @lang text */ '
-			SELECT package_id
-			FROM {db_prefix}log_packages
-			WHERE install_state = 1',
-			[]
-		);
-
-		$mods = [
-			'Optimus:IdnConvert',
-			'Optimus:ExampleAddon',
-		];
-
-		while ($row = $smcFunc['db_fetch_assoc']($result))
-			$mods[] = $row['package_id'];
-
-		$smcFunc['db_free_result']($result);
-
-		if (empty($mods))
+		if (empty($mods = $this->getInstalledMods()))
 			return;
 
 		$files = array_merge(
@@ -65,7 +48,7 @@ final class AddonHandler implements ListenerSubscriber
 		$addons = array_filter(array_map(fn($file) => $this->mapNamespace($file), $files), 'strlen');
 
 		foreach ($addons as $listener) {
-			if (in_array($listener::PACKAGE_ID, $mods)) {
+			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
 				/* @var array $events */
 				for ($i = 0; $i < count($listener::$events); $i++) {
 					$acceptor->subscribeTo($listener::$events[$i], new $listener);
@@ -74,6 +57,29 @@ final class AddonHandler implements ListenerSubscriber
 		}
 
 		self::$hasSubscribed = true;
+	}
+
+	private function getInstalledMods(): array
+	{
+		global $smcFunc;
+
+		if (($mods = cache_get_data('optimus_installed_mods', self::TTL)) === null) {
+			$result = $smcFunc['db_query']('', /** @lang text */ '
+				SELECT package_id
+				FROM {db_prefix}log_packages
+				WHERE install_state = 1',
+				[]
+			);
+
+			while ($row = $smcFunc['db_fetch_assoc']($result))
+				$mods[] = $row['package_id'];
+
+			$smcFunc['db_free_result']($result);
+
+			cache_put_data('optimus_installed_mods', $mods, self::TTL);
+		}
+
+		return $mods;
 	}
 
 	private function mapNamespace(string $fileName): string

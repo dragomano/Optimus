@@ -20,17 +20,17 @@ use Bugo\Optimus\Events\AddonEvent;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class ExampleAddon extends AbstractAddon
+final class ExampleAddon extends AbstractAddon
 {
 	public const PACKAGE_ID = 'Optimus:ExampleAddon';
 
 	public static array $events = [
-		AddonInterface::HOOK_EVENT,
+		self::HOOK_EVENT,
 	];
 
 	public function __invoke(AddonEvent $event): void
 	{
-		if ($event->eventName() === AddonInterface::HOOK_EVENT) {
+		if ($event->eventName() === self::HOOK_EVENT) {
 			add_integration_function(
 				'integrate_theme_context',
 				self::class . '::hideLockedTopicsForSpiders#',

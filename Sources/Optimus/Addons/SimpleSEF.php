@@ -22,7 +22,7 @@ use Bugo\Optimus\Tasks\Sitemap;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class SimpleSEF extends AbstractAddon
+final class SimpleSEF extends AbstractAddon
 {
 	public const PACKAGE_ID = 'slammeddime:simplesef';
 

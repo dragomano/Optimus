@@ -22,7 +22,7 @@ use Bugo\Optimus\Tasks\Sitemap;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class EhPortal extends AbstractAddon
+final class EhPortal extends AbstractAddon
 {
 	public const PACKAGE_ID = '[ChenZhen]:EhPortal';
 

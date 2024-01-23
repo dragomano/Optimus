@@ -23,7 +23,7 @@ use function MakeSEOUrl;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class EzPortal extends AbstractAddon
+final class EzPortal extends AbstractAddon
 {
 	public const PACKAGE_ID = 'vbgamer45:ezportal';
 

@@ -21,7 +21,7 @@ use Bugo\Optimus\Tasks\Sitemap;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class IdnConvert extends AbstractAddon
+final class IdnConvert extends AbstractAddon
 {
 	public const PACKAGE_ID = 'Optimus:IdnConvert';
 

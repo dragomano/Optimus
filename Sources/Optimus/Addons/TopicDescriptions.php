@@ -20,22 +20,19 @@ use Bugo\Optimus\Events\AddonEvent;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class TopicDescriptions extends AbstractAddon
+final class TopicDescriptions extends AbstractAddon
 {
 	public const PACKAGE_ID = 'runic:TopicDescriptions';
 
 	public static array $events = [
-		AddonInterface::HOOK_EVENT,
+		self::HOOK_EVENT,
 	];
 
 	public function __invoke(AddonEvent $event): void
 	{
 		global $context;
 
-		if ($event->eventName() !== AddonInterface::HOOK_EVENT)
-			return;
-
-		if (empty($context['topic_description']))
+		if ($event->eventName() !== self::HOOK_EVENT || empty($context['topic_description']))
 			return;
 
 		$context['meta_description'] = $context['topic_description'];

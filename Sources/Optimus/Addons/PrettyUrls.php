@@ -23,7 +23,7 @@ use function pretty_rewrite_buffer;
 if (! defined('SMF'))
 	die('No direct access...');
 
-class PrettyUrls extends AbstractAddon
+final class PrettyUrls extends AbstractAddon
 {
 	public const PACKAGE_ID = 'el:prettyurls';
 

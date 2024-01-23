@@ -19,4 +19,22 @@ abstract class AbstractAddon implements AddonInterface
 	public const PACKAGE_ID = '';
 
 	public static array $events = [];
+
+	protected function loadLanguages(string $baseDir): void
+	{
+		global $txt, $user_info;
+
+		if (empty($txt))
+			return;
+
+		$languages = array_merge(['english'], [$user_info['language'] ?? null]);
+
+		foreach ($languages as $lang) {
+			$langFile = $baseDir . '/langs/' . $lang . '.php';
+
+			if (is_file($langFile)) {
+				require_once $langFile;
+			}
+		}
+	}
 }
