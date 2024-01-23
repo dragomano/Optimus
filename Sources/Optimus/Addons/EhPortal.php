@@ -1,38 +1,51 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * EhPortal.php
  *
- * @package Optimus
+ * @package EhPortal (Optimus)
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2024 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @category addon
+ * @version 23.01.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Tasks\Sitemap;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
-/**
- * EhPortal pages for Sitemap
- */
 class EhPortal extends AbstractAddon
 {
-	public function __construct()
+	public const PACKAGE_ID = '[ChenZhen]:EhPortal';
+
+	public static array $events = [
+		self::ROBOTS_RULES,
+		self::SITEMAP_LINKS,
+	];
+
+	public function __invoke(AddonEvent $event): void
 	{
-		parent::__construct();
-
-		if (! function_exists('sportal_actions'))
-			return;
-
-		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
-		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
+		match ($event->eventName()) {
+			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+			self::SITEMAP_LINKS => $this->changeSitemap($event->getTarget()),
+		};
 	}
 
-	public function changeRobots(object $object): void
+	public function changeRobots(object $generator): void
 	{
-		$object->getTarget()->customRules[] = "Allow: " . $object->getTarget()->urlPath . "/*page=*";
+		/* @var Generator $generator */
+		$generator->customRules[] = "Allow: " . $generator->urlPath . "/*page=*";
 	}
 
-	public function changeSitemap(object $object): void
+	public function changeSitemap(object $sitemap): void
 	{
 		global $smcFunc, $scripturl;
 
@@ -52,7 +65,8 @@ class EhPortal extends AbstractAddon
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?page=' . $row['namespace'];
 
-			$object->getTarget()->links[] = [
+			/* @var Sitemap $sitemap */
+			$sitemap->links[] = [
 				'loc' => $url
 			];
 		}

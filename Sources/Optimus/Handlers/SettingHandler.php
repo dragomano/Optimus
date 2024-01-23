@@ -14,8 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Utils\Input;
-use Bugo\Optimus\Utils\RobotsGenerator;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -418,7 +418,7 @@ final class SettingHandler
 		$robots_path = (Input::server('document_root') ?: $boarddir) . '/robots.txt';
 		$context['robots_content'] = is_writable($robots_path) ? file_get_contents($robots_path) : '';
 
-		(new RobotsGenerator)->generate();
+		(new Generator())->generate();
 
 		if (Input::isGet('save')) {
 			checkSession();

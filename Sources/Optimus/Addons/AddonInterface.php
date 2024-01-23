@@ -18,11 +18,11 @@ use Bugo\Optimus\Events\AddonEvent;
 
 interface AddonInterface
 {
-	const COMMON_EVENT = 'optimus_common_event';
-	const ROBOTS_RULES = 'optimus_robots_rules';
-	const SITEMAP_LINKS = 'optimus_sitemap_links';
-	const SITEMAP_CONTENT = 'optimus_sitemap_content';
-	const CREATE_SEF_URLS = 'optimus_create_sef_urls';
+	public const HOOK_EVENT = 'optimus_common_event';
+	public const ROBOTS_RULES = 'optimus_robots_rules';
+	public const SITEMAP_LINKS = 'optimus_sitemap_links';
+	public const SITEMAP_CONTENT = 'optimus_sitemap_content';
+	public const CREATE_SEF_URLS = 'optimus_create_sef_urls';
 
 	public function __invoke(AddonEvent $event): void;
 }

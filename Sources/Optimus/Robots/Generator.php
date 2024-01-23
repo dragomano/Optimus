@@ -12,15 +12,16 @@
  * @version 3.0 Beta
  */
 
-namespace Bugo\Optimus\Utils;
+namespace Bugo\Optimus\Robots;
 
+use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class RobotsGenerator
+final class Generator
 {
 	private array $rules = [];
 
@@ -46,7 +47,7 @@ final class RobotsGenerator
 
 		// Mod authors can add or change generated rules
 		$dispatcher = (new DispatcherFactory())();
-		$dispatcher->dispatch(new AddonEvent('robots.rules', $this));
+		$dispatcher->dispatch(new AddonEvent(AddonInterface::ROBOTS_RULES, $this));
 
 		$this->addRules();
 		$this->addNews();

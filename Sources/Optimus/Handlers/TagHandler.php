@@ -65,8 +65,12 @@ final class TagHandler
 	{
 		global $modSettings;
 
-		if (! empty($modSettings['optimus_allow_change_topic_keywords']))
-			$permissionList['membergroup']['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
+		if (empty($modSettings['optimus_allow_change_topic_keywords']))
+			return;
+
+		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
+
+		$permissionList[$scope]['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
 	}
 
 	public function messageindexButtons(): void

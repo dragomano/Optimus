@@ -71,9 +71,12 @@ final class TopicHandler
 	{
 		global $modSettings;
 
-		if (! empty($modSettings['optimus_allow_change_topic_desc'])) {
-			$permissionList['membergroup']['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
-		}
+		if (empty($modSettings['optimus_allow_change_topic_desc']))
+			return;
+
+		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
+
+		$permissionList[$scope]['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
 	}
 
 	public function displayTopic(array &$topic_selects): void

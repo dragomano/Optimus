@@ -1,26 +1,43 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * ExampleAddon.php
  *
- * @package Optimus
+ * @package ExampleAddon (Optimus)
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2024 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @category addon
+ * @version 23.01.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
-/**
- * Simple example of your addon
- */
 class ExampleAddon extends AbstractAddon
 {
-	public function __construct()
-	{
-		parent::__construct();
+	public const PACKAGE_ID = 'Optimus:ExampleAddon';
 
-		//$this->hideLockedTopicsForSpiders();
+	public static array $events = [
+		AddonInterface::HOOK_EVENT,
+	];
+
+	public function __invoke(AddonEvent $event): void
+	{
+		if ($event->eventName() === AddonInterface::HOOK_EVENT) {
+			add_integration_function(
+				'integrate_theme_context',
+				self::class . '::hideLockedTopicsForSpiders#',
+				false,
+				__FILE__
+			);
+		}
 	}
 
 	public function hideLockedTopicsForSpiders(): void

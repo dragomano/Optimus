@@ -14,15 +14,9 @@
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Optimus\Events\DispatcherFactory;
-use League\Event\EventDispatcher;
-
-abstract class AbstractAddon
+abstract class AbstractAddon implements AddonInterface
 {
-	protected EventDispatcher $dispatcher;
+	public const PACKAGE_ID = '';
 
-	public function __construct()
-	{
-		$this->dispatcher = (new DispatcherFactory())();
-	}
+	public static array $events = [];
 }

@@ -14,6 +14,7 @@
 
 namespace Bugo\Optimus\Tasks;
 
+use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\EventDispatcher;
@@ -92,7 +93,7 @@ final class Sitemap extends SMF_BackgroundTask
 			if (! empty($counter) && $counter % $maxItems == 0)
 				$sitemapCounter++;
 
-			$entry['lastmod'] = (int) $entry['lastmod'];
+			$entry['lastmod'] = (int) ($entry['lastmod'] ?? 0);
 
 			$items[$sitemapCounter][] = [
 				'loc'        => $entry['loc'],
@@ -127,7 +128,7 @@ final class Sitemap extends SMF_BackgroundTask
 				$this->content = ob_get_clean();
 
 				// Some mods should rewrite full content (PrettyURLs, etc.)
-				$this->dispatcher->dispatch(new AddonEvent('sitemap.rewrite_content', $this));
+				$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
 
 				$gzMaps[$number] = $this->createFile($boarddir . '/sitemap_' . $number . '.xml', $this->content);
 			}
@@ -148,7 +149,7 @@ final class Sitemap extends SMF_BackgroundTask
 			$this->content = ob_get_clean();
 
 			// Some mods should rewrite full content (PrettyURLs, etc.)
-			$this->dispatcher->dispatch(new AddonEvent('sitemap.rewrite_content', $this));
+			$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
 		}
 
 		$this->createFile($boarddir . '/sitemap.xml', $this->content);
@@ -184,7 +185,7 @@ final class Sitemap extends SMF_BackgroundTask
 		$this->links = array_merge($this->getBoardLinks(), $this->getTopicLinks());
 
 		// Modders can add custom links
-		$this->dispatcher->dispatch(new AddonEvent('sitemap.links', $this));
+		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_LINKS, $this));
 
 		// Adding the main page
 		$home = [
@@ -193,7 +194,7 @@ final class Sitemap extends SMF_BackgroundTask
 		];
 
 		// Modders can process links with SEF handler
-		$this->dispatcher->dispatch(new AddonEvent('sitemap.sef_links', $this));
+		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::CREATE_SEF_URLS, $this));
 
 		array_unshift($this->links, $home);
 

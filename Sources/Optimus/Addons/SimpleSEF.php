@@ -3,24 +3,37 @@
 /**
  * SimpleSEF.php
  *
- * @package Optimus
+ * @package SimpleSEF (Optimus)
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2024 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @category addon
+ * @version 23.01.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Tasks\Sitemap;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
-/**
- * Support for SimpleSEF
- */
 class SimpleSEF extends AbstractAddon
 {
-	public function __construct()
+	public const PACKAGE_ID = 'slammeddime:simplesef';
+
+	public static array $events = [
+		self::ROBOTS_RULES,
+		self::CREATE_SEF_URLS,
+	];
+
+	public function __invoke(AddonEvent $event): void
 	{
 		global $modSettings;
-
-		parent::__construct();
 
 		if (empty($modSettings['simplesef_enable']))
 			return;
@@ -28,27 +41,28 @@ class SimpleSEF extends AbstractAddon
 		if (! empty($modSettings['optimus_remove_index_php']))
 			updateSettings(['optimus_remove_index_php' => 0]);
 
-		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
-		$this->dispatcher->subscribeTo('sitemap.sef_links', [$this, 'createSefLinks']);
+		match ($event->eventName()) {
+			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+			self::CREATE_SEF_URLS => $this->createSefLinks($event->getTarget()),
+		};
 	}
 
-	public function changeRobots(object $object): void
+	public function changeRobots(object $generator): void
 	{
 		global $modSettings;
 
-		$object->getTarget()->useSef = ! empty($modSettings['simplesef_enable'])
+		/* @var Generator $generator */
+		$generator->useSef = ! empty($modSettings['simplesef_enable'])
 			&& is_file(dirname(__DIR__, 2) . '/SimpleSEF.php');
 	}
 
-	public function createSefLinks(object $object): void
+	public function createSefLinks(object $sitemap): void
 	{
-		if (! class_exists('\SimpleSEF'))
-			return;
-
 		$sef = new \SimpleSEF();
 		$method = method_exists('\SimpleSEF', 'getSefUrl') ? 'getSefUrl' : 'create_sef_url';
 
-		foreach ($object->getTarget()->links as &$url) {
+		/* @var Sitemap $sitemap */
+		foreach ($sitemap->links as &$url) {
 			$url['loc'] = $sef->$method($url['loc']);
 		}
 	}

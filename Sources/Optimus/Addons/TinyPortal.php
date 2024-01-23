@@ -3,30 +3,49 @@
 /**
  * TinyPortal.php
  *
- * @package Optimus
+ * @package TinyPortal (Optimus)
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2024 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @category addon
+ * @version 23.01.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Tasks\Sitemap;
 use Bugo\Optimus\Utils\Input;
 use Bugo\Optimus\Utils\Str;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-/**
- * TinyPortal addon for Optimus
- */
 class TinyPortal extends AbstractAddon
 {
-	public function __construct()
+	public const PACKAGE_ID = 'bloc:tinyportal';
+
+	public static array $events = [
+		self::HOOK_EVENT,
+		self::ROBOTS_RULES,
+		self::SITEMAP_LINKS,
+	];
+
+	public function __invoke(AddonEvent $event): void
 	{
-		parent::__construct();
+		match ($event->eventName()) {
+			self::HOOK_EVENT    => $this->postInit(),
+			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+			self::SITEMAP_LINKS => $this->changeSitemap($event->getTarget()),
+		};
+	}
 
-		$this->prepareArticleMeta();
-
-		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
-		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
+	public function postInit(): void
+	{
+		add_integration_function('integrate_tp_post_init', self::class . '::prepareArticleMeta#', false, __FILE__);
 	}
 
 	public function prepareArticleMeta(): void
@@ -36,30 +55,27 @@ class TinyPortal extends AbstractAddon
 		if (! Input::isGet('page') || empty($context['TPortal']['article']))
 			return;
 
-		$pattern = $context['TPortal']['article']['rendertype'] == 'bbc' ? '/\[img.*]([^\]\[]+)\[\/img\]/U' : '/<img(.*)src(.*)=(.*)"(.*)"/U';
-		$firstPostImage = preg_match($pattern, $context['TPortal']['article']['body'], $value);
+		$article = $context['TPortal']['article'];
+
+		$pattern = $article['rendertype'] == 'bbc' ? '/\[img.*]([^\]\[]+)\[\/img\]/U' : '/<img(.*)src(.*)=(.*)"(.*)"/U';
+		$firstPostImage = preg_match($pattern, $article['body'], $value);
 		$settings['og_image'] = $firstPostImage ? array_pop($value) : null;
 
-		$context['meta_description'] = Str::teaser(empty($context['TPortal']['article']['intro']) ? $context['TPortal']['article']['body'] : $context['TPortal']['article']['intro']);
-		$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', $context['TPortal']['article']['date']);
-		$context['optimus_og_type']['article']['section'] = $context['TPortal']['article']['category_name'] ?? '';
-		$context['canonical_url'] = $scripturl . '?page=' . ($context['TPortal']['article']['shortname'] ?: $context['TPortal']['article']['id']);
+		$context['meta_description'] = Str::teaser($article['intro'] ?: $article['body']);
+		$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', (int) $article['date']);
+		$context['optimus_og_type']['article']['section'] = $article['category_name'] ?? '';
+		$context['canonical_url'] = $scripturl . '?page=' . ($article['shortname'] ?: $article['id']);
 	}
 
-	public function changeRobots(object $object): void
+	public function changeRobots(object $generator): void
 	{
-		if (! function_exists('TPortal'))
-			return;
-
-		$object->getTarget()->commonRules[] = "Allow: " . $object->getTarget()->urlPath . "/*page";
+		/* @var Generator $generator */
+		$generator->customRules[] = "Allow: " . $generator->urlPath . "/*page";
 	}
 
-	public function changeSitemap(object $object): void
+	public function changeSitemap(object $sitemap): void
 	{
 		global $modSettings, $smcFunc, $scripturl;
-
-		if (! class_exists('\TinyPortal\Integrate'))
-			return;
 
 		$startYear = (int) ($modSettings['optimus_start_year'] ?? 0);
 
@@ -83,7 +99,8 @@ class TinyPortal extends AbstractAddon
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
 			$url = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 
-			$object->getTarget()->links[] = [
+			/* @var Sitemap $sitemap */
+			$sitemap->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date']
 			];

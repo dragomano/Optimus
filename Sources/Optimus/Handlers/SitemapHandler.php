@@ -14,7 +14,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
-class SitemapHandler
+final class SitemapHandler
 {
 	public function __invoke(): void
 	{
@@ -76,9 +76,9 @@ class SitemapHandler
 
 	public function addSitemapLink(): void
 	{
-		global $modSettings, $forum_copyright, $boardurl, $txt, $context;
+		global $modSettings, $txt, $forum_copyright, $boardurl, $context;
 
-		if (empty($modSettings['optimus_sitemap_link']))
+		if (empty($modSettings['optimus_sitemap_link']) || empty($txt['optimus_sitemap_title']))
 			return;
 
 		$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';

@@ -25,11 +25,13 @@ final class FaviconHandler
 	{
 		global $modSettings, $context;
 
-		if (! empty($modSettings['optimus_favicon_text'])) {
-			$favicon = explode(PHP_EOL, trim($modSettings['optimus_favicon_text']));
+		if (empty($modSettings['optimus_favicon_text']))
+			return;
 
-			foreach ($favicon as $fav_line)
-				$context['html_headers'] .= "\n\t" . $fav_line;
+		$favicon = explode(PHP_EOL, trim($modSettings['optimus_favicon_text']));
+
+		foreach ($favicon as $line) {
+			$context['html_headers'] .= "\n\t" . $line;
 		}
 	}
 }

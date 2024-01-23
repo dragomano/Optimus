@@ -31,6 +31,7 @@ $loader = new StandardAutoloader();
 $loader->registerNamespace('Bugo\Optimus', __DIR__);
 $loader->register();
 
+// @TODO Future is not far off
 if (str_starts_with(SMF_VERSION, '3.0')) {
 	class_alias('SMF\\Tasks\\BackgroundTask', 'SMF_BackgroundTask');
 }

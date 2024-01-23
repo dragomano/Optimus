@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus;
 
+use Bugo\Optimus\Addons\AddonInterface;
+use Bugo\Optimus\Events\AddonEvent;
+use Bugo\Optimus\Events\DispatcherFactory;
 use Bugo\Optimus\Handlers\HandlerLoader;
 use Bugo\Optimus\Utils\Copyright;
 
@@ -32,6 +35,8 @@ final class Integration
 		add_integration_function('integrate_load_theme', self::class . '::loadTheme#', false, __FILE__);
 		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
 		add_integration_function('integrate_credits', self::class . '::credits#', false, __FILE__);
+
+		(new DispatcherFactory())()->dispatch(new AddonEvent(AddonInterface::HOOK_EVENT, $this));
 	}
 
 	public function loadTheme(): void
@@ -43,8 +48,12 @@ final class Integration
 	{
 		global $modSettings;
 
-		if (! empty($modSettings['optimus_log_search']))
-			$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
+		if (empty($modSettings['optimus_log_search']))
+			return;
+
+		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
+
+		$permissionList[$scope]['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
 	}
 
 	public function credits(): void

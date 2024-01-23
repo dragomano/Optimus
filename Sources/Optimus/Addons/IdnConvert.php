@@ -1,32 +1,46 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * IdnConvert.php
  *
- * @package Optimus
+ * @package IdnConvert (Optimus)
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2024 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @category addon
+ * @version 23.01.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+use Bugo\Optimus\Tasks\Sitemap;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
-/**
- * Conversion of Cyrillic urls
- */
 class IdnConvert extends AbstractAddon
 {
-	public function __construct()
+	public const PACKAGE_ID = 'Optimus:IdnConvert';
+
+	public static array $events = [
+		self::ROBOTS_RULES,
+		self::SITEMAP_LINKS,
+	];
+
+	public function __invoke(AddonEvent $event): void
 	{
 		global $boardurl;
-
-		parent::__construct();
 
 		if (iri_to_url($boardurl) === $boardurl)
 			return;
 
-		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
-		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
+		match ($event->eventName()) {
+			self::ROBOTS_RULES  => $this->changeRobots(),
+			self::SITEMAP_LINKS => $this->changeSitemap($event->getTarget()),
+		};
 	}
 
 	public function changeRobots(): void
@@ -37,9 +51,10 @@ class IdnConvert extends AbstractAddon
 		$scripturl = $boardurl . '/index.php';
 	}
 
-	public function changeSitemap(object $object): void
+	public function changeSitemap(object $sitemap): void
 	{
-		foreach ($object->getTarget()->links as &$url) {
+		/* @var Sitemap $sitemap */
+		foreach ($sitemap->links as &$url) {
 			$url['loc'] = iri_to_url($url['loc']);
 		}
 	}

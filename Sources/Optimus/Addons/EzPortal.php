@@ -1,45 +1,57 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * EzPortal.php
  *
- * @package Optimus
+ * @package EzPortal (Optimus)
+ * @link https://custom.simplemachines.org/mods/index.php?mod=2659
+ * @author Bugo https://dragomano.ru/mods/optimus
+ * @copyright 2010-2024 Bugo
+ * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
+ *
+ * @category addon
+ * @version 23.01.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Tasks\Sitemap;
 use function MakeSEOUrl;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-/**
- * EzPortal pages for Sitemap
- */
 class EzPortal extends AbstractAddon
 {
-	public function __construct()
+	public const PACKAGE_ID = 'vbgamer45:ezportal';
+
+	public static array $events = [
+		self::ROBOTS_RULES,
+		self::SITEMAP_LINKS,
+	];
+
+	public function __invoke(AddonEvent $event): void
 	{
-		parent::__construct();
-
-		if (! function_exists('EzPortalMain'))
-			return;
-
-		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
-		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
+		match ($event->eventName()) {
+			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+			self::SITEMAP_LINKS => $this->changeSitemap($event->getTarget()),
+		};
 	}
 
-	public function changeRobots(object $object): void
+	public function changeRobots(object $generator): void
 	{
 		global $ezpSettings;
 
+		/* @var Generator $generator */
 		if (! empty($ezpSettings['ezp_pages_seourls']))
-			$object->getTarget()->customRules[] = "Allow: " . $object->getTarget()->urlPath . "/pages/";
+			$generator->customRules[] = "Allow: " . $generator->urlPath . "/pages/";
 		else
-			$object->getTarget()->customRules[] = "Allow: " . $object->getTarget()->urlPath . "/*ezportal;sa=page;p=*";
+			$generator->customRules[] = "Allow: " . $generator->urlPath . "/*ezportal;sa=page;p=*";
 	}
 
-	public function changeSitemap(object $object): void
+	public function changeSitemap(object $sitemap): void
 	{
 		global $smcFunc, $ezpSettings, $boardurl, $scripturl;
 
@@ -60,7 +72,8 @@ class EzPortal extends AbstractAddon
 				$url = $scripturl . '?action=ezportal;sa=page;p=' . $row['id_page'];
 			}
 
-			$object->getTarget()->links[] = [
+			/* @var Sitemap $sitemap */
+			$sitemap->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date']
 			];
