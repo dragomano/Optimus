@@ -8,6 +8,8 @@
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Optimus\Events\AddonEvent;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
@@ -16,12 +18,26 @@ if (! defined('SMF'))
  */
 class LightPortal extends AbstractAddon
 {
+	public const PACKAGE_ID = 'Bugo:LightPortal';
+	public static $events = [
+		'robots.rules',
+		'sitemap.links',
+	];
+
 	public function __construct()
 	{
 		parent::__construct();
 
 		$this->dispatcher->subscribeTo('robots.rules', [$this, 'changeRobots']);
 		$this->dispatcher->subscribeTo('sitemap.links', [$this, 'changeSitemap']);
+	}
+
+	public function __invoke(AddonEvent $event)
+	{
+		return match($event->eventName()) {
+			'robots.rules' => $this->changeRobots($event->getTarget()),
+			'sitemap.links' => $this->changeSitemap($event->getTarget())
+		};
 	}
 
 	public function changeRobots(object $object): void

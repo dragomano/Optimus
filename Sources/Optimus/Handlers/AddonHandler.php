@@ -17,12 +17,16 @@ namespace Bugo\Optimus\Handlers;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\AddonListener;
 use Bugo\Optimus\Events\DispatcherFactory;
+use League\Event\ListenerRegistry;
+use League\Event\PrioritizedListenerRegistry;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class AddonHandler
+final class AddonHandler implements ListenerRegistry
 {
+	private $registry;
+
 	private static array $loaded = [];
 
 	private const TTL = 30 * 24 * 60 * 60;
@@ -34,7 +38,9 @@ final class AddonHandler
 		if (empty($addons))
 			return;
 
+		$this->registry = new PrioritizedListenerRegistry();
 		$dispatcher = (new DispatcherFactory())();
+
 
 		foreach ($addons as $addon) {
 			$this->loadLanguages($addon);
@@ -42,8 +48,8 @@ final class AddonHandler
 			if (isset(self::$loaded[$addon]))
 				continue;
 
-			$dispatcher->subscribeTo($addon, new AddonListener());
-			$dispatcher->dispatch(new AddonEvent($addon, new $addon));
+			$dispatcher->subscribe($addon, new AddonListener());
+			//$dispatcher->dispatch(new AddonEvent($addon, new $addon));
 
 			self::$loaded[$addon] = true;
 		}
@@ -76,14 +82,28 @@ final class AddonHandler
 		return cache_get_data('optimus_addons', self::TTL);
 	}
 
-	private function getList(): array
+	public function subscribeListeners(ListenerRegistry $acceptor): array
 	{
 		$files = array_merge(
 			glob(OP_ADDONS . '/*.php'),
 			glob(OP_ADDONS . '/*/*.php')
 		);
 
-		return array_filter(array_map('self::mapNamespace', $files), 'strlen');
+		$queryData = [
+			0 => 'Bugo:SML',
+			1 => 'Bugo:Classifieds',
+			2 => 'Bugo:LightPortal',
+			3 => 'Bugo:Optimus'
+		];
+		$filter = [];
+		foreach (array_filter(array_map('self::mapNamespace', $files), 'strlen') as $listener) {
+			if (in_array($listener::PACKAGE_ID, $queryData)) {
+				for ($i=0; $i < count($listener::$events); $i++) {
+					$acceptor->subscribeTo($listener::$events[$i], $listener::class);
+					continue;
+				}
+			}
+		}
 	}
 
 	private function mapNamespace(string $fileName): string
