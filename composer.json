@@ -1,7 +1,7 @@
 {
   "autoload": {
     "psr-4": {
-      "Bugo\\Optimus\\": "Sources\\Optimus"
+      "Bugo\\Optimus\\": "src\\Sources\\Optimus"
     }
   },
   "require": {

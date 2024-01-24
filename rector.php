@@ -11,8 +11,8 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->phpVersion(PhpVersion::PHP_80);
 
     $rectorConfig->paths([
-        __DIR__ . '/Sources',
-        __DIR__ . '/Themes',
+        __DIR__ . '/src/Sources',
+        __DIR__ . '/src/Themes',
     ]);
 
     $rectorConfig->skip([
