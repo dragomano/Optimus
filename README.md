@@ -1,6 +1,7 @@
 # Optimus
 
 [![SMF 2.1](https://img.shields.io/badge/SMF-2.1-ed6033.svg?style=flat)](https://github.com/SimpleMachines/SMF2.1)
+[![SMF 3.0 Alpha](https://img.shields.io/badge/SMF-3.0_Alpha-ed2533.svg?style=flat)](https://github.com/SimpleMachines/SMF/tree/release-3.0)
 ![License](https://img.shields.io/github/license/dragomano/optimus)
 ![Hooks only: Yes](https://img.shields.io/badge/Hooks%20only-YES-blue)
 [![Total Downloads](https://img.shields.io/github/downloads/dragomano/Optimus/total.svg)](https://github.com/dragomano/Optimus/releases)
