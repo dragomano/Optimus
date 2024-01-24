@@ -32,7 +32,11 @@ final class Str
 		$text = preg_replace('~http(s)?://(.*)\s~U', '', $text);
 
 		// Additional replacements
-		$text = strtr($text, ['&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => '']);
+		$replacements = ['&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''];
+
+		call_integration_hook('integrate_optimus_teaser', [&$replacements]);
+
+		$text = strtr($text, $replacements);
 
 		$sentences = preg_split('/([.?!])(\s)/', $text);
 
