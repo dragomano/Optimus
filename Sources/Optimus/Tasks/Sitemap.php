@@ -33,6 +33,13 @@ final class Sitemap extends SMF_BackgroundTask
 
 	private EventDispatcher $dispatcher;
 
+	public function __construct($details)
+	{
+		parent::__construct($details);
+
+		$this->dispatcher = (new DispatcherFactory())();
+	}
+
 	public function execute(): bool
 	{
 		global $sourcedir, $modSettings, $boarddir, $smcFunc;
@@ -46,8 +53,6 @@ final class Sitemap extends SMF_BackgroundTask
 		if (! empty($modSettings['optimus_remove_previous_xml_files'])) {
 			array_map("unlink", glob($boarddir . "/sitemap*.xml*"));
 		}
-
-		$this->dispatcher = (new DispatcherFactory())();
 
 		$this->createXml();
 
@@ -63,8 +68,18 @@ final class Sitemap extends SMF_BackgroundTask
 
 		$smcFunc['db_insert']('insert',
 			'{db_prefix}background_tasks',
-			['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string', 'claimed_time' => 'int'],
-			['$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', '', time() + ($frequency * 24 * 60 * 60)],
+			[
+				'task_file' => 'string-255',
+				'task_class' => 'string-255',
+				'task_data' => 'string',
+				'claimed_time' => 'int'
+			],
+			[
+				'$sourcedir/Optimus/Tasks/Sitemap.php',
+				'\\' . self::class,
+				'',
+				time() + ($frequency * 24 * 60 * 60)
+			],
 			['id_task']
 		);
 

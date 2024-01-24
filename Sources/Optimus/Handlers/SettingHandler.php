@@ -15,6 +15,7 @@
 namespace Bugo\Optimus\Handlers;
 
 use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Tasks\Sitemap;
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
@@ -513,7 +514,7 @@ final class SettingHandler
 				DELETE FROM {db_prefix}background_tasks
 				WHERE task_class = {string:task_class}',
 				[
-					'task_class' => '\Bugo\Optimus\Tasks\Sitemap'
+					'task_class' => '\\' . Sitemap::class
 				]
 			);
 
@@ -521,7 +522,7 @@ final class SettingHandler
 				$smcFunc['db_insert']('insert',
 					'{db_prefix}background_tasks',
 					['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string'],
-					['$sourcedir/Optimus/Tasks/Sitemap.php', '\Bugo\Optimus\Tasks\Sitemap', ''],
+					['$sourcedir/Optimus/Tasks/Sitemap.php', '\\' . Sitemap::class, ''],
 					['id_task']
 				);
 			}

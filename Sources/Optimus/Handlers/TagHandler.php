@@ -80,25 +80,27 @@ final class TagHandler
 		if (empty($modSettings['optimus_show_keywords_on_message_index']) || empty($context['topics']))
 			return;
 
+		addInlineCss('.optimus_keywords:visited { color: transparent }');
+
 		foreach ($context['topics'] as $topic => &$data) {
 			$keywords = $this->getKeywords()[$topic] ?? [];
 
 			foreach ($keywords as $id => $key) {
-				$data['first_post']['link'] .= ' <a class="amt" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="' . $this->getRandomColor($key) . '">' . $key . '</a>';
+				$data['first_post']['link'] .= ' <a class="optimus_keywords amt" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="' . $this->getRandomColor($key) . '">' . $key . '</a>';
 			}
 		}
 	}
 
-	public function prepareDisplayContext(array $output, array $message, int $counter): void
+	public function prepareDisplayContext(array $output): void
 	{
 		global $context, $modSettings, $options, $txt, $scripturl;
 
 		if (empty($context['optimus_keywords']) || empty($modSettings['optimus_show_keywords_block']))
 			return;
 
-		$current_counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
+		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
 
-		if ($current_counter == $output['counter'] && empty($context['start'])) {
+		if ($counter == $output['counter'] && empty($context['start'])) {
 			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_tags'] . ' </legend>';
 
 			foreach ($context['optimus_keywords'] as $id => $keyword) {
@@ -163,7 +165,6 @@ final class TagHandler
 		}
 
 		// Select2 https://select2.github.io/select2/
-		// Doesn't work? See https://developers.cloudflare.com/fundamentals/speed/rocket-loader/
 		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
 		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js', ['external' => true]);
 		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js', ['external' => true]);

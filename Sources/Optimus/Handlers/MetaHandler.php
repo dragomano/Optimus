@@ -79,9 +79,9 @@ final class MetaHandler
 		if (! empty($context['optimus_og_type'])) {
 			$type = key($context['optimus_og_type']);
 			$context['meta_tags'][] = ['prefix' => 'og: https://ogp.me/ns#', 'property' => 'og:type', 'content' => $type];
-			$optimus_custom_types = array_filter($context['optimus_og_type'][$type]);
+			$customTypes = array_filter($context['optimus_og_type'][$type]);
 
-			foreach ($optimus_custom_types as $property => $content) {
+			foreach ($customTypes as $property => $content) {
 				if (is_array($content)) {
 					foreach ($content as $value) {
 						$context['meta_tags'][] = ['prefix' => $type . ': https://ogp.me/ns/' . $type . '#', 'property' => $type . ':' . $property, 'content' => $value];

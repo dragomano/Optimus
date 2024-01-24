@@ -102,19 +102,14 @@ final class TopicHandler
 	 */
 	public function menuButtons(): void
 	{
-		global $context, $modSettings, $board_info;
+		global $context, $board_info;
 
 		if (empty($context['first_message']))
 			return;
 
-		// Generated description from the text of the first post of the topic
-		if (! empty($modSettings['optimus_topic_description']))
-			$this->makeDescriptionFromFirstMessage();
+		$this->makeDescriptionFromFirstMessage();
 
-		// Use own description of topic
-		if (! empty($context['topicinfo']['optimus_description'])) {
-			$context['meta_description'] = $context['topicinfo']['optimus_description'];
-		}
+		$this->makeDescriptionByOptimus();
 
 		// Additional data
 		$context['optimus_og_type']['article'] = [
@@ -182,18 +177,22 @@ final class TopicHandler
 
 	private function makeDescriptionFromFirstMessage(): void
 	{
+		global $modSettings, $context;
+
+		if (empty($modSettings['optimus_topic_description']) || empty($context['topicinfo']['topic_first_message']))
+			return;
+
+		$context['meta_description'] = Str::teaser($context['topicinfo']['topic_first_message']);
+	}
+
+	private function makeDescriptionByOptimus(): void
+	{
 		global $context;
 
-		if (
-			empty($context['topicinfo']['topic_first_message'])
-			|| ! empty($context['topicinfo']['optimus_description'])
-		) return;
+		if (empty($context['topicinfo']['optimus_description']))
+			return;
 
-		$body = $context['topicinfo']['topic_first_message'];
-
-		censorText($body);
-
-		$context['meta_description'] = Str::teaser($body);
+		$context['meta_description'] = $context['topicinfo']['optimus_description'];
 	}
 
 	private function modifyDescription(int $topic): void
