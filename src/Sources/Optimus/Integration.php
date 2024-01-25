@@ -51,9 +51,7 @@ final class Integration
 		if (empty($modSettings['optimus_log_search']))
 			return;
 
-		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
-
-		$permissionList[$scope]['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
+		$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
 	}
 
 	public function credits(): void

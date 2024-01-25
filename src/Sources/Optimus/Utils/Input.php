@@ -42,6 +42,19 @@ final class Input
 		return $_SERVER[$name] ?? getenv($name) ?? null;
 	}
 
+	public static function session(array|string $name = ''): mixed
+	{
+		if (is_array($name)) {
+			foreach ($name as $key => $value) {
+				$_SESSION[$key] = $value;
+			}
+
+			return true;
+		}
+
+		return $_SESSION[$name] ?? null;
+	}
+
 	public static function isRequest($name): bool
 	{
 		return isset($_REQUEST[$name]);

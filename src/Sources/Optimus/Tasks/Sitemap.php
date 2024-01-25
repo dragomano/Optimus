@@ -31,6 +31,10 @@ final class Sitemap extends SMF_BackgroundTask
 
 	public string $content = '';
 
+	private array $openBoards = [];
+
+	private array $ignoredBoards = [];
+
 	private EventDispatcher $dispatcher;
 
 	public function __construct($details)
@@ -189,18 +193,15 @@ final class Sitemap extends SMF_BackgroundTask
 
 	public function getLinks(): array
 	{
-		global $context, $modSettings, $boardurl;
-
-		if (! isset($context['optimus_ignored_boards']))
-			$context['optimus_ignored_boards'] = [];
-
-		if (! empty($modSettings['recycle_board']))
-			$context['optimus_ignored_boards'][] = (int) $modSettings['recycle_board'];
+		global $boardurl, $modSettings;
 
 		$this->links = array_merge($this->getBoardLinks(), $this->getTopicLinks());
 
 		// Modders can add custom links
 		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_LINKS, $this));
+
+		// External integrations
+		call_integration_hook('integrate_optimus_sitemap_links', [&$this->links]);
 
 		// Adding the main page
 		$home = [
@@ -218,7 +219,10 @@ final class Sitemap extends SMF_BackgroundTask
 
 	private function getBoardLinks(): array
 	{
-		global $modSettings, $smcFunc, $context, $scripturl;
+		global $modSettings, $smcFunc, $scripturl;
+
+		if (! empty($modSettings['recycle_board']))
+			$this->ignoredBoards[] = (int) $modSettings['recycle_board'];
 
 		$startYear = (int) ($modSettings['optimus_start_year'] ?? 0);
 
@@ -232,23 +236,23 @@ final class Sitemap extends SMF_BackgroundTask
 					WHERE bpv.id_group = -1
 						AND bpv.deny = 0
 						AND bpv.id_board = b.id_board
-				)' . (empty($context['optimus_ignored_boards']) ? '' : '
+				)' . (empty($this->ignoredBoards) ? '' : '
 				AND b.id_board NOT IN ({array_int:ignored_boards})') . '
 				AND b.redirect = {string:empty_string}
 				AND b.num_posts > {int:num_posts}' . ($startYear ? '
 				AND YEAR(FROM_UNIXTIME(m.poster_time)) >= {int:start_year}' : '') . '
 			ORDER BY b.id_board DESC',
 			[
-				'ignored_boards' => $context['optimus_ignored_boards'],
+				'ignored_boards' => $this->ignoredBoards,
 				'empty_string'   => '',
 				'num_posts'      => 0,
 				'start_year'     => $startYear
 			]
 		);
 
-		$context['optimus_open_boards'] = $links = [];
+		$links = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$context['optimus_open_boards'][] = $row['id_board'];
+			$this->openBoards[] = $row['id_board'];
 
 			if (! empty($modSettings['optimus_sitemap_boards'])) {
 				$boardUrl = $scripturl . '?board=' . $row['id_board'] . '.0';
@@ -270,7 +274,10 @@ final class Sitemap extends SMF_BackgroundTask
 
 	private function getTopicLinks(): array
 	{
-		global $db_temp_cache, $db_cache, $modSettings, $smcFunc, $context, $scripturl;
+		global $db_temp_cache, $db_cache, $modSettings, $smcFunc, $scripturl;
+
+		if (empty($this->openBoards))
+			return [];
 
 		$start = 0;
 		$limit = 1000;
@@ -316,7 +323,7 @@ final class Sitemap extends SMF_BackgroundTask
 					ORDER BY t.id_topic DESC, last_date
 					LIMIT {int:start}, {int:limit}',
 					[
-						'open_boards' => $context['optimus_open_boards'],
+						'open_boards' => $this->openBoards,
 						'num_replies' => $num_replies,
 						'is_approved' => 1,
 						'start_year'  => $startYear,
@@ -371,7 +378,7 @@ final class Sitemap extends SMF_BackgroundTask
 					ORDER BY t.id_topic DESC, last_date DESC
 					LIMIT {int:start}, {int:limit}',
 					[
-						'open_boards' => $context['optimus_open_boards'],
+						'open_boards' => $this->openBoards,
 						'num_replies' => $num_replies,
 						'is_approved' => 1,
 						'start_year'  => $startYear,

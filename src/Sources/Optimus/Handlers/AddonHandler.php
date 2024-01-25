@@ -37,8 +37,7 @@ final class AddonHandler implements ListenerSubscriber
 
 	public function subscribeListeners(ListenerRegistry $acceptor): void
 	{
-		if (empty($mods = $this->getInstalledMods()))
-			return;
+		$mods = $this->getInstalledMods();
 
 		$files = array_merge(
 			glob(OP_ADDONS . '/*.php'),
@@ -46,6 +45,9 @@ final class AddonHandler implements ListenerSubscriber
 		);
 
 		$addons = array_filter(array_map(fn($file) => $this->mapNamespace($file), $files), 'strlen');
+
+		// External integrations
+		call_integration_hook('integrate_optimus_addons', [&$addons]);
 
 		foreach ($addons as $listener) {
 			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
@@ -71,6 +73,7 @@ final class AddonHandler implements ListenerSubscriber
 				[]
 			);
 
+			$mods = [];
 			while ($row = $smcFunc['db_fetch_assoc']($result))
 				$mods[] = $row['package_id'];
 

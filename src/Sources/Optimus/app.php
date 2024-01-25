@@ -33,7 +33,8 @@ $loader->register();
 
 // @TODO Future is not far off
 if (str_starts_with(SMF_VERSION, '3.0')) {
-	class_alias('SMF\\Tasks\\BackgroundTask', 'SMF_BackgroundTask');
+	if (! class_exists('SMF_BackgroundTask'))
+		class_alias('SMF\\Tasks\\BackgroundTask', 'SMF_BackgroundTask');
 }
 
 (new Integration())();

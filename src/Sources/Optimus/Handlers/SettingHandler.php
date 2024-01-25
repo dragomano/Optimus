@@ -152,7 +152,8 @@ final class SettingHandler
 			]
 		];
 
-		require_once $sourcedir . '/ManageServer.php';
+		if (is_file($sourcedir . '/ManageServer.php'))
+			require_once $sourcedir . '/ManageServer.php';
 
 		$context['sub_template'] = 'show_settings';
 

@@ -49,6 +49,9 @@ final class Generator
 		$dispatcher = (new DispatcherFactory())();
 		$dispatcher->dispatch(new AddonEvent(AddonInterface::ROBOTS_RULES, $this));
 
+		// External integrations
+		call_integration_hook('integrate_optimus_robots_rules', [&$this->customRules, $this->urlPath]);
+
 		$this->addRules();
 		$this->addNews();
 		$this->addAssets();
