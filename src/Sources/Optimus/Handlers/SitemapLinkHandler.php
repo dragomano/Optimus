@@ -14,13 +14,13 @@
 
 namespace Bugo\Optimus\Handlers;
 
-final class SitemapHandler
+final class SitemapLinkHandler
 {
 	public function __invoke(): void
 	{
 		add_integration_function('integrate_actions', self::class . '::actions#', false, __FILE__);
 		add_integration_function('integrate_pre_log_stats', self::class . '::preLogStats#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::addSitemapLink#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::addLink#', false, __FILE__);
 
 	}
 
@@ -35,10 +35,7 @@ final class SitemapHandler
 
 		ob_end_clean();
 
-		if (! empty($modSettings['enableCompressedOutput']))
-			@ob_start('ob_gzhandler');
-		else
-			ob_start();
+		empty($modSettings['enableCompressedOutput']) ? ob_start() : @ob_start('ob_gzhandler');
 
 		header('content-type: text/xsl; charset=UTF-8');
 
@@ -74,7 +71,7 @@ final class SitemapHandler
 		$no_stat_actions['sitemap_xsl'] = true;
 	}
 
-	public function addSitemapLink(): void
+	public function addLink(): void
 	{
 		global $modSettings, $txt, $forum_copyright, $boardurl, $context;
 

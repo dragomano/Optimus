@@ -26,9 +26,12 @@ final class SearchTermHandler
 
 	public function prepareSearchTerms(): void
 	{
-		global $context, $modSettings, $smcFunc;
+		global $modSettings, $context, $smcFunc;
 
-		if (($context['current_action'] !== 'search' && $context['current_action'] !== 'search2') || empty($modSettings['optimus_log_search']))
+		if (empty($modSettings['optimus_log_search']))
+			return;
+
+		if ($context['current_action'] !== 'search' && $context['current_action'] !== 'search2')
 			return;
 
 		if (($context['search_terms'] = cache_get_data('optimus_search_terms', 3600)) === null) {
@@ -56,19 +59,19 @@ final class SearchTermHandler
 			cache_put_data('optimus_search_terms', $context['search_terms'], 3600);
 		}
 
-		$this->showTopSearchTerms();
+		$this->showChart();
 	}
 
 	public function searchParams(): void
 	{
 		global $modSettings, $smcFunc;
 
-		if (! Input::request('search') || empty($modSettings['optimus_log_search']))
+		if (empty($modSettings['optimus_log_search']) || ! Input::request('search'))
 			return;
 
-		$search_string = un_htmlspecialchars(Input::request('search'));
+		$searchString = un_htmlspecialchars(Input::request('search'));
 
-		if (empty($search_string))
+		if (empty($searchString))
 			return;
 
 		$request = $smcFunc['db_query']('', '
@@ -77,7 +80,7 @@ final class SearchTermHandler
 			WHERE phrase = {string:phrase}
 			LIMIT 1',
 			[
-				'phrase' => $search_string
+				'phrase' => $searchString
 			]
 		);
 
@@ -91,7 +94,7 @@ final class SearchTermHandler
 					'phrase' => 'string-255',
 					'hit'    => 'int'
 				],
-				[$search_string, 1],
+				[$searchString, 1],
 				['id_term']
 			);
 		} else {
@@ -106,11 +109,11 @@ final class SearchTermHandler
 		}
 	}
 
-	private function showTopSearchTerms(): void
+	private function showChart(): void
 	{
 		global $context;
 
-		if (empty($context['search_terms']) || ! $this->canViewSearchTerms())
+		if (empty($context['search_terms']) || ! $this->canView())
 			return;
 
 		loadTemplate('Optimus');
@@ -118,7 +121,7 @@ final class SearchTermHandler
 		$context['template_layers'][] = 'search_terms';
 	}
 
-	private function canViewSearchTerms(): bool
+	private function canView(): bool
 	{
 		global $modSettings;
 

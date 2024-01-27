@@ -5,7 +5,8 @@
   "autoload": {
     "psr-4": {
       "Bugo\\Optimus\\": ""
-    }
+    },
+    "exclude-from-classmap": ["Addons"]
   },
   "config": {
     "vendor-dir": "Libs",

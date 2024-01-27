@@ -18,39 +18,54 @@ final class ErrorHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_menu_buttons', self::class . '::handle#', false, __FILE__);
+		add_integration_function('integrate_fallback_action', self::class . '::fallbackAction#', false, __FILE__);
+		add_integration_function('integrate_menu_buttons', self::class . '::handleStatusErrors#', false, __FILE__);
 	}
 
-	public function handle(): void
+	public function fallbackAction(): void
 	{
-		global $modSettings, $board_info, $context, $txt, $scripturl;
+		global $modSettings, $context;
 
-		if (empty($modSettings['optimus_correct_http_status']) || empty($board_info['error']))
+		if (empty($modSettings['optimus_errors_for_wrong_actions']))
 			return;
 
-		// Does not page exist?
+		loadTemplate('Errors');
+
+		$context['sub_template'] = 'fatal_error';
+
+		$this->changeErrorPage();
+	}
+
+	public function handleStatusErrors(): void
+	{
+		global $modSettings, $board_info;
+
+		if (empty($modSettings['optimus_errors_for_wrong_boards_topics']) || empty($board_info['error']))
+			return;
+
 		if ($board_info['error'] === 'exist') {
-			send_http_status(404);
-
-			$context['page_title']    = $txt['optimus_404_page_title'];
-			$context['error_title']   = $txt['optimus_404_h2'];
-			$context['error_message'] = $txt['optimus_404_h3'] . '<br>' . sprintf($txt['optimus_goto_main_page'], $scripturl);
+			$this->changeErrorPage();
 		}
 
-		// No access?
 		if ($board_info['error'] === 'access') {
-			send_http_status(403);
-
-			$context['page_title']    = $txt['optimus_403_page_title'];
-			$context['error_title']   = $txt['optimus_403_h2'];
-			$context['error_message'] = $txt['optimus_403_h3'] . '<br>' . sprintf($txt['optimus_goto_main_page'], $scripturl);
+			$this->changeErrorPage(403);
 		}
+	}
 
-		if ($board_info['error'] === 'exist' || $board_info['error'] === 'access') {
-			addInlineJavaScript('
-		let error_block = document.getElementById("fatal_error");
-		error_block.classList.add("centertext");
-		error_block.nextElementSibling.querySelector("a.button").setAttribute("href", "javascript:history.go(-1)");', true);
-		}
+	private function changeErrorPage(int $code = 404): void
+	{
+		global $context, $txt, $scripturl;
+
+		send_http_status($code);
+
+		addInlineCss('#fatal_error { text-align: center }');
+
+		$context['page_title'] = $txt["optimus_{$code}_page_title"];
+
+		$context['error_code'] = '';
+		$context['error_link'] = 'javascript:history.go(-1)';
+		$context['error_title'] = $txt["optimus_{$code}_h2"];
+		$context['error_message'] = $txt["optimus_{$code}_h3"];
+		$context['error_message'] .= '<br>' . sprintf($txt['optimus_goto_main_page'], $scripturl);
 	}
 }

@@ -53,7 +53,8 @@ final class EhPortal extends AbstractAddon
 			SELECT namespace
 			FROM {db_prefix}sp_pages
 			WHERE status = {int:status}
-				AND (permission_set IN ({array_int:permissions}) OR (permission_set = 0 AND {int:guests} IN (groups_allowed)))
+				AND (permission_set IN ({array_int:permissions})
+				OR (permission_set = 0 AND {int:guests} IN (groups_allowed)))
 			ORDER BY id_page DESC',
 			[
 				'status'      => 1, // The page must be active

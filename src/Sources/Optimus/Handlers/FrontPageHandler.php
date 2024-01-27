@@ -28,18 +28,22 @@ final class FrontPageHandler
 	{
 		global $modSettings, $txt;
 
-		if (! empty($modSettings['optimus_forum_index']))
-			$txt['forum_index'] = $modSettings['optimus_forum_index'];
+		if (empty($modSettings['optimus_forum_index']))
+			return;
+
+		$txt['forum_index'] = $modSettings['optimus_forum_index'];
 	}
 
 	public function addDescription(): void
 	{
-		global $context, $modSettings;
+		global $modSettings, $context;
+
+		if (empty($modSettings['optimus_description']))
+			return;
 
 		if (empty($context['current_action'])
 			&& empty(Input::server('query_string'))
 			&& empty(Input::server('argv'))
-			&& ! empty($modSettings['optimus_description'])
 		) {
 			$context['meta_description'] = Input::xss($modSettings['optimus_description']);
 		}

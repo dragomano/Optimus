@@ -19,6 +19,7 @@ final class HandlerLoader
 	private array $handlers = [
 		SettingHandler::class,
 		BoardHandler::class,
+		TagHandler::class,
 		TopicHandler::class,
 		FrontPageHandler::class,
 		CounterHandler::class,
@@ -27,7 +28,7 @@ final class HandlerLoader
 		FaviconHandler::class,
 		SearchTermHandler::class,
 		ErrorHandler::class,
-		SitemapHandler::class,
+		SitemapLinkHandler::class,
 		RedirectHandler::class,
 		AddonHandler::class,
 	];

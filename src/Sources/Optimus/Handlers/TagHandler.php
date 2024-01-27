@@ -28,6 +28,7 @@ final class TagHandler
 		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
 		add_integration_function('integrate_current_action', self::class . '::currentAction#', false, __FILE__);
 		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__);
 		add_integration_function('integrate_messageindex_buttons', self::class . '::messageindexButtons#', false, __FILE__);
 		add_integration_function('integrate_display_topic', self::class . '::displayTopic#', false, __FILE__);
 		add_integration_function('integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false, __FILE__);
@@ -73,6 +74,32 @@ final class TagHandler
 		$permissionList['membergroup']['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
 	}
 
+	public function basicSettings(array &$config_vars): void
+	{
+		global $txt;
+
+		$counter = 0;
+		foreach ($config_vars as $key => $dump) {
+			if (isset($dump[1]) && $dump[1] === 'optimus_topic_extend_title') {
+				$counter = $key + 1;
+				break;
+			}
+		}
+
+		$config_vars = array_merge(
+			array_slice($config_vars, 0, $counter, true),
+			[
+				'',
+				['check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']],
+				['check', 'optimus_show_keywords_block'],
+				['check', 'optimus_show_keywords_on_message_index'],
+				['check', 'optimus_allow_keyword_phrases'],
+				['check', 'optimus_use_color_tags'],
+			],
+			array_slice($config_vars, $counter, null, true)
+		);
+	}
+
 	public function messageindexButtons(): void
 	{
 		global $modSettings, $context, $scripturl;
@@ -101,7 +128,7 @@ final class TagHandler
 		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
 
 		if ($counter == $output['counter'] && empty($context['start'])) {
-			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_tags'] . ' </legend>';
+			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
 
 			$class = empty($modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
 

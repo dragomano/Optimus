@@ -180,28 +180,30 @@ final class SettingHandler
 
 		$config_vars = [
 			['title', 'optimus_main_page'],
-			['text', 'optimus_forum_index', 80, 'value' => un_htmlspecialchars($modSettings['optimus_forum_index'] ?? '')],
-			['large_text', 'optimus_description', 'value' => un_htmlspecialchars($modSettings['optimus_description'] ?? ''), 'subtext' => $txt['optimus_description_subtext']],
+			[
+				'text',
+				'optimus_forum_index',
+				80,
+				'value' => un_htmlspecialchars($modSettings['optimus_forum_index'] ?? '')
+			],
+			[
+				'large_text',
+				'optimus_description',
+				'value' => un_htmlspecialchars($modSettings['optimus_description'] ?? ''),
+				'subtext' => $txt['optimus_description_subtext']
+			],
 			['large_text', 'meta_keywords', 'subtext' => $txt['meta_keywords_note']],
 			['title', 'optimus_all_pages'],
 			['select', 'optimus_board_extend_title', $txt['optimus_board_extend_title_set']],
 			['select', 'optimus_topic_extend_title', $txt['optimus_topic_extend_title_set']],
 			'',
-			['check', 'optimus_topic_description'],
-			['check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']],
-			'',
-			['check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']],
-			['check', 'optimus_show_keywords_block'],
-			['check', 'optimus_show_keywords_on_message_index'],
-			['check', 'optimus_allow_keyword_phrases'],
-			['check', 'optimus_use_color_tags'],
-			'',
-			['check', 'optimus_correct_http_status'],
 			['title', 'optimus_extra_settings'],
+			['check', 'optimus_errors_for_wrong_actions'],
+			['check', 'optimus_errors_for_wrong_boards_topics'],
 			['check', 'optimus_log_search'],
 		];
 
-		// Mod authors can add own options
+		// Modders can add own options
 		call_integration_hook('integrate_optimus_basic_settings', [&$config_vars]);
 
 		if ($return_config)
@@ -249,7 +251,7 @@ final class SettingHandler
 			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help']
 		];
 
-		// Mod authors can add own options
+		// Modders can add own options
 		call_integration_hook('integrate_optimus_extra_settings', [&$config_vars]);
 
 		if ($return_config)
@@ -503,7 +505,7 @@ final class SettingHandler
 			['select', 'optimus_update_frequency', $txt['optimus_update_frequency_set']]
 		];
 
-		// Mod authors can add own options
+		// Modders can add own options
 		call_integration_hook('integrate_optimus_sitemap_settings', [&$config_vars]);
 
 		if ($return_config)

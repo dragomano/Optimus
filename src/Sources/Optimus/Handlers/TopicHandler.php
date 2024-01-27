@@ -22,16 +22,12 @@ if (! defined('SMF'))
 
 final class TopicHandler
 {
-	public function __construct()
-	{
-		(new TagHandler())();
-	}
-
 	public function __invoke(): void
 	{
 		add_integration_function('integrate_menu_buttons', self::class . '::prepareOgImage#', false, __FILE__);
 		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
 		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
+		add_integration_function('integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__);
 		add_integration_function('integrate_display_topic', self::class . '::displayTopic#', false, __FILE__);
 		add_integration_function('integrate_before_create_topic', self::class . '::beforeCreateTopic#', false, __FILE__);
 		add_integration_function('integrate_modify_post', self::class . '::modifyPost#', false, __FILE__);
@@ -77,6 +73,29 @@ final class TopicHandler
 		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
 
 		$permissionList[$scope]['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
+	}
+
+	public function basicSettings(array &$config_vars): void
+	{
+		global $txt;
+
+		$counter = 0;
+		foreach ($config_vars as $key => $dump) {
+			if (isset($dump[1]) && $dump[1] === 'optimus_topic_extend_title') {
+				$counter = $key + 1;
+				break;
+			}
+		}
+
+		$config_vars = array_merge(
+			array_slice($config_vars, 0, $counter, true),
+			[
+				'',
+				['check', 'optimus_topic_description'],
+				['check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']],
+			],
+			array_slice($config_vars, $counter, null, true)
+		);
 	}
 
 	public function displayTopic(array &$topic_selects): void
@@ -167,9 +186,10 @@ final class TopicHandler
 		$context['posting_fields']['optimus_description']['input'] = [
 			'type' => 'textarea',
 			'attributes' => [
-				'id'        => 'optimus_description',
-				'maxlength' => 255,
-				'value'     => $context['optimus']['description'],
+				'id'          => 'optimus_description',
+				'maxlength'   => 255,
+				'value'       => $context['optimus']['description'],
+				'placeholder' => $txt['optimus_enter_description'],
 			],
 		];
 	}

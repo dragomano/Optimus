@@ -45,7 +45,7 @@ final class Generator
 		$this->urlPath = parse_url($boardurl, PHP_URL_PATH) ?? '';
 		$this->rules[]  = 'User-agent: *';
 
-		// Mod authors can add or change generated rules
+		// Modders can change generated rules
 		$dispatcher = (new DispatcherFactory())();
 		$dispatcher->dispatch(new AddonEvent(AddonInterface::ROBOTS_RULES, $this));
 

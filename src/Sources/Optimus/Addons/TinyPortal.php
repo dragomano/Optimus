@@ -45,7 +45,12 @@ final class TinyPortal extends AbstractAddon
 
 	public function postInit(): void
 	{
-		add_integration_function('integrate_tp_post_init', self::class . '::prepareArticleMeta#', false, __FILE__);
+		add_integration_function(
+			'integrate_tp_post_init',
+			self::class . '::prepareArticleMeta#',
+			false,
+			__FILE__
+		);
 	}
 
 	public function prepareArticleMeta(): void

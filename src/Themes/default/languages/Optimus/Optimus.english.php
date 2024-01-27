@@ -25,9 +25,10 @@ $txt['optimus_show_keywords_block'] = 'Display a block with keywords above the f
 $txt['optimus_show_keywords_on_message_index'] = 'Display keywords in topic lists within boards';
 $txt['optimus_allow_keyword_phrases'] = 'Allow to add entire key phrases';
 $txt['optimus_use_color_tags'] = 'Use color tags';
-$txt['optimus_correct_http_status'] = 'Return <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes" target="_blank" rel="noopener" class="bbc_link">403/404 code</a> depending on the requested page\'s status';
 
 $txt['optimus_extra_settings'] = 'Additional settings';
+$txt['optimus_errors_for_wrong_actions'] = 'Display a 404 page for non-existent forum areas';
+$txt['optimus_errors_for_wrong_boards_topics'] = 'Display a 403/404 page for inaccessible/non-existent boards and topics';
 $txt['optimus_log_search'] = 'Enable logging of search terms';
 
 $txt['optimus_extra_title'] = 'Metadata';
@@ -152,8 +153,9 @@ $txt['optimus_403_h2'] = 'Error 403';
 $txt['optimus_403_h3'] = 'You have no access to this page.';
 /* Argument: $scripturl */
 $txt['optimus_goto_main_page'] = 'Go to the <a class="bbc_link" href="%1$s">main page</a>.';
-$txt['optimus_seo_description'] = 'Topic description [SEO]';
-$txt['optimus_seo_keywords'] = 'Topic keywords [SEO]';
+$txt['optimus_seo_description'] = 'Description';
+$txt['optimus_enter_description'] = 'Enter a short description of this topic';
+$txt['optimus_seo_keywords'] = 'Keywords';
 $txt['optimus_enter_keywords'] = 'Enter one or more keywords';
 /* Argument: $keyword_name */
 $txt['optimus_topics_with_keyword'] = 'Forum topics with keyword "%s"';
@@ -166,5 +168,3 @@ $txt['optimus_top_queries'] = 'Popular search queries';
 /* Argument: $i  */
 $txt['optimus_chart_title'] = 'Top %1$s';
 $txt['optimus_no_search_terms'] = 'Statistics are not yet available.';
-
-$txt['optimus_tags'] = 'Tags';

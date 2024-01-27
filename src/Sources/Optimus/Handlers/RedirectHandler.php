@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Optimus\Utils\Input;
+
 final class RedirectHandler
 {
 	public function __invoke(): void
@@ -27,12 +29,12 @@ final class RedirectHandler
 
 		$redirects = empty($modSettings['optimus_redirect']) ? [] : unserialize($modSettings['optimus_redirect']);
 
-		if (empty($redirects))
+		if (empty($redirects) || empty($queryString = Input::server('query_string')))
 			return;
 
-		if (isset($_SERVER['QUERY_STRING']) && isset($redirects[$_SERVER['QUERY_STRING']])) {
+		if (isset($redirects[$queryString])) {
 			$url = $scripturl . '?';
-			$to = $redirects[$_SERVER['QUERY_STRING']];
+			$to = $redirects[$queryString];
 
 			if (str_starts_with($to, 'http'))
 				$url = '';
