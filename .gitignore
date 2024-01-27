@@ -3,6 +3,7 @@
 /**/vendor/
 /**/Libs/
 /**/composer.lock
+.phpunit.cache
 
 src/Themes/default/languages/Optimus/*
 src/Themes/default/languages/Optimus/index.php
