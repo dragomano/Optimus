@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Integration.php
+ * Prime.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -23,7 +23,7 @@ use Bugo\Optimus\Utils\Copyright;
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class Integration
+final class Prime
 {
 	public function __construct()
 	{
@@ -58,6 +58,6 @@ final class Integration
 	{
 		global $context;
 
-		$context['credits_modifications'][] = Copyright::getLink() . ' &copy; 2010&ndash;' . date('Y') . ', Bugo';
+		$context['credits_modifications'][] = Copyright::getLink() . Copyright::getYears();
 	}
 }

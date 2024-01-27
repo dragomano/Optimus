@@ -41,15 +41,17 @@ final class TagHandler
 	{
 		global $modSettings;
 
-		if (! empty($modSettings['optimus_allow_change_topic_keywords']) || ! empty($modSettings['optimus_show_keywords_block']))
-			$actions['keywords'] = [false, [$this, 'showTheSame']];
+		if (empty($modSettings['optimus_allow_change_topic_keywords']) && empty($modSettings['optimus_show_keywords_block']))
+			return;
+
+		$actions['keywords'] = [false, [$this, 'showTheSame']];
 	}
 
 	public function menuButtons(array &$buttons): void
 	{
 		global $context;
 
-		if (isset($buttons['home']) && $context['current_action'] == 'keywords')
+		if (isset($buttons['home']) && $context['current_action'] === 'keywords')
 			$buttons['home']['action_hook'] = true;
 	}
 
@@ -57,7 +59,7 @@ final class TagHandler
 	{
 		global $context;
 
-		if ($context['current_action'] == 'keywords')
+		if ($context['current_action'] === 'keywords')
 			$current_action = 'home';
 	}
 
@@ -68,9 +70,7 @@ final class TagHandler
 		if (empty($modSettings['optimus_allow_change_topic_keywords']))
 			return;
 
-		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
-
-		$permissionList[$scope]['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
+		$permissionList['membergroup']['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
 	}
 
 	public function messageindexButtons(): void
@@ -103,8 +103,12 @@ final class TagHandler
 		if ($counter == $output['counter'] && empty($context['start'])) {
 			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_tags'] . ' </legend>';
 
+			$class = empty($modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
+
 			foreach ($context['optimus_keywords'] as $id => $keyword) {
-				$keywords .= '<a class="' . (empty($modSettings['optimus_use_color_tags']) ? 'button' : 'descbox') . '" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="margin-right: 2px;' . $this->getRandomColor($keyword) . '">' . $keyword . '</a>';
+				$href = $scripturl . '?action=keywords;id=' . $id;
+				$style = 'margin-right: 2px;' . $this->getRandomColor($keyword);
+				$keywords .= '<a class="' . $class . '" href="' . $href . '" style="' . $style . '">' . $keyword . '</a>';
 			}
 
 			$keywords .= '</fieldset>';
@@ -365,10 +369,12 @@ final class TagHandler
 
 		$topics = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			$href = $scripturl . '?action=profile;u=' . $row['id_member'];
+
 			$topics[] = [
 				'topic'  => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
 				'board'  => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
-				'author' => empty($row['real_name']) ? $txt['guest'] : '<a href="' . $scripturl . '?action=profile;u=' . $row['id_member'] . '">' . $row['real_name'] . '</a>'
+				'author' => empty($row['real_name']) ? $txt['guest'] : '<a href="' . $href . '">' . $row['real_name'] . '</a>'
 			];
 		}
 
@@ -800,9 +806,10 @@ final class TagHandler
 		if (! isset($context['user']['started']))
 			$context['user']['started'] = empty($topic);
 
-		return ! empty($modSettings['optimus_allow_change_topic_keywords']) && (
-			allowedTo('optimus_add_keywords_any')
-			|| (! empty($context['user']['started']) && allowedTo('optimus_add_keywords_own'))
-		);
+		if (empty($modSettings['optimus_allow_change_topic_keywords']))
+			return false;
+
+		return allowedTo('optimus_add_keywords_any')
+			|| (allowedTo('optimus_add_keywords_own') && ! empty($context['user']['started']));
 	}
 }

@@ -28,13 +28,13 @@ final class BoardHandler
 		if (empty($modSettings['optimus_allow_change_board_og_image']))
 			return;
 
-		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons', false, __FILE__, true);
-		add_integration_function('integrate_load_board', self::class . '::loadBoard', false, __FILE__, true);
-		add_integration_function('integrate_board_info', self::class . '::boardInfo', false, __FILE__, true);
-		add_integration_function('integrate_pre_boardtree', self::class . '::preBoardtree', false, __FILE__, true);
-		add_integration_function('integrate_boardtree_board', self::class . '::boardtreeBoard', false, __FILE__, true);
-		add_integration_function('integrate_edit_board', self::class . '::editBoard', false, __FILE__, true);
-		add_integration_function('integrate_modify_board', self::class . '::modifyBoard', false, __FILE__, true);
+		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
+		add_integration_function('integrate_load_board', self::class . '::loadBoard#', false, __FILE__);
+		add_integration_function('integrate_board_info', self::class . '::boardInfo#', false, __FILE__);
+		add_integration_function('integrate_pre_boardtree', self::class . '::preBoardtree#', false, __FILE__);
+		add_integration_function('integrate_boardtree_board', self::class . '::boardtreeBoard#', false, __FILE__);
+		add_integration_function('integrate_edit_board', self::class . '::editBoard#', false, __FILE__);
+		add_integration_function('integrate_modify_board', self::class . '::modifyBoard#', false, __FILE__);
 	}
 
 	/**

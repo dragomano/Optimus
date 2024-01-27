@@ -71,7 +71,11 @@ final class PrettyUrls extends AbstractAddon
 			require_once($pretty);
 
 		if (! isset($context['session_var']))
-			$context['session_var'] = substr(md5($smcFunc['random_int']() . session_id() . $smcFunc['random_int']()), 0, $smcFunc['random_int'](7, 12));
+			$context['session_var'] = substr(
+				md5($smcFunc['random_int']() . session_id() . $smcFunc['random_int']()),
+				0,
+				$smcFunc['random_int'](7, 12)
+			);
 
 		$context['pretty']['search_patterns']  = ['~(<loc>)([^#<]+)~'];
 		$context['pretty']['replace_patterns'] = ['~(<loc>)([^<]+)~'];

@@ -32,6 +32,19 @@ final class Input
 		return $_REQUEST[$name] ?? $defaultValue;
 	}
 
+	public static function post(string|array $name, mixed $defaultValue = false): mixed
+	{
+		if (is_array($name)) {
+			foreach ($name as $key => $value) {
+				$_POST[$key] = $value;
+			}
+
+			return false;
+		}
+
+		return $_POST[$name] ?? $defaultValue;
+	}
+
 	public static function server(string $name = ''): mixed
 	{
 		if (empty($name))
@@ -83,17 +96,19 @@ final class Input
 
 	public static function filter(
 		string $key,
-		string $filter = 'string',
+		string $type = 'string',
 		int $input = INPUT_POST
-	): array|string
+	): mixed
 	{
-		$filter = match ($filter) {
+		$filter = match ($type) {
 			'int'   => FILTER_VALIDATE_INT,
 			'bool'  => FILTER_VALIDATE_BOOLEAN,
 			'url'   => FILTER_VALIDATE_URL,
 			default => FILTER_DEFAULT,
 		};
 
-		return self::xss(filter_input($input, $key, $filter));
+		$result = filter_input($input, $key, $filter);
+
+		return empty($result) ? $result : self::xss($result);
 	}
 }

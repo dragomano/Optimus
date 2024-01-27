@@ -25,9 +25,9 @@ final class SettingHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_modify_basic_settings', self::class . '::modifyBasicSettings', false, __FILE__, true);
-		add_integration_function('integrate_admin_areas', self::class . '::adminAreas', false, __FILE__, true);
-		add_integration_function('integrate_admin_search', self::class . '::adminSearch', false, __FILE__, true);
+		add_integration_function('integrate_modify_basic_settings', self::class . '::modifyBasicSettings#', false, __FILE__);
+		add_integration_function('integrate_admin_areas', self::class . '::adminAreas#', false, __FILE__);
+		add_integration_function('integrate_admin_search', self::class . '::adminSearch#', false, __FILE__);
 	}
 
 	/**
@@ -97,6 +97,7 @@ final class SettingHandler
 		$context['page_title'] = OP_NAME;
 
 		loadLanguage('ManageSettings');
+
 		loadTemplate('Optimus');
 
 		$subActions = [
@@ -157,7 +158,8 @@ final class SettingHandler
 
 		$context['sub_template'] = 'show_settings';
 
-		$_REQUEST['sa'] = isset($_REQUEST['sa'], $subActions[$_REQUEST['sa']]) ? $_REQUEST['sa'] : key($subActions);
+		$sa = Input::request('sa', 'basic');
+		Input::request(['sa' => isset($subActions[$sa]) ? $sa : key($subActions)]);
 
 		$this->{$subActions[Input::request('sa')]}();
 	}
@@ -209,10 +211,10 @@ final class SettingHandler
 			checkSession();
 
 			if (Input::isPost('optimus_forum_index'))
-				$_POST['optimus_forum_index'] = Input::filter('optimus_forum_index');
+				Input::post(['optimus_forum_index' => Input::filter('optimus_forum_index')]);
 
 			if (Input::isPost('optimus_description'))
-				$_POST['optimus_description'] = Input::filter('optimus_description');
+				Input::post(['optimus_description' => Input::filter('optimus_description')]);
 
 			call_integration_hook('integrate_save_optimus_basic_settings');
 
@@ -257,10 +259,10 @@ final class SettingHandler
 			checkSession();
 
 			if (Input::isPost('optimus_fb_appid'))
-				$_POST['optimus_fb_appid'] = Input::filter('optimus_fb_appid');
+				Input::post(['optimus_fb_appid' => Input::filter('optimus_fb_appid')]);
 
 			if (Input::isPost('optimus_tw_cards'))
-				$_POST['optimus_tw_cards'] = str_replace('@', '', Input::filter('optimus_tw_cards'));
+				Input::post(['optimus_tw_cards' => str_replace('@', '', Input::filter('optimus_tw_cards'))]);
 
 			call_integration_hook('integrate_save_optimus_extra_settings');
 
@@ -459,7 +461,7 @@ final class SettingHandler
 				copy($htaccess_path, $htaccess_path . '.backup');
 			}
 
-			file_put_contents($htaccess_path, trim($_POST['optimus_htaccess']), LOCK_EX);
+			file_put_contents($htaccess_path, trim(Input::post('optimus_htaccess')), LOCK_EX);
 
 			redirectexit('action=admin;area=optimus;sa=htaccess');
 		}

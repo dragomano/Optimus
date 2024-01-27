@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Input.php
+ * Copyright.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -23,8 +23,15 @@ final class Copyright
 	{
 		global $user_info;
 
-		$link = $user_info['language'] === 'russian' ? 'https://dragomano.ru/mods/optimus' : 'https://custom.simplemachines.org/mods/index.php?mod=2659';
+		$link = $user_info['language'] === 'russian'
+			? 'https://dragomano.ru/mods/optimus'
+			: 'https://custom.simplemachines.org/mods/index.php?mod=2659';
 
 		return '<a href="' . $link . '" target="_blank" rel="noopener" title="' . OP_VERSION . '">' . OP_NAME . '</a>';
+	}
+
+	public static function getYears(): string
+	{
+		return ' &copy; 2010&ndash;' . date('Y') . ', Bugo';
 	}
 }

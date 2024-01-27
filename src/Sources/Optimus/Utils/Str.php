@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Teaser.php
+ * Str.php
  *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
@@ -34,6 +34,7 @@ final class Str
 		// Additional replacements
 		$replacements = ['&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''];
 
+		// External integrations
 		call_integration_hook('integrate_optimus_teaser', [&$replacements]);
 
 		$text = strtr($text, $replacements);

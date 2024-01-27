@@ -83,18 +83,17 @@ final class TopicHandler
 	{
 		global $modSettings;
 
+		if (! empty($modSettings['optimus_allow_change_topic_desc']))
+			$topic_selects[] = 't.optimus_description';
+
 		if (! in_array('ms.modified_time AS topic_modified_time', $topic_selects))
 			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
 
-		if (
-			(! empty($modSettings['optimus_topic_description']) || ! empty($modSettings['optimus_og_image']))
-			&& ! in_array('ms.body AS topic_first_message', $topic_selects)
-		) {
-			$topic_selects[] = 'ms.body AS topic_first_message';
-		}
+		if (empty($modSettings['optimus_topic_description']) && empty($modSettings['optimus_og_image']))
+			return;
 
-		if (! empty($modSettings['optimus_allow_change_topic_desc']))
-			$topic_selects[] = 't.optimus_description';
+		if (! in_array('ms.body AS topic_first_message', $topic_selects))
+			$topic_selects[] = 'ms.body AS topic_first_message';
 	}
 
 	/**
@@ -219,13 +218,13 @@ final class TopicHandler
 	{
 		global $context, $topic, $modSettings;
 
-		if (! isset($context['user']['started'])) {
+		if (! isset($context['user']['started']))
 			$context['user']['started'] = empty($topic);
-		}
 
-		return ! empty($modSettings['optimus_allow_change_topic_desc']) && (
-			allowedTo('optimus_add_descriptions_any')
-			|| (! empty($context['user']['started']) && allowedTo('optimus_add_descriptions_own'))
-		);
+		if (empty($modSettings['optimus_allow_change_topic_desc']))
+			return false;
+
+		return allowedTo('optimus_add_descriptions_any')
+			|| (allowedTo('optimus_add_descriptions_own') && ! empty($context['user']['started']));
 	}
 }
