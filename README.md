@@ -9,7 +9,7 @@
 [![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
 
 - **Tested on:** PHP 8.0.30 / MariaDB 10.11.6
-- **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian
+- **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian, Polish
 
 ### Reviews
 
@@ -18,16 +18,17 @@
 ### Features
 
 - Managing of title and description for the main forum page.
-- Managing of title, description, and keywords metatags for topic pages.
+- Managing of title, description, and keywords meta-tags for topic pages.
 - Description meta-tag for boards' and topics' pages.
 - Keywords meta-tag for topics. Users can fill them when creating/changing topics.
 - Support of Open Graph meta-tags and Twitter Cards.
 - Ability to specify the verification codes when adding sites to Google, Yandex, and Bing (Webmaster Tools).
-- Adding custom metatags.
-- Adding any counters without template editing.
+- Adding custom meta-tags.
+- Adding any JS/CSS code without template editing.
 - Changing the robots.txt and .htaccess from the Settings page.
 - Generator for the robots.txt file.
 - Simple Sitemap XML.
-- Generation of favicon.
-- Support of Cyrillic domains.
+- Managing of favicon.
 - Statistics of search queries on the forum.
+- Ability to create simple redirects.
+- Support of addons.
