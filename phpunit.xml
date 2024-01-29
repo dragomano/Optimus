@@ -27,11 +27,5 @@
 
     <php>
         <const name="SMF" value="true"/>
-        <const name="OP_NAME" value="Optimus"/>
-        <const name="OP_VERSION" value="X.X.X"/>
-        <server name="foo" value="bar"/>
-        <request name="foo" value="bar"/>
-        <post name="foo" value="bar"/>
-        <get name="foo" value="bar"/>
     </php>
 </phpunit>

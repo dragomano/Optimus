@@ -46,7 +46,8 @@ final class TopicHandler
 		// Looking for an image in attachments of the topic first message
 		if (! empty($context['loaded_attachments']) && isset($context['loaded_attachments'][$firstMessageId])) {
 			$attachments = $context['loaded_attachments'][$firstMessageId];
-			$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . ';attach=' . ($key = array_key_first($attachments)) . ';image';
+			$attach = ';attach=' . ($key = array_key_first($attachments)) . ';image';
+			$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . $attach;
 
 			$context['optimus_og_image'] = [
 				'url'    => $settings['og_image'],
@@ -58,7 +59,10 @@ final class TopicHandler
 
 		// Looking for an image in the text of the topic first message
 		if (empty($context['optimus_og_image']) && ! empty($context['topicinfo']['topic_first_message'])) {
-			$image = preg_match('/\[img.*]([^]\[]+)\[\/img]/U', $context['topicinfo']['topic_first_message'], $value);
+			$image = preg_match(
+				'/\[img.*]([^]\[]+)\[\/img]/U', $context['topicinfo']['topic_first_message'], $value
+			);
+
 			$settings['og_image'] = $image ? array_pop($value) : $settings['og_image'];
 		}
 	}
@@ -70,9 +74,7 @@ final class TopicHandler
 		if (empty($modSettings['optimus_allow_change_topic_desc']))
 			return;
 
-		$scope = isset($permissionList['global']) ? 'global' : 'membergroup';
-
-		$permissionList[$scope]['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
+		$permissionList['membergroup']['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
 	}
 
 	public function basicSettings(array &$config_vars): void
@@ -92,7 +94,11 @@ final class TopicHandler
 			[
 				'',
 				['check', 'optimus_topic_description'],
-				['check', 'optimus_allow_change_topic_desc', 'subtext' => $txt['optimus_allow_change_topic_desc_subtext']],
+				[
+					'check',
+					'optimus_allow_change_topic_desc',
+					'subtext' => $txt['optimus_allow_change_topic_desc_subtext']
+				],
 			],
 			array_slice($config_vars, $counter, null, true)
 		);
@@ -130,16 +136,24 @@ final class TopicHandler
 		$this->makeDescriptionByOptimus();
 
 		// Additional data
+		$startedName = $context['topicinfo']['topic_started_name'] ?? '';
+		$modifiedTime = $context['topicinfo']['topic_modified_time'] ?? 0;
 		$context['optimus_og_type']['article'] = [
 			'published_time' => date('Y-m-d\TH:i:s', (int) $context['topicinfo']['topic_started_time']),
-			'modified_time'  => empty($context['topicinfo']['topic_modified_time']) ? null : date('Y-m-d\TH:i:s', (int) $context['topicinfo']['topic_modified_time']),
-			'author'         => empty($context['topicinfo']['topic_started_name']) ? null : $context['topicinfo']['topic_started_name'],
+			'modified_time'  => empty($modifiedTime) ? null : date('Y-m-d\TH:i:s', (int) $modifiedTime),
+			'author'         => empty($startedName) ? null : $startedName,
 			'section'        => $board_info['name'],
 			'tag'            => $context['optimus_keywords'] ?? null,
 		];
 	}
 
-	public function beforeCreateTopic(array $msgOptions, array $topicOptions, array $posterOptions, array &$topic_columns, array &$topic_parameters): void
+	public function beforeCreateTopic(
+		array $msgOptions,
+		array $topicOptions,
+		array $posterOptions,
+		array &$topic_columns,
+		array &$topic_parameters
+	): void
 	{
 		if (! $this->canChangeDescription())
 			return;
@@ -148,7 +162,12 @@ final class TopicHandler
 		$topic_parameters[] = Input::xss(Input::request('optimus_description', ''));
 	}
 
-	public function modifyPost(array $messages_columns, array $update_parameters, array $msgOptions, array $topicOptions): void
+	public function modifyPost(
+		array $messages_columns,
+		array $update_parameters,
+		array $msgOptions,
+		array $topicOptions
+	): void
 	{
 		if (empty($topicOptions['first_msg']) || $topicOptions['first_msg'] != $msgOptions['id'])
 			return;
@@ -158,7 +177,7 @@ final class TopicHandler
 
 	public function postEnd(): void
 	{
-		global $context, $smcFunc, $txt;
+		global $context, $smcFunc;
 
 		if ($context['is_new_topic']) {
 			$context['optimus']['description'] = Input::xss(Input::request('optimus_description', ''));
@@ -178,6 +197,13 @@ final class TopicHandler
 
 			$context['user']['started'] = $context['user']['id'] == $topic_author && !$context['user']['is_guest'];
 		}
+
+		$this->addFields();
+	}
+
+	private function addFields(): void
+	{
+		global $context, $txt;
 
 		if (! $this->canChangeDescription() || empty($context['is_first_post']))
 			return;

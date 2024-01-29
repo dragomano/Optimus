@@ -90,7 +90,11 @@ final class TagHandler
 			array_slice($config_vars, 0, $counter, true),
 			[
 				'',
-				['check', 'optimus_allow_change_topic_keywords', 'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']],
+				[
+					'check',
+					'optimus_allow_change_topic_keywords',
+					'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']
+				],
 				['check', 'optimus_show_keywords_block'],
 				['check', 'optimus_show_keywords_on_message_index'],
 				['check', 'optimus_allow_keyword_phrases'],
@@ -113,7 +117,11 @@ final class TagHandler
 			$keywords = $this->getKeywords()[$topic] ?? [];
 
 			foreach ($keywords as $id => $key) {
-				$data['first_post']['link'] .= ' <a class="optimus_keywords amt" href="' . $scripturl . '?action=keywords;id=' . $id . '" style="' . $this->getRandomColor($key) . '">' . $key . '</a>';
+				$link = $scripturl . '?action=keywords;id=' . $id;
+				$style = ' style="' . $this->getRandomColor($key) . '"';
+
+				$data['first_post']['link'] .= /** @lang text */
+					' <a class="optimus_keywords amt" href="' . $link . '"' . $style . '>' . $key . '</a>';
 			}
 		}
 	}
@@ -125,17 +133,19 @@ final class TagHandler
 		if (empty($context['optimus_keywords']) || empty($modSettings['optimus_show_keywords_block']))
 			return;
 
-		$counter = empty($options['view_newest_first']) ? $context['start'] : $context['total_visible_posts'] - $context['start'];
+		$counter = empty($options['view_newest_first'])
+			? $context['start'] : $context['total_visible_posts'] - $context['start'];
 
 		if ($counter == $output['counter'] && empty($context['start'])) {
-			$keywords = '<fieldset class="roundframe" style="overflow: unset"><legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
+			$keywords = '<fieldset class="roundframe" style="overflow: unset">
+				<legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
 
 			$class = empty($modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
 
 			foreach ($context['optimus_keywords'] as $id => $keyword) {
 				$href = $scripturl . '?action=keywords;id=' . $id;
-				$style = 'margin-right: 2px;' . $this->getRandomColor($keyword);
-				$keywords .= '<a class="' . $class . '" href="' . $href . '" style="' . $style . '">' . $keyword . '</a>';
+				$style = ' style="margin-right: 2px;' . $this->getRandomColor($keyword) . '"';
+				$keywords .= '<a class="' . $class . '" href="' . $href . '"' . $style . '>' . $keyword . '</a>';
 			}
 
 			$keywords .= '</fieldset>';
@@ -156,7 +166,7 @@ final class TagHandler
 
 	public function postEnd(): void
 	{
-		global $context, $txt, $modSettings;
+		global $context;
 
 		if (! $this->canChange())
 			return;
@@ -165,72 +175,20 @@ final class TagHandler
 			$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', ''));
 		} else {
 			$this->displayTopic();
-			$context['optimus']['keywords'] = empty($context['optimus_keywords']) ? [] : array_values($context['optimus_keywords']);
+			$context['optimus']['keywords'] = empty($context['optimus_keywords'])
+				? [] : array_values($context['optimus_keywords']);
 		}
 
-		if (empty($context['is_first_post']))
-			return;
-
-		$context['posting_fields']['optimus_keywords'] = [
-			'label' => [
-				'text' => $txt['optimus_seo_keywords']
-			],
-			'input' => [
-				'type' => 'select',
-				'attributes' => [
-					'id'       => 'optimus_keywords',
-					'name'     => 'optimus_keywords[]',
-					'multiple' => true
-				],
-				'options' => []
-			]
-		];
-
-		if (! empty($context['optimus']['keywords'])) {
-			foreach ($context['optimus']['keywords'] as $key) {
-				$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
-					'value'    => $key,
-					'selected' => true
-				];
-			}
-		}
-
-		// Select2 https://select2.github.io/select2/
-		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js', ['external' => true]);
-		loadJavaScriptFile('https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js', ['external' => true]);
-		addInlineJavaScript('
-		jQuery(document).ready(function ($) {
-			$("#optimus_keywords").select2({
-				language: "' . $txt['lang_dictionary'] . '",
-				placeholder: "' . $txt['optimus_enter_keywords'] . '",
-				minimumInputLength: 2,
-				width: "100%",
-				cache: true,
-				tags: true,' . ($context['right_to_left'] ? '
-				dir: "rtl",' : '') . '
-				tokenSeparators: [","' . (empty($modSettings['optimus_allow_keyword_phrases']) ? ', " "' : '') . '],
-				ajax: {
-					url: smf_scripturl + "?action=keywords;sa=search",
-					type: "POST",
-					delay: 250,
-					dataType: "json",
-					data: function (params) {
-						return {
-							q: params.term
-						}
-					},
-					processResults: function (data, params) {
-						return {
-							results: data
-						}
-					}
-				}
-			});
-		});', true);
+		$this->addFields();
 	}
 
-	public function modifyPost(array $messages_columns, array $update_parameters, array $msgOptions, array $topicOptions, array $posterOptions): void
+	public function modifyPost(
+		array $messages_columns,
+		array $update_parameters,
+		array $msgOptions,
+		array $topicOptions,
+		array $posterOptions
+	): void
 	{
 		if (empty($topicOptions['first_msg']) || $topicOptions['first_msg'] != $msgOptions['id'])
 			return;
@@ -256,7 +214,7 @@ final class TagHandler
 
 	public function showTheSame(): void
 	{
-		global $context, $settings, $txt, $scripturl, $sourcedir;
+		global $context, $settings, $txt, $scripturl;
 
 		if ($context['current_subaction'] == 'search') {
 			$this->prepareSearchData();
@@ -362,8 +320,7 @@ final class TagHandler
 			]
 		];
 
-		require_once($sourcedir . '/Subs-List.php');
-		createList($listOptions);
+		$this->createList($listOptions);
 
 		$context['sub_template'] = 'show_list';
 		$context['default_list'] = 'topics';
@@ -432,7 +389,7 @@ final class TagHandler
 
 	public function showAllWithFrequency(): void
 	{
-		global $context, $txt, $scripturl, $sourcedir;
+		global $context, $txt, $scripturl;
 
 		$context['page_title']    = $txt['optimus_all_keywords'];
 		$context['canonical_url'] = $scripturl . '?action=keywords';
@@ -494,8 +451,7 @@ final class TagHandler
 			]
 		];
 
-		require_once($sourcedir . '/Subs-List.php');
-		createList($listOptions);
+		$this->createList($listOptions);
 
 		if (! empty($context['current_page']) && $context['current_page'] != (int) Input::request('start'))
 			send_http_status(404);
@@ -524,8 +480,10 @@ final class TagHandler
 
 		$keywords = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			$link = $scripturl . '?action=keywords;id=' . $row['id'];
+
 			$keywords[] = [
-				'keyword'   => '<a href="' . $scripturl . '?action=keywords;id=' . $row['id'] . '">' . $row['name'] . '</a>',
+				'keyword'   => '<a href="' . $link . '">' . $row['name'] . '</a>',
 				'frequency' => $row['frequency']
 			];
 		}
@@ -550,6 +508,53 @@ final class TagHandler
 		$smcFunc['db_free_result']($request);
 
 		return (int) $num;
+	}
+
+	public function displayTopic(): void
+	{
+		global $modSettings, $context;
+
+		if (empty($modSettings['optimus_show_keywords_block']))
+			return;
+
+		if (empty($context['current_topic']) || ! empty($context['optimus']['keywords']))
+			return;
+
+		$keywords = $this->getKeywords();
+
+		$context['optimus_keywords'] = [];
+
+		if (empty($keywords[$context['current_topic']]))
+			return;
+
+		$context['optimus_keywords'] = $keywords[$context['current_topic']];
+
+		$modSettings['meta_keywords'] = implode(', ', $context['optimus_keywords']);
+	}
+
+	private function getKeywords(): array
+	{
+		global $smcFunc;
+
+		if (($keywords = cache_get_data('optimus_topic_keywords', 3600)) === null) {
+			$request = $smcFunc['db_query']('', /** @lang text */ '
+				SELECT k.id, k.name, lk.topic_id
+				FROM {db_prefix}optimus_keywords AS k
+					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
+				ORDER BY lk.topic_id, k.id',
+				[]
+			);
+
+			$keywords = [];
+			while ($row = $smcFunc['db_fetch_assoc']($request))
+				$keywords[$row['topic_id']][$row['id']] = $row['name'];
+
+			$smcFunc['db_free_result']($request);
+
+			cache_put_data('optimus_topic_keywords', $keywords, 3600);
+		}
+
+		return $keywords;
 	}
 
 	private function getNameById(int $id = 0): string
@@ -613,50 +618,6 @@ final class TagHandler
 		exit(json_encode($data));
 	}
 
-	public function displayTopic(): void
-	{
-		global $context, $modSettings;
-
-		if (empty($modSettings['optimus_show_keywords_block']))
-			return;
-
-		if (empty($context['current_topic']) || ! empty($context['optimus']['keywords']))
-			return;
-
-		$keywords = $this->getKeywords();
-
-		$context['optimus_keywords'] = [];
-		if (! empty($keywords[$context['current_topic']])) {
-			$context['optimus_keywords']  = $keywords[$context['current_topic']];
-			$modSettings['meta_keywords'] = implode(', ', $context['optimus_keywords']);
-		}
-	}
-
-	private function getKeywords(): array
-	{
-		global $smcFunc;
-
-		if (($keywords = cache_get_data('optimus_topic_keywords', 3600)) === null) {
-			$request = $smcFunc['db_query']('', /** @lang text */ '
-				SELECT k.id, k.name, lk.topic_id
-				FROM {db_prefix}optimus_keywords AS k
-					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
-				ORDER BY lk.topic_id, k.id',
-				[]
-			);
-
-			$keywords = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
-				$keywords[$row['topic_id']][$row['id']] = $row['name'];
-
-			$smcFunc['db_free_result']($request);
-
-			cache_put_data('optimus_topic_keywords', $keywords, 3600);
-		}
-
-		return $keywords;
-	}
-
 	private function getRandomColor(string $key): string
 	{
 		global $modSettings;
@@ -671,6 +632,91 @@ final class TagHandler
 		$hsl = 'background-color: hsl(' . (($hash * 57) % 360) . ', 70%, 40%)';
 
 		return $hsl . '; color: #fff';
+	}
+
+	private function addFields(): void
+	{
+		global $context, $txt;
+
+		if (empty($context['is_first_post']))
+			return;
+
+		$context['posting_fields']['optimus_keywords'] = [
+			'label' => [
+				'text' => $txt['optimus_seo_keywords']
+			],
+			'input' => [
+				'type' => 'select',
+				'attributes' => [
+					'id'       => 'optimus_keywords',
+					'name'     => 'optimus_keywords[]',
+					'multiple' => true
+				],
+				'options' => []
+			]
+		];
+
+		$this->loadAssets();
+
+		if (empty($context['optimus']['keywords']))
+			return;
+
+		foreach ($context['optimus']['keywords'] as $key) {
+			$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
+				'value'    => $key,
+				'selected' => true
+			];
+		}
+	}
+
+	/**
+	 * @see Select2 https://select2.github.io/select2/
+	 */
+	private function loadAssets(): void
+	{
+		global $txt, $context, $modSettings;
+
+		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
+
+		loadJavaScriptFile(
+			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js',
+			['external' => true]
+		);
+
+		loadJavaScriptFile(
+			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js',
+			['external' => true]
+		);
+
+		addInlineJavaScript('
+		jQuery(document).ready(function ($) {
+			$("#optimus_keywords").select2({
+				language: "' . $txt['lang_dictionary'] . '",
+				placeholder: "' . $txt['optimus_enter_keywords'] . '",
+				minimumInputLength: 2,
+				width: "100%",
+				cache: true,
+				tags: true,' . ($context['right_to_left'] ? '
+				dir: "rtl",' : '') . '
+				tokenSeparators: [","' . (empty($modSettings['optimus_allow_keyword_phrases']) ? ', " "' : '') . '],
+				ajax: {
+					url: smf_scripturl + "?action=keywords;sa=search",
+					type: "POST",
+					delay: 250,
+					dataType: "json",
+					data: function (params) {
+						return {
+							q: params.term
+						}
+					},
+					processResults: function (data, params) {
+						return {
+							results: data
+						}
+					}
+				}
+			});
+		});', true);
 	}
 
 	private function add(array $keywords, int $topic, int $user): void
@@ -765,16 +811,16 @@ final class TagHandler
 
 		// Check if the keywords have been changed
 		$this->displayTopic();
-		$current_keywords = empty($context['optimus_keywords']) ? [] : array_values($context['optimus_keywords']);
+		$currentKeywords = empty($context['optimus_keywords']) ? [] : array_values($context['optimus_keywords']);
 
-		if ($keywords == $current_keywords)
+		if ($keywords == $currentKeywords)
 			return;
 
-		$new_keywords = array_diff($keywords, $current_keywords);
-		$this->add($new_keywords, $topic, $user);
+		$newKeywords = array_diff($keywords, $currentKeywords);
+		$this->add($newKeywords, $topic, $user);
 
-		$del_keywords = array_diff($current_keywords, $keywords);
-		$this->remove($del_keywords, $topic);
+		$delKeywords = array_diff($currentKeywords, $keywords);
+		$this->remove($delKeywords, $topic);
 	}
 
 	private function remove(array $keywords, int $topic): void
@@ -797,23 +843,23 @@ final class TagHandler
 			]
 		);
 
-		$del_items = [];
+		$delItems = [];
 		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$del_items['keywords'][] = $row['keyword_id'];
-			$del_items['topics'][]   = $row['topic_id'];
+			$delItems['keywords'][] = $row['keyword_id'];
+			$delItems['topics'][]   = $row['topic_id'];
 		}
 
 		$smcFunc['db_free_result']($request);
 
-		if (empty($del_items))
+		if (empty($delItems))
 			return;
 
 		$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id IN ({array_int:keywords}) AND topic_id IN ({array_int:topics})',
 			[
-				'keywords' => $del_items['keywords'],
-				'topics'   => $del_items['topics']
+				'keywords' => $delItems['keywords'],
+				'topics'   => $delItems['topics']
 			]
 		);
 
@@ -838,5 +884,15 @@ final class TagHandler
 
 		return allowedTo('optimus_add_keywords_any')
 			|| (allowedTo('optimus_add_keywords_own') && ! empty($context['user']['started']));
+	}
+
+	private function createList(array $listOptions): void
+	{
+		global $sourcedir;
+
+		if (is_file($sourcedir . '/Subs-List.php'))
+			require_once($sourcedir . '/Subs-List.php');
+
+		createList($listOptions);
 	}
 }

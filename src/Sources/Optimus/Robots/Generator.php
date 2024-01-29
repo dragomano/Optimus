@@ -23,18 +23,23 @@ if (! defined('SMF'))
 
 final class Generator
 {
-	private array $rules = [];
 
-	public array $customRules = [];
+	public const MAP_FILE = 'sitemap.xml';
+
+	public const MAP_GZ_FILE = 'sitemap.xml.gz';
 
 	public array $actions = [
 		'msg', 'profile', 'help', 'search', 'mlist', 'sort', 'recent',
 		'unread', 'login', 'signup', 'groups', 'stats', 'prev_next', 'all'
 	];
 
+	public array $customRules = [];
+
 	public bool $useSef = false;
 
 	public string $urlPath = '';
+
+	private array $rules = [];
 
 	public function generate(): void
 	{
@@ -43,7 +48,7 @@ final class Generator
 		clearstatcache();
 
 		$this->urlPath = parse_url($boardurl, PHP_URL_PATH) ?? '';
-		$this->rules[]  = 'User-agent: *';
+		$this->rules[] = 'User-agent: *';
 
 		// Modders can change generated rules
 		$dispatcher = (new DispatcherFactory())();
@@ -53,12 +58,12 @@ final class Generator
 		call_integration_hook('integrate_optimus_robots_rules', [&$this->customRules, $this->urlPath]);
 
 		$this->addRules();
-		$this->addNews();
+		$this->addFeeds();
 		$this->addAssets();
 		$this->addSitemaps();
 
-		$new_robots = implode('<br>', str_replace("|", '', $this->rules));
-		$context['new_robots_content'] = parse_bbc('[code]' . $new_robots . '[/code]');
+		$content = implode('<br>', str_replace("|", '', $this->rules));
+		$context['new_robots_content'] = parse_bbc('[code]' . $content . '[/code]');
 	}
 
 	private function addRules(): void
@@ -95,7 +100,7 @@ final class Generator
 		$this->rules = array_merge($this->rules, $this->customRules);
 	}
 
-	private function addNews(): void
+	private function addFeeds(): void
 	{
 		global $modSettings;
 
@@ -109,27 +114,16 @@ final class Generator
 
 	private function addSitemaps(): void
 	{
-		global $boardurl, $boarddir, $sourcedir, $scripturl;
+		global $boarddir, $boardurl;
 
-		$mapFile = 'sitemap.xml';
-		$gzFile  = 'sitemap.xml.gz';
+		$mapFile = file_exists($boarddir . '/' . self::MAP_FILE) ? $boardurl . '/' . self::MAP_FILE : '';
+		$mapGzFile = file_exists($boarddir . '/' . self::MAP_GZ_FILE) ? $boardurl . '/' . self::MAP_GZ_FILE : '';
 
-		$mapFile = file_exists($boarddir . '/' . $mapFile) ? $boardurl . '/' . $mapFile : '';
-		$gzFile  = file_exists($boarddir . '/' . $gzFile) ? $boardurl . '/' . $gzFile : '';
-
-		$sitemapModInstalled = file_exists($sourcedir . '/Sitemap.php');
-
-		if ($sitemapModInstalled)
-			$this->rules[] = 'Allow: ' . $this->urlPath . '/*sitemap';
-
-		if (! empty($mapFile) || ! empty($gzFile) || $sitemapModInstalled)
+		if (! empty($mapFile) || ! empty($mapGzFile))
 			$this->rules[] = '|';
 
-		if ($sitemapModInstalled)
-			$this->rules[] = 'Sitemap: ' . $scripturl . '?action=sitemap;xml';
-
-		if (! empty($gzFile))
-			$this->rules[] = 'Sitemap: ' . $gzFile;
+		if (! empty($mapGzFile))
+			$this->rules[] = 'Sitemap: ' . $mapGzFile;
 		elseif (! empty($mapFile))
 			$this->rules[] = 'Sitemap: ' . $mapFile;
 	}

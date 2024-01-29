@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class TitleHandler
 {
 	public function __invoke(): void
@@ -23,23 +26,34 @@ final class TitleHandler
 
 	public function handle(): void
 	{
-		global $board_info, $modSettings, $context;
-
 		if (SMF === 'SSI')
 			return;
 
-		// Board titles
-		if (! empty($board_info['total_topics']) && ! empty($modSettings['optimus_board_extend_title'])) {
-			$modSettings['optimus_board_extend_title'] == 1
-				? $context['page_title_html_safe'] = $context['forum_name'] . ' - ' . $context['page_title_html_safe']
-				: $context['page_title_html_safe'] = $context['page_title_html_safe'] . ' - ' . $context['forum_name'];
-		}
+		$this->handleBoardTitles();
+		$this->handleTopicTitles();
+	}
 
-		// Topic titles
-		if (! empty($context['first_message']) && ! empty($modSettings['optimus_topic_extend_title'])) {
-			$modSettings['optimus_topic_extend_title'] == 1
-				? $context['page_title_html_safe'] = $context['forum_name'] . ' - ' . $board_info['name'] . ' - ' . $context['page_title_html_safe']
-				: $context['page_title_html_safe'] = $context['page_title_html_safe'] . ' - ' . $board_info['name'] . ' - ' . $context['forum_name'];
-		}
+	private function handleBoardTitles(): void
+	{
+		global $board_info, $modSettings, $context;
+
+		if (empty($board_info['total_topics']) || empty($modSettings['optimus_board_extend_title']))
+			return;
+
+		$context['page_title_html_safe'] = $modSettings['optimus_board_extend_title'] == 1
+			? $context['forum_name'] . ' - ' . $context['page_title_html_safe']
+			: $context['page_title_html_safe'] . ' - ' . $context['forum_name'];
+	}
+
+	private function handleTopicTitles(): void
+	{
+		global $context, $modSettings, $board_info;
+
+		if (empty($context['first_message']) || empty($modSettings['optimus_topic_extend_title']))
+			return;
+
+		$context['page_title_html_safe'] = $modSettings['optimus_topic_extend_title'] == 1
+			? $context['forum_name'] . ' - ' . $board_info['name'] . ' - ' . $context['page_title_html_safe']
+			: $context['page_title_html_safe'] . ' - ' . $board_info['name'] . ' - ' . $context['forum_name'];
 	}
 }

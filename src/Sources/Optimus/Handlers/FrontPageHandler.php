@@ -16,6 +16,9 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Optimus\Utils\Input;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class FrontPageHandler
 {
 	public function __invoke(): void

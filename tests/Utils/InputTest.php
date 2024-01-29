@@ -15,23 +15,32 @@ class InputTest extends AbstractBase
 	 */
     public function testRequest()
     {
-		// Data are set
 	    $this->request->request->set('foo', 'bar');
 	    $this->request->overrideGlobals();
 
-		$this->assertSame('bar', Input::request('foo'));
+	    $this->assertSame('bar', Input::request('foo'));
+    }
 
-	    // Data are not set
-	    $this->request->request->remove('foo');
-	    $this->request->overrideGlobals();
+	/**
+	 * @covers Input::request
+	 */
+	public function testRequestWithoutData()
+	{
+		$this->request->request->remove('foo');
+		$this->request->overrideGlobals();
 
 		// Default value is set
-	    $this->assertSame('bar', Input::request('foo', 'bar'));
+		$this->assertSame('bar', Input::request('foo', 'bar'));
 
-	    // Default value is not set
-	    $this->assertFalse(Input::request('foo'));
+		// Default value is not set
+		$this->assertFalse(Input::request('foo'));
+	}
 
-		// Setup data
+	/**
+	 * @covers Input::request
+	 */
+	public function testRequestWithArray()
+	{
 	    Input::request([
 			'foo' => 'bar',
 		    'bar' => 'foo',
@@ -46,13 +55,17 @@ class InputTest extends AbstractBase
 	 */
 	public function testPost()
 	{
-		// Data are set
 		$this->request->request->set('foo', 'bar');
 		$this->request->overrideGlobals();
 
 		$this->assertSame('bar', Input::post('foo'));
+	}
 
-		// Data are not set
+	/**
+	 * @covers Input::post
+	 */
+	public function testPostWithoutData()
+	{
 		$this->request->request->remove('foo');
 		$this->request->overrideGlobals();
 
@@ -61,8 +74,13 @@ class InputTest extends AbstractBase
 
 		// Default value is not set
 		$this->assertFalse(Input::post('foo'));
+	}
 
-		// Setup data
+	/**
+	 * @covers Input::post
+	 */
+	public function testPostWithArray()
+	{
 		Input::post([
 			'foo' => 'bar',
 			'bar' => 'foo',
@@ -80,11 +98,20 @@ class InputTest extends AbstractBase
 		$this->request->server->set('HOST_NAME', 'localhost');
 		$this->request->overrideGlobals();
 
-		// Empty key
-		$this->assertSame($this->request->server->all(), Input::server());
-
-		// Basic usage
 		$this->assertSame($this->request->server->get('HOST_NAME'), Input::server('host_name'));
+
+		$this->request->server->remove('HOST_NAME');
+	}
+
+	/**
+	 * @covers Input::server
+	 */
+	public function testServerWithEmptyKey()
+	{
+		$this->request->server->set('HOST_NAME', 'localhost');
+		$this->request->overrideGlobals();
+
+		$this->assertSame($this->request->server->all(), Input::server());
 
 		$this->request->server->remove('HOST_NAME');
 	}
@@ -94,17 +121,26 @@ class InputTest extends AbstractBase
 	 */
 	public function testSession()
 	{
-		// Data are set
 		$_SESSION['foo'] = 'bar';
 
 		$this->assertSame('bar', Input::session('foo'));
+	}
 
-		// Data are not set
+	/**
+	 * @covers Input::session
+	 */
+	public function testSessionWithoutData()
+	{
 		unset($_SESSION['foo']);
 
 		$this->assertNull(Input::session('foo'));
+	}
 
-		// Setup data
+	/**
+	 * @covers Input::session
+	 */
+	public function testSessionWithArray()
+	{
 		Input::session([
 			'foo' => 'bar',
 			'bar' => 'foo',
@@ -161,13 +197,22 @@ class InputTest extends AbstractBase
 	 */
 	public function testXss()
 	{
-		// Test with string value
-		$source = /** @lang text */ '<a href="foo">bar</a>';
+		$source = /** @lang text */
+			'<a href="foo">bar</a>';
 		$result = '&lt;a href=&quot;foo&quot;&gt;bar&lt;/a&gt;';
 
 		$this->assertSame($result, Input::xss($source));
+	}
 
-		// Test with array value
+	/**
+	 * @covers Input::xss
+	 */
+	public function testXssWithArray()
+	{
+		$source = /** @lang text */
+			'<a href="foo">bar</a>';
+		$result = '&lt;a href=&quot;foo&quot;&gt;bar&lt;/a&gt;';
+
 		$source = [$source,	$source];
 		$result = [$result, $result];
 
@@ -179,10 +224,14 @@ class InputTest extends AbstractBase
 	 */
 	public function testFilter()
 	{
-		// Empty input
 		$this->assertNull(Input::filter('foo'));
+	}
 
-		// Wrong filter
+	/**
+	 * @covers Input::filter
+	 */
+	public function testFilterWithWrongType()
+	{
 		$this->assertNull(Input::filter('foo', 'wrong'));
 	}
 }

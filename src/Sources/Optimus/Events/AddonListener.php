@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Events;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class AddonListener
 {
 	public function __invoke(AddonEvent $event): void

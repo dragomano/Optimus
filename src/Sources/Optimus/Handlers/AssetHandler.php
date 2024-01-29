@@ -16,21 +16,27 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Optimus\Utils\Input;
 
-final class CounterHandler
+if (! defined('SMF'))
+	die('No direct access...');
+
+final class AssetHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_load_theme', self::class . '::addJavaScript#', false, __FILE__);
+		add_integration_function('integrate_load_theme', self::class . '::handle#', false, __FILE__);
 	}
 
-	public function addJavaScript(): void
+	public function handle(): void
 	{
 		global $context, $modSettings;
 
-		if (stripos(Input::server('http_user_agent'), 'Lighthouse') !== false)
+		if (Input::isRequest('xml'))
 			return;
 
-		if (Input::isRequest('xml') || in_array($context['current_action'], explode(',', $modSettings['optimus_ignored_actions'] ?? '')))
+		if (stripos((string) Input::server('http_user_agent'), 'Lighthouse') !== false)
+			return;
+
+		if (in_array($context['current_action'], explode(',', $modSettings['optimus_ignored_actions'] ?? '')))
 			return;
 
 		if (! empty($modSettings['optimus_head_code'])) {

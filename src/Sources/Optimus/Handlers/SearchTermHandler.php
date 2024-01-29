@@ -16,12 +16,26 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Optimus\Utils\Input;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class SearchTermHandler
 {
 	public function __invoke(): void
 	{
+		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
 		add_integration_function('integrate_menu_buttons', self::class . '::prepareSearchTerms#', false, __FILE__);
 		add_integration_function('integrate_search_params', self::class . '::searchParams#', false, __FILE__);
+	}
+
+	public function loadPermissions(array $permissionGroups, array &$permissionList): void
+	{
+		global $modSettings;
+
+		if (empty($modSettings['optimus_log_search']))
+			return;
+
+		$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
 	}
 
 	public function prepareSearchTerms(): void
@@ -62,17 +76,17 @@ final class SearchTermHandler
 		$this->showChart();
 	}
 
-	public function searchParams(): void
+	public function searchParams(): bool
 	{
 		global $modSettings, $smcFunc;
 
 		if (empty($modSettings['optimus_log_search']) || ! Input::request('search'))
-			return;
+			return false;
 
 		$searchString = un_htmlspecialchars(Input::request('search'));
 
 		if (empty($searchString))
-			return;
+			return false;
 
 		$request = $smcFunc['db_query']('', '
 			SELECT id_term
@@ -107,6 +121,8 @@ final class SearchTermHandler
 				]
 			);
 		}
+
+		return true;
 	}
 
 	private function showChart(): void

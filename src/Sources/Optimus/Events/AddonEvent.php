@@ -16,6 +16,9 @@ namespace Bugo\Optimus\Events;
 
 use League\Event\HasEventName;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class AddonEvent implements HasEventName
 {
 	public function __construct(

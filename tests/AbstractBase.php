@@ -11,6 +11,8 @@ abstract class AbstractBase extends TestCase
     {
 		require_once __DIR__ . '/boostrap.php';
 
+	    require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
+
 		$this->request = Request::createFromGlobals();
     }
 

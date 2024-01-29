@@ -33,7 +33,6 @@ final class Prime
 	public function __invoke(): void
 	{
 		add_integration_function('integrate_load_theme', self::class . '::loadTheme#', false, __FILE__);
-		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
 		add_integration_function('integrate_credits', self::class . '::credits#', false, __FILE__);
 
 		(new DispatcherFactory())()->dispatch(new AddonEvent(AddonInterface::HOOK_EVENT, $this));
@@ -42,16 +41,6 @@ final class Prime
 	public function loadTheme(): void
 	{
 		loadLanguage('Optimus/Optimus');
-	}
-
-	public function loadPermissions(array $permissionGroups, array &$permissionList): void
-	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_log_search']))
-			return;
-
-		$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
 	}
 
 	public function credits(): void

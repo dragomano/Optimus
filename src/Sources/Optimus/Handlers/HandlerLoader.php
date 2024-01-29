@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class HandlerLoader
 {
 	private array $handlers = [
@@ -22,7 +25,7 @@ final class HandlerLoader
 		TagHandler::class,
 		TopicHandler::class,
 		FrontPageHandler::class,
-		CounterHandler::class,
+		AssetHandler::class,
 		TitleHandler::class,
 		MetaHandler::class,
 		FaviconHandler::class,

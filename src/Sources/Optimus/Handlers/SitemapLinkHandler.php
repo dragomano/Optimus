@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class SitemapLinkHandler
 {
 	public function __invoke(): void
@@ -21,7 +24,6 @@ final class SitemapLinkHandler
 		add_integration_function('integrate_actions', self::class . '::actions#', false, __FILE__);
 		add_integration_function('integrate_pre_log_stats', self::class . '::preLogStats#', false, __FILE__);
 		add_integration_function('integrate_menu_buttons', self::class . '::addLink#', false, __FILE__);
-
 	}
 
 	public function actions(array &$actions): void

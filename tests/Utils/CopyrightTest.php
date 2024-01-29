@@ -17,7 +17,10 @@ class CopyrightTest extends AbstractBase
     {
         $link = Copyright::getLink();
 
-		$this->assertStringContainsString('https://custom.simplemachines.org/mods/index.php?mod=2659', $link);
+		$this->assertStringContainsString(
+			'https://custom.simplemachines.org/mods/index.php?mod=2659',
+			$link
+		);
     }
 
 	/**
@@ -27,6 +30,9 @@ class CopyrightTest extends AbstractBase
 	{
 		$years = Copyright::getYears();
 
-		$this->assertSame(' &copy; 2010&ndash;' . date('Y') . ', Bugo', $years);
+		$this->assertSame(
+			' &copy; 2010&ndash;' . date('Y') . ', Bugo',
+			$years
+		);
 	}
 }

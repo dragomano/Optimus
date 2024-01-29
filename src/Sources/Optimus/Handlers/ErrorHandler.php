@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class ErrorHandler
 {
 	public function __invoke(): void

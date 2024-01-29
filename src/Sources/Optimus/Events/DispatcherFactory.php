@@ -16,6 +16,9 @@ namespace Bugo\Optimus\Events;
 
 use League\Event\EventDispatcher;
 
+if (! defined('SMF'))
+	die('No direct access...');
+
 final class DispatcherFactory
 {
 	private static EventDispatcher $dispatcher;

@@ -189,7 +189,7 @@ function template_counters(): void
 			<td>', $txt['optimus_head_code_subtext'], '</td>
 		</div>
 		<div class="descbox">
-			<textarea id="optimus_head_code" name="optimus_head_code" rows="6">', $modSettings['optimus_head_code'] ?? '', '</textarea>
+			<textarea id="optimus_head_code" name="optimus_head_code" rows="6" placeholder="<script>/* ', $txt['code'], ' */</script>">', $modSettings['optimus_head_code'] ?? '', '</textarea>
 		</div>
 		<div class="title_bar centertext">
 			<label class="titlebg" for="optimus_stat_code">', $txt['optimus_stat_code'], '</label>
@@ -198,13 +198,13 @@ function template_counters(): void
 			<td>', $txt['optimus_stat_code_subtext'], '</td>
 		</div>
 		<div class="descbox">
-			<textarea id="optimus_stat_code" name="optimus_stat_code" rows="6">', $modSettings['optimus_stat_code'] ?? '', '</textarea>
+			<textarea id="optimus_stat_code" name="optimus_stat_code" rows="6" placeholder="<script>/* ', $txt['code'], ' */</script>">', $modSettings['optimus_stat_code'] ?? '', '</textarea>
 		</div>
 		<div class="title_bar centertext">
 			<label class="titlebg" for="optimus_count_code">', $txt['optimus_count_code'], '</label>
 		</div>
 		<div class="descbox">
-			<textarea id="optimus_count_code" name="optimus_count_code" rows="6">', $modSettings['optimus_count_code'] ?? '', '</textarea>
+			<textarea id="optimus_count_code" name="optimus_count_code" rows="6" placeholder="<script>/* ', $txt['code'], ' */</script>">', $modSettings['optimus_count_code'] ?? '', '</textarea>
 		</div>
 		<div class="title_bar centertext">
 			<label class="titlebg" for="optimus_counters_css">', $txt['optimus_counters_css'], '</label>

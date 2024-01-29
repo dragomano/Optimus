@@ -13,21 +13,35 @@ class StrTest extends AbstractBase
 	/**
 	 * @covers Str::teaser
 	 */
-	public function testTeaser()
+	public function testTeaserWithBrAndSpaces()
 	{
-		// Replace all <br> and duplicate spaces
 		$source = 'foo<br>      bar';
 		$this->assertSame('foo bar', Str::teaser($source));
+	}
 
-		// Remove all urls
+	/**
+	 * @covers Str::teaser
+	 */
+	public function testTeaserWithUrls()
+	{
 		$source = 'foo https://some.site bar';
 		$this->assertSame('foo bar', Str::teaser($source));
+	}
 
-		// Additional replacements
+	/**
+	 * @covers Str::teaser
+	 */
+	public function testTeaserWithReplacements()
+	{
 		$source = 'foo&nbsp;&quot;bar&quot;&amp;nbsp;';
 		$this->assertSame('foo bar', Str::teaser($source));
+	}
 
-		// Limits
+	/**
+	 * @covers Str::teaser
+	 */
+	public function testTeaserWithLimits()
+	{
 		$source = 'foo bar. foo bar.';
 		$this->assertSame('foo bar.', Str::teaser($source, 1));
 
