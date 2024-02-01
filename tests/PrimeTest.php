@@ -19,14 +19,14 @@ class PrimeTest extends AbstractBase
 	/**
 	 * @covers Prime::loadTheme
 	 */
-    public function testLoadTheme()
-    {
+	public function testLoadTheme()
+	{
 		global $txt;
 
-	    $this->prime->loadTheme();
+		$this->prime->loadTheme();
 
 		$this->assertSame('Search Engine Optimization', $txt['optimus_title']);
-    }
+	}
 
 	/**
 	 * @covers Prime::credits

@@ -1,8 +1,7 @@
 {
   "require": {
     "php": "^8.0",
-    "ext-dom": "*",
-    "nette/http": "^3.2"
+    "ext-dom": "*"
   },
   "require-dev": {
     "rector/rector": "^0.19",

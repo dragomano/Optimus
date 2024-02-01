@@ -13,13 +13,13 @@ class InputTest extends AbstractBase
 	/**
 	 * @covers Input::request
 	 */
-    public function testRequest()
-    {
-	    $this->request->request->set('foo', 'bar');
-	    $this->request->overrideGlobals();
+	public function testRequest()
+	{
+		$this->request->request->set('foo', 'bar');
+		$this->request->overrideGlobals();
 
-	    $this->assertSame('bar', Input::request('foo'));
-    }
+		$this->assertSame('bar', Input::request('foo'));
+	}
 
 	/**
 	 * @covers Input::request
@@ -41,14 +41,14 @@ class InputTest extends AbstractBase
 	 */
 	public function testRequestWithArray()
 	{
-	    Input::request([
+		Input::request([
 			'foo' => 'bar',
-		    'bar' => 'foo',
-	    ]);
+			'bar' => 'foo',
+		]);
 
 		$this->assertSame('bar', Input::request('foo'));
 		$this->assertSame('foo', Input::request('bar'));
-    }
+	}
 
 	/**
 	 * @covers Input::post

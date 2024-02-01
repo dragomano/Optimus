@@ -19,5 +19,4 @@ class AddonHandlerTest extends AbstractBase
 			method_exists(AddonHandler::class, 'subscribeListeners')
 		);
 	}
-
 }

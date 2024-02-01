@@ -13,15 +13,15 @@ class CopyrightTest extends AbstractBase
 	/**
 	 * @covers Copyright::getLink
 	 */
-    public function testGetLink()
-    {
-        $link = Copyright::getLink();
+	public function testGetLink()
+	{
+		$link = Copyright::getLink();
 
 		$this->assertStringContainsString(
 			'https://custom.simplemachines.org/mods/index.php?mod=2659',
 			$link
 		);
-    }
+	}
 
 	/**
 	 * @covers Copyright::getYears
