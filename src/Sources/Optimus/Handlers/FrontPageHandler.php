@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Config, IntegrationHook};
+use Bugo\Compat\{Lang, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
@@ -23,32 +25,33 @@ final class FrontPageHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_load_theme', self::class . '::changeTitle#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::addDescription#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_load_theme', self::class . '::changeTitle#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::addDescription#', false, __FILE__
+		);
 	}
 
 	public function changeTitle(): void
 	{
-		global $modSettings, $txt;
-
-		if (empty($modSettings['optimus_forum_index']))
+		if (empty(Config::$modSettings['optimus_forum_index']))
 			return;
 
-		$txt['forum_index'] = $modSettings['optimus_forum_index'];
+		Lang::$txt['forum_index'] = Config::$modSettings['optimus_forum_index'];
 	}
 
 	public function addDescription(): void
 	{
-		global $modSettings, $context;
-
-		if (empty($modSettings['optimus_description']))
+		if (empty(Config::$modSettings['optimus_description']))
 			return;
 
-		if (empty($context['current_action'])
+		if (empty(Utils::$context['current_action'])
 			&& empty(Input::server('query_string'))
 			&& empty(Input::server('argv'))
 		) {
-			$context['meta_description'] = Input::xss($modSettings['optimus_description']);
+			Utils::$context['meta_description'] = Input::xss(Config::$modSettings['optimus_description']);
 		}
 	}
 }

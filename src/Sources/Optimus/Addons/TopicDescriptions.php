@@ -10,11 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 23.01.24
+ * @version 03.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Events\AddonEvent;
 
 if (! defined('SMF'))
@@ -30,11 +31,9 @@ final class TopicDescriptions extends AbstractAddon
 
 	public function __invoke(AddonEvent $event): void
 	{
-		global $context;
-
-		if ($event->eventName() !== self::HOOK_EVENT || empty($context['topic_description']))
+		if ($event->eventName() !== self::HOOK_EVENT || empty(Utils::$context['topic_description']))
 			return;
 
-		$context['meta_description'] = $context['topic_description'];
+		Utils::$context['meta_description'] = Utils::$context['topic_description'];
 	}
 }

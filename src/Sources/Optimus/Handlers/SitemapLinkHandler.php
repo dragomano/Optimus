@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Config, IntegrationHook};
+use Bugo\Compat\{Lang, Theme, Utils};
+
 if (! defined('SMF'))
 	die('No direct access...');
 
@@ -21,9 +24,17 @@ final class SitemapLinkHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_actions', self::class . '::actions#', false, __FILE__);
-		add_integration_function('integrate_pre_log_stats', self::class . '::preLogStats#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::addLink#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_actions', self::class . '::actions#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_pre_log_stats', self::class . '::preLogStats#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::addLink#', false, __FILE__
+		);
 	}
 
 	public function actions(array &$actions): void
@@ -33,39 +44,37 @@ final class SitemapLinkHandler
 
 	public function xsl(): void
 	{
-		global $modSettings, $settings, $txt;
-
 		ob_end_clean();
 
-		empty($modSettings['enableCompressedOutput']) ? ob_start() : @ob_start('ob_gzhandler');
+		empty(Config::$modSettings['enableCompressedOutput']) ? ob_start() : @ob_start('ob_gzhandler');
 
 		header('content-type: text/xsl; charset=UTF-8');
 
-		$content = file_get_contents($settings['default_theme_dir'] . '/css/optimus/sitemap.xsl');
+		$content = file_get_contents(Theme::$current->settings['default_theme_dir'] . '/css/optimus/sitemap.xsl');
 
 		$content = strtr($content, [
-			'{link}'          => $settings['theme_url'] . '/css/index.css',
-			'{sitemap}'       => $txt['optimus_sitemap_title'],
-			'{mobile}'        => $txt['optimus_mobile'],
-			'{images}'        => $txt['optimus_images'],
-			'{news}'          => $txt['optimus_news'],
-			'{video}'         => $txt['optimus_video'],
-			'{index}'         => $txt['optimus_index'],
-			'{total_files}'   => $txt['optimus_total_files'],
-			'{total_urls}'    => $txt['optimus_total_urls'],
-			'{url}'           => $txt['url'],
-			'{last_modified}' => $txt['optimus_last_modified'],
-			'{frequency}'     => $txt['optimus_frequency'],
-			'{priority}'      => $txt['optimus_priority'],
-			'{direct_link}'   => $txt['optimus_direct_link'],
-			'{caption}'       => $txt['optimus_caption'],
-			'{thumbnail}'     => $txt['optimus_thumbnail'],
-			'{optimus}'       => OP_NAME
+			'{link}'          => Theme::$current->settings['theme_url'] . '/css/index.css',
+			'{sitemap}'       => Lang::$txt['optimus_sitemap_title'],
+			'{mobile}'        => Lang::$txt['optimus_mobile'],
+			'{images}'        => Lang::$txt['optimus_images'],
+			'{news}'          => Lang::$txt['optimus_news'],
+			'{video}'         => Lang::$txt['optimus_video'],
+			'{index}'         => Lang::$txt['optimus_index'],
+			'{total_files}'   => Lang::$txt['optimus_total_files'],
+			'{total_urls}'    => Lang::$txt['optimus_total_urls'],
+			'{url}'           => Lang::$txt['url'],
+			'{last_modified}' => Lang::$txt['optimus_last_modified'],
+			'{frequency}'     => Lang::$txt['optimus_frequency'],
+			'{priority}'      => Lang::$txt['optimus_priority'],
+			'{direct_link}'   => Lang::$txt['optimus_direct_link'],
+			'{caption}'       => Lang::$txt['optimus_caption'],
+			'{thumbnail}'     => Lang::$txt['optimus_thumbnail'],
+			'{optimus}'       => OP_NAME,
 		]);
 
 		echo $content;
 
-		obExit(false);
+		Utils::obExit(false);
 	}
 
 	public function preLogStats(array &$no_stat_actions): void
@@ -75,13 +84,11 @@ final class SitemapLinkHandler
 
 	public function addLink(): void
 	{
-		global $modSettings, $txt, $forum_copyright, $boardurl, $context;
-
-		if (empty($modSettings['optimus_sitemap_link']) || empty($txt['optimus_sitemap_title']))
+		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::$txt['optimus_sitemap_title']))
 			return;
 
-		$forum_copyright .= ' | <a href="' . $boardurl . '/sitemap.xml">' . $txt['optimus_sitemap_title'] . '</a>';
+		Lang::$forum_copyright .= ' | <a href="' . Config::$boardurl . '/sitemap.xml">' . Lang::$txt['optimus_sitemap_title'] . '</a>';
 
-		$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="' . $boardurl . '/sitemap.xml">';
+		Utils::$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="' . Config::$boardurl . '/sitemap.xml">';
 	}
 }

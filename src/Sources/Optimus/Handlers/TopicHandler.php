@@ -14,8 +14,10 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Optimus\Utils\Input;
-use Bugo\Optimus\Utils\Str;
+use Bugo\Compat\{Board, Config, IntegrationHook};
+use Bugo\Compat\{BBCodeParser, Lang, Theme};
+use Bugo\Compat\{Topic, User, Utils};
+use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -24,33 +26,54 @@ final class TopicHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_menu_buttons', self::class . '::prepareOgImage#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
-		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
-		add_integration_function('integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__);
-		add_integration_function('integrate_display_topic', self::class . '::displayTopic#', false, __FILE__);
-		add_integration_function('integrate_before_create_topic', self::class . '::beforeCreateTopic#', false, __FILE__);
-		add_integration_function('integrate_modify_post', self::class . '::modifyPost#', false, __FILE__);
-		add_integration_function('integrate_post_end', self::class . '::postEnd#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::prepareOgImage#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_display_topic', self::class . '::displayTopic#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_before_create_topic', self::class . '::beforeCreateTopic#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_modify_post', self::class . '::modifyPost#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_post_end', self::class . '::postEnd#', false, __FILE__
+		);
 	}
 
 	public function prepareOgImage(): void
 	{
-		global $modSettings, $context, $scripturl, $settings;
-
-		if (empty($modSettings['optimus_og_image']) || empty($context['topicinfo']['id_first_msg']))
+		if (empty(Config::$modSettings['optimus_og_image']) || empty(Utils::$context['topicinfo']['id_first_msg']))
 			return;
 
-		$firstMessageId = $context['topicinfo']['id_first_msg'];
+		$firstMessageId = Utils::$context['topicinfo']['id_first_msg'];
 
 		// Looking for an image in attachments of the topic first message
-		if (! empty($context['loaded_attachments']) && isset($context['loaded_attachments'][$firstMessageId])) {
-			$attachments = $context['loaded_attachments'][$firstMessageId];
+		if (! empty(Utils::$context['loaded_attachments']) && isset(Utils::$context['loaded_attachments'][$firstMessageId])) {
+			$attachments = Utils::$context['loaded_attachments'][$firstMessageId];
 			$attach = ';attach=' . ($key = array_key_first($attachments)) . ';image';
-			$settings['og_image'] = $scripturl . '?action=dlattach;topic=' . $context['current_topic'] . $attach;
+			Theme::$current->settings['og_image'] = Config::$scripturl . '?action=dlattach;topic=' . Utils::$context['current_topic'] . $attach;
 
-			$context['optimus_og_image'] = [
-				'url'    => $settings['og_image'],
+			Utils::$context['optimus_og_image'] = [
+				'url'    => Theme::$current->settings['og_image'],
 				'width'  => $attachments[$key]['width'],
 				'height' => $attachments[$key]['height'],
 				'mime'   => $attachments[$key]['mime_type'],
@@ -58,20 +81,18 @@ final class TopicHandler
 		}
 
 		// Looking for an image in the text of the topic first message
-		if (empty($context['optimus_og_image']) && ! empty($context['topicinfo']['topic_first_message'])) {
+		if (empty(Utils::$context['optimus_og_image']) && ! empty(Utils::$context['topicinfo']['topic_first_message'])) {
 			$image = preg_match(
-				'/\[img.*]([^]\[]+)\[\/img]/U', $context['topicinfo']['topic_first_message'], $value
+				'/\[img.*]([^]\[]+)\[\/img]/U', Utils::$context['topicinfo']['topic_first_message'], $value
 			);
 
-			$settings['og_image'] = $image ? array_pop($value) : $settings['og_image'];
+			Theme::$current->settings['og_image'] = $image ? array_pop($value) : Theme::$current->settings['og_image'];
 		}
 	}
 
 	public function loadPermissions(array $permissionGroups, array &$permissionList): void
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_allow_change_topic_desc']))
+		if (empty(Config::$modSettings['optimus_allow_change_topic_desc']))
 			return;
 
 		$permissionList['membergroup']['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
@@ -79,8 +100,6 @@ final class TopicHandler
 
 	public function basicSettings(array &$config_vars): void
 	{
-		global $txt;
-
 		$counter = 0;
 		foreach ($config_vars as $key => $dump) {
 			if (isset($dump[1]) && $dump[1] === 'optimus_topic_extend_title') {
@@ -97,7 +116,7 @@ final class TopicHandler
 				[
 					'check',
 					'optimus_allow_change_topic_desc',
-					'subtext' => $txt['optimus_allow_change_topic_desc_subtext']
+					'subtext' => Lang::$txt['optimus_allow_change_topic_desc_subtext']
 				],
 			],
 			array_slice($config_vars, $counter, null, true)
@@ -106,15 +125,13 @@ final class TopicHandler
 
 	public function displayTopic(array &$topic_selects): void
 	{
-		global $modSettings;
-
-		if (! empty($modSettings['optimus_allow_change_topic_desc']))
+		if (! empty(Config::$modSettings['optimus_allow_change_topic_desc']))
 			$topic_selects[] = 't.optimus_description';
 
 		if (! in_array('ms.modified_time AS topic_modified_time', $topic_selects))
 			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
 
-		if (empty($modSettings['optimus_topic_description']) && empty($modSettings['optimus_og_image']))
+		if (empty(Config::$modSettings['optimus_topic_description']) && empty(Config::$modSettings['optimus_og_image']))
 			return;
 
 		if (! in_array('ms.body AS topic_first_message', $topic_selects))
@@ -126,24 +143,21 @@ final class TopicHandler
 	 */
 	public function menuButtons(): void
 	{
-		global $context, $board_info;
-
-		if (empty($context['first_message']))
+		if (empty(Utils::$context['first_message']))
 			return;
 
 		$this->makeDescriptionFromFirstMessage();
-
 		$this->makeDescriptionByOptimus();
 
 		// Additional data
-		$startedName = $context['topicinfo']['topic_started_name'] ?? '';
-		$modifiedTime = $context['topicinfo']['topic_modified_time'] ?? 0;
-		$context['optimus_og_type']['article'] = [
-			'published_time' => date('Y-m-d\TH:i:s', (int) $context['topicinfo']['topic_started_time']),
+		$startedName = Utils::$context['topicinfo']['topic_started_name'] ?? '';
+		$modifiedTime = Utils::$context['topicinfo']['topic_modified_time'] ?? 0;
+		Utils::$context['optimus_og_type']['article'] = [
+			'published_time' => date('Y-m-d\TH:i:s', (int) Utils::$context['topicinfo']['topic_started_time']),
 			'modified_time'  => empty($modifiedTime) ? null : date('Y-m-d\TH:i:s', (int) $modifiedTime),
 			'author'         => empty($startedName) ? null : $startedName,
-			'section'        => $board_info['name'],
-			'tag'            => $context['optimus_keywords'] ?? null,
+			'section'        => Board::$info['name'],
+			'tag'            => Utils::$context['optimus_keywords'] ?? null,
 		];
 	}
 
@@ -177,25 +191,23 @@ final class TopicHandler
 
 	public function postEnd(): void
 	{
-		global $context, $smcFunc;
-
-		if ($context['is_new_topic']) {
-			$context['optimus']['description'] = Input::xss(Input::request('optimus_description', ''));
+		if (Utils::$context['is_new_topic']) {
+			Utils::$context['optimus']['description'] = Input::xss(Input::request('optimus_description', ''));
 		} else {
-			$request = $smcFunc['db_query']('', '
+			$request = Utils::$smcFunc['db_query']('', '
 				SELECT optimus_description, id_member_started
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:id_topic}
 				LIMIT 1',
 				[
-					'id_topic' => $context['current_topic'],
+					'id_topic' => Utils::$context['current_topic'],
 				]
 			);
 
-			[$context['optimus']['description'], $topic_author] = $smcFunc['db_fetch_row']($request);
-			$smcFunc['db_free_result']($request);
+			[Utils::$context['optimus']['description'], $topic_author] = Utils::$smcFunc['db_fetch_row']($request);
+			Utils::$smcFunc['db_free_result']($request);
 
-			$context['user']['started'] = $context['user']['id'] == $topic_author && !$context['user']['is_guest'];
+			Utils::$context['user']['started'] = Utils::$context['user']['id'] == $topic_author && !Utils::$context['user']['is_guest'];
 		}
 
 		$this->addFields();
@@ -203,58 +215,50 @@ final class TopicHandler
 
 	private function addFields(): void
 	{
-		global $context, $txt;
-
-		if (! $this->canChangeDescription() || empty($context['is_first_post']))
+		if (! $this->canChangeDescription() || empty(Utils::$context['is_first_post']))
 			return;
 
-		$context['posting_fields']['optimus_description']['label']['text'] = $txt['optimus_seo_description'];
-		$context['posting_fields']['optimus_description']['input'] = [
+		Utils::$context['posting_fields']['optimus_description']['label']['text'] = Lang::$txt['optimus_seo_description'];
+		Utils::$context['posting_fields']['optimus_description']['input'] = [
 			'type' => 'textarea',
 			'attributes' => [
 				'id'          => 'optimus_description',
 				'maxlength'   => 255,
-				'value'       => $context['optimus']['description'],
-				'placeholder' => $txt['optimus_enter_description'],
+				'value'       => Utils::$context['optimus']['description'],
+				'placeholder' => Lang::$txt['optimus_enter_description'],
 			],
 		];
 	}
 
 	private function makeDescriptionFromFirstMessage(): void
 	{
-		global $modSettings, $context;
-
-		if (empty($modSettings['optimus_topic_description']) || empty($context['topicinfo']['topic_first_message']))
+		if (empty(Config::$modSettings['optimus_topic_description']) || empty(Utils::$context['topicinfo']['topic_first_message']))
 			return;
 
-		$context['meta_description'] = Str::teaser($context['topicinfo']['topic_first_message']);
+		Utils::$context['meta_description'] = Str::teaser(Utils::$context['topicinfo']['topic_first_message']);
 	}
 
 	private function makeDescriptionByOptimus(): void
 	{
-		global $context;
-
-		if (empty($context['topicinfo']['optimus_description']))
+		if (empty(Utils::$context['topicinfo']['optimus_description']))
 			return;
 
-		$context['meta_description'] = $context['topicinfo']['optimus_description'];
+		Utils::$context['meta_description'] = Utils::$context['topicinfo']['optimus_description'];
 	}
 
 	private function modifyDescription(int $topic): void
 	{
-		global $smcFunc;
-
 		if (! $this->canChangeDescription())
 			return;
 
 		$description = Input::xss(Input::request('optimus_description', ''));
 
-		$smcFunc['db_query']('', '
+		Utils::$smcFunc['db_query']('', '
 			UPDATE {db_prefix}topics
 			SET optimus_description = {string:description}
 			WHERE id_topic = {int:current_topic}',
 			[
-				'description'   => shorten_subject(strip_tags(parse_bbc($description)), 200),
+				'description'   => Utils::shorten(strip_tags(BBCodeParser::load()->parse($description)), 200),
 				'current_topic' => $topic,
 			]
 		);
@@ -262,15 +266,13 @@ final class TopicHandler
 
 	private function canChangeDescription(): bool
 	{
-		global $context, $topic, $modSettings;
+		if (! isset(Utils::$context['user']['started']))
+			Utils::$context['user']['started'] = empty(Topic::$id);
 
-		if (! isset($context['user']['started']))
-			$context['user']['started'] = empty($topic);
-
-		if (empty($modSettings['optimus_allow_change_topic_desc']))
+		if (empty(Config::$modSettings['optimus_allow_change_topic_desc']))
 			return false;
 
-		return allowedTo('optimus_add_descriptions_any')
-			|| (allowedTo('optimus_add_descriptions_own') && ! empty($context['user']['started']));
+		return User::hasPermission('optimus_add_descriptions_any')
+			|| (User::hasPermission('optimus_add_descriptions_own') && ! empty(Utils::$context['user']['started']));
 	}
 }

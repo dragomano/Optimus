@@ -10,11 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 23.01.24
+ * @version 03.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -53,9 +54,9 @@ final class EzPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		global $smcFunc, $ezpSettings, $boardurl, $scripturl;
+		global $ezpSettings;
 
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT id_page, date, title, permissions
 			FROM {db_prefix}ezp_page
 			WHERE {int:guests} IN (permissions)
@@ -65,11 +66,11 @@ final class EzPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
 			if (! empty($ezpSettings['ezp_pages_seourls']) && function_exists('MakeSEOUrl')) {
-				$url = $boardurl . '/pages/' . MakeSEOUrl($row['title']) . '-' . $row['id_page'];
+				$url = Config::$boardurl . '/pages/' . MakeSEOUrl($row['title']) . '-' . $row['id_page'];
 			} else {
-				$url = $scripturl . '?action=ezportal;sa=page;p=' . $row['id_page'];
+				$url = Config::$scripturl . '?action=ezportal;sa=page;p=' . $row['id_page'];
 			}
 
 			/* @var Sitemap $sitemap */
@@ -79,6 +80,6 @@ final class EzPortal extends AbstractAddon
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 	}
 }

@@ -14,6 +14,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{CacheApi, IntegrationHook, Utils};
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\ListenerRegistry;
 use League\Event\ListenerSubscriber;
@@ -47,7 +48,7 @@ final class AddonHandler implements ListenerSubscriber
 		$addons = array_filter(array_map(fn($file) => $this->mapNamespace($file), $files), 'strlen');
 
 		// External integrations
-		call_integration_hook('integrate_optimus_addons', [&$addons]);
+		IntegrationHook::call('integrate_optimus_addons', [&$addons]);
 
 		foreach ($addons as $listener) {
 			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
@@ -63,10 +64,8 @@ final class AddonHandler implements ListenerSubscriber
 
 	private function getInstalledMods(): array
 	{
-		global $smcFunc;
-
-		if (($mods = cache_get_data('optimus_installed_mods', self::TTL)) === null) {
-			$result = $smcFunc['db_query']('', /** @lang text */ '
+		if (($mods = CacheApi::get('optimus_installed_mods', self::TTL)) === null) {
+			$result = Utils::$smcFunc['db_query']('', /** @lang text */ '
 				SELECT package_id
 				FROM {db_prefix}log_packages
 				WHERE install_state = 1',
@@ -74,12 +73,12 @@ final class AddonHandler implements ListenerSubscriber
 			);
 
 			$mods = [];
-			while ($row = $smcFunc['db_fetch_assoc']($result))
+			while ($row = Utils::$smcFunc['db_fetch_assoc']($result))
 				$mods[] = $row['package_id'];
 
-			$smcFunc['db_free_result']($result);
+			Utils::$smcFunc['db_free_result']($result);
 
-			cache_put_data('optimus_installed_mods', $mods, self::TTL);
+			CacheApi::put('optimus_installed_mods', $mods, self::TTL);
 		}
 
 		return $mods;

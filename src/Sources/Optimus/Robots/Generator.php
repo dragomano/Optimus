@@ -14,6 +14,7 @@
 
 namespace Bugo\Optimus\Robots;
 
+use Bugo\Compat\{BBCodeParser, Config, Utils};
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
@@ -43,11 +44,9 @@ final class Generator
 
 	public function generate(): void
 	{
-		global $boardurl, $context;
-
 		clearstatcache();
 
-		$this->urlPath = parse_url($boardurl, PHP_URL_PATH) ?? '';
+		$this->urlPath = parse_url(Config::$boardurl, PHP_URL_PATH) ?? '';
 		$this->rules[] = 'User-agent: *';
 
 		// Modders can change generated rules
@@ -63,13 +62,11 @@ final class Generator
 		$this->addSitemaps();
 
 		$content = implode('<br>', str_replace("|", '', $this->rules));
-		$context['new_robots_content'] = parse_bbc('[code]' . $content . '[/code]');
+		Utils::$context['new_robots_content'] = BBCodeParser::load()->parse('[code]' . $content . '[/code]');
 	}
 
 	private function addRules(): void
 	{
-		global $modSettings;
-
 		if ($this->useSef) {
 			foreach ($this->actions as $action) {
 				$this->rules[] = 'Disallow: ' . $this->urlPath . '/' . $action . '/';
@@ -89,7 +86,7 @@ final class Generator
 
 		// Content
 		if (! $this->useSef) {
-			if (empty($modSettings['queryless_urls'])) {
+			if (empty(Config::$modSettings['queryless_urls'])) {
 				$this->rules[] = 'Allow: ' . $this->urlPath . "/*board=*.0$\nAllow: " . $this->urlPath . '/*topic=*.0$';
 			} else {
 				$this->rules[] = 'Allow: ' . $this->urlPath . "/*board,*.0.html$\nAllow: " . $this->urlPath . '/*topic,*.0.html$';
@@ -102,9 +99,7 @@ final class Generator
 
 	private function addFeeds(): void
 	{
-		global $modSettings;
-
-		$this->rules[] = empty($modSettings['xmlnews_enable']) ? '' : 'Allow: ' . $this->urlPath . '/*.xml';
+		$this->rules[] = empty(Config::$modSettings['xmlnews_enable']) ? '' : 'Allow: ' . $this->urlPath . '/*.xml';
 	}
 
 	private function addAssets(): void
@@ -114,10 +109,12 @@ final class Generator
 
 	private function addSitemaps(): void
 	{
-		global $boarddir, $boardurl;
-
-		$mapFile = file_exists($boarddir . '/' . self::MAP_FILE) ? $boardurl . '/' . self::MAP_FILE : '';
-		$mapGzFile = file_exists($boarddir . '/' . self::MAP_GZ_FILE) ? $boardurl . '/' . self::MAP_GZ_FILE : '';
+		$mapFile = file_exists(Config::$boarddir . '/' . self::MAP_FILE)
+			? Config::$boardurl . '/' . self::MAP_FILE
+			: '';
+		$mapGzFile = file_exists(Config::$boarddir . '/' . self::MAP_GZ_FILE)
+			? Config::$boardurl . '/' . self::MAP_GZ_FILE
+			: '';
 
 		if (! empty($mapFile) || ! empty($mapGzFile))
 			$this->rules[] = '|';

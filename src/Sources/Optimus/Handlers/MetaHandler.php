@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Config, IntegrationHook};
+use Bugo\Compat\{Theme, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
@@ -23,17 +25,17 @@ final class MetaHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_theme_context', self::class . '::handle#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_theme_context', self::class . '::handle#', false, __FILE__
+		);
 	}
 
 	public function handle(): void
 	{
-		global $modSettings, $context, $settings;
+		if (! empty(Config::$modSettings['optimus_forum_index']))
+			Utils::$context['page_title_html_safe'] = Utils::htmlspecialcharsDecode(Utils::$context['page_title_html_safe']);
 
-		if (! empty($modSettings['optimus_forum_index']))
-			$context['page_title_html_safe'] = un_htmlspecialchars($context['page_title_html_safe']);
-
-		if (! empty($context['robot_no_index']))
+		if (! empty(Utils::$context['robot_no_index']))
 			return;
 
 		$meta = [
@@ -46,7 +48,7 @@ final class MetaHandler
 
 		$ogImageKey = 0;
 
-		$tags = $context['meta_tags'];
+		$tags = Utils::$context['meta_tags'];
 
 		foreach ($tags as $key => $value) {
 			foreach ($value as $k => $v) {
@@ -59,10 +61,10 @@ final class MetaHandler
 				if ($v === 'og:image') {
 					$ogImageKey = $key;
 
-					if (! empty($context['optimus_og_image'])) {
-						$imageData[0] = $context['optimus_og_image']['width'];
-						$imageData[1] = $context['optimus_og_image']['height'];
-						$imageData['mime'] = $context['optimus_og_image']['mime'];
+					if (! empty(Utils::$context['optimus_og_image'])) {
+						$imageData[0] = Utils::$context['optimus_og_image']['width'];
+						$imageData[1] = Utils::$context['optimus_og_image']['height'];
+						$imageData['mime'] = Utils::$context['optimus_og_image']['mime'];
 					}
 				}
 			}
@@ -97,15 +99,15 @@ final class MetaHandler
 		}
 
 		// Various types
-		if (! empty($context['optimus_og_type'])) {
-			$type = key($context['optimus_og_type']);
+		if (! empty(Utils::$context['optimus_og_type'])) {
+			$type = key(Utils::$context['optimus_og_type']);
 			$tags[] = [
 				'prefix'   => 'og: https://ogp.me/ns#',
 				'property' => 'og:type',
 				'content'  => $type,
 			];
 
-			$customTypes = array_filter($context['optimus_og_type'][$type]);
+			$customTypes = array_filter(Utils::$context['optimus_og_type'][$type]);
 
 			foreach ($customTypes as $property => $content) {
 				if (is_array($content)) {
@@ -124,7 +126,7 @@ final class MetaHandler
 			}
 		}
 
-		if ($context['current_action'] == 'profile' && Input::isRequest('u')) {
+		if (Utils::$context['current_action'] == 'profile' && Input::isRequest('u')) {
 			$tags[] = [
 				'prefix'   => 'og: https://ogp.me/ns#',
 				'property' => 'og:type',
@@ -133,32 +135,32 @@ final class MetaHandler
 		}
 
 		// Twitter cards
-		if (! empty($modSettings['optimus_tw_cards']) && isset($context['canonical_url'])) {
+		if (! empty(Config::$modSettings['optimus_tw_cards']) && isset(Utils::$context['canonical_url'])) {
 			$tags[] = ['property' => 'twitter:card', 'content' => 'summary'];
-			$tags[] = ['property' => 'twitter:site', 'content' => '@' . $modSettings['optimus_tw_cards']];
+			$tags[] = ['property' => 'twitter:site', 'content' => '@' . Config::$modSettings['optimus_tw_cards']];
 
-			if (! empty($settings['og_image']))
-				$tags[] = ['property' => 'twitter:image', 'content' => $settings['og_image']];
+			if (! empty(Theme::$current->settings['og_image']))
+				$tags[] = ['property' => 'twitter:image', 'content' => Theme::$current->settings['og_image']];
 		}
 
 		// Facebook
-		if (! empty($modSettings['optimus_fb_appid'])) {
+		if (! empty(Config::$modSettings['optimus_fb_appid'])) {
 			$tags[] = [
 				'prefix'   => 'fb: https://ogp.me/ns/fb#',
 				'property' => 'fb:app_id',
-				'content'  => $modSettings['optimus_fb_appid'],
+				'content'  => Config::$modSettings['optimus_fb_appid'],
 			];
 		}
 
 		// Meta-tags
-		if (! empty($modSettings['optimus_meta'])) {
-			$customTags = array_filter(unserialize($modSettings['optimus_meta']));
+		if (! empty(Config::$modSettings['optimus_meta'])) {
+			$customTags = array_filter(unserialize(Config::$modSettings['optimus_meta']));
 
 			foreach ($customTags as $name => $value) {
 				$tags[] = ['name' => $name, 'content' => $value];
 			}
 		}
 
-		$context['meta_tags'] = $tags;
+		Utils::$context['meta_tags'] = $tags;
 	}
 }

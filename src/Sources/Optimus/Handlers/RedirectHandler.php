@@ -14,6 +14,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Config, IntegrationHook};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
@@ -23,20 +24,20 @@ final class RedirectHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_actions', self::class . '::handle#', false, __FILE__);
+		IntegrationHook::add('integrate_actions', self::class . '::handle#', false, __FILE__);
 	}
 
 	public function handle(): void
 	{
-		global $modSettings, $scripturl;
-
-		$redirects = empty($modSettings['optimus_redirect']) ? [] : unserialize($modSettings['optimus_redirect']);
+		$redirects = empty(Config::$modSettings['optimus_redirect'])
+			? []
+			: unserialize(Config::$modSettings['optimus_redirect']);
 
 		if (empty($redirects) || empty($queryString = Input::server('query_string')))
 			return;
 
 		if (isset($redirects[$queryString])) {
-			$url = $scripturl . '?';
+			$url = Config::$scripturl . '?';
 			$to = $redirects[$queryString];
 
 			if (str_starts_with($to, 'http'))

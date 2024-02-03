@@ -14,6 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Config, IntegrationHook};
+use Bugo\Compat\{Board, Lang, Theme, Utils};
+
 if (! defined('SMF'))
 	die('No direct access...');
 
@@ -21,54 +24,53 @@ final class ErrorHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_fallback_action', self::class . '::fallbackAction#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::handleStatusErrors#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_fallback_action', self::class . '::fallbackAction#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::handleStatusErrors#', false, __FILE__
+		);
 	}
 
 	public function fallbackAction(): void
 	{
-		global $modSettings, $context;
-
-		if (empty($modSettings['optimus_errors_for_wrong_actions']))
+		if (empty(Config::$modSettings['optimus_errors_for_wrong_actions']))
 			return;
 
-		loadTemplate('Errors');
+		Theme::loadTemplate('Errors');
 
-		$context['sub_template'] = 'fatal_error';
+		Utils::$context['sub_template'] = 'fatal_error';
 
 		$this->changeErrorPage();
 	}
 
 	public function handleStatusErrors(): void
 	{
-		global $modSettings, $board_info;
-
-		if (empty($modSettings['optimus_errors_for_wrong_boards_topics']) || empty($board_info['error']))
+		if (empty(Config::$modSettings['optimus_errors_for_wrong_boards_topics']) || empty(Board::$info['error']))
 			return;
 
-		if ($board_info['error'] === 'exist') {
+		if (Board::$info['error'] === 'exist') {
 			$this->changeErrorPage();
 		}
 
-		if ($board_info['error'] === 'access') {
+		if (Board::$info['error'] === 'access') {
 			$this->changeErrorPage(403);
 		}
 	}
 
 	private function changeErrorPage(int $code = 404): void
 	{
-		global $context, $txt, $scripturl;
+		Utils::sendHttpStatus($code);
 
-		send_http_status($code);
+		Theme::addInlineCss('#fatal_error { text-align: center }');
 
-		addInlineCss('#fatal_error { text-align: center }');
+		Utils::$context['page_title'] = Lang::$txt["optimus_{$code}_page_title"];
 
-		$context['page_title'] = $txt["optimus_{$code}_page_title"];
-
-		$context['error_code'] = '';
-		$context['error_link'] = 'javascript:history.go(-1)';
-		$context['error_title'] = $txt["optimus_{$code}_h2"];
-		$context['error_message'] = $txt["optimus_{$code}_h3"];
-		$context['error_message'] .= '<br>' . sprintf($txt['optimus_goto_main_page'], $scripturl);
+		Utils::$context['error_code'] = '';
+		Utils::$context['error_link'] = 'javascript:history.go(-1)';
+		Utils::$context['error_title'] = Lang::$txt["optimus_{$code}_h2"];
+		Utils::$context['error_message'] = Lang::$txt["optimus_{$code}_h3"];
+		Utils::$context['error_message'] .= '<br>' . sprintf(Lang::$txt['optimus_goto_main_page'], Config::$scripturl);
 	}
 }

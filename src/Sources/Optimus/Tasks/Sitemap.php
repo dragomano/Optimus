@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Tasks;
 
+use Bugo\Compat\{Config, Database as Db, IntegrationHook};
+use Bugo\Compat\{Sapi, Theme, Utils};
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
@@ -46,23 +48,19 @@ final class Sitemap extends SMF_BackgroundTask
 
 	public function execute(): bool
 	{
-		global $sourcedir, $modSettings, $boarddir, $smcFunc;
-
 		@ini_set('opcache.enable', '0');
 
-		require_once($sourcedir . '/ScheduledTasks.php');
+		Theme::loadEssential();
 
-		loadEssentialThemeData();
-
-		if (! empty($modSettings['optimus_remove_previous_xml_files'])) {
-			array_map("unlink", glob($boarddir . "/sitemap*.xml*"));
+		if (! empty(Config::$modSettings['optimus_remove_previous_xml_files'])) {
+			array_map("unlink", glob(Config::$boarddir . "/sitemap*.xml*"));
 		}
 
 		$this->createXml();
 
 		$frequency = 1;
-		if (! empty($modSettings['optimus_update_frequency'])) {
-			$frequency = match ($modSettings['optimus_update_frequency']) {
+		if (! empty(Config::$modSettings['optimus_update_frequency'])) {
+			$frequency = match (Config::$modSettings['optimus_update_frequency']) {
 				1 => 3,
 				2 => 7,
 				3 => 14,
@@ -70,7 +68,7 @@ final class Sitemap extends SMF_BackgroundTask
 			};
 		}
 
-		$smcFunc['db_insert']('insert',
+		Utils::$smcFunc['db_insert']('insert',
 			'{db_prefix}background_tasks',
 			[
 				'task_file' => 'string-255',
@@ -92,15 +90,14 @@ final class Sitemap extends SMF_BackgroundTask
 
 	public function createXml(): void
 	{
-		global $modSettings, $context, $boardurl, $boarddir;
-
 		ignore_user_abort(true);
-		@set_time_limit(600);
 
-		$modSettings['disableQueryCheck'] = true;
-		$modSettings['pretty_bufferusecache'] = false;
+		Sapi::setTimeLimit();
 
-		$maxItems = $modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
+		Config::$modSettings['disableQueryCheck'] = true;
+		Config::$modSettings['pretty_bufferusecache'] = false;
+
+		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
 
 		$sitemapCounter = 0;
 
@@ -119,7 +116,7 @@ final class Sitemap extends SMF_BackgroundTask
 				'lastmod'    => empty($entry['lastmod']) ? null : $this->getDateIso8601($entry['lastmod']),
 				'changefreq' => empty($entry['lastmod']) ? null : $this->getFrequency($entry['lastmod']),
 				'priority'   => empty($entry['lastmod']) ? null : $this->getPriority($entry['lastmod']),
-				'image'      => empty($modSettings['optimus_sitemap_add_found_images']) ? null : $entry['image'] ?? null
+				'image'      => empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? null : $entry['image'] ?? null
 			];
 		}
 
@@ -127,20 +124,20 @@ final class Sitemap extends SMF_BackgroundTask
 			return;
 
 		// The update frequency of the main page
-		if (empty($modSettings['optimus_main_page_frequency']))
+		if (empty(Config::$modSettings['optimus_main_page_frequency']))
 			$items[0][0]['changefreq'] = 'always';
 
 		// The priority of the main page
 		$items[0][0]['priority'] = '1.0';
 
-		$context['sitemap'] = [];
+		Utils::$context['sitemap'] = [];
 
-		loadTemplate('Optimus');
+		Theme::loadTemplate('Optimus');
 
 		if ($sitemapCounter > 0) {
 			$gzMaps = [];
 			for ($number = 0; $number <= $sitemapCounter; $number++) {
-				$context['sitemap'] = $items[$number];
+				Utils::$context['sitemap'] = $items[$number];
 
 				ob_start();
 				template_sitemap_xml();
@@ -149,19 +146,19 @@ final class Sitemap extends SMF_BackgroundTask
 				// Some mods should rewrite full content (PrettyURLs, etc.)
 				$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
 
-				$gzMaps[$number] = $this->createFile($boarddir . '/sitemap_' . $number . '.xml', $this->content);
+				$gzMaps[$number] = $this->createFile(Config::$boarddir . '/sitemap_' . $number . '.xml', $this->content);
 			}
 
-			$context['sitemap'] = [];
+			Utils::$context['sitemap'] = [];
 			for ($number = 0; $number <= $sitemapCounter; $number++) {
-				$context['sitemap'][$number]['loc'] = $boardurl . '/sitemap_' . $number . '.xml' . (! empty($gzMaps[$number]) ? '.gz' : '');
+				Utils::$context['sitemap'][$number]['loc'] = Config::$boardurl . '/sitemap_' . $number . '.xml' . (empty($gzMaps[$number]) ? '' : '.gz');
 			}
 
 			ob_start();
 			template_sitemapindex_xml();
 			$this->content = ob_get_clean();
 		} else {
-			$context['sitemap'] = $items[0];
+			Utils::$context['sitemap'] = $items[0];
 
 			ob_start();
 			template_sitemap_xml();
@@ -171,7 +168,7 @@ final class Sitemap extends SMF_BackgroundTask
 			$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
 		}
 
-		$this->createFile($boarddir . '/sitemap.xml', $this->content);
+		$this->createFile(Config::$boarddir . '/sitemap.xml', $this->content);
 
 		ignore_user_abort(false);
 	}
@@ -193,20 +190,18 @@ final class Sitemap extends SMF_BackgroundTask
 
 	public function getLinks(): array
 	{
-		global $boardurl, $modSettings;
-
 		$this->links = array_merge($this->getBoardLinks(), $this->getTopicLinks());
 
 		// Modders can add custom links
 		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_LINKS, $this));
 
 		// External integrations
-		call_integration_hook('integrate_optimus_sitemap_links', [&$this->links]);
+		IntegrationHook::call('integrate_optimus_sitemap_links', [&$this->links]);
 
 		// Adding the main page
 		$home = [
-			'loc'     => $boardurl . '/',
-			'lastmod' => empty($modSettings['optimus_main_page_frequency']) ? time() : $this->getLastDate($this->links)
+			'loc'     => Config::$boardurl . '/',
+			'lastmod' => empty(Config::$modSettings['optimus_main_page_frequency']) ? time() : $this->getLastDate($this->links)
 		];
 
 		// Modders can process links with SEF handler
@@ -219,14 +214,12 @@ final class Sitemap extends SMF_BackgroundTask
 
 	private function getBoardLinks(): array
 	{
-		global $modSettings, $smcFunc, $scripturl;
+		if (! empty(Config::$modSettings['recycle_board']))
+			$this->ignoredBoards[] = (int) Config::$modSettings['recycle_board'];
 
-		if (! empty($modSettings['recycle_board']))
-			$this->ignoredBoards[] = (int) $modSettings['recycle_board'];
+		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$startYear = (int) ($modSettings['optimus_start_year'] ?? 0);
-
-		$request = $smcFunc['db_query']('', /** @lang text */ '
+		$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}messages AS m ON (b.id_last_msg = m.id_msg)
@@ -251,14 +244,14 @@ final class Sitemap extends SMF_BackgroundTask
 		);
 
 		$links = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
 			$this->openBoards[] = $row['id_board'];
 
-			if (! empty($modSettings['optimus_sitemap_boards'])) {
-				$boardUrl = $scripturl . '?board=' . $row['id_board'] . '.0';
+			if (! empty(Config::$modSettings['optimus_sitemap_boards'])) {
+				$boardUrl = Config::$scripturl . '?board=' . $row['id_board'] . '.0';
 
-				if (! empty($modSettings['queryless_urls']))
-					$boardUrl = $scripturl . '/board,' . $row['id_board'] . '.0.html';
+				if (! empty(Config::$modSettings['queryless_urls']))
+					$boardUrl = Config::$scripturl . '/board,' . $row['id_board'] . '.0.html';
 
 				$links[] = [
 					'loc'     => $boardUrl,
@@ -267,15 +260,13 @@ final class Sitemap extends SMF_BackgroundTask
 			}
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return $links;
 	}
 
 	private function getTopicLinks(): array
 	{
-		global $db_temp_cache, $db_cache, $modSettings, $smcFunc, $scripturl;
-
 		if (empty($this->openBoards))
 			return [];
 
@@ -283,33 +274,35 @@ final class Sitemap extends SMF_BackgroundTask
 		$limit = 1000;
 
 		// Don't allow the cache to get too full
-		$db_temp_cache = $db_cache;
-		$db_cache = [];
+		$tempCache = Db::$cache;
+		Db::$cache = [];
 
-		$startYear  = (int) ($modSettings['optimus_start_year'] ?? 0);
-		$num_replies = (int) ($modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
-		$total_rows  = (int) (empty($modSettings['optimus_sitemap_all_topic_pages']) ? ($modSettings['totalTopics'] ?? 0) : ($modSettings['totalMessages'] ?? 0));
+		$startYear  = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
+		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
+		$totalRows  = (int) (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])
+			? (Config::$modSettings['totalTopics'] ?? 0)
+			: (Config::$modSettings['totalMessages'] ?? 0));
 
 		$links  = [];
 		$topics = [];
 		$images = [];
 
-		$messages_per_page = (int) ($modSettings['defaultMaxMessages'] ?? 0);
+		$messagesPerPage = (int) (Config::$modSettings['defaultMaxMessages'] ?? 0);
 
-		while ($start < $total_rows) {
+		while ($start < $totalRows) {
 			@set_time_limit(600);
 			if (function_exists('apache_reset_timeout'))
 				@apache_reset_timeout();
 
-			if (! empty($modSettings['optimus_sitemap_all_topic_pages'])) {
-				$request = $smcFunc['db_query']('', '
+			if (! empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
+				$request = Utils::$smcFunc['db_query']('', '
 					SELECT t.id_topic, t.num_replies,
 						m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
-							empty($modSettings['optimus_sitemap_add_found_images']) ? '' : ',
+							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ',
 						a.id_attach, a.filename') . '
 					FROM {db_prefix}messages AS m
 						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)' . (
-							empty($modSettings['optimus_sitemap_add_found_images']) ? '' : '
+							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : '
 						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
 							AND a.attachment_type = 0
 							AND a.width <> 0
@@ -324,7 +317,7 @@ final class Sitemap extends SMF_BackgroundTask
 					LIMIT {int:start}, {int:limit}',
 					[
 						'open_boards' => $this->openBoards,
-						'num_replies' => $num_replies,
+						'num_replies' => $numReplies,
 						'is_approved' => 1,
 						'start_year'  => $startYear,
 						'start'       => $start,
@@ -332,13 +325,13 @@ final class Sitemap extends SMF_BackgroundTask
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request)) {
-					$totalPages = ceil($row['num_replies'] / $messages_per_page);
+				while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+					$totalPages = ceil($row['num_replies'] / $messagesPerPage);
 					$pageStart = 0;
 
 					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
 						$images[$row['id_topic']] = [
-							'loc'   => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image',
+							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image',
 							'title' => $row['filename']
 						];
 					}
@@ -349,22 +342,22 @@ final class Sitemap extends SMF_BackgroundTask
 						for ($i = 0; $i <= $totalPages; $i++) {
 							$topics[$row['id_topic']][$pageStart][$row['id_msg']] = $row['last_date'];
 
-							if (count($topics[$row['id_topic']][$pageStart]) <= $messages_per_page)
+							if (count($topics[$row['id_topic']][$pageStart]) <= $messagesPerPage)
 								break;
 
-							$topics[$row['id_topic']][$pageStart] = array_slice($topics[$row['id_topic']][$pageStart], 0, $messages_per_page, true);
-							$pageStart += $messages_per_page;
+							$topics[$row['id_topic']][$pageStart] = array_slice($topics[$row['id_topic']][$pageStart], 0, $messagesPerPage, true);
+							$pageStart += $messagesPerPage;
 						}
 					}
 				}
 			} else {
-				$request = $smcFunc['db_query']('', '
+				$request = Utils::$smcFunc['db_query']('', '
 					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
-						empty($modSettings['optimus_sitemap_add_found_images']) ? '' : ',
+						empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ',
 						a.id_attach, a.filename') . '
 					FROM {db_prefix}topics AS t
 						INNER JOIN {db_prefix}messages AS m ON (t.id_last_msg = m.id_msg)' . (
-							empty($modSettings['optimus_sitemap_add_found_images']) ? '' : '
+							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : '
 						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
 							AND a.attachment_type = 0
 							AND a.width <> 0
@@ -379,7 +372,7 @@ final class Sitemap extends SMF_BackgroundTask
 					LIMIT {int:start}, {int:limit}',
 					[
 						'open_boards' => $this->openBoards,
-						'num_replies' => $num_replies,
+						'num_replies' => $numReplies,
 						'is_approved' => 1,
 						'start_year'  => $startYear,
 						'start'       => $start,
@@ -387,15 +380,15 @@ final class Sitemap extends SMF_BackgroundTask
 					]
 				);
 
-				while ($row = $smcFunc['db_fetch_assoc']($request)) {
-					$topicUrl = $scripturl . '?topic=' . $row['id_topic'] . '.0';
+				while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+					$topicUrl = Config::$scripturl . '?topic=' . $row['id_topic'] . '.0';
 
-					if (! empty($modSettings['queryless_urls']))
-						$topicUrl = $scripturl . '/topic,' . $row['id_topic'] . '.0.html';
+					if (! empty(Config::$modSettings['queryless_urls']))
+						$topicUrl = Config::$scripturl . '/topic,' . $row['id_topic'] . '.0.html';
 
 					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
 						$images[$row['id_topic']] = [
-							'loc'   => $scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image',
+							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image',
 							'title' => $row['filename']
 						];
 					}
@@ -408,14 +401,16 @@ final class Sitemap extends SMF_BackgroundTask
 				}
 			}
 
-			$smcFunc['db_free_result']($request);
+			Utils::$smcFunc['db_free_result']($request);
 
 			$start += $limit;
 		}
 
 		foreach ($topics as $topic_id => $topic_data) {
 			foreach ($topic_data as $pageStart => $dates) {
-				$topicUrl = empty($modSettings['queryless_urls']) ? $scripturl . '?topic=' . $topic_id . '.' . $pageStart : $scripturl . '/topic,' . $topic_id . '.' . $pageStart . '.html';
+				$topicUrl = empty(Config::$modSettings['queryless_urls'])
+					? Config::$scripturl . '?topic=' . $topic_id . '.' . $pageStart
+					: Config::$scripturl . '/topic,' . $topic_id . '.' . $pageStart . '.html';
 
 				$links[] = [
 					'loc'     => $topicUrl,
@@ -426,7 +421,7 @@ final class Sitemap extends SMF_BackgroundTask
 		}
 
 		// Restore the cache
-		$db_cache = $db_temp_cache;
+		Db::$cache = $tempCache;
 
 		return array_values($links);
 	}

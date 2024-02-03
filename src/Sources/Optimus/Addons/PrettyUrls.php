@@ -15,6 +15,7 @@
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -44,41 +45,36 @@ final class PrettyUrls extends AbstractAddon
 
 	public function addSupportKeywordsAction(): void
 	{
-		global $context;
-
-		if (isset($context['pretty']['action_array']))
-			$context['pretty']['action_array'][] = 'keywords';
+		if (isset(Utils::$context['pretty']['action_array']))
+			Utils::$context['pretty']['action_array'][] = 'keywords';
 	}
 
 	public function changeRobots(object $generator): void
 	{
-		global $modSettings;
-
 		/* @var Generator $generator */
-		$generator->useSef = ! empty($modSettings['pretty_enable_filters'])
+		$generator->useSef = ! empty(Config::$modSettings['pretty_enable_filters'])
 			&& is_file(dirname(__DIR__, 2) . '/PrettyUrls-Filters.php');
 	}
 
 	public function changeSitemapContent(object $sitemap): void
 	{
-		global $sourcedir, $modSettings, $context, $smcFunc;
-
-		$pretty = $sourcedir . '/PrettyUrls-Filters.php';
-		if (! file_exists($pretty) || empty($modSettings['pretty_enable_filters']))
+		$pretty = Config::$sourcedir . '/PrettyUrls-Filters.php';
+		if (! file_exists($pretty) || empty(Config::$modSettings['pretty_enable_filters']))
 			return;
 
 		if (! function_exists('pretty_rewrite_buffer'))
 			require_once($pretty);
 
-		if (! isset($context['session_var']))
-			$context['session_var'] = substr(
-				md5($smcFunc['random_int']() . session_id() . $smcFunc['random_int']()),
+		if (! isset(Utils::$context['session_var'])) {
+			Utils::$context['session_var'] = substr(
+				md5(Utils::$smcFunc['random_int']() . session_id() . Utils::$smcFunc['random_int']()),
 				0,
-				$smcFunc['random_int'](7, 12)
+				Utils::$smcFunc['random_int'](7, 12)
 			);
+		}
 
-		$context['pretty']['search_patterns']  = ['~(<loc>)([^#<]+)~'];
-		$context['pretty']['replace_patterns'] = ['~(<loc>)([^<]+)~'];
+		Utils::$context['pretty']['search_patterns']  = ['~(<loc>)([^#<]+)~'];
+		Utils::$context['pretty']['replace_patterns'] = ['~(<loc>)([^<]+)~'];
 
 		/* @var Sitemap $sitemap */
 		if (function_exists('pretty_rewrite_buffer'))

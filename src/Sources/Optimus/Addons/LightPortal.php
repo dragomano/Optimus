@@ -10,11 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 23.01.24
+ * @version 03.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -47,11 +48,9 @@ final class LightPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		global $modSettings, $smcFunc, $scripturl;
+		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$startYear = (int) ($modSettings['optimus_start_year'] ?? 0);
-
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT page_id, alias, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
@@ -67,8 +66,8 @@ final class LightPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$url = $scripturl . '?' . ($modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
 
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
@@ -77,6 +76,6 @@ final class LightPortal extends AbstractAddon
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 	}
 }

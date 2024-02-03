@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\{Lang, User};
+
 abstract class AbstractAddon implements AddonInterface
 {
 	public const PACKAGE_ID = '';
@@ -22,18 +24,24 @@ abstract class AbstractAddon implements AddonInterface
 
 	protected function loadLanguages(string $baseDir): void
 	{
-		global $txt, $user_info;
-
-		if (empty($txt))
+		if (empty(Lang::$txt))
 			return;
 
-		$languages = array_merge(['english'], [$user_info['language'] ?? null]);
+		$userLang = property_exists(Lang::class, 'LANG_TO_LOCALE')
+			? array_flip(Lang::LANG_TO_LOCALE)[User::$info['language']] ?? 'english'
+			: User::$info['language'];
+
+		$languages = array_merge(['english'], [$userLang ?? null]);
 
 		foreach ($languages as $lang) {
 			$langFile = $baseDir . '/langs/' . $lang . '.php';
 
 			if (is_file($langFile)) {
-				require_once $langFile;
+				$addonStrings = (array) require_once $langFile;
+
+				foreach ($addonStrings as $key => $value) {
+					Lang::$txt[$key] = $value;
+				}
 			}
 		}
 	}

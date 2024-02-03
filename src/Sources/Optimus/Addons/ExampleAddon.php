@@ -10,11 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 25.01.24
+ * @version 03.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\{IntegrationHook, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 
 if (! defined('SMF'))
@@ -33,7 +34,7 @@ final class ExampleAddon extends AbstractAddon
 		if ($event->eventName() !== self::HOOK_EVENT)
 			return;
 
-		add_integration_function(
+		IntegrationHook::add(
 			'integrate_theme_context',
 			self::class . '::hideSomeTopicsFromSpiders#',
 			false,
@@ -43,13 +44,11 @@ final class ExampleAddon extends AbstractAddon
 
 	public function hideSomeTopicsFromSpiders(): void
 	{
-		global $context;
-
-		if (empty($context['topicinfo']))
+		if (empty(Utils::$context['topicinfo']))
 			return;
 
-		if ($context['topicinfo']['locked'] || $context['topicinfo']['num_replies'] < 2) {
-			$context['meta_tags'][] = ['name' => 'robots', 'content' => 'noindex,nofollow'];
+		if (Utils::$context['topicinfo']['locked'] || Utils::$context['topicinfo']['num_replies'] < 2) {
+			Utils::$context['meta_tags'][] = ['name' => 'robots', 'content' => 'noindex,nofollow'];
 		}
 	}
 }

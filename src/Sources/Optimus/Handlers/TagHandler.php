@@ -14,8 +14,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Optimus\Utils\Copyright;
-use Bugo\Optimus\Utils\Input;
+use Bugo\Compat\{CacheApi, Config, IntegrationHook};
+use Bugo\Compat\{ItemList, Lang, Theme, Topic, User, Utils};
+use Bugo\Optimus\Utils\{Copyright, Input};
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -24,25 +25,61 @@ final class TagHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_actions', self::class . '::actions#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
-		add_integration_function('integrate_current_action', self::class . '::currentAction#', false, __FILE__);
-		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
-		add_integration_function('integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__);
-		add_integration_function('integrate_messageindex_buttons', self::class . '::messageindexButtons#', false, __FILE__);
-		add_integration_function('integrate_display_topic', self::class . '::displayTopic#', false, __FILE__);
-		add_integration_function('integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false, __FILE__);
-		add_integration_function('integrate_create_topic', self::class . '::createTopic#', false, __FILE__);
-		add_integration_function('integrate_post_end', self::class . '::postEnd#', false, __FILE__);
-		add_integration_function('integrate_modify_post', self::class . '::modifyPost#', false, __FILE__);
-		add_integration_function('integrate_remove_topics', self::class . '::removeTopics#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_actions', self::class . '::actions#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_current_action', self::class . '::currentAction#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_messageindex_buttons', self::class . '::messageindexButtons#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_display_topic', self::class . '::displayTopic#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_create_topic', self::class . '::createTopic#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_post_end', self::class . '::postEnd#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_modify_post', self::class . '::modifyPost#', false, __FILE__
+		);
+		
+		IntegrationHook::add(
+			'integrate_remove_topics', self::class . '::removeTopics#', false, __FILE__
+		);
 	}
 
 	public function actions(array &$actions): void
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_allow_change_topic_keywords']) && empty($modSettings['optimus_show_keywords_block']))
+		if (
+			empty(Config::$modSettings['optimus_allow_change_topic_keywords'])
+			&& empty(Config::$modSettings['optimus_show_keywords_block'])
+		)
 			return;
 
 		$actions['keywords'] = [false, [$this, 'showTheSame']];
@@ -50,25 +87,19 @@ final class TagHandler
 
 	public function menuButtons(array &$buttons): void
 	{
-		global $context;
-
-		if (isset($buttons['home']) && $context['current_action'] === 'keywords')
+		if (isset($buttons['home']) && Utils::$context['current_action'] === 'keywords')
 			$buttons['home']['action_hook'] = true;
 	}
 
 	public function currentAction(string &$current_action): void
 	{
-		global $context;
-
-		if ($context['current_action'] === 'keywords')
+		if (Utils::$context['current_action'] === 'keywords')
 			$current_action = 'home';
 	}
 
 	public function loadPermissions(array $permissionGroups, array &$permissionList): void
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_allow_change_topic_keywords']))
+		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords']))
 			return;
 
 		$permissionList['membergroup']['optimus_add_keywords'] = [true, 'general', 'view_basic_info'];
@@ -76,8 +107,6 @@ final class TagHandler
 
 	public function basicSettings(array &$config_vars): void
 	{
-		global $txt;
-
 		$counter = 0;
 		foreach ($config_vars as $key => $dump) {
 			if (isset($dump[1]) && $dump[1] === 'optimus_topic_extend_title') {
@@ -93,7 +122,7 @@ final class TagHandler
 				[
 					'check',
 					'optimus_allow_change_topic_keywords',
-					'subtext' => $txt['optimus_allow_change_topic_keywords_subtext']
+					'subtext' => Lang::$txt['optimus_allow_change_topic_keywords_subtext']
 				],
 				['check', 'optimus_show_keywords_block'],
 				['check', 'optimus_show_keywords_on_message_index'],
@@ -106,18 +135,16 @@ final class TagHandler
 
 	public function messageindexButtons(): void
 	{
-		global $modSettings, $context, $scripturl;
-
-		if (empty($modSettings['optimus_show_keywords_on_message_index']) || empty($context['topics']))
+		if (empty(Config::$modSettings['optimus_show_keywords_on_message_index']) || empty(Utils::$context['topics']))
 			return;
 
-		addInlineCss('.optimus_keywords:visited { color: transparent }');
+		Theme::addInlineCss('.optimus_keywords:visited { color: transparent }');
 
-		foreach ($context['topics'] as $topic => &$data) {
+		foreach (Utils::$context['topics'] as $topic => &$data) {
 			$keywords = $this->getKeywords()[$topic] ?? [];
 
 			foreach ($keywords as $id => $key) {
-				$link = $scripturl . '?action=keywords;id=' . $id;
+				$link = Config::$scripturl . '?action=keywords;id=' . $id;
 				$style = ' style="' . $this->getRandomColor($key) . '"';
 
 				$data['first_post']['link'] .= /** @lang text */
@@ -128,22 +155,20 @@ final class TagHandler
 
 	public function prepareDisplayContext(array $output): void
 	{
-		global $context, $modSettings, $options, $txt, $scripturl;
-
-		if (empty($context['optimus_keywords']) || empty($modSettings['optimus_show_keywords_block']))
+		if (empty(Utils::$context['optimus_keywords']) || empty(Config::$modSettings['optimus_show_keywords_block']))
 			return;
 
-		$counter = empty($options['view_newest_first'])
-			? $context['start'] : $context['total_visible_posts'] - $context['start'];
+		$counter = empty(Theme::$current->options['view_newest_first'])
+			? Utils::$context['start'] : Utils::$context['total_visible_posts'] - Utils::$context['start'];
 
-		if ($counter == $output['counter'] && empty($context['start'])) {
+		if ($counter == $output['counter'] && empty(Utils::$context['start'])) {
 			$keywords = '<fieldset class="roundframe" style="overflow: unset">
-				<legend class="amt" style="padding: .2em .4em"> ' . $txt['optimus_seo_keywords'] . ' </legend>';
+				<legend class="amt" style="padding: .2em .4em"> ' . Lang::$txt['optimus_seo_keywords'] . ' </legend>';
 
-			$class = empty($modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
+			$class = empty(Config::$modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
 
-			foreach ($context['optimus_keywords'] as $id => $keyword) {
-				$href = $scripturl . '?action=keywords;id=' . $id;
+			foreach (Utils::$context['optimus_keywords'] as $id => $keyword) {
+				$href = Config::$scripturl . '?action=keywords;id=' . $id;
 				$style = ' style="margin-right: 2px;' . $this->getRandomColor($keyword) . '"';
 				$keywords .= '<a class="' . $class . '" href="' . $href . '"' . $style . '>' . $keyword . '</a>';
 			}
@@ -166,17 +191,16 @@ final class TagHandler
 
 	public function postEnd(): void
 	{
-		global $context;
-
 		if (! $this->canChange())
 			return;
 
-		if ($context['is_new_topic']) {
-			$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', ''));
+		if (Utils::$context['is_new_topic']) {
+			Utils::$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', ''));
 		} else {
 			$this->displayTopic();
-			$context['optimus']['keywords'] = empty($context['optimus_keywords'])
-				? [] : array_values($context['optimus_keywords']);
+
+			Utils::$context['optimus']['keywords'] = empty(Utils::$context['optimus_keywords'])
+				? [] : array_values(Utils::$context['optimus_keywords']);
 		}
 
 		$this->addFields();
@@ -198,12 +222,10 @@ final class TagHandler
 
 	public function removeTopics(array $topics): void
 	{
-		global $smcFunc;
-
 		if (empty($topics))
 			return;
 
-		$smcFunc['db_query']('', '
+		Utils::$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE topic_id IN ({array_int:topics})',
 			[
@@ -214,53 +236,52 @@ final class TagHandler
 
 	public function showTheSame(): void
 	{
-		global $context, $settings, $txt, $scripturl;
-
-		if ($context['current_subaction'] == 'search') {
+		if (Utils::$context['current_subaction'] == 'search') {
 			$this->prepareSearchData();
 			return;
 		}
 
-		addInlineCss('
+		Theme::addInlineCss('
 		.main_icons.optimus::before {
-			background:url(' . $settings['default_images_url'] . '/optimus.png) no-repeat 0 0 !important;
+			background:url(' . Theme::$current->settings['default_images_url'] . '/optimus.png) no-repeat 0 0 !important;
 		}');
 
-		$context['optimus_keyword_id'] = (int) Input::request('id', 0);
+		Utils::$context['optimus_keyword_id'] = (int) Input::request('id', 0);
 
-		loadTemplate('Optimus');
-		$context['template_layers'][] = 'keywords';
+		Theme::loadTemplate('Optimus');
+		Utils::$context['template_layers'][] = 'keywords';
 
-		if (empty($context['optimus_keyword_id'])) {
+		if (empty(Utils::$context['optimus_keyword_id'])) {
 			$this->showAllWithFrequency();
 			return;
 		}
 
-		$keyword_name             = $this->getNameById($context['optimus_keyword_id']);
-		$context['page_title']    = sprintf($txt['optimus_topics_with_keyword'], $keyword_name);
-		$context['canonical_url'] = $scripturl . '?action=keywords;id=' . $context['optimus_keyword_id'];
+		$keywordName = $this->getNameById(Utils::$context['optimus_keyword_id']);
+		
+		Utils::$context['page_title']    = sprintf(Lang::$txt['optimus_topics_with_keyword'], $keywordName);
+		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'];
 
-		if (empty($keyword_name)) {
-			$context['page_title'] = $txt['optimus_404_page_title'];
-			send_http_status(404);
+		if (empty($keywordName)) {
+			Utils::$context['page_title'] = Lang::$txt['optimus_404_page_title'];
+			Utils::sendHttpStatus(404);
 		}
 
-		$context['linktree'][] = [
-			'name' => $txt['optimus_all_keywords'],
-			'url'  => $scripturl . '?action=keywords'
+		Utils::$context['linktree'][] = [
+			'name' => Lang::$txt['optimus_all_keywords'],
+			'url'  => Config::$scripturl . '?action=keywords'
 		];
 
-		$context['linktree'][] = [
-			'name' => $context['page_title'],
-			'url'  => $context['canonical_url']
+		Utils::$context['linktree'][] = [
+			'name' => Utils::$context['page_title'],
+			'url'  => Utils::$context['canonical_url']
 		];
 
 		$listOptions = [
 			'id'               => 'topics',
 			'items_per_page'   => 30,
 			'title'            => '',
-			'no_items_label'   => $txt['optimus_no_keywords'],
-			'base_href'        => $scripturl . '?action=keywords;id=' . $context['optimus_keyword_id'],
+			'no_items_label'   => Lang::$txt['optimus_no_keywords'],
+			'base_href'        => Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'],
 			'default_sort_col' => 'topic',
 			'get_items' => [
 				'function' => [$this, 'getAllByKeyId']
@@ -271,7 +292,7 @@ final class TagHandler
 			'columns' => [
 				'topic' => [
 					'header' => [
-						'value' => $txt['topic']
+						'value' => Lang::$txt['topic']
 					],
 					'data' => [
 						'db' => 'topic'
@@ -283,7 +304,7 @@ final class TagHandler
 				],
 				'board' => [
 					'header' => [
-						'value' => $txt['board']
+						'value' => Lang::$txt['board']
 					],
 					'data' => [
 						'db'    => 'board',
@@ -296,7 +317,7 @@ final class TagHandler
 				],
 				'author' => [
 					'header' => [
-						'value' => $txt['author']
+						'value' => Lang::$txt['author']
 					],
 					'data' => [
 						'db'    => 'author',
@@ -309,7 +330,7 @@ final class TagHandler
 				]
 			],
 			'form' => [
-				'href' => $scripturl . '?action=keywords;id=' . $context['optimus_keyword_id']
+				'href' => Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id']
 			],
 			'additional_rows' => [
 				[
@@ -320,17 +341,15 @@ final class TagHandler
 			]
 		];
 
-		$this->createList($listOptions);
+		new ItemList($listOptions);
 
-		$context['sub_template'] = 'show_list';
-		$context['default_list'] = 'topics';
+		Utils::$context['sub_template'] = 'show_list';
+		Utils::$context['default_list'] = 'topics';
 	}
 
 	public function getAllByKeyId(int $start, int $items_per_page, string $sort): array
 	{
-		global $smcFunc, $context, $scripturl, $txt;
-
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT t.id_topic, ms.subject, b.id_board, b.name, m.id_member, m.id_group, m.real_name, mg.group_name
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}optimus_log_keywords AS olk ON (t.id_topic = olk.topic_id)
@@ -344,7 +363,7 @@ final class TagHandler
 			ORDER BY {raw:sort}, t.id_topic DESC
 			LIMIT {int:start}, {int:limit}',
 			[
-				'keyword_id' => $context['optimus_keyword_id'],
+				'keyword_id' => Utils::$context['optimus_keyword_id'],
 				'sort'       => $sort,
 				'start'      => $start,
 				'limit'      => $items_per_page
@@ -352,51 +371,47 @@ final class TagHandler
 		);
 
 		$topics = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$href = $scripturl . '?action=profile;u=' . $row['id_member'];
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+			$href = Config::$scripturl . '?action=profile;u=' . $row['id_member'];
 
 			$topics[] = [
-				'topic'  => '<a href="' . $scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
-				'board'  => '<a href="' . $scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
-				'author' => empty($row['real_name']) ? $txt['guest'] : '<a href="' . $href . '">' . $row['real_name'] . '</a>'
+				'topic'  => '<a href="' . Config::$scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
+				'board'  => '<a href="' . Config::$scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
+				'author' => empty($row['real_name']) ? Lang::$txt['guest'] : '<a href="' . $href . '">' . $row['real_name'] . '</a>'
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return $topics;
 	}
 
 	public function getTotalCountByKeyId(): int
 	{
-		global $smcFunc, $context;
-
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT COUNT(topic_id)
 			FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id = {int:keyword}
 			LIMIT 1',
 			[
-				'keyword' => $context['optimus_keyword_id']
+				'keyword' => Utils::$context['optimus_keyword_id']
 			]
 		);
 
-		[$num] = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		[$num] = Utils::$smcFunc['db_fetch_row']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return (int) $num;
 	}
 
 	public function showAllWithFrequency(): void
 	{
-		global $context, $txt, $scripturl;
+		Utils::$context['page_title']    = Lang::$txt['optimus_all_keywords'];
+		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords';
 
-		$context['page_title']    = $txt['optimus_all_keywords'];
-		$context['canonical_url'] = $scripturl . '?action=keywords';
-
-		$context['linktree'][] = [
-			'name' => $context['page_title'],
-			'url'  => $context['canonical_url']
+		Utils::$context['linktree'][] = [
+			'name' => Utils::$context['page_title'],
+			'url'  => Utils::$context['canonical_url']
 		];
 
 		$listOptions = [
@@ -404,7 +419,7 @@ final class TagHandler
 			'items_per_page'   => 30,
 			'title'            => '',
 			'no_items_label'   => '',
-			'base_href'        => $scripturl . '?action=keywords',
+			'base_href'        => Config::$scripturl . '?action=keywords',
 			'default_sort_col' => 'frequency',
 			'get_items' => [
 				'function' => [$this, 'getAll']
@@ -415,7 +430,7 @@ final class TagHandler
 			'columns' => [
 				'keyword' => [
 					'header' => [
-						'value' => $txt['optimus_keyword_column']
+						'value' => Lang::$txt['optimus_keyword_column']
 					],
 					'data' => [
 						'db' => 'keyword'
@@ -427,7 +442,7 @@ final class TagHandler
 				],
 				'frequency' => [
 					'header' => [
-						'value' => $txt['optimus_frequency_column']
+						'value' => Lang::$txt['optimus_frequency_column']
 					],
 					'data' => [
 						'db'    => 'frequency',
@@ -440,7 +455,7 @@ final class TagHandler
 				]
 			],
 			'form' => [
-				'href' => $scripturl . '?action=keywords'
+				'href' => Config::$scripturl . '?action=keywords'
 			],
 			'additional_rows' => [
 				[
@@ -451,20 +466,18 @@ final class TagHandler
 			]
 		];
 
-		$this->createList($listOptions);
+		new ItemList($listOptions);
 
-		if (! empty($context['current_page']) && $context['current_page'] != (int) Input::request('start'))
-			send_http_status(404);
+		if (! empty(Utils::$context['current_page']) && Utils::$context['current_page'] != (int) Input::request('start'))
+			Utils::sendHttpStatus(404);
 
-		$context['sub_template'] = 'show_list';
-		$context['default_list'] = 'keywords';
+		Utils::$context['sub_template'] = 'show_list';
+		Utils::$context['default_list'] = 'keywords';
 	}
 
 	public function getAll(int $start, int $items_per_page, string $sort): array
 	{
-		global $smcFunc, $scripturl;
-
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT ok.id, ok.name, COUNT(olk.keyword_id) AS frequency
 			FROM {db_prefix}optimus_keywords AS ok
 				LEFT JOIN {db_prefix}optimus_log_keywords AS olk ON (ok.id = olk.keyword_id)
@@ -479,8 +492,8 @@ final class TagHandler
 		);
 
 		$keywords = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$link = $scripturl . '?action=keywords;id=' . $row['id'];
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+			$link = Config::$scripturl . '?action=keywords;id=' . $row['id'];
 
 			$keywords[] = [
 				'keyword'   => '<a href="' . $link . '">' . $row['name'] . '</a>',
@@ -488,56 +501,50 @@ final class TagHandler
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return $keywords;
 	}
 
 	public function getTotalCount(): int
 	{
-		global $smcFunc;
-
-		$request = $smcFunc['db_query']('', /** @lang text */ '
+		$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
 			SELECT COUNT(id)
 			FROM {db_prefix}optimus_keywords
 			LIMIT 1',
 			[]
 		);
 
-		[$num] = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		[$num] = Utils::$smcFunc['db_fetch_row']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return (int) $num;
 	}
 
 	public function displayTopic(): void
 	{
-		global $modSettings, $context;
-
-		if (empty($modSettings['optimus_show_keywords_block']))
+		if (empty(Config::$modSettings['optimus_show_keywords_block']))
 			return;
 
-		if (empty($context['current_topic']) || ! empty($context['optimus']['keywords']))
+		if (empty(Utils::$context['current_topic']) || ! empty(Utils::$context['optimus']['keywords']))
 			return;
 
 		$keywords = $this->getKeywords();
 
-		$context['optimus_keywords'] = [];
+		Utils::$context['optimus_keywords'] = [];
 
-		if (empty($keywords[$context['current_topic']]))
+		if (empty($keywords[Utils::$context['current_topic']]))
 			return;
 
-		$context['optimus_keywords'] = $keywords[$context['current_topic']];
+		Utils::$context['optimus_keywords'] = $keywords[Utils::$context['current_topic']];
 
-		$modSettings['meta_keywords'] = implode(', ', $context['optimus_keywords']);
+		Config::$modSettings['meta_keywords'] = implode(', ', Utils::$context['optimus_keywords']);
 	}
 
 	private function getKeywords(): array
 	{
-		global $smcFunc;
-
-		if (($keywords = cache_get_data('optimus_topic_keywords', 3600)) === null) {
-			$request = $smcFunc['db_query']('', /** @lang text */ '
+		if (($keywords = CacheApi::get('optimus_topic_keywords', 3600)) === null) {
+			$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
 				SELECT k.id, k.name, lk.topic_id
 				FROM {db_prefix}optimus_keywords AS k
 					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
@@ -546,12 +553,12 @@ final class TagHandler
 			);
 
 			$keywords = [];
-			while ($row = $smcFunc['db_fetch_assoc']($request))
+			while ($row = Utils::$smcFunc['db_fetch_assoc']($request))
 				$keywords[$row['topic_id']][$row['id']] = $row['name'];
 
-			$smcFunc['db_free_result']($request);
+			Utils::$smcFunc['db_free_result']($request);
 
-			cache_put_data('optimus_topic_keywords', $keywords, 3600);
+			CacheApi::put('optimus_topic_keywords', $keywords, 3600);
 		}
 
 		return $keywords;
@@ -559,12 +566,10 @@ final class TagHandler
 
 	private function getNameById(int $id = 0): string
 	{
-		global $smcFunc;
-
 		if (empty($id))
 			return '';
 
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT name
 			FROM {db_prefix}optimus_keywords
 			WHERE id = {int:id}
@@ -574,8 +579,8 @@ final class TagHandler
 			]
 		);
 
-		[$name] = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		[$name] = Utils::$smcFunc['db_fetch_row']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return $name;
 	}
@@ -587,14 +592,12 @@ final class TagHandler
 	 */
 	private function prepareSearchData(): void
 	{
-		global $smcFunc;
-
-		$query = $smcFunc['htmltrim'](Input::filter('q'));
+		$query = Utils::$smcFunc['htmltrim'](Input::filter('q'));
 
 		if (empty($query))
 			exit;
 
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT name
 			FROM {db_prefix}optimus_keywords
 			WHERE name LIKE {string:search}
@@ -606,23 +609,21 @@ final class TagHandler
 		);
 
 		$data = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
 			$data[] = [
 				'id'   => $row['name'],
 				'text' => $row['name']
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		exit(json_encode($data));
 	}
 
 	private function getRandomColor(string $key): string
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_use_color_tags']))
+		if (empty(Config::$modSettings['optimus_use_color_tags']))
 			return '';
 
 		$hash = -105;
@@ -636,14 +637,12 @@ final class TagHandler
 
 	private function addFields(): void
 	{
-		global $context, $txt;
-
-		if (empty($context['is_first_post']))
+		if (empty(Utils::$context['is_first_post']))
 			return;
 
-		$context['posting_fields']['optimus_keywords'] = [
+		Utils::$context['posting_fields']['optimus_keywords'] = [
 			'label' => [
-				'text' => $txt['optimus_seo_keywords']
+				'text' => Lang::$txt['optimus_seo_keywords']
 			],
 			'input' => [
 				'type' => 'select',
@@ -658,11 +657,11 @@ final class TagHandler
 
 		$this->loadAssets();
 
-		if (empty($context['optimus']['keywords']))
+		if (empty(Utils::$context['optimus']['keywords']))
 			return;
 
-		foreach ($context['optimus']['keywords'] as $key) {
-			$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
+		foreach (Utils::$context['optimus']['keywords'] as $key) {
+			Utils::$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
 				'value'    => $key,
 				'selected' => true
 			];
@@ -674,31 +673,29 @@ final class TagHandler
 	 */
 	private function loadAssets(): void
 	{
-		global $txt, $context, $modSettings;
+		Theme::loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
 
-		loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
-
-		loadJavaScriptFile(
+		Theme::loadJavaScriptFile(
 			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js',
 			['external' => true]
 		);
 
-		loadJavaScriptFile(
-			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . $txt['lang_dictionary'] . '.js',
+		Theme::loadJavaScriptFile(
+			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . Lang::$txt['lang_dictionary'] . '.js',
 			['external' => true]
 		);
 
-		addInlineJavaScript('
+		Theme::addInlineJavaScript('
 		jQuery(document).ready(function ($) {
 			$("#optimus_keywords").select2({
-				language: "' . $txt['lang_dictionary'] . '",
-				placeholder: "' . $txt['optimus_enter_keywords'] . '",
+				language: "' . Lang::$txt['lang_dictionary'] . '",
+				placeholder: "' . Lang::$txt['optimus_enter_keywords'] . '",
 				minimumInputLength: 2,
 				width: "100%",
 				cache: true,
-				tags: true,' . ($context['right_to_left'] ? '
+				tags: true,' . (Utils::$context['right_to_left'] ? '
 				dir: "rtl",' : '') . '
-				tokenSeparators: [","' . (empty($modSettings['optimus_allow_keyword_phrases']) ? ', " "' : '') . '],
+				tokenSeparators: [","' . (empty(Config::$modSettings['optimus_allow_keyword_phrases']) ? ', " "' : '') . '],
 				ajax: {
 					url: smf_scripturl + "?action=keywords;sa=search",
 					type: "POST",
@@ -733,14 +730,12 @@ final class TagHandler
 			$this->addNoteToLogTable($keyword_id, $topic, $user);
 		}
 
-		clean_cache();
+		CacheApi::clean();
 	}
 
 	private function getIdByName(string $name): int
 	{
-		global $smcFunc;
-
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT id
 			FROM {db_prefix}optimus_keywords
 			WHERE name = {string:name}
@@ -750,8 +745,8 @@ final class TagHandler
 			]
 		);
 
-		[$id] = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		[$id] = Utils::$smcFunc['db_fetch_row']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		return (int) $id;
 	}
@@ -763,9 +758,7 @@ final class TagHandler
 	 */
 	private function addToDatabase(string $keyword): int
 	{
-		global $smcFunc;
-
-		return $smcFunc['db_insert']('insert',
+		return Utils::$smcFunc['db_insert']('insert',
 			'{db_prefix}optimus_keywords',
 			[
 				'name' => 'string-255'
@@ -778,9 +771,7 @@ final class TagHandler
 
 	private function addNoteToLogTable(int $keyword_id, int $topic, int $user): void
 	{
-		global $smcFunc;
-
-		$smcFunc['db_insert']('replace',
+		Utils::$smcFunc['db_insert']('replace',
 			'{db_prefix}optimus_log_keywords',
 			[
 				'keyword_id' => 'int',
@@ -802,8 +793,6 @@ final class TagHandler
 
 	private function modify(int $topic, int $user): void
 	{
-		global $context;
-
 		if (! $this->canChange())
 			return;
 
@@ -811,7 +800,9 @@ final class TagHandler
 
 		// Check if the keywords have been changed
 		$this->displayTopic();
-		$currentKeywords = empty($context['optimus_keywords']) ? [] : array_values($context['optimus_keywords']);
+		$currentKeywords = empty(Utils::$context['optimus_keywords'])
+			? []
+			: array_values(Utils::$context['optimus_keywords']);
 
 		if ($keywords == $currentKeywords)
 			return;
@@ -825,12 +816,10 @@ final class TagHandler
 
 	private function remove(array $keywords, int $topic): void
 	{
-		global $smcFunc;
-
 		if (empty($keywords) || empty($topic))
 			return;
 
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT lk.keyword_id, lk.topic_id
 			FROM {db_prefix}optimus_log_keywords AS lk
 				INNER JOIN {db_prefix}optimus_keywords AS k ON (lk.keyword_id = k.id
@@ -844,17 +833,17 @@ final class TagHandler
 		);
 
 		$delItems = [];
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
 			$delItems['keywords'][] = $row['keyword_id'];
 			$delItems['topics'][]   = $row['topic_id'];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		if (empty($delItems))
 			return;
 
-		$smcFunc['db_query']('', '
+		Utils::$smcFunc['db_query']('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id IN ({array_int:keywords}) AND topic_id IN ({array_int:topics})',
 			[
@@ -863,36 +852,24 @@ final class TagHandler
 			]
 		);
 
-		$smcFunc['db_query']('', /** @lang text */ '
+		Utils::$smcFunc['db_query']('', /** @lang text */ '
 			DELETE FROM {db_prefix}optimus_keywords
 			WHERE id NOT IN (SELECT keyword_id FROM {db_prefix}optimus_log_keywords)',
 			[]
 		);
 
-		clean_cache();
+		CacheApi::clean();
 	}
 
 	private function canChange(): bool
 	{
-		global $context, $topic, $modSettings;
+		if (! isset(Utils::$context['user']['started']))
+			Utils::$context['user']['started'] = empty(Topic::$id);
 
-		if (! isset($context['user']['started']))
-			$context['user']['started'] = empty($topic);
-
-		if (empty($modSettings['optimus_allow_change_topic_keywords']))
+		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords']))
 			return false;
 
-		return allowedTo('optimus_add_keywords_any')
-			|| (allowedTo('optimus_add_keywords_own') && ! empty($context['user']['started']));
-	}
-
-	private function createList(array $listOptions): void
-	{
-		global $sourcedir;
-
-		if (is_file($sourcedir . '/Subs-List.php'))
-			require_once($sourcedir . '/Subs-List.php');
-
-		createList($listOptions);
+		return User::hasPermission('optimus_add_keywords_any')
+			|| (User::hasPermission('optimus_add_keywords_own') && ! empty(Utils::$context['user']['started']));
 	}
 }

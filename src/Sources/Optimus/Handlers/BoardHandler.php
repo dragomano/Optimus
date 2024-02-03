@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Board, Config, IntegrationHook};
+use Bugo\Compat\{Lang, Theme, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
@@ -23,18 +25,36 @@ final class BoardHandler
 {
 	public function __invoke(): void
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_allow_change_board_og_image']))
+		if (empty(Config::$modSettings['optimus_allow_change_board_og_image']))
 			return;
 
-		add_integration_function('integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__);
-		add_integration_function('integrate_load_board', self::class . '::loadBoard#', false, __FILE__);
-		add_integration_function('integrate_board_info', self::class . '::boardInfo#', false, __FILE__);
-		add_integration_function('integrate_pre_boardtree', self::class . '::preBoardtree#', false, __FILE__);
-		add_integration_function('integrate_boardtree_board', self::class . '::boardtreeBoard#', false, __FILE__);
-		add_integration_function('integrate_edit_board', self::class . '::editBoard#', false, __FILE__);
-		add_integration_function('integrate_modify_board', self::class . '::modifyBoard#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_load_board', self::class . '::loadBoard#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_board_info', self::class . '::boardInfo#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_pre_boardtree', self::class . '::preBoardtree#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_boardtree_board', self::class . '::boardtreeBoard#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_edit_board', self::class . '::editBoard#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_modify_board', self::class . '::modifyBoard#', false, __FILE__
+		);
 	}
 
 	/**
@@ -42,10 +62,8 @@ final class BoardHandler
 	 */
 	public function menuButtons(): void
 	{
-		global $board_info, $settings;
-
-		if (! empty($board_info['og_image']))
-			$settings['og_image'] = $board_info['og_image'];
+		if (! empty(Board::$info['og_image']))
+			Theme::$current->settings['og_image'] = Board::$info['og_image'];
 	}
 
 	/**
@@ -85,28 +103,30 @@ final class BoardHandler
 	 */
 	public function boardtreeBoard(array $row): void
 	{
-		global $boards;
-
-		$boards[$row['id_board']]['optimus_og_image'] = $row['optimus_og_image'];
+		Board::$loaded[$row['id_board']]['optimus_og_image'] = $row['optimus_og_image'];
 	}
 
 	public function editBoard(): void
 	{
-		global $context, $txt;
+		Lang::load('Themes');
 
-		loadLanguage('Themes');
-
-		$context['custom_board_settings'] = array_merge(
+		Utils::$context['custom_board_settings'] = array_merge(
 			[
 				[
 					'dt' => '
-						<strong>' . $txt['og_image'] . ':</strong><br>
-						<span class="smalltext">' . $txt['og_image_desc'] . '</span><br>',
+						<strong>' . Lang::$txt['og_image'] . ':</strong><br>
+						<span class="smalltext">' . Lang::$txt['og_image_desc'] . '</span><br>',
 					'dd' => '
-						<input type="url" name="optimus_og_image" id="optimus_og_image" value="' . ($context['board']['optimus_og_image'] ?? '') . '" style="width: 100%">',
+						<input
+							type="url"
+							name="optimus_og_image"
+							id="optimus_og_image"
+							value="' . (Utils::$context['board']['optimus_og_image'] ?? '') . '"
+							style="width: 100%"
+						>',
 				]
 			],
-			$context['custom_board_settings'] ?? []
+			Utils::$context['custom_board_settings'] ?? []
 		);
 	}
 

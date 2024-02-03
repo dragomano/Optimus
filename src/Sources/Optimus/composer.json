@@ -1,6 +1,7 @@
 {
   "require": {
-    "league/event": "^3.0"
+    "league/event": "^3.0",
+    "bugo/smf-compat": "^0.1"
   },
   "autoload": {
     "psr-4": {

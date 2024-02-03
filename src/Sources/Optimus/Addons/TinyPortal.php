@@ -10,16 +10,17 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 23.01.24
+ * @version 03.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\{Config, IntegrationHook};
+use Bugo\Compat\{Theme, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
-use Bugo\Optimus\Utils\Input;
-use Bugo\Optimus\Utils\Str;
+use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -45,7 +46,7 @@ final class TinyPortal extends AbstractAddon
 
 	public function postInit(): void
 	{
-		add_integration_function(
+		IntegrationHook::add(
 			'integrate_tp_post_init',
 			self::class . '::prepareArticleMeta#',
 			false,
@@ -55,21 +56,19 @@ final class TinyPortal extends AbstractAddon
 
 	public function prepareArticleMeta(): void
 	{
-		global $context, $settings, $scripturl;
-
-		if (! Input::isGet('page') || empty($context['TPortal']['article']))
+		if (! Input::isGet('page') || empty(Utils::$context['TPortal']['article']))
 			return;
 
-		$article = $context['TPortal']['article'];
+		$article = Utils::$context['TPortal']['article'];
 
 		$pattern = $article['rendertype'] == 'bbc' ? '/\[img.*]([^\]\[]+)\[\/img\]/U' : '/<img(.*)src(.*)=(.*)"(.*)"/U';
 		$firstPostImage = preg_match($pattern, $article['body'], $value);
-		$settings['og_image'] = $firstPostImage ? array_pop($value) : null;
+		Theme::$current->settings['og_image'] = $firstPostImage ? array_pop($value) : null;
 
-		$context['meta_description'] = Str::teaser($article['intro'] ?: $article['body']);
-		$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', (int) $article['date']);
-		$context['optimus_og_type']['article']['section'] = $article['category_name'] ?? '';
-		$context['canonical_url'] = $scripturl . '?page=' . ($article['shortname'] ?: $article['id']);
+		Utils::$context['meta_description'] = Str::teaser($article['intro'] ?: $article['body']);
+		Utils::$context['optimus_og_type']['article']['published_time'] = date('Y-m-d\TH:i:s', (int) $article['date']);
+		Utils::$context['optimus_og_type']['article']['section'] = $article['category_name'] ?? '';
+		Utils::$context['canonical_url'] = Config::$scripturl . '?page=' . ($article['shortname'] ?: $article['id']);
 	}
 
 	public function changeRobots(object $generator): void
@@ -80,11 +79,9 @@ final class TinyPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		global $modSettings, $smcFunc, $scripturl;
+		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$startYear = (int) ($modSettings['optimus_start_year'] ?? 0);
-
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT a.id, a.date, a.shortname
 			FROM {db_prefix}tp_articles AS a
 				INNER JOIN {db_prefix}tp_variables AS v ON (a.category = v.id)
@@ -101,8 +98,8 @@ final class TinyPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = $smcFunc['db_fetch_assoc']($request)) {
-			$url = $scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
+		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+			$url = Config::$scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
@@ -111,6 +108,6 @@ final class TinyPortal extends AbstractAddon
 			];
 		}
 
-		$smcFunc['db_free_result']($request);
+		Utils::$smcFunc['db_free_result']($request);
 	}
 }

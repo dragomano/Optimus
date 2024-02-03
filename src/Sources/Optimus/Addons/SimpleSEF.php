@@ -10,11 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 23.01.24
+ * @version 03.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
+use Bugo\Compat\Config;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -33,13 +34,11 @@ final class SimpleSEF extends AbstractAddon
 
 	public function __invoke(AddonEvent $event): void
 	{
-		global $modSettings;
-
-		if (empty($modSettings['simplesef_enable']))
+		if (empty(Config::$modSettings['simplesef_enable']))
 			return;
 
-		if (! empty($modSettings['optimus_remove_index_php']))
-			updateSettings(['optimus_remove_index_php' => 0]);
+		if (! empty(Config::$modSettings['optimus_remove_index_php']))
+			Config::updateModSettings(['optimus_remove_index_php' => 0]);
 
 		match ($event->eventName()) {
 			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
@@ -49,21 +48,19 @@ final class SimpleSEF extends AbstractAddon
 
 	public function changeRobots(object $generator): void
 	{
-		global $modSettings;
-
 		/* @var Generator $generator */
-		$generator->useSef = ! empty($modSettings['simplesef_enable'])
+		$generator->useSef = ! empty(Config::$modSettings['simplesef_enable'])
 			&& is_file(dirname(__DIR__, 2) . '/SimpleSEF.php');
 	}
 
 	public function createSefLinks(object $sitemap): void
 	{
-		$sef = new \SimpleSEF();
+		$engine = new \SimpleSEF();
 		$method = method_exists('\SimpleSEF', 'getSefUrl') ? 'getSefUrl' : 'create_sef_url';
 
 		/* @var Sitemap $sitemap */
 		foreach ($sitemap->links as &$url) {
-			$url['loc'] = $sef->$method($url['loc']);
+			$url['loc'] = $engine->$method($url['loc']);
 		}
 	}
 }

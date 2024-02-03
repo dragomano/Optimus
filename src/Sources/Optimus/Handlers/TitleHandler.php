@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{Board, Config, IntegrationHook, Utils};
+
 if (! defined('SMF'))
 	die('No direct access...');
 
@@ -21,7 +23,9 @@ final class TitleHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_theme_context', self::class . '::handle#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_theme_context', self::class . '::handle#', false, __FILE__
+		);
 	}
 
 	public function handle(): void
@@ -35,25 +39,21 @@ final class TitleHandler
 
 	private function handleBoardTitles(): void
 	{
-		global $board_info, $modSettings, $context;
-
-		if (empty($board_info['total_topics']) || empty($modSettings['optimus_board_extend_title']))
+		if (empty(Board::$info['total_topics']) || empty(Config::$modSettings['optimus_board_extend_title']))
 			return;
 
-		$context['page_title_html_safe'] = $modSettings['optimus_board_extend_title'] == 1
-			? $context['forum_name'] . ' - ' . $context['page_title_html_safe']
-			: $context['page_title_html_safe'] . ' - ' . $context['forum_name'];
+		Utils::$context['page_title_html_safe'] = Config::$modSettings['optimus_board_extend_title'] == 1
+			? Utils::$context['forum_name'] . ' - ' . Utils::$context['page_title_html_safe']
+			: Utils::$context['page_title_html_safe'] . ' - ' . Utils::$context['forum_name'];
 	}
 
 	private function handleTopicTitles(): void
 	{
-		global $context, $modSettings, $board_info;
-
-		if (empty($context['first_message']) || empty($modSettings['optimus_topic_extend_title']))
+		if (empty(Utils::$context['first_message']) || empty(Config::$modSettings['optimus_topic_extend_title']))
 			return;
 
-		$context['page_title_html_safe'] = $modSettings['optimus_topic_extend_title'] == 1
-			? $context['forum_name'] . ' - ' . $board_info['name'] . ' - ' . $context['page_title_html_safe']
-			: $context['page_title_html_safe'] . ' - ' . $board_info['name'] . ' - ' . $context['forum_name'];
+		Utils::$context['page_title_html_safe'] = Config::$modSettings['optimus_topic_extend_title'] == 1
+			? Utils::$context['forum_name'] . ' - ' . Board::$info['name'] . ' - ' . Utils::$context['page_title_html_safe']
+			: Utils::$context['page_title_html_safe'] . ' - ' . Board::$info['name'] . ' - ' . Utils::$context['forum_name'];
 	}
 }

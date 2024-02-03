@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
+use Bugo\Compat\{CacheApi, Config, IntegrationHook};
+use Bugo\Compat\{Theme, User, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
@@ -23,16 +25,22 @@ final class SearchTermHandler
 {
 	public function __invoke(): void
 	{
-		add_integration_function('integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__);
-		add_integration_function('integrate_menu_buttons', self::class . '::prepareSearchTerms#', false, __FILE__);
-		add_integration_function('integrate_search_params', self::class . '::searchParams#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::prepareSearchTerms#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_search_params', self::class . '::searchParams#', false, __FILE__
+		);
 	}
 
 	public function loadPermissions(array $permissionGroups, array &$permissionList): void
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_log_search']))
+		if (empty(Config::$modSettings['optimus_log_search']))
 			return;
 
 		$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
@@ -40,16 +48,14 @@ final class SearchTermHandler
 
 	public function prepareSearchTerms(): void
 	{
-		global $modSettings, $context, $smcFunc;
-
-		if (empty($modSettings['optimus_log_search']))
+		if (empty(Config::$modSettings['optimus_log_search']))
 			return;
 
-		if ($context['current_action'] !== 'search' && $context['current_action'] !== 'search2')
+		if (Utils::$context['current_action'] !== 'search' && Utils::$context['current_action'] !== 'search2')
 			return;
 
-		if (($context['search_terms'] = cache_get_data('optimus_search_terms', 3600)) === null) {
-			$request = $smcFunc['db_query']('', /** @lang text */ '
+		if ((Utils::$context['search_terms'] = CacheApi::get('optimus_search_terms', 3600)) === null) {
+			$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
 				SELECT phrase, hit
 				FROM {db_prefix}optimus_search_terms
 				ORDER BY hit DESC
@@ -57,20 +63,20 @@ final class SearchTermHandler
 			);
 
 			$scale = 1;
-			while ($row = $smcFunc['db_fetch_assoc']($request)) {
+			while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
 				if ($scale < $row['hit'])
 					$scale = $row['hit'];
 
-				$context['search_terms'][] = [
+				Utils::$context['search_terms'][] = [
 					'text'  => $row['phrase'],
 					'scale' => round(($row['hit'] * 100) / $scale),
 					'hit'   => $row['hit']
 				];
 			}
 
-			$smcFunc['db_free_result']($request);
+			Utils::$smcFunc['db_free_result']($request);
 
-			cache_put_data('optimus_search_terms', $context['search_terms'], 3600);
+			CacheApi::put('optimus_search_terms', Utils::$context['search_terms'], 3600);
 		}
 
 		$this->showChart();
@@ -78,17 +84,15 @@ final class SearchTermHandler
 
 	public function searchParams(): bool
 	{
-		global $modSettings, $smcFunc;
-
-		if (empty($modSettings['optimus_log_search']) || ! Input::request('search'))
+		if (empty(Config::$modSettings['optimus_log_search']) || ! Input::request('search'))
 			return false;
 
-		$searchString = un_htmlspecialchars(Input::request('search'));
+		$searchString = Utils::htmlspecialcharsDecode(Input::request('search'));
 
 		if (empty($searchString))
 			return false;
 
-		$request = $smcFunc['db_query']('', '
+		$request = Utils::$smcFunc['db_query']('', '
 			SELECT id_term
 			FROM {db_prefix}optimus_search_terms
 			WHERE phrase = {string:phrase}
@@ -98,11 +102,11 @@ final class SearchTermHandler
 			]
 		);
 
-		[$id] = $smcFunc['db_fetch_row']($request);
-		$smcFunc['db_free_result']($request);
+		[$id] = Utils::$smcFunc['db_fetch_row']($request);
+		Utils::$smcFunc['db_free_result']($request);
 
 		if (empty($id)) {
-			$smcFunc['db_insert']('insert',
+			Utils::$smcFunc['db_insert']('insert',
 				'{db_prefix}optimus_search_terms',
 				[
 					'phrase' => 'string-255',
@@ -112,7 +116,7 @@ final class SearchTermHandler
 				['id_term']
 			);
 		} else {
-			$smcFunc['db_query']('', '
+			Utils::$smcFunc['db_query']('', '
 				UPDATE {db_prefix}optimus_search_terms
 				SET hit = hit + 1
 				WHERE id_term = {int:id_term}',
@@ -127,23 +131,19 @@ final class SearchTermHandler
 
 	private function showChart(): void
 	{
-		global $context;
-
-		if (empty($context['search_terms']) || ! $this->canView())
+		if (empty(Utils::$context['search_terms']) || ! $this->canView())
 			return;
 
-		loadTemplate('Optimus');
+		Theme::loadTemplate('Optimus');
 
-		$context['template_layers'][] = 'search_terms';
+		Utils::$context['template_layers'][] = 'search_terms';
 	}
 
 	private function canView(): bool
 	{
-		global $modSettings;
-
-		if (empty($modSettings['optimus_log_search']))
+		if (empty(Config::$modSettings['optimus_log_search']))
 			return false;
 
-		return allowedTo('optimus_view_search_terms');
+		return User::hasPermission('optimus_view_search_terms');
 	}
 }

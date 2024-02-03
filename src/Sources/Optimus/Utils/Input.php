@@ -14,6 +14,8 @@
 
 namespace Bugo\Optimus\Utils;
 
+use Bugo\Compat\Utils;
+
 if (! defined('SMF'))
 	die('No direct access...');
 
@@ -85,13 +87,11 @@ final class Input
 
 	public static function xss(string|array $data): string|array
 	{
-		global $smcFunc;
-
 		if (is_array($data)) {
 			return array_map('self::xss', $data);
 		}
 
-		return $smcFunc['htmlspecialchars']($data, ENT_QUOTES);
+		return Utils::$smcFunc['htmlspecialchars']($data, ENT_QUOTES);
 	}
 
 	public static function filter(
