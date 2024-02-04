@@ -1,97 +1,65 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Board;
+use Bugo\Compat\Config;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\ErrorHandler;
-use Tests\AbstractBase;
 
-/**
- * @requires PHP 8.0
- */
-class ErrorHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		global $context;
+beforeEach(function () {
+	$this->handler = new ErrorHandler();
 
-		parent::setUp();
+	Utils::$context['error_link'] = '';
+});
 
-		$this->handler = new ErrorHandler();
-
-		$context['error_link'] = '';
-	}
-
-	/**
-	 * @covers BoardHandler::fallbackAction
-	 */
-	public function testFallbackAction()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_errors_for_wrong_actions'] = true;
+describe('fallbackAction method', function () {
+	it('checks basic usage', function () {
+		Config::$modSettings['optimus_errors_for_wrong_actions'] = true;
 
 		$this->handler->fallbackAction();
 
-		$this->assertSame('javascript:history.go(-1)', $context['error_link']);
-	}
+		expect(Utils::$context['error_link'])
+			->toBe('javascript:history.go(-1)');
+	});
 
-	/**
-	 * @covers BoardHandler::fallbackAction
-	 */
-	public function testFallbackActionWithDisabledSetting()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_errors_for_wrong_actions'] = false;
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_errors_for_wrong_actions'] = false;
 
 		$this->handler->fallbackAction();
 
-		$this->assertEmpty($context['error_link']);
-	}
+		expect(Utils::$context['error_link'])
+			->toBeEmpty();
+	});
+});
 
-	/**
-	 * @covers BoardHandler::handleStatusErrors
-	 */
-	public function testHandleStatusErrorsExist()
-	{
-		global $modSettings, $board_info, $context;
+describe('handleStatusErrors method', function () {
+	it('checks case when board_info[error] = exist', function () {
+		Config::$modSettings['optimus_errors_for_wrong_boards_topics'] = true;
 
-		$modSettings['optimus_errors_for_wrong_boards_topics'] = true;
-
-		$board_info['error'] = 'exist';
+		Board::$info['error'] = 'exist';
 
 		$this->handler->handleStatusErrors();
 
-		$this->assertSame('javascript:history.go(-1)', $context['error_link']);
-	}
+		expect(Utils::$context['error_link'])
+			->toBe('javascript:history.go(-1)');
+	});
 
-	/**
-	 * @covers BoardHandler::handleStatusErrors
-	 */
-	public function testHandleStatusErrorsAccess()
-	{
-		global $modSettings, $board_info, $context;
+	it('checks case when board_info[error] = access', function () {
+		Config::$modSettings['optimus_errors_for_wrong_boards_topics'] = true;
 
-		$modSettings['optimus_errors_for_wrong_boards_topics'] = true;
-
-		$board_info['error'] = 'access';
+		Board::$info['error'] = 'access';
 
 		$this->handler->handleStatusErrors();
 
-		$this->assertSame('javascript:history.go(-1)', $context['error_link']);
-	}
+		expect(Utils::$context['error_link'])
+			->toBe('javascript:history.go(-1)');
+	});
 
-	/**
-	 * @covers BoardHandler::handleStatusErrors
-	 */
-	public function testHandleStatusErrorsWithDisabledSetting()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_errors_for_wrong_boards_topics'] = false;
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_errors_for_wrong_boards_topics'] = false;
 
 		$this->handler->handleStatusErrors();
 
-		$this->assertEmpty($context['error_link']);
-	}
-}
+		expect(Utils::$context['error_link'])
+			->toBeEmpty();
+	});
+});

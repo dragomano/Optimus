@@ -1,51 +1,36 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Utils;
-
-use Tests\AbstractBase;
 use Bugo\Optimus\Utils\Str;
 
-/**
- * @requires PHP 8.0
- */
-class StrTest extends AbstractBase
-{
-	/**
-	 * @covers Str::teaser
-	 */
-	public function testTeaserWithBrAndSpaces()
-	{
-		$source = 'foo<br>      bar';
-		$this->assertSame('foo bar', Str::teaser($source));
-	}
+it('checks teaser with br and spaces', function () {
+	$source = 'foo<br>      bar';
 
-	/**
-	 * @covers Str::teaser
-	 */
-	public function testTeaserWithUrls()
-	{
-		$source = 'foo https://some.site bar';
-		$this->assertSame('foo bar', Str::teaser($source));
-	}
+	expect(Str::teaser($source))
+		->toBe('foo bar');
+});
 
-	/**
-	 * @covers Str::teaser
-	 */
-	public function testTeaserWithReplacements()
-	{
-		$source = 'foo&nbsp;&quot;bar&quot;&amp;nbsp;';
-		$this->assertSame('foo bar', Str::teaser($source));
-	}
+it('checks teaser with urls', function () {
+	$source = 'foo https://some.site bar';
 
-	/**
-	 * @covers Str::teaser
-	 */
-	public function testTeaserWithLimits()
-	{
-		$source = 'foo bar. foo bar.';
-		$this->assertSame('foo bar.', Str::teaser($source, 1));
+	expect(Str::teaser($source))
+		->toBe('foo bar');
+});
 
-		$source = 'foo bar foo bar';
-		$this->assertSame('foo...', Str::teaser($source, length: 3));
-	}
-}
+it('checks teaser with replacements', function () {
+	$source = 'foo&nbsp;&quot;bar&quot;&amp;nbsp;';
+
+	expect(Str::teaser($source))
+		->toBe('foo bar');
+});
+
+it('checks teaser with limits', function () {
+	$source = 'foo bar. foo bar.';
+
+	expect(Str::teaser($source, 1))
+		->toBe('foo bar.');
+
+	$source = 'foo bar foo bar';
+
+	expect(Str::teaser($source, length: 3))
+		->toBe('foo...');
+});

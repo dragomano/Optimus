@@ -1,129 +1,93 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Board;
+use Bugo\Compat\Lang;
+use Bugo\Compat\Theme;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\BoardHandler;
-use Tests\AbstractBase;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @requires PHP 8.0
- */
-class BoardHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		global $settings;
+beforeEach(function () {
+	$this->handler = new BoardHandler();
 
-		parent::setUp();
+	Theme::$current->settings['og_image'] = '';
+});
 
-		$this->handler = new BoardHandler();
-
-		$settings['og_image'] = '';
-	}
-
-	/**
-	 * @covers BoardHandler::menuButtons
-	 */
-	public function testMenuButtons()
-	{
-		global $board_info, $settings;
-
-		$board_info['og_image'] = 'bar';
+describe('menuButtons method', function () {
+	it('checks basic usage', function () {
+		Board::$info['og_image'] = 'bar';
 
 		$this->handler->menuButtons();
 
-		$this->assertSame('bar', $settings['og_image']);
-	}
+		expect(Theme::$current->settings['og_image'])
+			->toBe('bar');
+	});
 
-	/**
-	 * @covers BoardHandler::menuButtons
-	 */
-	public function testMenuButtonsWithoutOgImage()
-	{
-		global $board_info, $settings;
-
-		unset($board_info['og_image']);
+	it('checks case without og image', function () {
+		unset(Board::$info['og_image']);
 
 		$this->handler->menuButtons();
 
-		$this->assertEmpty($settings['og_image']);
-	}
+		expect(Theme::$current->settings['og_image'])
+			->toBeEmpty();
+	});
+});
 
-	/**
-	 * @covers BoardHandler::loadBoard
-	 */
-	public function testLoadBoard()
-	{
-		$selects = [];
+test('loadBoard method', function () {
+	$selects = [];
 
-		$this->handler->loadBoard($selects);
+	$this->handler->loadBoard($selects);
 
-		$this->assertContains('b.optimus_og_image', $selects);
-	}
+	expect($selects)
+		->toContain('b.optimus_og_image');
+});
 
-	/**
-	 * @covers BoardHandler::boardInfo
-	 */
-	public function testBoardInfo()
-	{
-		$board_info = [];
-		$row = ['optimus_og_image' => 'bar'];
+test('boardInfo method', function () {
+	$board_info = [];
 
-		$this->handler->boardInfo($board_info, $row);
+	$row = ['optimus_og_image' => 'bar'];
 
-		$this->assertArrayHasKey('og_image', $board_info);
-	}
+	$this->handler->boardInfo($board_info, $row);
 
-	/**
-	 * @covers BoardHandler::preBoardtree
-	 */
-	public function testPreBoardtree()
-	{
-		$boardColumns = [];
+	expect($board_info)
+		->toHaveKey('og_image');
+});
 
-		$this->handler->preBoardtree($boardColumns);
+test('preBoardtree method', function () {
+	$boardColumns = [];
 
-		$this->assertContains('b.optimus_og_image', $boardColumns);
-	}
+	$this->handler->preBoardtree($boardColumns);
 
-	/**
-	 * @covers BoardHandler::boardtreeBoard
-	 */
-	public function testBoardtreeBoard()
-	{
-		global $boards;
+	expect($boardColumns)
+		->toContain('b.optimus_og_image');
+});
 
-		$row = [
-			'id_board' => 1,
-			'optimus_og_image' => 'bar'
-		];
+test('boardtreeBoard method', function () {
+	$row = [
+		'id_board' => 1,
+		'optimus_og_image' => 'bar'
+	];
 
-		$this->handler->boardtreeBoard($row);
+	$this->handler->boardtreeBoard($row);
 
-		$this->assertArrayHasKey('optimus_og_image', $boards[$row['id_board']]);
-	}
+	expect(Board::$loaded[$row['id_board']])
+		->toHaveKey('optimus_og_image');
+});
 
-	/**
-	 * @covers BoardHandler::editBoard
-	 */
-	public function testEditBoard()
-	{
-		global $context, $txt;
+test('editBoard method', function () {
+	Utils::$context['custom_board_settings'] = [];
 
-		$context['custom_board_settings'] = [];
+	Lang::$txt['og_image'] = Lang::$txt['og_image_desc'] = '';
 
-		$txt['og_image'] = $txt['og_image_desc'] = '';
+	$this->handler->editBoard();
 
-		$this->handler->editBoard();
+	expect(Utils::$context['custom_board_settings'])
+		->toHaveKey(0);
+});
 
-		$this->assertArrayHasKey(0, $context['custom_board_settings']);
-	}
-
-	/**
-	 * @covers BoardHandler::modifyBoard
-	 */
-	public function testModifyBoard()
-	{
+describe('modifyBoard method', function () {
+	it('checks basic usage', function () {
+		$this->request = Request::createFromGlobals();
 		$this->request->request->set('optimus_og_image', 'bar');
 		$this->request->overrideGlobals();
 
@@ -131,15 +95,14 @@ class BoardHandlerTest extends AbstractBase
 
 		$this->handler->modifyBoard(0, [], $boardUpdates, $boardUpdateParameters);
 
-		$this->assertContains('optimus_og_image = {string:og_image}', $boardUpdates);
-		$this->assertArrayHasKey('og_image', $boardUpdateParameters);
-	}
+		expect($boardUpdates)
+			->toContain('optimus_og_image = {string:og_image}')
+			->and($boardUpdateParameters)
+			->toHaveKey('og_image');
+	});
 
-	/**
-	 * @covers BoardHandler::modifyBoard
-	 */
-	public function testModifyBoardWithoutPostData()
-	{
+	it('checks saving without post data', function () {
+		$this->request = Request::createFromGlobals();
 		$this->request->request->remove('optimus_og_image');
 		$this->request->overrideGlobals();
 
@@ -147,7 +110,9 @@ class BoardHandlerTest extends AbstractBase
 
 		$this->handler->modifyBoard(0, [], $boardUpdates, $boardUpdateParameters);
 
-		$this->assertEmpty($boardUpdates);
-		$this->assertEmpty($boardUpdateParameters);
-	}
-}
+		expect($boardUpdates)
+			->toBeEmpty()
+			->and($boardUpdateParameters)
+			->toBeEmpty();
+	});
+});

@@ -1,72 +1,46 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Lang;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\SitemapLinkHandler;
-use Tests\AbstractBase;
 
-/**
- * @requires PHP 8.0
- */
-class SitemapLinkHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		parent::setUp();
+beforeEach(function () {
+	$this->handler = new SitemapLinkHandler();
+});
 
-		$this->handler = new SitemapLinkHandler();
-	}
+test('actions method', function () {
+	$actions = [];
 
-	/**
-	 * @covers SitemapLinkHandler::actions
-	 */
-	public function testActions()
-	{
-		$actions = [];
+	$this->handler->actions($actions);
 
-		$this->handler->actions($actions);
+	expect($actions)
+		->toHaveKey('sitemap_xsl');
+});
 
-		$this->assertArrayHasKey('sitemap_xsl', $actions);
-	}
+test('xsl method', function () {
+	expect(method_exists(SitemapLinkHandler::class, 'xsl'))
+		->toBeTrue();
+});
 
-	/**
-	 * @covers SitemapLinkHandler::xsl
-	 */
-	public function testXsl()
-	{
-		$this->assertTrue(
-			method_exists(SitemapLinkHandler::class, 'xsl')
-		);
-	}
+test('preLogStats method', function () {
+	$no_stat_actions = [];
 
-	/**
-	 * @covers SitemapLinkHandler::preLogStats
-	 */
-	public function testPreLogStats()
-	{
-		$no_stat_actions = [];
+	$this->handler->preLogStats($no_stat_actions);
 
-		$this->handler->preLogStats($no_stat_actions);
+	expect($no_stat_actions)
+		->toHaveKey('sitemap_xsl');
+});
 
-		$this->assertArrayHasKey('sitemap_xsl', $no_stat_actions);
-	}
+test('addLink method', function () {
+	Config::$modSettings['optimus_sitemap_link'] = true;
 
-	/**
-	 * @covers SitemapLinkHandler::addLink
-	 */
-	public function testAddLink()
-	{
-		global $modSettings, $txt, $forum_copyright, $context;
+	Lang::$txt['optimus_sitemap_title'] = 'foo';
 
-		$modSettings['optimus_sitemap_link'] = true;
+	Utils::$context['html_headers'] = '';
 
-		$txt['optimus_sitemap_title'] = 'foo';
+	$this->handler->addLink();
 
-		$context['html_headers'] = '';
-
-		$this->handler->addLink();
-
-		$this->assertStringContainsString($txt['optimus_sitemap_title'], $forum_copyright);
-		$this->assertNotEmpty($context['html_headers']);
-	}
-}
+	$this->assertStringContainsString(Lang::$txt['optimus_sitemap_title'], Lang::$forum_copyright);
+	expect(Utils::$context['html_headers'])->not->toBeEmpty();
+});

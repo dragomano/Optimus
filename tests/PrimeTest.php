@@ -1,42 +1,28 @@
 <?php declare(strict_types=1);
 
-namespace Tests;
-
+use Bugo\Compat\Lang;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Prime;
 
-/**
- * @requires PHP 8.0
- */
-class PrimeTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		parent::setUp();
+beforeEach(function () {
+    $this->prime = new Prime();
+});
 
-		$this->prime = new Prime();
-	}
+it('runs __invoke', function () {
+	expect($this->prime)->toBeCallable();
+});
 
-	/**
-	 * @covers Prime::loadTheme
-	 */
-	public function testLoadTheme()
-	{
-		global $txt;
+it('loads languages', function () {
+	$this->prime->loadTheme();
 
-		$this->prime->loadTheme();
+	expect(Lang::$txt['optimus_title'])
+		->toEqual('Search Engine Optimization');
+});
 
-		$this->assertSame('Search Engine Optimization', $txt['optimus_title']);
-	}
+it('adds copyright', function () {
+	$this->prime->credits();
 
-	/**
-	 * @covers Prime::credits
-	 */
-	public function testCredits()
-	{
-		global $context;
-
-		$this->prime->credits();
-
-		$this->assertNotEmpty($context['credits_modifications']);
-	}
-}
+	expect(Utils::$context['credits_modifications'])
+		->not
+		->toBeEmpty();
+});

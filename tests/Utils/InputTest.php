@@ -1,237 +1,183 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Utils;
-
-use Tests\AbstractBase;
 use Bugo\Optimus\Utils\Input;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @requires PHP 8.0
- */
-class InputTest extends AbstractBase
-{
-	/**
-	 * @covers Input::request
-	 */
-	public function testRequest()
-	{
+beforeEach(function () {
+	$this->request = Request::createFromGlobals();
+});
+
+describe('request', function () {
+	it('sets $_REQUEST foo with bar', function () {
 		$this->request->request->set('foo', 'bar');
 		$this->request->overrideGlobals();
 
-		$this->assertSame('bar', Input::request('foo'));
-	}
+		expect(Input::request('foo'))
+			->toBe('bar');
+	});
 
-	/**
-	 * @covers Input::request
-	 */
-	public function testRequestWithoutData()
-	{
-		$this->request->request->remove('foo');
-		$this->request->overrideGlobals();
+	it('sets $_REQUEST foo with default value', function () {
+		expect(Input::request('foo', 'bar'))
+			->toBe('bar');
+	});
 
-		// Default value is set
-		$this->assertSame('bar', Input::request('foo', 'bar'));
+	it('sets $_REQUEST foo without default value', function () {
+		expect(Input::request('foo'))
+			->toBeFalse();
+	});
 
-		// Default value is not set
-		$this->assertFalse(Input::request('foo'));
-	}
-
-	/**
-	 * @covers Input::request
-	 */
-	public function testRequestWithArray()
-	{
+	it('sets $_REQUEST with array dataset', function () {
 		Input::request([
 			'foo' => 'bar',
 			'bar' => 'foo',
 		]);
 
-		$this->assertSame('bar', Input::request('foo'));
-		$this->assertSame('foo', Input::request('bar'));
-	}
+		expect(Input::request('foo'))->toBe('bar')
+			->and(Input::request('bar'))->toBe('foo');
 
-	/**
-	 * @covers Input::post
-	 */
-	public function testPost()
-	{
+	});
+
+	afterEach(function () {
+		$this->request->request->remove('foo');
+		$this->request->overrideGlobals();
+	});
+});
+
+describe('post', function () {
+	it('sets $_POST foo with bar', function () {
 		$this->request->request->set('foo', 'bar');
 		$this->request->overrideGlobals();
 
-		$this->assertSame('bar', Input::post('foo'));
-	}
+		expect(Input::post('foo'))
+			->toBe('bar');
+	});
 
-	/**
-	 * @covers Input::post
-	 */
-	public function testPostWithoutData()
-	{
-		$this->request->request->remove('foo');
-		$this->request->overrideGlobals();
+	it('sets $_POST foo with default value', function () {
+		expect(Input::post('foo', 'bar'))
+			->toBe('bar');
+	});
 
-		// Default value is set
-		$this->assertSame('bar', Input::post('foo', 'bar'));
+	it('sets $_POST foo without default value', function () {
+		expect(Input::post('foo'))
+			->toBeFalse();
+	});
 
-		// Default value is not set
-		$this->assertFalse(Input::post('foo'));
-	}
-
-	/**
-	 * @covers Input::post
-	 */
-	public function testPostWithArray()
-	{
+	it('sets $_POST with array dataset', function () {
 		Input::post([
 			'foo' => 'bar',
 			'bar' => 'foo',
 		]);
 
-		$this->assertSame('bar', Input::post('foo'));
-		$this->assertSame('foo', Input::post('bar'));
-	}
+		expect(Input::post('foo'))->toBe('bar')
+			->and(Input::post('bar'))->toBe('foo');
 
-	/**
-	 * @covers Input::server
-	 */
-	public function testServer()
-	{
-		$this->request->server->set('HOST_NAME', 'localhost');
+	});
+
+	afterEach(function () {
+		$this->request->request->remove('foo');
 		$this->request->overrideGlobals();
+	});
+});
 
-		$this->assertSame($this->request->server->get('HOST_NAME'), Input::server('host_name'));
+describe('server', function () {
+	it('gets $_SERVER[QUERY_STRING]', function () {
+		expect(Input::server('query_string'))
+			->toBe($this->request->server->get('QUERY_STRING'));
+	});
 
-		$this->request->server->remove('HOST_NAME');
-	}
+	it('gets $_SERVER (whole array)', function () {
+		expect(Input::server())
+			->toBe($this->request->server->all());
+	});
+});
 
-	/**
-	 * @covers Input::server
-	 */
-	public function testServerWithEmptyKey()
-	{
-		$this->request->server->set('HOST_NAME', 'localhost');
-		$this->request->overrideGlobals();
-
-		$this->assertSame($this->request->server->all(), Input::server());
-
-		$this->request->server->remove('HOST_NAME');
-	}
-
-	/**
-	 * @covers Input::session
-	 */
-	public function testSession()
-	{
+describe('session', function () {
+	it('sets $_SESSION foo with bar', function () {
 		$_SESSION['foo'] = 'bar';
 
-		$this->assertSame('bar', Input::session('foo'));
-	}
+		expect(Input::session('foo'))
+			->toBe('bar');
+	});
 
-	/**
-	 * @covers Input::session
-	 */
-	public function testSessionWithoutData()
-	{
+	it('gets $_SESSION foo when it is unset', function () {
 		unset($_SESSION['foo']);
 
-		$this->assertNull(Input::session('foo'));
-	}
+		expect(Input::session('foo'))
+			->toBeNull();
+	});
 
-	/**
-	 * @covers Input::session
-	 */
-	public function testSessionWithArray()
-	{
+	it('sets $_SESSION with array dataset', function () {
 		Input::session([
 			'foo' => 'bar',
 			'bar' => 'foo',
 		]);
 
-		$this->assertSame('bar', Input::session('foo'));
-		$this->assertSame('foo', Input::session('bar'));
-	}
+		expect(Input::session('foo'))->toBe('bar')
+			->and(Input::session('bar'))->toBe('foo');
 
-	/**
-	 * @covers Input::isRequest
-	 */
-	public function testIsRequest()
-	{
+	});
+});
+
+describe('isRequest, isPost, isGet', function () {
+	beforeEach(function () {
 		$this->request->request->set('foo', 'bar');
-		$this->request->overrideGlobals();
-
-		$this->assertTrue(Input::isRequest('foo'));
-		$this->assertFalse(Input::isRequest('bar'));
-
-		$this->request->request->remove('foo');
-	}
-
-	/**
-	 * @covers Input::isPost
-	 */
-	public function testIsPost()
-	{
-		$this->request->request->set('foo', 'bar');
-		$this->request->overrideGlobals();
-
-		$this->assertTrue(Input::isPost('foo'));
-		$this->assertFalse(Input::isPost('bar'));
-
-		$this->request->request->remove('foo');
-	}
-
-	/**
-	 * @covers Input::isGet
-	 */
-	public function testIsGet()
-	{
 		$this->request->query->set('foo', 'bar');
 		$this->request->overrideGlobals();
+	});
 
-		$this->assertTrue(Input::isGet('foo'));
-		$this->assertFalse(Input::isGet('bar'));
+	it('checks isRequest()', function () {
+		expect(Input::isRequest('foo'))->toBeTrue()
+			->and(Input::isRequest('bar'))->toBeFalse();
 
+	});
+
+	it('checks isPost()', function () {
+		expect(Input::isPost('foo'))->toBeTrue()
+			->and(Input::isPost('bar'))->toBeFalse();
+
+	});
+
+	it('checks isGet()', function () {
+		expect(Input::isGet('foo'))->toBeTrue()
+			->and(Input::isGet('bar'))->toBeFalse();
+
+	});
+
+	afterEach(function () {
+		$this->request->request->remove('foo');
 		$this->request->query->remove('foo');
-	}
+		$this->request->overrideGlobals();
+	});
+});
 
-	/**
-	 * @covers Input::xss
-	 */
-	public function testXss()
-	{
-		$source = /** @lang text */
-			'<a href="foo">bar</a>';
-		$result = '&lt;a href=&quot;foo&quot;&gt;bar&lt;/a&gt;';
+describe('xss', function () {
+	beforeEach(function () {
+		$this->source = /** @lang text */ '<a href="foo">bar</a>';
+		$this->result = '&lt;a href=&quot;foo&quot;&gt;bar&lt;/a&gt;';
+	});
 
-		$this->assertSame($result, Input::xss($source));
-	}
+	it('checks xss (basic usage)', function () {
+		expect(Input::xss($this->source))
+			->toBe($this->result);
+	});
 
-	/**
-	 * @covers Input::xss
-	 */
-	public function testXssWithArray()
-	{
-		$source = /** @lang text */
-			'<a href="foo">bar</a>';
-		$result = '&lt;a href=&quot;foo&quot;&gt;bar&lt;/a&gt;';
+	it('checks xss with array param', function () {
+		$source = [$this->source, $this->source];
+		$result = [$this->result, $this->result];
 
-		$source = [$source,	$source];
-		$result = [$result, $result];
+		expect(Input::xss($source))
+			->toBe($result);
+	});
+});
 
-		$this->assertSame($result, Input::xss($source));
-	}
+describe('filter', function () {
+	it('checks filter (basic usage)', function () {
+		expect(Input::filter('foo'))
+			->toBeNull();
+	});
 
-	/**
-	 * @covers Input::filter
-	 */
-	public function testFilter()
-	{
-		$this->assertNull(Input::filter('foo'));
-	}
-
-	/**
-	 * @covers Input::filter
-	 */
-	public function testFilterWithWrongType()
-	{
-		$this->assertNull(Input::filter('foo', 'wrong'));
-	}
-}
+	it('checks filter with wrong type', function () {
+		expect(Input::filter('foo', 'wrong'))
+			->toBeNull();
+	});
+});

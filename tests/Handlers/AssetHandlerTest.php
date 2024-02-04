@@ -1,140 +1,93 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\AssetHandler;
-use Tests\AbstractBase;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @requires PHP 8.0
- */
-class AssetHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		parent::setUp();
+beforeEach(function () {
+	$this->handler = new AssetHandler();
+});
 
-		$this->handler = new AssetHandler();
+test('handle for lighthouse', function () {
+	$this->request = Request::createFromGlobals();
+	$this->request->server->set('HTTP_USER_AGENT', 'Lighthouse');
+	$this->request->overrideGlobals();
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Unknown';
-	}
+	Utils::$context['html_headers'] = '';
 
-	/**
-	 * @covers AssetHandler::handle
-	 */
-	public function testHandleForLighthouse()
-	{
-		global $context, $modSettings;
+	Config::$modSettings['optimus_head_code'] = 'bar';
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Lighthouse';
+	$this->handler->handle();
 
-		$context['html_headers'] = '';
+	expect(Utils::$context['html_headers'])
+		->toBeEmpty();
 
-		$modSettings['optimus_head_code'] = 'bar';
+	$this->request->server->remove('HTTP_USER_AGENT');
+	$this->request->overrideGlobals();
+});
 
-		$this->handler->handle();
+test('handle with request xml', function () {
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('xml', true);
+	$this->request->overrideGlobals();
 
-		$this->assertEmpty($context['html_headers']);
-	}
+	Utils::$context['html_headers'] = '';
 
-	/**
-	 * @covers AssetHandler::handle
-	 */
-	public function testHandleWithRequestXml()
-	{
-		global $context, $modSettings;
+	Config::$modSettings['optimus_head_code'] = 'bar';
 
-		$this->request->request->set('xml', true);
-		$this->request->overrideGlobals();
+	$this->handler->handle();
 
-		$context['html_headers'] = '';
+	expect(Utils::$context['html_headers'])->toBeEmpty();
 
-		$modSettings['optimus_head_code'] = 'bar';
+	$this->request->request->remove('xml');
+	$this->request->overrideGlobals();
+});
 
-		$this->handler->handle();
+test('handle with head code', function () {
+	Utils::$context['html_headers'] = '';
+	Utils::$context['current_action'] = 'forum';
 
-		$this->assertEmpty($context['html_headers']);
+	Config::$modSettings['optimus_head_code'] = 'bar';
 
-		$this->request->request->remove('xml');
-	}
+	$this->handler->handle();
 
-	/**
-	 * @covers AssetHandler::handle
-	 */
-	public function testHandleWithHeadCode()
-	{
-		global $context, $modSettings;
+	$this->assertStringContainsString('bar', Utils::$context['html_headers']);
+});
 
-		$context['html_headers'] = '';
+test('handle with stat code', function () {
+	Utils::$context['insert_after_template'] = '';
+	Utils::$context['current_action'] = 'forum';
 
-		$context['current_action'] = 'forum';
+	Config::$modSettings['optimus_stat_code'] = 'bar';
 
-		$modSettings['optimus_head_code'] = 'bar';
+	$this->handler->handle();
 
-		$this->handler->handle();
+	$this->assertStringContainsString('bar', Utils::$context['insert_after_template']);
+});
 
-		$this->assertStringContainsString('bar', $context['html_headers']);
-	}
+test('handle with count code', function () {
+	Utils::$context['template_layers'] = Utils::$context['css_header'] = [];
+	Utils::$context['current_action'] = 'forum';
 
-	/**
-	 * @covers AssetHandler::handle
-	 */
-	public function testHandleWithStatCode()
-	{
-		global $context, $modSettings;
+	Config::$modSettings['optimus_count_code'] = 'bar';
+	Config::$modSettings['optimus_counters_css'] = 'bar';
 
-		$context['insert_after_template'] = '';
+	$this->handler->handle();
 
-		$context['current_action'] = 'forum';
+	expect(Utils::$context['template_layers'])->toContain('footer_counters')
+		->and(Utils::$context['css_header'])->toContain('bar');
+});
 
-		$modSettings['optimus_stat_code'] = 'bar';
+test('handle with count code without css', function () {
+	Utils::$context['template_layers'] = Utils::$context['css_header'] = [];
+	Utils::$context['current_action'] = 'forum';
 
-		$this->handler->handle();
+	Config::$modSettings['optimus_count_code'] = 'bar';
+	Config::$modSettings['optimus_counters_css'] = false;
 
-		$this->assertStringContainsString('bar', $context['insert_after_template']);
-	}
+	$this->handler->handle();
 
-	/**
-	 * @covers AssetHandler::handle
-	 */
-	public function testHandleWithCountCode()
-	{
-		global $context, $modSettings;
-
-		$context['template_layers'] = $context['css_header'] = [];
-
-		$context['current_action'] = 'forum';
-
-		$modSettings['optimus_count_code'] = 'bar';
-
-		$modSettings['optimus_counters_css'] = 'bar';
-
-		$this->handler->handle();
-
-		$this->assertContains('footer_counters', $context['template_layers']);
-
-		$this->assertContains('bar', $context['css_header']);
-	}
-
-	/**
-	 * @covers AssetHandler::handle
-	 */
-	public function testHandleWithCountCodeWithoutCss()
-	{
-		global $context, $modSettings;
-
-		$context['template_layers'] = $context['css_header'] = [];
-
-		$context['current_action'] = 'forum';
-
-		$modSettings['optimus_count_code'] = 'bar';
-
-		$modSettings['optimus_counters_css'] = false;
-
-		$this->handler->handle();
-
-		$this->assertContains('footer_counters', $context['template_layers']);
-
-		$this->assertEmpty($context['css_header']);
-	}
-}
+	expect(Utils::$context['template_layers'])->toContain('footer_counters')
+		->and(Utils::$context['css_header'])->toBeEmpty();
+});

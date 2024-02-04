@@ -1,55 +1,33 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Theme;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\FaviconHandler;
-use Tests\AbstractBase;
 
-/**
- * @requires PHP 8.0
- */
-class FaviconHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		global $settings;
+beforeEach(function () {
+	$this->handler = new FaviconHandler();
 
-		parent::setUp();
+	Theme::$current->settings['og_image'] = '';
+});
 
-		$this->handler = new FaviconHandler();
+test('handle', function () {
+	Config::$modSettings['optimus_favicon_text'] = 'bar';
 
-		$settings['og_image'] = '';
-	}
+	Utils::$context['html_headers'] = '';
 
-	/**
-	 * @covers FaviconHandler::handle
-	 */
-	public function testHandle()
-	{
-		global $modSettings, $context;
+	$this->handler->handle();
 
-		$modSettings['optimus_favicon_text'] = 'bar';
+	$this->assertStringContainsString('bar', Utils::$context['html_headers']);
+});
 
-		$context['html_headers'] = '';
+test('handle with disabled setting', function () {
+	Config::$modSettings['optimus_favicon_text'] = false;
 
-		$this->handler->handle();
+	Utils::$context['html_headers'] = '';
 
-		$this->assertStringContainsString('bar', $context['html_headers']);
-	}
+	$this->handler->handle();
 
-	/**
-	 * @covers FaviconHandler::handle
-	 */
-	public function testHandleWithDisabledSetting()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_favicon_text'] = false;
-
-		$context['html_headers'] = '';
-
-		$this->handler->handle();
-
-		$this->assertEmpty($context['html_headers']);
-	}
-}
+	expect(Utils::$context['html_headers'])
+		->toBeEmpty();
+});

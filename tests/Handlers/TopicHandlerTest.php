@@ -1,174 +1,127 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Theme;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\TopicHandler;
-use Tests\AbstractBase;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @requires PHP 8.0
- */
-class TopicHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		parent::setUp();
+beforeEach(function () {
+	$this->handler = new TopicHandler();
+});
 
-		$this->handler = new TopicHandler();
-	}
+test('prepareOgImage method', function () {
+	Config::$modSettings['optimus_og_image'] = true;
 
-	/**
-	 * @covers TopicHandler::prepareOgImage
-	 */
-	public function testPrepareOgImage()
-	{
-		global $modSettings, $context, $settings;
+	Utils::$context['topicinfo']['id_first_msg'] = 1;
 
-		$modSettings['optimus_og_image'] = true;
+	Utils::$context['current_topic'] = 1;
 
-		$context['topicinfo']['id_first_msg'] = 1;
+	Utils::$context['loaded_attachments'][1] = [
+		[
+			'width' => 600,
+			'height' => 400,
+			'mime_type' => 'image/png',
+		]
+	];
 
-		$context['current_topic'] = 1;
+	$this->handler->prepareOgImage();
 
-		$context['loaded_attachments'][1] = [
-			[
-				'width' => 600,
-				'height' => 400,
-				'mime_type' => 'image/png',
-			]
-		];
+	expect(Utils::$context['optimus_og_image']['url'])
+		->toBe(Theme::$current->settings['og_image']);
+});
 
-		$this->handler->prepareOgImage();
+test('loadPermissions method', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
 
-		$this->assertSame($settings['og_image'], $context['optimus_og_image']['url']);
-	}
+	$permissionList = [];
 
-	/**
-	 * @covers TopicHandler::loadPermissions
-	 */
-	public function testLoadPermissions()
-	{
-		global $modSettings;
+	$this->handler->loadPermissions([], $permissionList);
 
-		$modSettings['optimus_allow_change_topic_desc'] = true;
+	expect($permissionList['membergroup'])
+		->toHaveKey('optimus_add_descriptions');
+});
 
-		$permissionList = [];
+test('basicSettings method', function () {
+	$config_vars = [];
 
-		$this->handler->loadPermissions([], $permissionList);
+	$this->handler->basicSettings($config_vars);
 
-		$this->assertArrayHasKey('optimus_add_descriptions', $permissionList['membergroup']);
-	}
+	expect($config_vars)->not->toBeEmpty();
+});
 
-	/**
-	 * @covers TopicHandler::basicSettings
-	 */
-	public function testBasicSettings()
-	{
-		$config_vars = [];
+test('displayTopic method', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
 
-		$this->handler->basicSettings($config_vars);
+	$topic_selects = [];
 
-		$this->assertNotEmpty($config_vars);
-	}
+	$this->handler->displayTopic($topic_selects);
 
-	/**
-	 * @covers TopicHandler::displayTopic
-	 */
-	public function testDisplayTopic()
-	{
-		global $modSettings;
+	expect($topic_selects)->toContain('t.optimus_description');
 
-		$modSettings['optimus_allow_change_topic_desc'] = true;
+	$topic_selects = ['ms.modified_time AS topic_modified_time'];
 
-		$topic_selects = [];
+	$this->handler->displayTopic($topic_selects);
 
-		$this->handler->displayTopic($topic_selects);
+	expect($topic_selects)->toContain('ms.modified_time AS topic_modified_time');
 
-		$this->assertContains('t.optimus_description', $topic_selects);
+	Config::$modSettings['optimus_topic_description'] = true;
 
-		$topic_selects = ['ms.modified_time AS topic_modified_time'];
+	Config::$modSettings['optimus_og_image'] = true;
 
-		$this->handler->displayTopic($topic_selects);
+	$topic_selects = ['ms.body AS topic_first_message'];
 
-		$this->assertContains('ms.modified_time AS topic_modified_time', $topic_selects);
+	$this->handler->displayTopic($topic_selects);
 
-		$modSettings['optimus_topic_description'] = true;
+	expect($topic_selects)->toContain('ms.body AS topic_first_message');
+});
 
-		$modSettings['optimus_og_image'] = true;
+test('menuButtons method', function () {
+	Utils::$context['first_message'] = 1;
 
-		$topic_selects = ['ms.body AS topic_first_message'];
+	Config::$modSettings['optimus_topic_description'] = true;
 
-		$this->handler->displayTopic($topic_selects);
+	Utils::$context['topicinfo'] = [
+		'topic_first_message' => 'bar',
+		'topic_started_name' => 'foo',
+		'topic_started_time' => time(),
+		'topic_modified_time' => time(),
+	];
 
-		$this->assertContains('ms.body AS topic_first_message', $topic_selects);
-	}
+	$this->handler->menuButtons();
 
-	/**
-	 * @covers TopicHandler::menuButtons
-	 */
-	public function testMenuButtons()
-	{
-		global $context, $modSettings;
+	expect(Utils::$context['meta_description'])->toBe('bar')
+		->and(Utils::$context['optimus_og_type']['article'])->not->toBeEmpty();
+});
 
-		$context['first_message'] = 1;
+test('beforeCreateTopic method', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
 
-		$modSettings['optimus_topic_description'] = true;
+	$topic_columns = $topic_parameters = [];
 
-		$context['topicinfo'] = [
-			'topic_first_message' => 'bar',
-			'topic_started_name' => 'foo',
-			'topic_started_time' => time(),
-			'topic_modified_time' => time(),
-		];
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('optimus_description', 'bar');
+	$this->request->overrideGlobals();
 
-		$this->handler->menuButtons();
+	$this->handler->beforeCreateTopic([], [], [], $topic_columns, $topic_parameters);
 
-		$this->assertSame('bar', $context['meta_description']);
-		$this->assertNotEmpty($context['optimus_og_type']['article']);
-	}
+	expect($topic_columns)->toHaveKey('optimus_description')
+		->and($topic_parameters)->toContain('bar');
+});
 
-	/**
-	 * @covers TopicHandler::beforeCreateTopic
-	 */
-	public function testBeforeCreateTopic()
-	{
-		global $modSettings;
+test('modifyPost method', function () {
+	expect(method_exists(TopicHandler::class, 'modifyPost'))
+		->toBeTrue();
+});
 
-		$modSettings['optimus_allow_change_topic_desc'] = true;
+test('postEnd method', function () {
+	Utils::$context['is_new_topic'] = true;
 
-		$topic_columns = $topic_parameters = [];
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('optimus_description', 'bar');
+	$this->request->overrideGlobals();
 
-		$this->request->request->set('optimus_description', 'bar');
-		$this->request->overrideGlobals();
+	$this->handler->postEnd();
 
-		$this->handler->beforeCreateTopic([], [], [], $topic_columns, $topic_parameters);
-
-		$this->assertArrayHasKey('optimus_description', $topic_columns);
-		$this->assertContains('bar', $topic_parameters);
-	}
-
-	/**
-	 * @covers TopicHandler::modifyPost
-	 */
-	public function testModifyPost()
-	{
-		$this->assertTrue(method_exists(TopicHandler::class, 'modifyPost'));
-	}
-
-	/**
-	 * @covers TopicHandler::postEnd
-	 */
-	public function testPostEnd()
-	{
-		global $context;
-
-		$context['is_new_topic'] = true;
-
-		$this->request->request->set('optimus_description', 'bar');
-		$this->request->overrideGlobals();
-
-		$this->handler->postEnd();
-
-		$this->assertStringContainsString('bar', $context['optimus']['description']);
-	}
-}
+	$this->assertStringContainsString('bar', Utils::$context['optimus']['description']);
+});

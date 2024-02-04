@@ -1,89 +1,60 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Lang;
+use Bugo\Compat\Theme;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\FrontPageHandler;
 use Bugo\Optimus\Utils\Input;
-use Tests\AbstractBase;
 
-/**
- * @requires PHP 8.0
- */
-class FrontPageHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		global $settings;
+beforeEach(function () {
+	$this->handler = new FrontPageHandler();
 
-		parent::setUp();
+	Theme::$current->settings['og_image'] = '';
+});
 
-		$this->handler = new FrontPageHandler();
-
-		$settings['og_image'] = '';
-	}
-
-	/**
-	 * @covers FrontPageHandler::changeTitle
-	 */
-	public function testChangeTitle()
-	{
-		global $modSettings, $txt;
-
-		$modSettings['optimus_forum_index'] = 'bar';
+describe('changeTitle method', function () {
+	it('checks basic usage', function () {
+		Config::$modSettings['optimus_forum_index'] = 'bar';
 
 		$this->handler->changeTitle();
 
-		$this->assertSame('bar', $txt['forum_index']);
-	}
+		expect(Lang::$txt['forum_index'])
+			->toBe('bar');
+	});
 
-	/**
-	 * @covers FrontPageHandler::changeTitle
-	 */
-	public function testChangeTitleWithDisabledSetting()
-	{
-		global $modSettings, $txt;
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_forum_index'] = false;
 
-		$modSettings['optimus_forum_index'] = false;
-
-		$txt['forum_index'] = '';
+		Lang::$txt['forum_index'] = '';
 
 		$this->handler->changeTitle();
 
-		$this->assertEmpty($txt['forum_index']);
-	}
+		expect(Lang::$txt['forum_index'])
+			->toBeEmpty();
+	});
+});
 
-	/**
-	 * @covers FrontPageHandler::addDescription
-	 */
-	public function testAddDescription()
-	{
-		global $modSettings, $context;
+describe('addDescription method', function () {
+	it('checks basic usage', function () {
+		Config::$modSettings['optimus_description'] = 'bar';
 
-		$modSettings['optimus_description'] = 'bar';
-
-		$context['meta_description'] = $context['current_action'] = '';
+		Utils::$context['meta_description'] = Utils::$context['current_action'] = '';
 
 		$this->handler->addDescription();
 
-		$this->assertSame(
-			Input::xss($modSettings['optimus_description']),
-			$context['meta_description']
-		);
-	}
+		expect(Utils::$context['meta_description'])
+			->toBe(Input::xss(Config::$modSettings['optimus_description']));
+	});
 
-	/**
-	 * @covers FrontPageHandler::addDescription
-	 */
-	public function testAddDescriptionWithDisabledSetting()
-	{
-		global $modSettings, $context;
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_description'] = false;
 
-		$modSettings['optimus_description'] = false;
-
-		$context['meta_description'] = '';
+		Utils::$context['meta_description'] = '';
 
 		$this->handler->addDescription();
 
-		$this->assertEmpty($context['meta_description']);
-	}
-}
+		expect(Utils::$context['meta_description'])
+			->toBeEmpty();
+	});
+});

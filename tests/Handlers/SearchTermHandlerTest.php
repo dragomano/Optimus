@@ -1,111 +1,69 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\SearchTermHandler;
 use Bugo\Optimus\Utils\Input;
-use Tests\AbstractBase;
 
-/**
- * @requires PHP 8.0
- */
-class SearchTermHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		parent::setUp();
+beforeEach(function () {
+	$this->handler = new SearchTermHandler();
+});
 
-		$this->handler = new SearchTermHandler();
-	}
-
-	/**
-	 * @covers SearchTermHandler::loadPermissions
-	 */
-	public function testLoadPermissions()
-	{
-		global $modSettings;
-
+describe('loadPermissions method', function () {
+	it('checks case with disabled setting', function () {
 		$permissionList = [];
 
-		$modSettings['optimus_log_search'] = false;
+		Config::$modSettings['optimus_log_search'] = false;
 
 		$this->handler->loadPermissions([], $permissionList);
 
-		$this->assertEmpty($permissionList);
-	}
+		expect($permissionList)->toBeEmpty();
+	});
 
-	/**
-	 * @covers SearchTermHandler::loadPermissions
-	 */
-	public function testLoadPermissionsEnabled()
-	{
-		global $modSettings;
-
+	it('checks case with enabled setting', function () {
 		$permissionList = [];
 
-		$modSettings['optimus_log_search'] = true;
+		Config::$modSettings['optimus_log_search'] = true;
 
 		$this->handler->loadPermissions([], $permissionList);
 
-		$this->assertArrayHasKey(
-			'optimus_view_search_terms',
-			$permissionList['membergroup']
-		);
-	}
+		expect($permissionList['membergroup'])
+			->toHaveKey('optimus_view_search_terms');
+	});
+});
 
-	/**
-	 * @covers SearchTermHandler::prepareSearchTerms
-	 */
-	public function testPrepareSearchTerms()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_log_search'] = false;
+describe('prepareSearchTerms method', function () {
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_log_search'] = false;
 
 		$this->handler->prepareSearchTerms();
 
-		$this->assertArrayNotHasKey('search_terms', $context);
-	}
+		$this->assertArrayNotHasKey('search_terms', Utils::$context);
+	});
 
-	/**
-	 * @covers SearchTermHandler::prepareSearchTerms
-	 */
-	public function testPrepareSearchTermsEnabled()
-	{
-		global $modSettings, $context;
+	it('checks case with enabled setting', function () {
+		Config::$modSettings['optimus_log_search'] = true;
 
-		$modSettings['optimus_log_search'] = true;
-
-		$context['current_action'] = 'search';
+		Utils::$context['current_action'] = 'search';
 
 		$this->handler->prepareSearchTerms();
 
-		$this->assertSame([], $context['search_terms']);
-	}
+		expect(Utils::$context['search_terms'])->toBeArray();
+	});
+});
 
-	/**
-	 * @covers SearchTermHandler::searchParams
-	 */
-	public function testSearchParams()
-	{
-		global $modSettings;
+describe('searchParams method', function () {
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_log_search'] = false;
 
-		$modSettings['optimus_log_search'] = false;
+		expect($this->handler->searchParams())->toBeFalse();
+	});
 
-		$this->assertFalse($this->handler->searchParams());
-	}
-
-	/**
-	 * @covers SearchTermHandler::searchParams
-	 */
-	public function testSearchParamsEnabled()
-	{
-		global $modSettings;
-
-		$modSettings['optimus_log_search'] = true;
+	it('checks case with enabled setting', function () {
+		Config::$modSettings['optimus_log_search'] = true;
 
 		Input::request(['search' => 'bar']);
 
-		$this->assertTrue($this->handler->searchParams());
-	}
-}
+		expect($this->handler->searchParams())->toBeTrue();
+	});
+});

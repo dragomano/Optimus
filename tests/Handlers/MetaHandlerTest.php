@@ -1,188 +1,133 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Config;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\MetaHandler;
-use Tests\AbstractBase;
+use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @requires PHP 8.0
- */
-class MetaHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		global $context;
+beforeEach(function () {
+	$this->handler = new MetaHandler();
 
-		parent::setUp();
+	Utils::$context['robot_no_index'] = false;
 
-		$this->handler = new MetaHandler();
+	Utils::$context['current_action'] = '';
 
-		$context['robot_no_index'] = false;
+	Utils::$context['optimus_og_type'] = [];
 
-		$context['current_action'] = '';
+	Utils::$context['meta_tags'] = [];
+});
 
-		$context['optimus_og_type'] = [];
+test('handle', function () {
+	Config::$modSettings['optimus_forum_index'] = true;
 
-		$context['meta_tags'] = [];
-	}
+	Utils::$context['page_title_html_safe'] = 'bar';
 
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandle()
-	{
-		global $modSettings, $context;
+	Utils::$context['robot_no_index'] = true;
 
-		$modSettings['optimus_forum_index'] = true;
+	$this->handler->handle();
 
-		$context['page_title_html_safe'] = 'bar';
+	expect(Utils::$context['page_title_html_safe'])
+		->toBe('bar');
+});
 
-		$context['robot_no_index'] = true;
+test('handle with meta tags', function () {
+	Utils::$context['meta_tags'] = [
+		[
+			'property' => 'og:title',
+			'content' => 'foo bar',
+		]
+	];
 
-		$this->handler->handle();
+	$this->handler->handle();
 
-		$this->assertSame('bar', $context['page_title_html_safe']);
-	}
+	expect(Utils::$context['meta_tags'][0])
+		->toHaveKey('prefix');
+});
 
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithMetaTags()
-	{
-		global $context;
+test('handle with og image', function () {
+	Utils::$context['optimus_og_image'] = [
+		'width' => 600,
+		'height' => 400,
+		'mime' => 'image/png',
+	];
 
-		$context['meta_tags'] = [
-			[
-				'property' => 'og:title',
-				'content' => 'foo bar',
-			]
-		];
+	Utils::$context['meta_tags'] = [
+		[
+			'property' => 'og:image',
+			'content' => 'https://dummyimage.com/600x400/000/fff',
+		]
+	];
 
-		$this->handler->handle();
+	$this->handler->handle();
 
-		$this->assertArrayHasKey('prefix', $context['meta_tags'][0]);
-	}
+	expect(Utils::$context['meta_tags'][1]['property'])->toBe('og:image:type')
+		->and(Utils::$context['meta_tags'][2]['content'])->toBe(600)
+		->and(Utils::$context['meta_tags'][3]['content'])->toBe(400);
+});
 
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithOgImage()
-	{
-		global $context;
+test('handle with og type', function () {
+	Utils::$context['optimus_og_type']['article'] = [
+		'published_time' => time(),
+		'modified_time'  => null,
+		'author'         => 'John Doe',
+		'section'        => 'foo',
+		'tag'            => 'bar',
+	];
 
-		$context['optimus_og_image'] = [
-			'width' => 600,
-			'height' => 400,
-			'mime' => 'image/png',
-		];
+	$this->handler->handle();
 
-		$context['meta_tags'] = [
-			[
-				'property' => 'og:image',
-				'content' => 'https://dummyimage.com/600x400/000/fff',
-			]
-		];
+	expect(Utils::$context['meta_tags'][0]['content'])->toBe('article')
+		->and(Utils::$context['meta_tags'][1]['property'])->toBe('article:published_time')
+		->and(Utils::$context['meta_tags'][2]['content'])->toBe('John Doe')
+		->and(Utils::$context['meta_tags'][3]['property'])->toBe('article:section')
+		->and(Utils::$context['meta_tags'][4]['content'])->toBe('bar');
+});
 
-		$this->handler->handle();
+test('handle with profile', function () {
+	Utils::$context['current_action'] = 'profile';
 
-		$this->assertSame('og:image:type', $context['meta_tags'][1]['property']);
-		$this->assertSame(600, $context['meta_tags'][2]['content']);
-		$this->assertSame(400, $context['meta_tags'][3]['content']);
-	}
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('u', 1);
+	$this->request->overrideGlobals();
 
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithOgType()
-	{
-		global $context;
+	$this->handler->handle();
 
-		$context['optimus_og_type']['article'] = [
-			'published_time' => time(),
-			'modified_time'  => null,
-			'author'         => 'John Doe',
-			'section'        => 'foo',
-			'tag'            => 'bar',
-		];
+	expect(Utils::$context['meta_tags'][0]['content'])
+		->toBe('profile');
+});
 
-		$this->handler->handle();
+test('handle with twitter cards', function () {
+	Config::$modSettings['optimus_tw_cards'] = true;
 
-		$this->assertSame('article', $context['meta_tags'][0]['content']);
-		$this->assertSame('article:published_time', $context['meta_tags'][1]['property']);
-		$this->assertSame('John Doe', $context['meta_tags'][2]['content']);
-		$this->assertSame('article:section', $context['meta_tags'][3]['property']);
-		$this->assertSame('bar', $context['meta_tags'][4]['content']);
-	}
+	Utils::$context['canonical_url'] = 'https://foo.bar/some';
 
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithProfile()
-	{
-		global $context;
+	$this->handler->handle();
 
-		$context['current_action'] = 'profile';
+	expect(Utils::$context['meta_tags'][0]['content'])->toBe('summary')
+		->and(Utils::$context['meta_tags'][1]['property'])->toBe('twitter:site');
 
-		$this->request->request->set('u', 1);
-		$this->request->overrideGlobals();
+	Config::$modSettings['optimus_tw_cards'] = false;
+});
 
-		$this->handler->handle();
+test('handle with facebook app id', function () {
+	Config::$modSettings['optimus_fb_appid'] = 'foo';
 
-		$this->assertSame('profile', $context['meta_tags'][0]['content']);
-	}
+	$this->handler->handle();
 
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithTwitterCards()
-	{
-		global $modSettings, $context;
+	expect(Utils::$context['meta_tags'][0]['property'])->toBe('fb:app_id')
+		->and(Utils::$context['meta_tags'][0]['content'])->toBe('foo');
 
-		$modSettings['optimus_tw_cards'] = true;
+	Config::$modSettings['optimus_fb_appid'] = false;
+});
 
-		$context['canonical_url'] = 'https://foo.bar/some';
+test('handle with custom tags', function () {
+	Config::$modSettings['optimus_meta'] = serialize([
+		'foo' => 'bar',
+		'key' => 'value',
+	]);
 
-		$this->handler->handle();
+	$this->handler->handle();
 
-		$this->assertSame('summary', $context['meta_tags'][0]['content']);
-		$this->assertSame('twitter:site', $context['meta_tags'][1]['property']);
-
-		$modSettings['optimus_tw_cards'] = false;
-	}
-
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithFacebookAppId()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_fb_appid'] = 'foo';
-
-		$this->handler->handle();
-
-		$this->assertSame('fb:app_id', $context['meta_tags'][0]['property']);
-		$this->assertSame('foo', $context['meta_tags'][0]['content']);
-
-		$modSettings['optimus_fb_appid'] = false;
-	}
-
-	/**
-	 * @covers MetaHandler::handle
-	 */
-	public function testHandleWithCustomTags()
-	{
-		global $modSettings, $context;
-
-		$modSettings['optimus_meta'] = serialize([
-			'foo' => 'bar',
-			'key' => 'value',
-		]);
-
-		$this->handler->handle();
-
-		$this->assertSame('foo', $context['meta_tags'][0]['name']);
-		$this->assertSame('value', $context['meta_tags'][1]['content']);
-	}
-}
+	expect(Utils::$context['meta_tags'][0]['name'])->toBe('foo')
+		->and(Utils::$context['meta_tags'][1]['content'])->toBe('value');
+});

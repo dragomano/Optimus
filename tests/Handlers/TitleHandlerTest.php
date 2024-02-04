@@ -1,102 +1,69 @@
 <?php declare(strict_types=1);
 
-namespace Tests\Handlers;
-
+use Bugo\Compat\Board;
+use Bugo\Compat\Config;
+use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\TitleHandler;
-use Tests\AbstractBase;
 
-/**
- * @requires PHP 8.0
- */
-class TitleHandlerTest extends AbstractBase
-{
-	protected function setUp(): void
-	{
-		global $board_info, $context;
+beforeEach(function () {
+	$this->handler = new TitleHandler();
 
-		parent::setUp();
+	Board::$info['name'] = 'lol';
 
-		$this->handler = new TitleHandler();
+	Utils::$context['forum_name'] = 'foo';
+	Utils::$context['page_title_html_safe'] = 'bar';
+});
 
-		$board_info['name'] = 'lol';
+afterEach(function () {
+	unset(Utils::$context['page_title_html_safe']);
+	unset(Utils::$context['first_message']);
+	unset(Board::$info['total_topics']);
+});
 
-		$context['forum_name'] = 'foo';
+describe('handleBoardTitles method', function () {
+	it('checks case with first option', function () {
+		Config::$modSettings['optimus_board_extend_title'] = 1;
 
-		$context['page_title_html_safe'] = 'bar';
-	}
-
-	protected function tearDown(): void
-	{
-		global $context, $board_info;
-
-		unset($context['page_title_html_safe']);
-
-		unset($context['first_message']);
-
-		unset($board_info['total_topics']);
-	}
-
-	/**
-	 * @covers TitleHandler::handle
-	 */
-	public function testHandleBoardTitlesWithFirstOption()
-	{
-		global $modSettings, $board_info, $context;
-
-		$modSettings['optimus_board_extend_title'] = 1;
-
-		$board_info['total_topics'] = 10;
+		Board::$info['total_topics'] = 10;
 
 		$this->handler->handle();
 
-		$this->assertSame('foo - bar', $context['page_title_html_safe']);
-	}
+		expect(Utils::$context['page_title_html_safe'])
+			->toBe('foo - bar');
+	});
 
-	/**
-	 * @covers TitleHandler::handle
-	 */
-	public function testHandleBoardTitlesWithSecondOption()
-	{
-		global $modSettings, $board_info, $context;
+	it('checks case with second option', function () {
+		Config::$modSettings['optimus_board_extend_title'] = 2;
 
-		$modSettings['optimus_board_extend_title'] = 2;
-
-		$board_info['total_topics'] = 10;
+		Board::$info['total_topics'] = 10;
 
 		$this->handler->handle();
 
-		$this->assertSame('bar - foo', $context['page_title_html_safe']);
-	}
+		expect(Utils::$context['page_title_html_safe'])
+			->toBe('bar - foo');
+	});
+});
 
-	/**
-	 * @covers TitleHandler::handle
-	 */
-	public function testHandleTopicTitlesWithFirstOption()
-	{
-		global $modSettings, $context;
+describe('handleTopicTitles method', function () {
+	it('checks case with first option', function () {
+		Config::$modSettings['optimus_topic_extend_title'] = 1;
 
-		$modSettings['optimus_topic_extend_title'] = 1;
-
-		$context['first_message'] = 1;
+		Utils::$context['first_message'] = 1;
 
 		$this->handler->handle();
 
-		$this->assertSame('foo - lol - bar', $context['page_title_html_safe']);
-	}
+		expect(Utils::$context['page_title_html_safe'])
+			->toBe('foo - lol - bar');
+	});
 
-	/**
-	 * @covers TitleHandler::handle
-	 */
-	public function testHandleTopicTitlesWithSecondOption()
-	{
-		global $modSettings, $context;
+	it('checks case with second option', function () {
+		Config::$modSettings['optimus_topic_extend_title'] = 2;
 
-		$modSettings['optimus_topic_extend_title'] = 2;
-
-		$context['first_message'] = 1;
+		Utils::$context['first_message'] = 1;
 
 		$this->handler->handle();
 
-		$this->assertSame('bar - lol - foo', $context['page_title_html_safe']);
-	}
-}
+		expect(Utils::$context['page_title_html_safe'])
+			->toBe('bar - lol - foo');
+	});
+});
