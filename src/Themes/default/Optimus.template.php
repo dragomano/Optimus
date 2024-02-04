@@ -1,6 +1,35 @@
 <?php
 
 use Bugo\Compat\{Config, Lang, Utils};
+use Bugo\Optimus\Utils\Input;
+
+function template_tips_above(): void
+{
+	$links = [
+		'basic'    => 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=',
+		'extra'    => 'https://developers.facebook.com/docs/sharing/webmasters',
+		'favicon'  => 'https://developers.google.com/search/docs/appearance/favicon-in-search?hl=',
+		'metatags' => 'https://developers.google.com/search/docs/fundamentals/get-on-google?hl=',
+		'robots'   => 'https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt?hl=',
+		'sitemap'  => 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=',
+	];
+
+	if (empty(Input::isRequest('sa') && array_key_exists(Input::request('sa'), Lang::$txt['optimus_tips'])))
+		return;
+
+	$sa = Input::request('sa');
+
+	echo '
+	<div class="noticebox">
+		<a class="bbc_link" href="' . $links[$sa] . ($sa !== 'extra' ? Lang::$txt['lang_dictionary'] : '') . '" target="_blank" rel="noopener">
+			', Lang::$txt['optimus_tips'][$sa], '
+		</a>
+	</div>';
+}
+
+function template_tips_below(): void
+{
+}
 
 function template_favicon(): void
 {
@@ -238,20 +267,6 @@ function template_robots(): void
 				<div class="inner">
 					<span class="smalltext">', Lang::$txt['optimus_rules_hint'], '</span>
 					', Utils::$context['new_robots_content'], '
-				</div>
-				<div class="title_bar">
-					<h4 class="titlebg">', Lang::$txt['optimus_links_title'], '</h4>
-				</div>
-				<div class="inner">
-					<ul class="bbc_list">';
-
-	foreach (Lang::$txt['optimus_links'] as $link) {
-		echo '
-							<li><a href="', $link[1], '" target="_blank">', $link[0], '</a></li>';
-	}
-
-	echo '
-					</ul>
 				</div>
 			</div>
 			<div class="half_content">

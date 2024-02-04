@@ -160,15 +160,9 @@ final class SettingHandler
 			]
 		];
 
-		if (is_file(Config::$sourcedir . '/ManageServer.php'))
-			require_once Config::$sourcedir . '/ManageServer.php';
+		$this->addBlockWithTips();
 
-		Utils::$context['sub_template'] = 'show_settings';
-
-		$sa = Input::request('sa', 'basic');
-		Input::request(['sa' => isset($subActions[$sa]) ? $sa : key($subActions)]);
-
-		$this->{$subActions[Input::request('sa')]}();
+		$this->callActionFromAreas($subActions);
 	}
 
 	/**
@@ -547,6 +541,28 @@ final class SettingHandler
 		}
 
 		ACP::prepareDBSettingContext($config_vars);
+	}
+
+	private function addBlockWithTips(): void
+	{
+		if (empty(Input::isRequest('area')))
+			return;
+
+		if (! empty(Utils::$context['template_layers']) && str_contains(Input::request('area'), 'optimus')) {
+			Theme::loadTemplate('Optimus');
+
+			Utils::$context['template_layers'][] = 'tips';
+		}
+	}
+
+	private function callActionFromAreas(array $subActions): void
+	{
+		Utils::$context['sub_template'] = 'show_settings';
+
+		$sa = Input::request('sa', 'basic');
+		Input::request(['sa' => isset($subActions[$sa]) ? $sa : key($subActions)]);
+
+		$this->{$subActions[Input::request('sa')]}();
 	}
 
 	private function addDefaultSettings($settings): void

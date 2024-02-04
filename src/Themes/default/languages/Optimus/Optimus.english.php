@@ -2,6 +2,15 @@
 
 $txt['optimus_title'] = 'Search Engine Optimization';
 
+$txt['optimus_tips'] = [
+	'basic' => 'Search Engine Optimization (SEO) Starter Guide',
+	'extra' => 'A Guide to Sharing for Webmasters',
+	'favicon' => 'Define a favicon to show in search results',
+	'metatags' => 'Get your website on Google',
+	'robots' => 'How to write and submit a robots.txt file',
+	'sitemap' => 'Build and submit a sitemap',
+];
+
 $txt['optimus_basic_title'] = 'Base settings';
 /* Arguments: OP_VERSION, php_version(), $smcFunc['db_title'], $smcFunc['db_get_version']() */
 $txt['optimus_basic_desc'] = 'The mod version: <strong>%1$s</strong>, PHP version: <strong>%2$s</strong>, %3$s version: <strong>%4$s</strong>.<br>One can discuss bugs and features of the mod at <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">simplemachines.org</a>.';
@@ -32,7 +41,7 @@ $txt['optimus_errors_for_wrong_boards_topics'] = 'Display a 403/404 page for ina
 $txt['optimus_log_search'] = 'Enable logging of search terms';
 
 $txt['optimus_extra_title'] = 'Metadata';
-$txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages. <a href="https://developers.facebook.com/docs/sharing/webmasters" target="_blank" rel="noopener" class="bbc_link">A Guide to Sharing for Webmasters</a>.';
+$txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages.';
 /* Argument: $scripturl */
 $txt['optimus_extra_info'] = 'Use <a href="https://webmaster.yandex.ru/tools/microtest/" target="_blank" rel="noopener" class="bbc_link">structured data validator</a> (Yandex.Webmaster) or <a href="https://developers.facebook.com/tools/debug" target="_blank" rel="noopener" class="bbc_link">Facebook Sharing Debugger</a> to debug your Open Graph tags.<hr><strong>Note</strong>: Facebook caches images and other OG data. To reset the cache, in the repost debugger, type the page address with the parameter <em>fbrefresh</em>, i.e. %1$s?fbrefresh=reset.';
 
@@ -92,9 +101,6 @@ $txt['optimus_robots_desc'] = 'The rule generator is updated depending on the in
 
 $txt['optimus_rules'] = 'Rule generator';
 $txt['optimus_rules_hint'] = 'You can use these rules as an example for your robots.txt (on the right textarea):';
-$txt['optimus_links_title'] = 'Useful links';
-$txt['optimus_links'][0] = ['Create a robots.txt file', 'https://support.google.com/webmasters/answer/6062596?hl=en'];
-$txt['optimus_links'][1] = ['Using robots.txt', 'https://yandex.com/support/webmaster/controlling-robot/robots-txt.html?lang=en'];
 
 $txt['optimus_htaccess_title'] = 'Manage .htaccess';
 $txt['optimus_htaccess_desc'] = 'Here you can modify the .htaccess file for your forum. Be careful!';
