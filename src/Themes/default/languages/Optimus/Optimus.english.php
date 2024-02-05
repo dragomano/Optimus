@@ -100,7 +100,7 @@ $txt['optimus_robots_title'] = 'Manage robots.txt';
 $txt['optimus_robots_desc'] = 'The rule generator is updated depending on the installed mods and some settings of your SMF.';
 
 $txt['optimus_rules'] = 'Rule generator';
-$txt['optimus_rules_hint'] = 'You can use these rules as an example for your robots.txt (on the right textarea):';
+$txt['optimus_rules_hint'] = 'You can use these rules as an example for your robots.txt:';
 
 $txt['optimus_htaccess_title'] = 'Manage .htaccess';
 $txt['optimus_htaccess_desc'] = 'Here you can modify the .htaccess file for your forum. Be careful!';
@@ -140,9 +140,9 @@ $txt['optimus_direct_link'] = 'Direct link';
 $txt['optimus_caption'] = 'Caption';
 $txt['optimus_thumbnail'] = 'Thumbnail';
 
-$txt['permissionname_optimus_add_descriptions'] = $txt['group_perms_name_optimus_add_descriptions'] = 'Adding descriptions for topics';
+$txt['permissionname_optimus_add_descriptions'] = $txt['group_perms_name_optimus_add_descriptions'] = 'Add descriptions for topics';
 $txt['permissionhelp_optimus_add_descriptions'] = 'Ability to add a description when creating/editing a topic.';
-$txt['permissionname_optimus_add_keywords'] = $txt['group_perms_name_optimus_add_keywords'] = 'Adding keywords for topics';
+$txt['permissionname_optimus_add_keywords'] = $txt['group_perms_name_optimus_add_keywords'] = 'Add keywords for topics';
 $txt['permissionhelp_optimus_add_keywords'] = 'Ability to add keywords when creating/editing a topic.';
 $txt['permissionname_optimus_add_descriptions_own'] = $txt['permissionname_optimus_add_keywords_own'] = 'Own topic';
 $txt['permissionname_optimus_add_descriptions_any'] = $txt['permissionname_optimus_add_keywords_any'] = 'Any topic';
