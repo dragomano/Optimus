@@ -10,3 +10,5 @@ coverage/
 src/Themes/default/languages/Optimus/*
 src/Themes/default/languages/Optimus/index.php
 !src/Themes/default/languages/Optimus/Optimus.english.php
+
+src/Sources/Optimus/Addons/*/
