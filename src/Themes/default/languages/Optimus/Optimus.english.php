@@ -73,7 +73,7 @@ $txt['optimus_meta_content'] = 'Content';
 $txt['optimus_meta_info'] = 'Please use only the values from <strong>content</strong> parameter of the meta tags.<br>Example: <span class="smalltext">&lt;meta name="<strong>NAME</strong>" content="<strong>VALUE</strong>"&gt;</span>';
 $txt['optimus_search_engines'] = [
 	'Google' => ['google-site-verification', 'https://www.google.com/webmasters/tools/', 'Google Search Console'],
-	'Bing' => ['msvalidate.01', 'https://www.bing.com/toolbox/webmaster/', 'Bing Webmaster'],
+	'Bing'   => ['msvalidate.01', 'https://www.bing.com/toolbox/webmaster/', 'Bing Webmaster'],
 	'Yandex' => ['yandex-verification', 'https://webmaster.yandex.com/', 'Yandex.Webmaster'],
 ];
 
@@ -108,7 +108,8 @@ $txt['optimus_htaccess_desc'] = 'Here you can modify the .htaccess file for your
 $txt['optimus_sitemap_title'] = 'Sitemap';
 /* Argument: OP_NAME */
 $txt['optimus_sitemap_desc'] = '%1$s can generate a simple XML map in accordance with the settings below.';
-
+/* Argument: string */
+$txt['optimus_sitemap_info'] = 'If you do not see recent boards or topics in the map, check the %s';
 $txt['optimus_sitemap_enable'] = 'Activate the Sitemap';
 $txt['optimus_sitemap_enable_subtext'] = 'The map will be created/updated after saving the settings.';
 $txt['optimus_sitemap_link'] = 'Show the Sitemap link on the footer';

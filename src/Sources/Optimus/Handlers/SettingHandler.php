@@ -478,6 +478,8 @@ final class SettingHandler
 		Utils::$context['settings_title'] = Lang::$txt['optimus_sitemap_title'];
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
+		Lang::load('ManageMaintenance');
+
 		$this->addDefaultSettings([
 			'optimus_sitemap_topics_num_replies' => 5,
 			'optimus_sitemap_items_display'      => 10000,
@@ -485,7 +487,10 @@ final class SettingHandler
 			'optimus_update_frequency'           => 1
 		]);
 
+		Lang::$txt['optimus_sitemap_info'] = sprintf(Lang::$txt['optimus_sitemap_info'], sprintf('<a class="bbc_link" href="%s?action=admin;area=maintain;sa=routine">' . Lang::$txt['maintain_recount'] . '</a>', Config::$scripturl));
+
 		$config_vars = [
+			['desc', 'optimus_sitemap_info'],
 			['check', 'optimus_sitemap_enable', 'subtext' => Lang::$txt['optimus_sitemap_enable_subtext']],
 			['check', 'optimus_sitemap_link'],
 			['check', 'optimus_remove_previous_xml_files'],
