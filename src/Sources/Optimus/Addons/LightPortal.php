@@ -10,12 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 03.02.24
+ * @version 06.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Compat\{Config, Utils};
+use Bugo\Compat\{Config, Database as Db};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -50,7 +50,7 @@ final class LightPortal extends AbstractAddon
 	{
 		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT page_id, alias, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
@@ -66,7 +66,7 @@ final class LightPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
 
 			/* @var Sitemap $sitemap */
@@ -76,6 +76,6 @@ final class LightPortal extends AbstractAddon
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 	}
 }

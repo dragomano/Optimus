@@ -14,7 +14,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{CacheApi, IntegrationHook, Utils};
+use Bugo\Compat\{CacheApi, Database as Db, IntegrationHook};
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\ListenerRegistry;
 use League\Event\ListenerSubscriber;
@@ -65,7 +65,7 @@ final class AddonHandler implements ListenerSubscriber
 	private function getInstalledMods(): array
 	{
 		if (($mods = CacheApi::get('optimus_installed_mods', self::TTL)) === null) {
-			$result = Utils::$smcFunc['db_query']('', /** @lang text */ '
+			$result = Db::$db->query('', /** @lang text */ '
 				SELECT package_id
 				FROM {db_prefix}log_packages
 				WHERE install_state = 1',
@@ -73,10 +73,10 @@ final class AddonHandler implements ListenerSubscriber
 			);
 
 			$mods = [];
-			while ($row = Utils::$smcFunc['db_fetch_assoc']($result))
+			while ($row = Db::$db->fetch_assoc($result))
 				$mods[] = $row['package_id'];
 
-			Utils::$smcFunc['db_free_result']($result);
+			Db::$db->free_result($result);
 
 			CacheApi::put('optimus_installed_mods', $mods, self::TTL);
 		}

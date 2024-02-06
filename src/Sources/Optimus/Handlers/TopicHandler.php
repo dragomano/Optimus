@@ -16,7 +16,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Board, Config, IntegrationHook};
 use Bugo\Compat\{BBCodeParser, Lang, Theme};
-use Bugo\Compat\{Topic, User, Utils};
+use Bugo\Compat\{Database as Db, Topic, User, Utils};
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
@@ -67,10 +67,14 @@ final class TopicHandler
 		$firstMessageId = Utils::$context['topicinfo']['id_first_msg'];
 
 		// Looking for an image in attachments of the topic first message
-		if (! empty(Utils::$context['loaded_attachments']) && isset(Utils::$context['loaded_attachments'][$firstMessageId])) {
+		if (
+			! empty(Utils::$context['loaded_attachments'])
+			&& isset(Utils::$context['loaded_attachments'][$firstMessageId])
+		) {
 			$attachments = Utils::$context['loaded_attachments'][$firstMessageId];
 			$attach = ';attach=' . ($key = array_key_first($attachments)) . ';image';
-			Theme::$current->settings['og_image'] = Config::$scripturl . '?action=dlattach;topic=' . Utils::$context['current_topic'] . $attach;
+			Theme::$current->settings['og_image'] = Config::$scripturl . '?action=dlattach;topic='
+				. Utils::$context['current_topic'] . $attach;
 
 			Utils::$context['optimus_og_image'] = [
 				'url'    => Theme::$current->settings['og_image'],
@@ -86,7 +90,9 @@ final class TopicHandler
 				'/\[img.*]([^]\[]+)\[\/img]/U', Utils::$context['topicinfo']['topic_first_message'], $value
 			);
 
-			Theme::$current->settings['og_image'] = $image ? array_pop($value) : Theme::$current->settings['og_image'];
+			Theme::$current->settings['og_image'] = $image
+				? array_pop($value)
+				: Theme::$current->settings['og_image'];
 		}
 	}
 
@@ -192,9 +198,11 @@ final class TopicHandler
 	public function postEnd(): void
 	{
 		if (Utils::$context['is_new_topic']) {
-			Utils::$context['optimus']['description'] = Input::xss(Input::request('optimus_description', ''));
+			Utils::$context['optimus']['description'] = Input::xss(
+				Input::request('optimus_description', '')
+			);
 		} else {
-			$request = Utils::$smcFunc['db_query']('', '
+			$result = Db::$db->query('', '
 				SELECT optimus_description, id_member_started
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:id_topic}
@@ -204,10 +212,12 @@ final class TopicHandler
 				]
 			);
 
-			[Utils::$context['optimus']['description'], $topic_author] = Utils::$smcFunc['db_fetch_row']($request);
-			Utils::$smcFunc['db_free_result']($request);
+			[Utils::$context['optimus']['description'], $topicAuthor] = Db::$db->fetch_row($result);
 
-			Utils::$context['user']['started'] = Utils::$context['user']['id'] == $topic_author && !Utils::$context['user']['is_guest'];
+			Db::$db->free_result($result);
+
+			Utils::$context['user']['started'] = Utils::$context['user']['id'] == $topicAuthor
+				&& ! Utils::$context['user']['is_guest'];
 		}
 
 		$this->addFields();
@@ -232,8 +242,12 @@ final class TopicHandler
 
 	private function makeDescriptionFromFirstMessage(): void
 	{
-		if (empty(Config::$modSettings['optimus_topic_description']) || empty(Utils::$context['topicinfo']['topic_first_message']))
+		if (
+			empty(Config::$modSettings['optimus_topic_description'])
+			|| empty(Utils::$context['topicinfo']['topic_first_message'])
+		) {
 			return;
+		}
 
 		Utils::$context['meta_description'] = Str::teaser(Utils::$context['topicinfo']['topic_first_message']);
 	}
@@ -253,7 +267,7 @@ final class TopicHandler
 
 		$description = Input::xss(Input::request('optimus_description', ''));
 
-		Utils::$smcFunc['db_query']('', '
+		Db::$db->query('', '
 			UPDATE {db_prefix}topics
 			SET optimus_description = {string:description}
 			WHERE id_topic = {int:current_topic}',
@@ -273,6 +287,9 @@ final class TopicHandler
 			return false;
 
 		return User::hasPermission('optimus_add_descriptions_any')
-			|| (User::hasPermission('optimus_add_descriptions_own') && ! empty(Utils::$context['user']['started']));
+			|| (
+				User::hasPermission('optimus_add_descriptions_own')
+				&& ! empty(Utils::$context['user']['started'])
+			);
 	}
 }

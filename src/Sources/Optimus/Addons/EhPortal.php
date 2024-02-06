@@ -10,12 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 03.02.24
+ * @version 06.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Compat\{Config, Utils};
+use Bugo\Compat\{Config, Database as Db};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -48,7 +48,7 @@ final class EhPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT namespace
 			FROM {db_prefix}sp_pages
 			WHERE status = {int:status}
@@ -62,7 +62,7 @@ final class EhPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$url = Config::$scripturl . '?page=' . $row['namespace'];
 
 			/* @var Sitemap $sitemap */
@@ -71,6 +71,6 @@ final class EhPortal extends AbstractAddon
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 	}
 }

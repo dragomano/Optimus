@@ -10,12 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 03.02.24
+ * @version 06.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Compat\{Config, Utils};
+use Bugo\Compat\{Config, Database as Db};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -56,7 +56,7 @@ final class EzPortal extends AbstractAddon
 	{
 		global $ezpSettings;
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT id_page, date, title, permissions
 			FROM {db_prefix}ezp_page
 			WHERE {int:guests} IN (permissions)
@@ -66,7 +66,7 @@ final class EzPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			if (! empty($ezpSettings['ezp_pages_seourls']) && function_exists('MakeSEOUrl')) {
 				$url = Config::$boardurl . '/pages/' . MakeSEOUrl($row['title']) . '-' . $row['id_page'];
 			} else {
@@ -80,6 +80,6 @@ final class EzPortal extends AbstractAddon
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 	}
 }

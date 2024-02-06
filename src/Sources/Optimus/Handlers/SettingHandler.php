@@ -130,7 +130,7 @@ final class SettingHandler
 						OP_VERSION,
 						phpversion(),
 						Utils::$smcFunc['db_title'],
-						Utils::$smcFunc['db_get_version']()
+						Db::$db->get_version()
 					)
 				],
 				'extra' => [
@@ -520,7 +520,7 @@ final class SettingHandler
 			User::$me->checkSession();
 
 			// Recreate a sitemap after save settings
-			Utils::$smcFunc['db_query']('', '
+			Db::$db->query('', '
 				DELETE FROM {db_prefix}background_tasks
 				WHERE task_class = {string:task_class}',
 				[
@@ -529,7 +529,7 @@ final class SettingHandler
 			);
 
 			if (Input::isPost('optimus_sitemap_enable')) {
-				Utils::$smcFunc['db_insert']('insert',
+				Db::$db->insert('insert',
 					'{db_prefix}background_tasks',
 					['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string'],
 					['$sourcedir/Optimus/Tasks/Sitemap.php', '\\' . Sitemap::class, ''],

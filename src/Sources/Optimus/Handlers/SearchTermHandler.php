@@ -14,7 +14,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{CacheApi, Config, IntegrationHook};
+use Bugo\Compat\{CacheApi, Config, Database as Db, IntegrationHook};
 use Bugo\Compat\{Theme, User, Utils};
 use Bugo\Optimus\Utils\Input;
 
@@ -55,7 +55,7 @@ final class SearchTermHandler
 			return;
 
 		if ((Utils::$context['search_terms'] = CacheApi::get('optimus_search_terms', 3600)) === null) {
-			$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
+			$request = Db::$db->query('', /** @lang text */ '
 				SELECT phrase, hit
 				FROM {db_prefix}optimus_search_terms
 				ORDER BY hit DESC
@@ -63,7 +63,7 @@ final class SearchTermHandler
 			);
 
 			$scale = 1;
-			while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+			while ($row = Db::$db->fetch_assoc($request)) {
 				if ($scale < $row['hit'])
 					$scale = $row['hit'];
 
@@ -74,7 +74,7 @@ final class SearchTermHandler
 				];
 			}
 
-			Utils::$smcFunc['db_free_result']($request);
+			Db::$db->free_result($request);
 
 			CacheApi::put('optimus_search_terms', Utils::$context['search_terms'], 3600);
 		}
@@ -92,7 +92,7 @@ final class SearchTermHandler
 		if (empty($searchString))
 			return false;
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT id_term
 			FROM {db_prefix}optimus_search_terms
 			WHERE phrase = {string:phrase}
@@ -102,11 +102,11 @@ final class SearchTermHandler
 			]
 		);
 
-		[$id] = Utils::$smcFunc['db_fetch_row']($request);
-		Utils::$smcFunc['db_free_result']($request);
+		[$id] = Db::$db->fetch_row($request);
+		Db::$db->free_result($request);
 
 		if (empty($id)) {
-			Utils::$smcFunc['db_insert']('insert',
+			Db::$db->insert('insert',
 				'{db_prefix}optimus_search_terms',
 				[
 					'phrase' => 'string-255',
@@ -116,7 +116,7 @@ final class SearchTermHandler
 				['id_term']
 			);
 		} else {
-			Utils::$smcFunc['db_query']('', '
+			Db::$db->query('', '
 				UPDATE {db_prefix}optimus_search_terms
 				SET hit = hit + 1
 				WHERE id_term = {int:id_term}',

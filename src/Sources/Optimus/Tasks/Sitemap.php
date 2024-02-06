@@ -68,7 +68,7 @@ final class Sitemap extends SMF_BackgroundTask
 			};
 		}
 
-		Utils::$smcFunc['db_insert']('insert',
+		Db::$db->insert('insert',
 			'{db_prefix}background_tasks',
 			[
 				'task_file' => 'string-255',
@@ -219,7 +219,7 @@ final class Sitemap extends SMF_BackgroundTask
 
 		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
+		$request = Db::$db->query('', /** @lang text */ '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}messages AS m ON (b.id_last_msg = m.id_msg)
@@ -244,7 +244,7 @@ final class Sitemap extends SMF_BackgroundTask
 		);
 
 		$links = [];
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$this->openBoards[] = $row['id_board'];
 
 			if (! empty(Config::$modSettings['optimus_sitemap_boards'])) {
@@ -260,7 +260,7 @@ final class Sitemap extends SMF_BackgroundTask
 			}
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 
 		return $links;
 	}
@@ -295,7 +295,7 @@ final class Sitemap extends SMF_BackgroundTask
 				@apache_reset_timeout();
 
 			if (! empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
-				$request = Utils::$smcFunc['db_query']('', '
+				$result = Db::$db->query('', '
 					SELECT t.id_topic, t.num_replies,
 						m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
 							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ',
@@ -325,7 +325,7 @@ final class Sitemap extends SMF_BackgroundTask
 					]
 				);
 
-				while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+				while ($row = Db::$db->fetch_assoc($result)) {
 					$totalPages = ceil($row['num_replies'] / $messagesPerPage);
 					$pageStart = 0;
 
@@ -351,7 +351,7 @@ final class Sitemap extends SMF_BackgroundTask
 					}
 				}
 			} else {
-				$request = Utils::$smcFunc['db_query']('', '
+				$result = Db::$db->query('', '
 					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
 						empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ',
 						a.id_attach, a.filename') . '
@@ -380,7 +380,7 @@ final class Sitemap extends SMF_BackgroundTask
 					]
 				);
 
-				while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+				while ($row = Db::$db->fetch_assoc($result)) {
 					$topicUrl = Config::$scripturl . '?topic=' . $row['id_topic'] . '.0';
 
 					if (! empty(Config::$modSettings['queryless_urls']))
@@ -401,7 +401,7 @@ final class Sitemap extends SMF_BackgroundTask
 				}
 			}
 
-			Utils::$smcFunc['db_free_result']($request);
+			Db::$db->free_result($result);
 
 			$start += $limit;
 		}

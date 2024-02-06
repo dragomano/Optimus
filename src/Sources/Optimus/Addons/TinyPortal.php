@@ -10,13 +10,13 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 03.02.24
+ * @version 06.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
 use Bugo\Compat\{Config, IntegrationHook};
-use Bugo\Compat\{Theme, Utils};
+use Bugo\Compat\{Database as Db, Theme, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -81,7 +81,7 @@ final class TinyPortal extends AbstractAddon
 	{
 		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT a.id, a.date, a.shortname
 			FROM {db_prefix}tp_articles AS a
 				INNER JOIN {db_prefix}tp_variables AS v ON (a.category = v.id)
@@ -98,7 +98,7 @@ final class TinyPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$url = Config::$scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 
 			/* @var Sitemap $sitemap */
@@ -108,6 +108,6 @@ final class TinyPortal extends AbstractAddon
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 	}
 }

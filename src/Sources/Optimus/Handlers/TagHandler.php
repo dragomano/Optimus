@@ -15,7 +15,8 @@
 namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{CacheApi, Config, IntegrationHook};
-use Bugo\Compat\{ItemList, Lang, Theme, Topic, User, Utils};
+use Bugo\Compat\{Database as Db, ItemList, Lang};
+use Bugo\Compat\{Theme, Topic, User, Utils};
 use Bugo\Optimus\Utils\{Copyright, Input};
 
 if (! defined('SMF'))
@@ -225,7 +226,7 @@ final class TagHandler
 		if (empty($topics))
 			return;
 
-		Utils::$smcFunc['db_query']('', '
+		Db::$db->query('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE topic_id IN ({array_int:topics})',
 			[
@@ -349,7 +350,7 @@ final class TagHandler
 
 	public function getAllByKeyId(int $start, int $items_per_page, string $sort): array
 	{
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT t.id_topic, ms.subject, b.id_board, b.name, m.id_member, m.id_group, m.real_name, mg.group_name
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}optimus_log_keywords AS olk ON (t.id_topic = olk.topic_id)
@@ -371,7 +372,7 @@ final class TagHandler
 		);
 
 		$topics = [];
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$href = Config::$scripturl . '?action=profile;u=' . $row['id_member'];
 
 			$topics[] = [
@@ -381,14 +382,14 @@ final class TagHandler
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 
 		return $topics;
 	}
 
 	public function getTotalCountByKeyId(): int
 	{
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT COUNT(topic_id)
 			FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id = {int:keyword}
@@ -398,8 +399,8 @@ final class TagHandler
 			]
 		);
 
-		[$num] = Utils::$smcFunc['db_fetch_row']($request);
-		Utils::$smcFunc['db_free_result']($request);
+		[$num] = Db::$db->fetch_row($request);
+		Db::$db->free_result($request);
 
 		return (int) $num;
 	}
@@ -477,7 +478,7 @@ final class TagHandler
 
 	public function getAll(int $start, int $items_per_page, string $sort): array
 	{
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT ok.id, ok.name, COUNT(olk.keyword_id) AS frequency
 			FROM {db_prefix}optimus_keywords AS ok
 				LEFT JOIN {db_prefix}optimus_log_keywords AS olk ON (ok.id = olk.keyword_id)
@@ -492,7 +493,7 @@ final class TagHandler
 		);
 
 		$keywords = [];
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$link = Config::$scripturl . '?action=keywords;id=' . $row['id'];
 
 			$keywords[] = [
@@ -501,22 +502,22 @@ final class TagHandler
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 
 		return $keywords;
 	}
 
 	public function getTotalCount(): int
 	{
-		$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
+		$request = Db::$db->query('', /** @lang text */ '
 			SELECT COUNT(id)
 			FROM {db_prefix}optimus_keywords
 			LIMIT 1',
 			[]
 		);
 
-		[$num] = Utils::$smcFunc['db_fetch_row']($request);
-		Utils::$smcFunc['db_free_result']($request);
+		[$num] = Db::$db->fetch_row($request);
+		Db::$db->free_result($request);
 
 		return (int) $num;
 	}
@@ -544,7 +545,7 @@ final class TagHandler
 	private function getKeywords(): array
 	{
 		if (($keywords = CacheApi::get('optimus_topic_keywords', 3600)) === null) {
-			$request = Utils::$smcFunc['db_query']('', /** @lang text */ '
+			$request = Db::$db->query('', /** @lang text */ '
 				SELECT k.id, k.name, lk.topic_id
 				FROM {db_prefix}optimus_keywords AS k
 					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
@@ -553,10 +554,10 @@ final class TagHandler
 			);
 
 			$keywords = [];
-			while ($row = Utils::$smcFunc['db_fetch_assoc']($request))
+			while ($row = Db::$db->fetch_assoc($request))
 				$keywords[$row['topic_id']][$row['id']] = $row['name'];
 
-			Utils::$smcFunc['db_free_result']($request);
+			Db::$db->free_result($request);
 
 			CacheApi::put('optimus_topic_keywords', $keywords, 3600);
 		}
@@ -569,7 +570,7 @@ final class TagHandler
 		if (empty($id))
 			return '';
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT name
 			FROM {db_prefix}optimus_keywords
 			WHERE id = {int:id}
@@ -579,8 +580,8 @@ final class TagHandler
 			]
 		);
 
-		[$name] = Utils::$smcFunc['db_fetch_row']($request);
-		Utils::$smcFunc['db_free_result']($request);
+		[$name] = Db::$db->fetch_row($request);
+		Db::$db->free_result($request);
 
 		return $name;
 	}
@@ -597,7 +598,7 @@ final class TagHandler
 		if (empty($query))
 			exit;
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT name
 			FROM {db_prefix}optimus_keywords
 			WHERE name LIKE {string:search}
@@ -609,14 +610,14 @@ final class TagHandler
 		);
 
 		$data = [];
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$data[] = [
 				'id'   => $row['name'],
 				'text' => $row['name']
 			];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 
 		exit(json_encode($data));
 	}
@@ -735,7 +736,7 @@ final class TagHandler
 
 	private function getIdByName(string $name): int
 	{
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT id
 			FROM {db_prefix}optimus_keywords
 			WHERE name = {string:name}
@@ -745,8 +746,8 @@ final class TagHandler
 			]
 		);
 
-		[$id] = Utils::$smcFunc['db_fetch_row']($request);
-		Utils::$smcFunc['db_free_result']($request);
+		[$id] = Db::$db->fetch_row($request);
+		Db::$db->free_result($request);
 
 		return (int) $id;
 	}
@@ -758,7 +759,7 @@ final class TagHandler
 	 */
 	private function addToDatabase(string $keyword): int
 	{
-		return Utils::$smcFunc['db_insert']('insert',
+		return Db::$db->insert('insert',
 			'{db_prefix}optimus_keywords',
 			[
 				'name' => 'string-255'
@@ -771,7 +772,7 @@ final class TagHandler
 
 	private function addNoteToLogTable(int $keyword_id, int $topic, int $user): void
 	{
-		Utils::$smcFunc['db_insert']('replace',
+		Db::$db->insert('replace',
 			'{db_prefix}optimus_log_keywords',
 			[
 				'keyword_id' => 'int',
@@ -819,7 +820,7 @@ final class TagHandler
 		if (empty($keywords) || empty($topic))
 			return;
 
-		$request = Utils::$smcFunc['db_query']('', '
+		$request = Db::$db->query('', '
 			SELECT lk.keyword_id, lk.topic_id
 			FROM {db_prefix}optimus_log_keywords AS lk
 				INNER JOIN {db_prefix}optimus_keywords AS k ON (lk.keyword_id = k.id
@@ -833,17 +834,17 @@ final class TagHandler
 		);
 
 		$delItems = [];
-		while ($row = Utils::$smcFunc['db_fetch_assoc']($request)) {
+		while ($row = Db::$db->fetch_assoc($request)) {
 			$delItems['keywords'][] = $row['keyword_id'];
 			$delItems['topics'][]   = $row['topic_id'];
 		}
 
-		Utils::$smcFunc['db_free_result']($request);
+		Db::$db->free_result($request);
 
 		if (empty($delItems))
 			return;
 
-		Utils::$smcFunc['db_query']('', '
+		Db::$db->query('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id IN ({array_int:keywords}) AND topic_id IN ({array_int:topics})',
 			[
@@ -852,7 +853,7 @@ final class TagHandler
 			]
 		);
 
-		Utils::$smcFunc['db_query']('', /** @lang text */ '
+		Db::$db->query('', /** @lang text */ '
 			DELETE FROM {db_prefix}optimus_keywords
 			WHERE id NOT IN (SELECT keyword_id FROM {db_prefix}optimus_log_keywords)',
 			[]
