@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Bugo\Compat\Board;
+use Bugo\Compat\Config;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Theme;
 use Bugo\Compat\Utils;
@@ -11,6 +12,21 @@ beforeEach(function () {
 	$this->handler = new BoardHandler();
 
 	Theme::$current->settings['og_image'] = '';
+});
+
+it('checks __invoke method', function () {
+	Config::$modSettings['optimus_allow_change_board_og_image'] = true;
+
+	try {
+		(new BoardHandler())();
+		$result = 'success';
+	} catch (Exception $e) {
+		$result = $e->getMessage();
+	}
+
+	expect($result)->toEqual('success');
+
+	unset(Config::$modSettings['optimus_allow_change_board_og_image']);
 });
 
 describe('menuButtons method', function () {
