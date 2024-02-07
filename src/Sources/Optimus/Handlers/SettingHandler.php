@@ -487,10 +487,22 @@ final class SettingHandler
 			'optimus_update_frequency'           => 1
 		]);
 
-		Lang::$txt['optimus_sitemap_info'] = sprintf(Lang::$txt['optimus_sitemap_info'], sprintf('<a class="bbc_link" href="%s?action=admin;area=maintain;sa=routine">' . Lang::$txt['maintain_recount'] . '</a>', Config::$scripturl));
+		$title = Lang::$txt['admin_maintenance'] . ' - ' . Lang::$txt['maintain_recount'];
+		Lang::$txt['optimus_sitemap_info'] = sprintf(
+			Lang::$txt['optimus_sitemap_info'],
+			sprintf(
+				'<a class="bbc_link" href="%s?action=admin;area=maintain;sa=routine">' . $title . '</a>',
+				Config::$scripturl
+			)
+		);
+
+		Utils::$context['settings_insert_above'] = implode('', [
+			'<div class="roundframe">',
+			Lang::$txt['optimus_sitemap_info'],
+			'</div>',
+		]);
 
 		$config_vars = [
-			['desc', 'optimus_sitemap_info'],
 			['check', 'optimus_sitemap_enable', 'subtext' => Lang::$txt['optimus_sitemap_enable_subtext']],
 			['check', 'optimus_sitemap_link'],
 			['check', 'optimus_remove_previous_xml_files'],
