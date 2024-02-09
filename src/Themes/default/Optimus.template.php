@@ -331,7 +331,7 @@ function template_sitemap_xml(): void
 	<url>
 		<loc>', $item['loc'], '</loc>';
 
-		if ( empty($item['lastmod']))
+		if (! empty($item['lastmod']))
 			echo '
 		<lastmod>', $item['lastmod'], '</lastmod>';
 
