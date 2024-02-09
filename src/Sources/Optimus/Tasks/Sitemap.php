@@ -29,6 +29,8 @@ final class Sitemap extends SMF_BackgroundTask
 {
 	public const MAX_ITEMS = 50000;
 
+	public int $startYear = 0;
+
 	public array $links = [];
 
 	public string $content = '';
@@ -98,6 +100,8 @@ final class Sitemap extends SMF_BackgroundTask
 		Config::$modSettings['pretty_bufferusecache'] = false;
 
 		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
+
+		$this->startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
 		$sitemapCounter = 0;
 
@@ -201,7 +205,9 @@ final class Sitemap extends SMF_BackgroundTask
 		// Adding the main page
 		$home = [
 			'loc'     => Config::$boardurl . '/',
-			'lastmod' => empty(Config::$modSettings['optimus_main_page_frequency']) ? time() : $this->getLastDate($this->links)
+			'lastmod' => empty(Config::$modSettings['optimus_main_page_frequency'])
+				? time()
+				: $this->getLastDate($this->links)
 		];
 
 		// Modders can process links with SEF handler
@@ -217,9 +223,7 @@ final class Sitemap extends SMF_BackgroundTask
 		if (! empty(Config::$modSettings['recycle_board']))
 			$this->ignoredBoards[] = (int) Config::$modSettings['recycle_board'];
 
-		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-
-		$request = Db::$db->query('', /** @lang text */ '
+		$result = Db::$db->query('', /** @lang text */ '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}messages AS m ON (b.id_last_msg = m.id_msg)
@@ -232,19 +236,19 @@ final class Sitemap extends SMF_BackgroundTask
 				)' . (empty($this->ignoredBoards) ? '' : '
 				AND b.id_board NOT IN ({array_int:ignored_boards})') . '
 				AND b.redirect = {string:empty_string}
-				AND b.num_posts > {int:num_posts}' . ($startYear ? '
+				AND b.num_posts > {int:num_posts}' . ($this->startYear ? '
 				AND YEAR(FROM_UNIXTIME(m.poster_time)) >= {int:start_year}' : '') . '
 			ORDER BY b.id_board DESC',
 			[
 				'ignored_boards' => $this->ignoredBoards,
 				'empty_string'   => '',
 				'num_posts'      => 0,
-				'start_year'     => $startYear
+				'start_year'     => $this->startYear
 			]
 		);
 
 		$links = [];
-		while ($row = Db::$db->fetch_assoc($request)) {
+		while ($row = Db::$db->fetch_assoc($result)) {
 			$this->openBoards[] = $row['id_board'];
 
 			if (! empty(Config::$modSettings['optimus_sitemap_boards'])) {
@@ -260,7 +264,7 @@ final class Sitemap extends SMF_BackgroundTask
 			}
 		}
 
-		Db::$db->free_result($request);
+		Db::$db->free_result($result);
 
 		return $links;
 	}
@@ -277,7 +281,7 @@ final class Sitemap extends SMF_BackgroundTask
 		$tempCache = Db::$cache;
 		Db::$cache = [];
 
-		$startYear  = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
+		$this->startYear  = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
 		$totalRows  = (int) (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])
 			? (Config::$modSettings['totalTopics'] ?? 0)
@@ -311,7 +315,7 @@ final class Sitemap extends SMF_BackgroundTask
 						)') . '
 					WHERE t.id_board IN ({array_int:open_boards})
 						AND t.num_replies >= {int:num_replies}
-						AND t.approved = {int:is_approved}' . ($startYear ? '
+						AND t.approved = {int:is_approved}' . ($this->startYear ? '
 						AND YEAR(FROM_UNIXTIME(GREATEST(m.poster_time, m.modified_time))) >= {int:start_year}' : '') . '
 					ORDER BY t.id_topic DESC, last_date
 					LIMIT {int:start}, {int:limit}',
@@ -319,7 +323,7 @@ final class Sitemap extends SMF_BackgroundTask
 						'open_boards' => $this->openBoards,
 						'num_replies' => $numReplies,
 						'is_approved' => 1,
-						'start_year'  => $startYear,
+						'start_year'  => $this->startYear,
 						'start'       => $start,
 						'limit'       => $limit
 					]
@@ -366,7 +370,7 @@ final class Sitemap extends SMF_BackgroundTask
 						)') . '
 					WHERE t.id_board IN ({array_int:open_boards})
 						AND t.num_replies >= {int:num_replies}
-						AND t.approved = {int:is_approved}' . ($startYear ? '
+						AND t.approved = {int:is_approved}' . ($this->startYear ? '
 						AND YEAR(FROM_UNIXTIME(GREATEST(m.poster_time, m.modified_time))) >= {int:start_year}' : '') . '
 					ORDER BY t.id_topic DESC, last_date DESC
 					LIMIT {int:start}, {int:limit}',
@@ -374,7 +378,7 @@ final class Sitemap extends SMF_BackgroundTask
 						'open_boards' => $this->openBoards,
 						'num_replies' => $numReplies,
 						'is_approved' => 1,
-						'start_year'  => $startYear,
+						'start_year'  => $this->startYear,
 						'start'       => $start,
 						'limit'       => $limit
 					]

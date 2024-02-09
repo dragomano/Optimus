@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 06.02.24
+ * @version 09.02.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -48,7 +48,7 @@ final class EhPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		$request = Db::$db->query('', '
+		$result = Db::$db->query('', '
 			SELECT namespace
 			FROM {db_prefix}sp_pages
 			WHERE status = {int:status}
@@ -62,7 +62,7 @@ final class EhPortal extends AbstractAddon
 			]
 		);
 
-		while ($row = Db::$db->fetch_assoc($request)) {
+		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?page=' . $row['namespace'];
 
 			/* @var Sitemap $sitemap */
@@ -71,6 +71,6 @@ final class EhPortal extends AbstractAddon
 			];
 		}
 
-		Db::$db->free_result($request);
+		Db::$db->free_result($result);
 	}
 }

@@ -19,9 +19,13 @@ use Bugo\Optimus\Events\AddonEvent;
 interface AddonInterface
 {
 	public const HOOK_EVENT = 'optimus_hook_event';
+
 	public const ROBOTS_RULES = 'optimus_robots_rules';
+
 	public const SITEMAP_LINKS = 'optimus_sitemap_links';
+
 	public const SITEMAP_CONTENT = 'optimus_sitemap_content';
+
 	public const CREATE_SEF_URLS = 'optimus_create_sef_urls';
 
 	public function __invoke(AddonEvent $event): void;

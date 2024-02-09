@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 06.02.24
+ * @version 09.02.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -48,25 +48,23 @@ final class LightPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-
-		$request = Db::$db->query('', '
+		$result = Db::$db->query('', '
 			SELECT page_id, alias, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
 				AND created_at <= {int:current_time}
-				AND permissions IN ({array_int:permissions})' . ($startYear ? '
+				AND permissions IN ({array_int:permissions})' . ($sitemap->startYear ? '
 				AND YEAR(FROM_UNIXTIME(created_at)) >= {int:start_year}' : '') . '
 			ORDER BY page_id DESC',
 			[
 				'status'       => 1, // The page must be active
 				'current_time' => time(),
 				'permissions'  => [1, 3], // The page must be available to guests
-				'start_year'   => $startYear
+				'start_year'   => $sitemap->startYear
 			]
 		);
 
-		while ($row = Db::$db->fetch_assoc($request)) {
+		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
 
 			/* @var Sitemap $sitemap */
@@ -76,6 +74,6 @@ final class LightPortal extends AbstractAddon
 			];
 		}
 
-		Db::$db->free_result($request);
+		Db::$db->free_result($result);
 	}
 }

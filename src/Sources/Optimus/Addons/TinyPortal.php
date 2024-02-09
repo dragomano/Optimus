@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 06.02.24
+ * @version 09.02.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -79,26 +79,24 @@ final class TinyPortal extends AbstractAddon
 
 	public function changeSitemap(object $sitemap): void
 	{
-		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-
-		$request = Db::$db->query('', '
+		$result = Db::$db->query('', '
 			SELECT a.id, a.date, a.shortname
 			FROM {db_prefix}tp_articles AS a
 				INNER JOIN {db_prefix}tp_variables AS v ON (a.category = v.id)
 			WHERE a.approved = {int:approved}
 				AND a.off = {int:off_status}
-				AND {int:guests} IN (v.value3)' . ($startYear ? '
+				AND {int:guests} IN (v.value3)' . ($sitemap->startYear ? '
 				AND YEAR(FROM_UNIXTIME(a.date)) >= {int:start_year}' : '') . '
 			ORDER BY a.id DESC',
 			[
 				'approved'   => 1, // The article must be approved
 				'off_status' => 0, // The article must be active
 				'guests'     => -1, // The article category must be available to guests
-				'start_year' => $startYear
+				'start_year' => $sitemap->startYear
 			]
 		);
 
-		while ($row = Db::$db->fetch_assoc($request)) {
+		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 
 			/* @var Sitemap $sitemap */
@@ -108,6 +106,6 @@ final class TinyPortal extends AbstractAddon
 			];
 		}
 
-		Db::$db->free_result($request);
+		Db::$db->free_result($result);
 	}
 }

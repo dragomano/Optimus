@@ -55,7 +55,7 @@ final class SearchTermHandler
 			return;
 
 		if ((Utils::$context['search_terms'] = CacheApi::get('optimus_search_terms', 3600)) === null) {
-			$request = Db::$db->query('', /** @lang text */ '
+			$result = Db::$db->query('', /** @lang text */ '
 				SELECT phrase, hit
 				FROM {db_prefix}optimus_search_terms
 				ORDER BY hit DESC
@@ -63,7 +63,7 @@ final class SearchTermHandler
 			);
 
 			$scale = 1;
-			while ($row = Db::$db->fetch_assoc($request)) {
+			while ($row = Db::$db->fetch_assoc($result)) {
 				if ($scale < $row['hit'])
 					$scale = $row['hit'];
 
@@ -74,7 +74,7 @@ final class SearchTermHandler
 				];
 			}
 
-			Db::$db->free_result($request);
+			Db::$db->free_result($result);
 
 			CacheApi::put('optimus_search_terms', Utils::$context['search_terms'], 3600);
 		}
@@ -92,7 +92,7 @@ final class SearchTermHandler
 		if (empty($searchString))
 			return false;
 
-		$request = Db::$db->query('', '
+		$result = Db::$db->query('', '
 			SELECT id_term
 			FROM {db_prefix}optimus_search_terms
 			WHERE phrase = {string:phrase}
@@ -102,8 +102,8 @@ final class SearchTermHandler
 			]
 		);
 
-		[$id] = Db::$db->fetch_row($request);
-		Db::$db->free_result($request);
+		[$id] = Db::$db->fetch_row($result);
+		Db::$db->free_result($result);
 
 		if (empty($id)) {
 			Db::$db->insert('insert',
