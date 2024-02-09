@@ -1,11 +1,12 @@
 {
   "require": {
-    "php": "^8.1",
+    "php": "^8.0",
     "ext-dom": "*"
   },
   "require-dev": {
+    "php": "^8.1",
     "pestphp/pest": "^2.33.4",
-    "rector/rector": "^0.19",
+    "rector/rector": "^1.0",
     "symfony/http-foundation": "^6.0"
   },
   "autoload": {
