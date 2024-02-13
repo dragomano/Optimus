@@ -260,7 +260,8 @@ final class TagHandler
 		$keywordName = $this->getNameById(Utils::$context['optimus_keyword_id']);
 		
 		Utils::$context['page_title']    = sprintf(Lang::$txt['optimus_topics_with_keyword'], $keywordName);
-		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'];
+		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id='
+			. Utils::$context['optimus_keyword_id'];
 
 		if (empty($keywordName)) {
 			Utils::$context['page_title'] = Lang::$txt['optimus_404_page_title'];
@@ -376,9 +377,12 @@ final class TagHandler
 			$href = Config::$scripturl . '?action=profile;u=' . $row['id_member'];
 
 			$topics[] = [
-				'topic'  => '<a href="' . Config::$scripturl . '?topic=' . $row['id_topic'] . '.0">' . $row['subject'] . '</a>',
-				'board'  => '<a href="' . Config::$scripturl . '?board=' . $row['id_board'] . '.0">' . $row['name'] . '</a>',
-				'author' => empty($row['real_name']) ? Lang::$txt['guest'] : '<a href="' . $href . '">' . $row['real_name'] . '</a>'
+				'topic'  => '<a href="' . Config::$scripturl . '?topic=' . $row['id_topic'] . '.0">'
+					. $row['subject'] . '</a>',
+				'board'  => '<a href="' . Config::$scripturl . '?board=' . $row['id_board'] . '.0">'
+					. $row['name'] . '</a>',
+				'author' => empty($row['real_name']) ? Lang::$txt['guest'] : '<a href="' . $href . '">'
+					. $row['real_name'] . '</a>'
 			];
 		}
 
@@ -469,8 +473,12 @@ final class TagHandler
 
 		new ItemList($listOptions);
 
-		if (! empty(Utils::$context['current_page']) && Utils::$context['current_page'] != (int) Input::request('start'))
+		if (
+			! empty(Utils::$context['current_page'])
+			&& Utils::$context['current_page'] != (int) Input::request('start')
+		) {
 			Utils::sendHttpStatus(404);
+		}
 
 		Utils::$context['sub_template'] = 'show_list';
 		Utils::$context['default_list'] = 'keywords';

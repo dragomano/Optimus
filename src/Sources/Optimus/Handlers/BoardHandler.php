@@ -135,7 +135,12 @@ final class BoardHandler
 	 *
 	 * Обновляем значение optimus_og_image для раздела
 	 */
-	public function modifyBoard(int $id, array $boardOptions, array &$boardUpdates, array &$boardUpdateParameters): void
+	public function modifyBoard(
+		int $id,
+		array $boardOptions,
+		array &$boardUpdates,
+		array &$boardUpdateParameters
+	): void
 	{
 		if (Input::isPost('optimus_og_image')) {
 			$boardUpdates[] = 'optimus_og_image = {string:og_image}';

@@ -87,8 +87,10 @@ final class SitemapLinkHandler
 		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::$txt['optimus_sitemap_title']))
 			return;
 
-		Lang::$forum_copyright .= ' | <a href="' . Config::$boardurl . '/sitemap.xml">' . Lang::$txt['optimus_sitemap_title'] . '</a>';
+		Lang::$forum_copyright .= ' | <a href="' . Config::$boardurl . '/sitemap.xml">'
+			. Lang::$txt['optimus_sitemap_title'] . '</a>';
 
-		Utils::$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="' . Config::$boardurl . '/sitemap.xml">';
+		Utils::$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="'
+			. Config::$boardurl . '/sitemap.xml">';
 	}
 }

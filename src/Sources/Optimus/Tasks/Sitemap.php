@@ -46,6 +46,8 @@ final class Sitemap extends SMF_BackgroundTask
 		parent::__construct($details);
 
 		$this->dispatcher = (new DispatcherFactory())();
+
+		$this->startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 	}
 
 	public function execute(): bool
@@ -101,8 +103,6 @@ final class Sitemap extends SMF_BackgroundTask
 
 		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
 
-		$this->startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-
 		$sitemapCounter = 0;
 
 		$items = [];
@@ -120,7 +120,9 @@ final class Sitemap extends SMF_BackgroundTask
 				'lastmod'    => empty($entry['lastmod']) ? null : $this->getDateIso8601($entry['lastmod']),
 				'changefreq' => empty($entry['lastmod']) ? null : $this->getFrequency($entry['lastmod']),
 				'priority'   => empty($entry['lastmod']) ? null : $this->getPriority($entry['lastmod']),
-				'image'      => empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? null : $entry['image'] ?? null
+				'image'      => empty(Config::$modSettings['optimus_sitemap_add_found_images'])
+					? null
+					: $entry['image'] ?? null
 			];
 		}
 
@@ -150,12 +152,15 @@ final class Sitemap extends SMF_BackgroundTask
 				// Some mods should rewrite full content (PrettyURLs, etc.)
 				$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
 
-				$gzMaps[$number] = $this->createFile(Config::$boarddir . '/sitemap_' . $number . '.xml', $this->content);
+				$gzMaps[$number] = $this->createFile(
+					Config::$boarddir . '/sitemap_' . $number . '.xml', $this->content
+				);
 			}
 
 			Utils::$context['sitemap'] = [];
 			for ($number = 0; $number <= $sitemapCounter; $number++) {
-				Utils::$context['sitemap'][$number]['loc'] = Config::$boardurl . '/sitemap_' . $number . '.xml' . (empty($gzMaps[$number]) ? '' : '.gz');
+				$gz = empty($gzMaps[$number]) ? '' : '.gz';
+				Utils::$context['sitemap'][$number]['loc'] = Config::$boardurl . '/sitemap_' . $number . '.xml' . $gz;
 			}
 
 			ob_start();
@@ -335,7 +340,8 @@ final class Sitemap extends SMF_BackgroundTask
 
 					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
 						$images[$row['id_topic']] = [
-							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image',
+							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach='
+								. $row['id_attach'] . ';image',
 							'title' => $row['filename']
 						];
 					}
@@ -349,7 +355,10 @@ final class Sitemap extends SMF_BackgroundTask
 							if (count($topics[$row['id_topic']][$pageStart]) <= $messagesPerPage)
 								break;
 
-							$topics[$row['id_topic']][$pageStart] = array_slice($topics[$row['id_topic']][$pageStart], 0, $messagesPerPage, true);
+							$topics[$row['id_topic']][$pageStart] = array_slice(
+								$topics[$row['id_topic']][$pageStart], 0, $messagesPerPage, true
+							);
+
 							$pageStart += $messagesPerPage;
 						}
 					}
@@ -392,7 +401,8 @@ final class Sitemap extends SMF_BackgroundTask
 
 					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
 						$images[$row['id_topic']] = [
-							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach=' . $row['id_attach'] . ';image',
+							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach='
+								. $row['id_attach'] . ';image',
 							'title' => $row['filename']
 						];
 					}

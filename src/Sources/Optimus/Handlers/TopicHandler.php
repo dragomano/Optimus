@@ -85,9 +85,14 @@ final class TopicHandler
 		}
 
 		// Looking for an image in the text of the topic first message
-		if (empty(Utils::$context['optimus_og_image']) && ! empty(Utils::$context['topicinfo']['topic_first_message'])) {
+		if (
+			empty(Utils::$context['optimus_og_image'])
+			&& ! empty(Utils::$context['topicinfo']['topic_first_message'])
+		) {
 			$image = preg_match(
-				'/\[img.*]([^]\[]+)\[\/img]/U', Utils::$context['topicinfo']['topic_first_message'], $value
+				'/\[img.*]([^]\[]+)\[\/img]/U',
+				Utils::$context['topicinfo']['topic_first_message'],
+				$value
 			);
 
 			Theme::$current->settings['og_image'] = $image
@@ -137,8 +142,12 @@ final class TopicHandler
 		if (! in_array('ms.modified_time AS topic_modified_time', $topic_selects))
 			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
 
-		if (empty(Config::$modSettings['optimus_topic_description']) && empty(Config::$modSettings['optimus_og_image']))
+		if (
+			empty(Config::$modSettings['optimus_topic_description'])
+			&& empty(Config::$modSettings['optimus_og_image'])
+		) {
 			return;
+		}
 
 		if (! in_array('ms.body AS topic_first_message', $topic_selects))
 			$topic_selects[] = 'ms.body AS topic_first_message';

@@ -21,7 +21,7 @@ if (! defined('SMF'))
 
 final class Str
 {
-	public static function teaser(string $text, int $num_sentences = 2, int $length = 252): string
+	public static function teaser(string $text, int $sentencesCount = 2, int $length = 252): string
 	{
 		$text = BBCodeParser::load()->parse($text);
 
@@ -44,18 +44,18 @@ final class Str
 		// Limit given text
 		$text = Utils::shorten($text, $length);
 
-		if (count($sentences) <= $num_sentences)
+		if (count($sentences) <= $sentencesCount)
 			return trim($text);
 
-		$stop_at = 0;
+		$stopAt = 0;
 		foreach ($sentences as $i => $sentence) {
-			$stop_at += Utils::$smcFunc['strlen']($sentence);
-			if ($i >= $num_sentences - 1)
+			$stopAt += Utils::$smcFunc['strlen']($sentence);
+			if ($i >= $sentencesCount - 1)
 				break;
 		}
 
-		$stop_at += ($num_sentences * 2);
+		$stopAt += ($sentencesCount * 2);
 
-		return trim(Utils::$smcFunc['substr']($text, 0, $stop_at));
+		return trim(Utils::$smcFunc['substr']($text, 0, $stopAt));
 	}
 }

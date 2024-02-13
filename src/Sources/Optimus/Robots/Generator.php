@@ -18,20 +18,20 @@ use Bugo\Compat\{BBCodeParser, Config, Utils};
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
+use League\Event\EventDispatcher;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
 final class Generator
 {
-
 	public const MAP_FILE = 'sitemap.xml';
 
 	public const MAP_GZ_FILE = 'sitemap.xml.gz';
 
 	public array $actions = [
 		'msg', 'profile', 'help', 'search', 'mlist', 'sort', 'recent',
-		'unread', 'login', 'signup', 'groups', 'stats', 'prev_next', 'all'
+		'unread', 'login', 'signup', 'groups', 'stats', 'prev_next', 'all',
 	];
 
 	public array $customRules = [];
@@ -42,6 +42,13 @@ final class Generator
 
 	private array $rules = [];
 
+	private EventDispatcher $dispatcher;
+
+	public function __construct()
+	{
+		$this->dispatcher = (new DispatcherFactory())();
+	}
+
 	public function generate(): void
 	{
 		clearstatcache();
@@ -50,8 +57,7 @@ final class Generator
 		$this->rules[] = 'User-agent: *';
 
 		// Modders can change generated rules
-		$dispatcher = (new DispatcherFactory())();
-		$dispatcher->dispatch(new AddonEvent(AddonInterface::ROBOTS_RULES, $this));
+		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::ROBOTS_RULES, $this));
 
 		// External integrations
 		call_integration_hook('integrate_optimus_robots_rules', [&$this->customRules, $this->urlPath]);
@@ -112,6 +118,7 @@ final class Generator
 		$mapFile = file_exists(Config::$boarddir . '/' . self::MAP_FILE)
 			? Config::$boardurl . '/' . self::MAP_FILE
 			: '';
+
 		$mapGzFile = file_exists(Config::$boarddir . '/' . self::MAP_GZ_FILE)
 			? Config::$boardurl . '/' . self::MAP_GZ_FILE
 			: '';

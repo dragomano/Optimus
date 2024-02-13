@@ -42,7 +42,7 @@ final class SettingHandler
 	}
 
 	/**
-	 * Remove meta_keywords setting (it moved to Optimus settings) and disable queryless_urls settings (if "Remove index.php" enabled)
+	 * Remove meta_keywords setting (it moved to Optimus settings) and disable queryless_urls settings
 	 *
 	 * Удаляем настройку meta_keywords из её стандартного места и помещаем на страницу настроек Optimus
 	 */
@@ -237,7 +237,8 @@ final class SettingHandler
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=extra;save';
 
 		Lang::$txt['optimus_extra_info'] = sprintf(Lang::$txt['optimus_extra_info'], Config::$scripturl);
-		$ogImageLink = Config::$scripturl . '?action=admin;area=theme;sa=list;th=' . Theme::$current->settings['theme_id']  . '#options_og_image';
+		$ogImageLink = Config::$scripturl . '?action=admin;area=theme;sa=list;th='
+			. Theme::$current->settings['theme_id']  . '#options_og_image';
 
 		$config_vars = [
 			['title', 'optimus_extra_title'],
@@ -269,8 +270,12 @@ final class SettingHandler
 			if (Input::isPost('optimus_fb_appid'))
 				Input::post(['optimus_fb_appid' => Input::filter('optimus_fb_appid')]);
 
-			if (Input::isPost('optimus_tw_cards'))
-				Input::post(['optimus_tw_cards' => str_replace('@', '', Input::filter('optimus_tw_cards'))]);
+			if (Input::isPost('optimus_tw_cards')) {
+				Input::post([
+					'optimus_tw_cards' => str_replace(
+						'@', '', Input::filter('optimus_tw_cards'))
+				]);
+			}
 
 			IntegrationHook::call('integrate_save_optimus_extra_settings');
 
@@ -565,7 +570,10 @@ final class SettingHandler
 		if (empty(Input::isRequest('area')))
 			return;
 
-		if (! empty(Utils::$context['template_layers']) && str_contains(Input::request('area'), 'optimus')) {
+		if (
+			! empty(Utils::$context['template_layers'])
+			&& str_contains(Input::request('area'), 'optimus')
+		) {
 			Theme::loadTemplate('Optimus');
 
 			Utils::$context['template_layers'][] = 'tips';
