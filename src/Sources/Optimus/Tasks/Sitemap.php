@@ -14,7 +14,7 @@
 
 namespace Bugo\Optimus\Tasks;
 
-use Bugo\Compat\{Config, Database as Db, IntegrationHook};
+use Bugo\Compat\{Config, Db, IntegrationHook};
 use Bugo\Compat\{Sapi, Theme, Utils};
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;

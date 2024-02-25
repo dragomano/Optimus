@@ -14,7 +14,7 @@
 
 namespace Bugo\Optimus\Utils;
 
-use Bugo\Compat\User;
+use Bugo\Compat\Lang;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -23,7 +23,7 @@ final class Copyright
 {
 	public static function getLink(): string
 	{
-		$link = User::$info['language'] === 'russian'
+		$link = Lang::$txt['lang_dictionary'] === 'ru'
 			? 'https://dragomano.ru/mods/optimus'
 			: 'https://custom.simplemachines.org/mods/index.php?mod=2659';
 

@@ -14,7 +14,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{CacheApi, Database as Db, IntegrationHook};
+use Bugo\Compat\{CacheApi, Db, IntegrationHook};
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\ListenerRegistry;
 use League\Event\ListenerSubscriber;
@@ -42,7 +42,7 @@ final class AddonHandler implements ListenerSubscriber
 
 		$files = array_merge(
 			glob(OP_ADDONS . '/*.php'),
-			glob(OP_ADDONS . '/*/*.php')
+			glob(OP_ADDONS . '/*/*.php'),
 		);
 
 		$addons = array_filter(array_map(fn($file) => $this->mapNamespace($file), $files), 'strlen');
@@ -73,8 +73,9 @@ final class AddonHandler implements ListenerSubscriber
 			);
 
 			$mods = [];
-			while ($row = Db::$db->fetch_assoc($result))
+			while ($row = Db::$db->fetch_assoc($result)) {
 				$mods[] = $row['package_id'];
+			}
 
 			Db::$db->free_result($result);
 

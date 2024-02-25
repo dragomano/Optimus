@@ -10,16 +10,15 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 09.02.24
+ * @version 28.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Compat\{Config, Database as Db};
+use Bugo\Compat\{Config, Db};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
-use function MakeSEOUrl;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -70,7 +69,7 @@ final class EzPortal extends AbstractAddon
 
 		while ($row = Db::$db->fetch_assoc($result)) {
 			if (! empty($ezpSettings['ezp_pages_seourls']) && function_exists('MakeSEOUrl')) {
-				$url = Config::$boardurl . '/pages/' . MakeSEOUrl($row['title']) . '-' . $row['id_page'];
+				$url = Config::$boardurl . '/pages/' . \MakeSEOUrl($row['title']) . '-' . $row['id_page'];
 			} else {
 				$url = Config::$scripturl . '?action=ezportal;sa=page;p=' . $row['id_page'];
 			}

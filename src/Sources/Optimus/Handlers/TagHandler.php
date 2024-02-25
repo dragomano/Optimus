@@ -14,9 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{CacheApi, Config, IntegrationHook};
-use Bugo\Compat\{Database as Db, ItemList, Lang};
-use Bugo\Compat\{Theme, Topic, User, Utils};
+use Bugo\Compat\{CacheApi, Config, IntegrationHook, Db};
+use Bugo\Compat\{ItemList, Lang, Theme, Topic, User, Utils};
 use Bugo\Optimus\Utils\{Copyright, Input};
 
 if (! defined('SMF'))
@@ -29,47 +28,47 @@ final class TagHandler
 		IntegrationHook::add(
 			'integrate_actions', self::class . '::actions#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_current_action', self::class . '::currentAction#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_messageindex_buttons', self::class . '::messageindexButtons#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_display_topic', self::class . '::displayTopic#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_create_topic', self::class . '::createTopic#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_post_end', self::class . '::postEnd#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_modify_post', self::class . '::modifyPost#', false, __FILE__
 		);
-		
+
 		IntegrationHook::add(
 			'integrate_remove_topics', self::class . '::removeTopics#', false, __FILE__
 		);
@@ -258,7 +257,7 @@ final class TagHandler
 		}
 
 		$keywordName = $this->getNameById(Utils::$context['optimus_keyword_id']);
-		
+
 		Utils::$context['page_title']    = sprintf(Lang::$txt['optimus_topics_with_keyword'], $keywordName);
 		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id='
 			. Utils::$context['optimus_keyword_id'];

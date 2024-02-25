@@ -16,7 +16,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Board, Config, IntegrationHook};
 use Bugo\Compat\{BBCodeParser, Lang, Theme};
-use Bugo\Compat\{Database as Db, Topic, User, Utils};
+use Bugo\Compat\{Db, Topic, User, Utils};
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))

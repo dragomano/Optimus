@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 23.01.24
+ * @version 19.02.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -19,7 +19,6 @@ use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
-use function pretty_rewrite_buffer;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -78,6 +77,6 @@ final class PrettyUrls extends AbstractAddon
 
 		/* @var Sitemap $sitemap */
 		if (function_exists('pretty_rewrite_buffer'))
-			pretty_rewrite_buffer($sitemap->content);
+			\pretty_rewrite_buffer($sitemap->content);
 	}
 }

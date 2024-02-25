@@ -14,9 +14,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{ACP, Config, Database as Db};
-use Bugo\Compat\{IntegrationHook, Lang, Theme};
-use Bugo\Compat\{User, Utils};
+use Bugo\Compat\{ACP, Config, Db, IntegrationHook};
+use Bugo\Compat\{Lang, Theme, User, Utils};
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
 use Bugo\Optimus\Utils\Input;

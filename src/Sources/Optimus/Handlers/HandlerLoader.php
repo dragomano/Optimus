@@ -38,6 +38,6 @@ final class HandlerLoader
 
 	public function __construct()
 	{
-		array_map(fn($handler) => (new $handler)(), $this->handlers);
+		array_map(static fn($handler) => (new $handler())(), $this->handlers);
 	}
 }

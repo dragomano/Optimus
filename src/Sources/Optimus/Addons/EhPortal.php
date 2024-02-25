@@ -10,12 +10,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 09.02.24
+ * @version 28.02.24
  */
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Compat\{Config, Database as Db};
+use Bugo\Compat\{Config, Db};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;

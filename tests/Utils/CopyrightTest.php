@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-use Bugo\Compat\User;
+use Bugo\Compat\Lang;
 use Bugo\Optimus\Utils\Copyright;
 
 it('gets link', function () {
@@ -11,14 +11,14 @@ it('gets link', function () {
 });
 
 it('gets link for Russian language', function () {
-	User::$info['language'] = 'russian';
+	Lang::$txt['lang_dictionary'] = 'ru';
 
 	$link = Copyright::getLink();
 
 	expect($link)
 		->toContain('https://dragomano.ru/mods/optimus');
 
-	unset(User::$info['language']);
+	unset(Lang::$txt['lang_dictionary']);
 });
 
 it('gets years', function () {
