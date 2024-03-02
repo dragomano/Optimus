@@ -79,8 +79,9 @@ final class TagHandler
 		if (
 			empty(Config::$modSettings['optimus_allow_change_topic_keywords'])
 			&& empty(Config::$modSettings['optimus_show_keywords_block'])
-		)
+		) {
 			return;
+		}
 
 		$actions['keywords'] = [false, [$this, 'showTheSame']];
 	}
@@ -91,10 +92,10 @@ final class TagHandler
 			$buttons['home']['action_hook'] = true;
 	}
 
-	public function currentAction(string &$current_action): void
+	public function currentAction(string &$action): void
 	{
 		if (Utils::$context['current_action'] === 'keywords')
-			$current_action = 'home';
+			$action = 'home';
 	}
 
 	public function loadPermissions(array $permissionGroups, array &$permissionList): void
@@ -229,7 +230,7 @@ final class TagHandler
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE topic_id IN ({array_int:topics})',
 			[
-				'topics' => $topics
+				'topics' => $topics,
 			]
 		);
 	}
@@ -259,22 +260,22 @@ final class TagHandler
 		$keywordName = $this->getNameById(Utils::$context['optimus_keyword_id']);
 
 		Utils::$context['page_title']    = sprintf(Lang::$txt['optimus_topics_with_keyword'], $keywordName);
-		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id='
-			. Utils::$context['optimus_keyword_id'];
+		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'];
 
 		if (empty($keywordName)) {
 			Utils::$context['page_title'] = Lang::$txt['optimus_404_page_title'];
+
 			Utils::sendHttpStatus(404);
 		}
 
 		Utils::$context['linktree'][] = [
 			'name' => Lang::$txt['optimus_all_keywords'],
-			'url'  => Config::$scripturl . '?action=keywords'
+			'url'  => Config::$scripturl . '?action=keywords',
 		];
 
 		Utils::$context['linktree'][] = [
 			'name' => Utils::$context['page_title'],
-			'url'  => Utils::$context['canonical_url']
+			'url'  => Utils::$context['canonical_url'],
 		];
 
 		$listOptions = [
@@ -348,7 +349,7 @@ final class TagHandler
 		Utils::$context['default_list'] = 'topics';
 	}
 
-	public function getAllByKeyId(int $start, int $items_per_page, string $sort): array
+	public function getAllByKeyId(int $start, int $limit, string $sort): array
 	{
 		$result = Db::$db->query('', '
 			SELECT t.id_topic, ms.subject, b.id_board, b.name, m.id_member, m.id_group, m.real_name, mg.group_name
@@ -367,7 +368,7 @@ final class TagHandler
 				'keyword_id' => Utils::$context['optimus_keyword_id'],
 				'sort'       => $sort,
 				'start'      => $start,
-				'limit'      => $items_per_page
+				'limit'      => $limit,
 			]
 		);
 
@@ -398,14 +399,14 @@ final class TagHandler
 			WHERE keyword_id = {int:keyword}
 			LIMIT 1',
 			[
-				'keyword' => Utils::$context['optimus_keyword_id']
+				'keyword' => Utils::$context['optimus_keyword_id'],
 			]
 		);
 
-		[$num] = Db::$db->fetch_row($result);
+		[$count] = Db::$db->fetch_row($result);
 		Db::$db->free_result($result);
 
-		return (int) $num;
+		return (int) $count;
 	}
 
 	public function showAllWithFrequency(): void
@@ -415,7 +416,7 @@ final class TagHandler
 
 		Utils::$context['linktree'][] = [
 			'name' => Utils::$context['page_title'],
-			'url'  => Utils::$context['canonical_url']
+			'url'  => Utils::$context['canonical_url'],
 		];
 
 		$listOptions = [
@@ -483,7 +484,7 @@ final class TagHandler
 		Utils::$context['default_list'] = 'keywords';
 	}
 
-	public function getAll(int $start, int $items_per_page, string $sort): array
+	public function getAll(int $start, int $limit, string $sort): array
 	{
 		$result = Db::$db->query('', '
 			SELECT ok.id, ok.name, COUNT(olk.keyword_id) AS frequency
@@ -495,7 +496,7 @@ final class TagHandler
 			[
 				'sort'  => $sort,
 				'start' => $start,
-				'limit' => $items_per_page
+				'limit' => $limit,
 			]
 		);
 
@@ -505,7 +506,7 @@ final class TagHandler
 
 			$keywords[] = [
 				'keyword'   => '<a href="' . $link . '">' . $row['name'] . '</a>',
-				'frequency' => $row['frequency']
+				'frequency' => $row['frequency'],
 			];
 		}
 
@@ -523,10 +524,10 @@ final class TagHandler
 			[]
 		);
 
-		[$num] = Db::$db->fetch_row($result);
+		[$count] = Db::$db->fetch_row($result);
 		Db::$db->free_result($result);
 
-		return (int) $num;
+		return (int) $count;
 	}
 
 	public function displayTopic(): void
@@ -561,8 +562,9 @@ final class TagHandler
 			);
 
 			$keywords = [];
-			while ($row = Db::$db->fetch_assoc($result))
+			while ($row = Db::$db->fetch_assoc($result)) {
 				$keywords[$row['topic_id']][$row['id']] = $row['name'];
+			}
 
 			Db::$db->free_result($result);
 
@@ -583,7 +585,7 @@ final class TagHandler
 			WHERE id = {int:id}
 			LIMIT 1',
 			[
-				'id' => $id
+				'id' => $id,
 			]
 		);
 
@@ -600,7 +602,7 @@ final class TagHandler
 	 */
 	private function prepareSearchData(): void
 	{
-		$query = Utils::$smcFunc['htmltrim'](Input::filter('q'));
+		$query = Utils::$smcFunc['htmltrim'](Input::filter('q') ?? '');
 
 		if (empty($query))
 			exit;
@@ -612,7 +614,7 @@ final class TagHandler
 			ORDER BY name DESC
 			LIMIT 10',
 			[
-				'search' => '%' . $query . '%'
+				'search' => '%' . $query . '%',
 			]
 		);
 
@@ -620,7 +622,7 @@ final class TagHandler
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$data[] = [
 				'id'   => $row['name'],
-				'text' => $row['name']
+				'text' => $row['name'],
 			];
 		}
 
@@ -671,7 +673,7 @@ final class TagHandler
 		foreach (Utils::$context['optimus']['keywords'] as $key) {
 			Utils::$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
 				'value'    => $key,
-				'selected' => true
+				'selected' => true,
 			];
 		}
 	}
@@ -730,12 +732,12 @@ final class TagHandler
 			return;
 
 		foreach ($keywords as $keyword) {
-			$keyword_id = $this->getIdByName($keyword);
+			$id = $this->getIdByName($keyword);
 
-			if (empty($keyword_id))
-				$keyword_id = $this->addToDatabase($keyword);
+			if (empty($id))
+				$id = $this->addToDatabase($keyword);
 
-			$this->addNoteToLogTable($keyword_id, $topic, $user);
+			$this->addNoteToLogTable($id, $topic, $user);
 		}
 
 		CacheApi::clean();
@@ -749,7 +751,7 @@ final class TagHandler
 			WHERE name = {string:name}
 			LIMIT 1',
 			[
-				'name' => $name
+				'name' => $name,
 			]
 		);
 
@@ -769,7 +771,7 @@ final class TagHandler
 		return Db::$db->insert('insert',
 			'{db_prefix}optimus_keywords',
 			[
-				'name' => 'string-255'
+				'name' => 'string-255',
 			],
 			[$keyword],
 			['id'],
@@ -784,17 +786,17 @@ final class TagHandler
 			[
 				'keyword_id' => 'int',
 				'topic_id'   => 'int',
-				'user_id'    => 'int'
+				'user_id'    => 'int',
 			],
 			[
 				$keyword_id,
 				$topic,
-				$user
+				$user,
 			],
 			[
 				'keyword_id',
 				'topic_id',
-				'user_id'
+				'user_id',
 			]
 		);
 	}
@@ -809,8 +811,7 @@ final class TagHandler
 		// Check if the keywords have been changed
 		$this->displayTopic();
 		$currentKeywords = empty(Utils::$context['optimus_keywords'])
-			? []
-			: array_values(Utils::$context['optimus_keywords']);
+			? [] : array_values(Utils::$context['optimus_keywords']);
 
 		if ($keywords == $currentKeywords)
 			return;
@@ -836,7 +837,7 @@ final class TagHandler
 				)',
 			[
 				'keywords'      => $keywords,
-				'current_topic' => $topic
+				'current_topic' => $topic,
 			]
 		);
 
@@ -856,7 +857,7 @@ final class TagHandler
 			WHERE keyword_id IN ({array_int:keywords}) AND topic_id IN ({array_int:topics})',
 			[
 				'keywords' => $delItems['keywords'],
-				'topics'   => $delItems['topics']
+				'topics'   => $delItems['topics'],
 			]
 		);
 

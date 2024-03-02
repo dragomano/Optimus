@@ -59,7 +59,8 @@ final class SearchTermHandler
 				SELECT phrase, hit
 				FROM {db_prefix}optimus_search_terms
 				ORDER BY hit DESC
-				LIMIT 30'
+				LIMIT 30',
+				[]
 			);
 
 			$scale = 1;
@@ -70,7 +71,7 @@ final class SearchTermHandler
 				Utils::$context['search_terms'][] = [
 					'text'  => $row['phrase'],
 					'scale' => round(($row['hit'] * 100) / $scale),
-					'hit'   => $row['hit']
+					'hit'   => $row['hit'],
 				];
 			}
 
@@ -98,7 +99,7 @@ final class SearchTermHandler
 			WHERE phrase = {string:phrase}
 			LIMIT 1',
 			[
-				'phrase' => $searchString
+				'phrase' => $searchString,
 			]
 		);
 
@@ -110,10 +111,10 @@ final class SearchTermHandler
 				'{db_prefix}optimus_search_terms',
 				[
 					'phrase' => 'string-255',
-					'hit'    => 'int'
+					'hit'    => 'int',
 				],
 				[$searchString, 1],
-				['id_term']
+				['id_term'],
 			);
 		} else {
 			Db::$db->query('', '
@@ -121,7 +122,7 @@ final class SearchTermHandler
 				SET hit = hit + 1
 				WHERE id_term = {int:id_term}',
 				[
-					'id_term' => $id
+					'id_term' => $id,
 				]
 			);
 		}

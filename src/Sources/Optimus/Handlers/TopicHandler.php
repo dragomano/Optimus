@@ -85,10 +85,10 @@ final class TopicHandler
 		}
 
 		// Looking for an image in the text of the topic first message
-		if (
-			empty(Utils::$context['optimus_og_image'])
-			&& ! empty(Utils::$context['topicinfo']['topic_first_message'])
-		) {
+		if (empty(Utils::$context['topicinfo']['topic_first_message']))
+			return;
+
+		if (empty(Utils::$context['optimus_og_image'])) {
 			$image = preg_match(
 				'/\[img.*]([^]\[]+)\[\/img]/U',
 				Utils::$context['topicinfo']['topic_first_message'],
@@ -97,7 +97,7 @@ final class TopicHandler
 
 			Theme::$current->settings['og_image'] = $image
 				? array_pop($value)
-				: Theme::$current->settings['og_image'];
+				: (Theme::$current->settings['og_image'] ?? '');
 		}
 	}
 
@@ -134,13 +134,13 @@ final class TopicHandler
 		);
 	}
 
-	public function displayTopic(array &$topic_selects): void
+	public function displayTopic(array &$columns): void
 	{
 		if (! empty(Config::$modSettings['optimus_allow_change_topic_desc']))
-			$topic_selects[] = 't.optimus_description';
+			$columns[] = 't.optimus_description';
 
-		if (! in_array('ms.modified_time AS topic_modified_time', $topic_selects))
-			$topic_selects[] = 'ms.modified_time AS topic_modified_time';
+		if (! in_array('ms.modified_time AS topic_modified_time', $columns))
+			$columns[] = 'ms.modified_time AS topic_modified_time';
 
 		if (
 			empty(Config::$modSettings['optimus_topic_description'])
@@ -149,8 +149,8 @@ final class TopicHandler
 			return;
 		}
 
-		if (! in_array('ms.body AS topic_first_message', $topic_selects))
-			$topic_selects[] = 'ms.body AS topic_first_message';
+		if (! in_array('ms.body AS topic_first_message', $columns))
+			$columns[] = 'ms.body AS topic_first_message';
 	}
 
 	/**
@@ -180,20 +180,20 @@ final class TopicHandler
 		array $msgOptions,
 		array $topicOptions,
 		array $posterOptions,
-		array &$topic_columns,
-		array &$topic_parameters
+		array &$topicColumns,
+		array &$topicParameters
 	): void
 	{
 		if (! $this->canChangeDescription())
 			return;
 
-		$topic_columns['optimus_description'] = 'string-255';
-		$topic_parameters[] = Input::xss(Input::request('optimus_description', ''));
+		$topicColumns['optimus_description'] = 'string-255';
+		$topicParameters[] = Input::xss(Input::request('optimus_description', ''));
 	}
 
 	public function modifyPost(
-		array $messages_columns,
-		array $update_parameters,
+		array $messagesColumns,
+		array $updateParameters,
 		array $msgOptions,
 		array $topicOptions
 	): void

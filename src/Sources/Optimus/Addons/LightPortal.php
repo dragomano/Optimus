@@ -60,7 +60,7 @@ final class LightPortal extends AbstractAddon
 				'status'       => 1, // The page must be active
 				'current_time' => time(),
 				'permissions'  => [1, 3], // The page must be available to guests
-				'start_year'   => $sitemap->startYear
+				'start_year'   => $sitemap->startYear,
 			]
 		);
 
@@ -70,7 +70,7 @@ final class LightPortal extends AbstractAddon
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
 				'loc'     => $url,
-				'lastmod' => $row['date']
+				'lastmod' => $row['date'],
 			];
 		}
 

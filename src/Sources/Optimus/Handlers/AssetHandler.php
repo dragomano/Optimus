@@ -25,7 +25,9 @@ final class AssetHandler
 {
 	public function __invoke(): void
 	{
-		IntegrationHook::add('integrate_load_theme', self::class . '::handle#', false, __FILE__);
+		IntegrationHook::add(
+			'integrate_load_theme', self::class . '::handle#', false, __FILE__
+		);
 	}
 
 	public function handle(): void
@@ -39,29 +41,50 @@ final class AssetHandler
 		if (in_array(
 			Utils::$context['current_action'],
 			explode(',', Config::$modSettings['optimus_ignored_actions'] ?? '')
-		))
+		)) {
+			return;
+		}
+
+		$this->prepareHeadCode();
+		$this->prepareStatCode();
+		$this->prepareCountCode();
+	}
+
+	private function prepareHeadCode(): void
+	{
+		if (empty(Config::$modSettings['optimus_head_code']))
 			return;
 
-		if (! empty(Config::$modSettings['optimus_head_code'])) {
-			$head = explode(PHP_EOL, trim(Config::$modSettings['optimus_head_code']));
+		$head = explode(PHP_EOL, trim(Config::$modSettings['optimus_head_code']));
 
-			foreach ($head as $part)
-				Utils::$context['html_headers'] .= "\n\t" . $part;
+		foreach ($head as $part) {
+			Utils::$context['html_headers'] .= "\n\t" . $part;
 		}
+	}
 
-		if (! empty(Config::$modSettings['optimus_stat_code'])) {
-			$stat = explode(PHP_EOL, trim(Config::$modSettings['optimus_stat_code']));
+	private function prepareStatCode(): void
+	{
+		if (empty(Config::$modSettings['optimus_stat_code']))
+			return;
 
-			foreach ($stat as $part)
-				Utils::$context['insert_after_template'] .= "\n\t" . $part;
+		$stat = explode(PHP_EOL, trim(Config::$modSettings['optimus_stat_code']));
+
+		foreach ($stat as $part) {
+			Utils::$context['insert_after_template'] .= "\n\t" . $part;
 		}
+	}
 
-		if (! empty(Config::$modSettings['optimus_count_code'])) {
-			Theme::loadTemplate('Optimus');
-			Utils::$context['template_layers'][] = 'footer_counters';
+	private function prepareCountCode(): void
+	{
+		if (empty(Config::$modSettings['optimus_count_code']))
+			return;
 
-			if (! empty(Config::$modSettings['optimus_counters_css']))
-				Theme::addInlineCss(Config::$modSettings['optimus_counters_css']);
-		}
+		Theme::loadTemplate('Optimus');
+		Utils::$context['template_layers'][] = 'footer_counters';
+
+		if (empty(Config::$modSettings['optimus_counters_css']))
+			return;
+
+		Theme::addInlineCss(Config::$modSettings['optimus_counters_css']);
 	}
 }

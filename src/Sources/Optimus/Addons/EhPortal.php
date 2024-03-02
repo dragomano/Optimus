@@ -58,7 +58,7 @@ final class EhPortal extends AbstractAddon
 			[
 				'status'      => 1, // The page must be active
 				'permissions' => [1, 3], // The page must be available to guests
-				'guests'      => -1
+				'guests'      => -1,
 			]
 		);
 
@@ -67,7 +67,7 @@ final class EhPortal extends AbstractAddon
 
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
-				'loc' => $url
+				'loc' => $url,
 			];
 		}
 

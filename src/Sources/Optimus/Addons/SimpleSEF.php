@@ -41,7 +41,7 @@ final class SimpleSEF extends AbstractAddon
 			Config::updateModSettings(['optimus_remove_index_php' => 0]);
 
 		match ($event->eventName()) {
-			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+			self::ROBOTS_RULES    => $this->changeRobots($event->getTarget()),
 			self::CREATE_SEF_URLS => $this->createSefLinks($event->getTarget()),
 		};
 	}

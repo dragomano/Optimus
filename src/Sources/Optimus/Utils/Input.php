@@ -91,7 +91,7 @@ final class Input
 			return array_map('self::xss', $data);
 		}
 
-		return Utils::$smcFunc['htmlspecialchars']($data, ENT_QUOTES);
+		return Utils::htmlspecialchars($data, ENT_QUOTES);
 	}
 
 	public static function filter(

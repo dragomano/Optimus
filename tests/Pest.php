@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Bugo\Compat\Config;
+use Bugo\Compat\Lang;
 use Bugo\Compat\Theme;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
@@ -36,6 +37,8 @@ uses()->beforeAll(function () {
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
 	User::$info['language'] = 'english';
+
+	Lang::$txt['lang_dictionary'] = 'en';
 
 	Config::$sourcedir = __DIR__ . '/files';
 
@@ -99,7 +102,7 @@ function allowedTo(string $permission): bool
 
 function un_htmlspecialchars(string $string): string
 {
-	return $string;
+	return 'decoded';
 }
 
 function cache_get_data(...$params): array

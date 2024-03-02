@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 19.02.24
+ * @version 28.02.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -36,8 +36,8 @@ final class PrettyUrls extends AbstractAddon
 	public function __invoke(AddonEvent $event): void
 	{
 		match ($event->eventName()) {
-			self::HOOK_EVENT => $this->addSupportKeywordsAction(),
-			self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+			self::HOOK_EVENT      => $this->addSupportKeywordsAction(),
+			self::ROBOTS_RULES    => $this->changeRobots($event->getTarget()),
 			self::SITEMAP_CONTENT => $this->changeSitemapContent($event->getTarget()),
 		};
 	}

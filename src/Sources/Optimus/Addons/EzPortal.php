@@ -45,10 +45,9 @@ final class EzPortal extends AbstractAddon
 		global $ezpSettings;
 
 		/* @var Generator $generator */
-		if (! empty($ezpSettings['ezp_pages_seourls']))
-			$generator->customRules[] = "Allow: " . $generator->urlPath . "/pages/";
-		else
-			$generator->customRules[] = "Allow: " . $generator->urlPath . "/*ezportal;sa=page;p=*";
+		$generator->customRules[] = empty($ezpSettings['ezp_pages_seourls'])
+			? "Allow: " . $generator->urlPath . "/*ezportal;sa=page;p=*"
+			: "Allow: " . $generator->urlPath . "/pages/";
 	}
 
 	public function changeSitemap(object $sitemap): void
@@ -63,21 +62,19 @@ final class EzPortal extends AbstractAddon
 			ORDER BY id_page DESC',
 			[
 				'guests'     => -1, // The page must be available to guests
-				'start_year' => $sitemap->startYear
+				'start_year' => $sitemap->startYear,
 			]
 		);
 
 		while ($row = Db::$db->fetch_assoc($result)) {
-			if (! empty($ezpSettings['ezp_pages_seourls']) && function_exists('MakeSEOUrl')) {
-				$url = Config::$boardurl . '/pages/' . \MakeSEOUrl($row['title']) . '-' . $row['id_page'];
-			} else {
-				$url = Config::$scripturl . '?action=ezportal;sa=page;p=' . $row['id_page'];
-			}
+			$url = empty($ezpSettings['ezp_pages_seourls']) || ! function_exists('MakeSEOUrl')
+				? Config::$scripturl . '?action=ezportal;sa=page;p=' . $row['id_page']
+				: Config::$boardurl . '/pages/' . \MakeSEOUrl($row['title']) . '-' . $row['id_page'];
 
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
 				'loc'     => $url,
-				'lastmod' => $row['date']
+				'lastmod' => $row['date'],
 			];
 		}
 

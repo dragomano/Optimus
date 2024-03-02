@@ -47,10 +47,7 @@ final class TinyPortal extends AbstractAddon
 	public function postInit(): void
 	{
 		IntegrationHook::add(
-			'integrate_tp_post_init',
-			self::class . '::prepareArticleMeta#',
-			false,
-			__FILE__
+			'integrate_tp_post_init', self::class . '::prepareArticleMeta#', false,	__FILE__
 		);
 	}
 
@@ -92,7 +89,7 @@ final class TinyPortal extends AbstractAddon
 				'approved'   => 1, // The article must be approved
 				'off_status' => 0, // The article must be active
 				'guests'     => -1, // The article category must be available to guests
-				'start_year' => $sitemap->startYear
+				'start_year' => $sitemap->startYear,
 			]
 		);
 
@@ -102,7 +99,7 @@ final class TinyPortal extends AbstractAddon
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
 				'loc'     => $url,
-				'lastmod' => $row['date']
+				'lastmod' => $row['date'],
 			];
 		}
 

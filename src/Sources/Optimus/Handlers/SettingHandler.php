@@ -83,7 +83,7 @@ final class SettingHandler
 				'counters' => [Lang::$txt['optimus_counters']],
 				'robots'   => [Lang::$txt['optimus_robots_title']],
 				'htaccess' => [Lang::$txt['optimus_htaccess_title']],
-				'sitemap'  => [Lang::$txt['optimus_sitemap_title']]
+				'sitemap'  => [Lang::$txt['optimus_sitemap_title']],
 			]
 		];
 	}
@@ -115,7 +115,7 @@ final class SettingHandler
 			'counters' => 'counterTabSettings',
 			'robots'   => 'robotsTabSettings',
 			'htaccess' => 'htaccessTabSettings',
-			'sitemap'  => 'sitemapTabSettings'
+			'sitemap'  => 'sitemapTabSettings',
 		];
 
 		Db::extend();
@@ -127,9 +127,9 @@ final class SettingHandler
 					'description' => sprintf(
 						Lang::$txt['optimus_basic_desc'],
 						OP_VERSION,
-						phpversion(),
+						PHP_VERSION,
 						Utils::$smcFunc['db_title'],
-						Db::$db->get_version()
+						Db::$db->get_version(),
 					)
 				],
 				'extra' => [
@@ -182,12 +182,12 @@ final class SettingHandler
 				'text',
 				'optimus_forum_index',
 				80,
-				'value' => Utils::htmlspecialcharsDecode(Config::$modSettings['optimus_forum_index'] ?? '')
+				'value' => Utils::htmlspecialcharsDecode((string) Config::$modSettings['optimus_forum_index'] ?? '')
 			],
 			[
 				'large_text',
 				'optimus_description',
-				'value' => Utils::htmlspecialcharsDecode(Config::$modSettings['optimus_description'] ?? ''),
+				'value' => Utils::htmlspecialcharsDecode((string) Config::$modSettings['optimus_description'] ?? ''),
 				'subtext' => Lang::$txt['optimus_description_subtext']
 			],
 			['large_text', 'meta_keywords', 'subtext' => Lang::$txt['meta_keywords_note']],
@@ -254,7 +254,7 @@ final class SettingHandler
 				'subtext' => Lang::$txt['optimus_allow_change_board_og_image_subtext']
 			],
 			['text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'],
-			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help']
+			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'],
 		];
 
 		// Modders can add own options
@@ -296,7 +296,7 @@ final class SettingHandler
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=favicon;save';
 
 		$config_vars = [
-			['large_text', 'optimus_favicon_text']
+			['large_text', 'optimus_favicon_text'],
 		];
 
 		if ($return_config)
@@ -323,8 +323,7 @@ final class SettingHandler
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
 		Utils::$context['optimus_metatags_rules'] = empty(Config::$modSettings['optimus_meta'])
-			? []
-			: unserialize(Config::$modSettings['optimus_meta']);
+			? [] : unserialize(Config::$modSettings['optimus_meta']);
 
 		$config_vars = [];
 
@@ -358,8 +357,7 @@ final class SettingHandler
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=redirect;save';
 
 		Utils::$context['optimus_redirect_rules'] = empty(Config::$modSettings['optimus_redirect'])
-			? []
-			: unserialize(Config::$modSettings['optimus_redirect']);
+			? [] : unserialize(Config::$modSettings['optimus_redirect']);
 
 		$config_vars = [];
 
@@ -394,7 +392,7 @@ final class SettingHandler
 
 		$this->addDefaultSettings([
 			'optimus_counters_css'    => '.counters {text-align: center}',
-			'optimus_ignored_actions' => 'admin,bookmarks,credits,helpadmin,pm,printpage'
+			'optimus_ignored_actions' => 'admin,bookmarks,credits,helpadmin,pm,printpage',
 		]);
 
 		$config_vars = [
@@ -402,7 +400,7 @@ final class SettingHandler
 			['large_text', 'optimus_stat_code'],
 			['large_text', 'optimus_count_code'],
 			['large_text', 'optimus_counters_css'],
-			['text', 'optimus_ignored_actions']
+			['text', 'optimus_ignored_actions'],
 		];
 
 		if (Input::isGet('save')) {
@@ -488,7 +486,7 @@ final class SettingHandler
 			'optimus_sitemap_topics_num_replies' => 5,
 			'optimus_sitemap_items_display'      => 10000,
 			'optimus_start_year'                 => 1994,
-			'optimus_update_frequency'           => 1
+			'optimus_update_frequency'           => 1,
 		]);
 
 		$title = Lang::$txt['admin_maintenance'] . ' - ' . Lang::$txt['maintain_recount'];
@@ -523,7 +521,7 @@ final class SettingHandler
 			'',
 			['int', 'optimus_sitemap_items_display', 'min' => 1, 'max' => 50000],
 			['int', 'optimus_start_year', 'min' => 1994, 'max' => date('Y')],
-			['select', 'optimus_update_frequency', Lang::$txt['optimus_update_frequency_set']]
+			['select', 'optimus_update_frequency', Lang::$txt['optimus_update_frequency_set']],
 		];
 
 		// Modders can add own options
@@ -540,7 +538,7 @@ final class SettingHandler
 				DELETE FROM {db_prefix}background_tasks
 				WHERE task_class = {string:task_class}',
 				[
-					'task_class' => '\\' . Sitemap::class
+					'task_class' => '\\' . Sitemap::class,
 				]
 			);
 
@@ -549,7 +547,7 @@ final class SettingHandler
 					'{db_prefix}background_tasks',
 					['task_file' => 'string-255', 'task_class' => 'string-255', 'task_data' => 'string'],
 					['$sourcedir/Optimus/Tasks/Sitemap.php', '\\' . Sitemap::class, ''],
-					['id_task']
+					['id_task'],
 				);
 			}
 
@@ -566,13 +564,10 @@ final class SettingHandler
 
 	private function addBlockWithTips(): void
 	{
-		if (empty(Input::isRequest('area')))
+		if (empty(Input::isRequest('area')) || empty(Utils::$context['template_layers']))
 			return;
 
-		if (
-			! empty(Utils::$context['template_layers'])
-			&& str_contains(Input::request('area'), 'optimus')
-		) {
+		if (str_contains(Input::request('area'), 'optimus')) {
 			Theme::loadTemplate('Optimus');
 
 			Utils::$context['template_layers'][] = 'tips';
@@ -596,8 +591,9 @@ final class SettingHandler
 
 		$vars = [];
 		foreach ($settings as $key => $value) {
-			if (! isset(Config::$modSettings[$key]))
+			if (! isset(Config::$modSettings[$key])) {
 				$vars[$key] = $value;
+			}
 		}
 
 		Config::updateModSettings($vars);

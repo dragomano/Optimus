@@ -30,6 +30,5 @@ it('adds copyright', function () {
 	$this->prime->credits();
 
 	expect(Utils::$context['credits_modifications'])
-		->not
-		->toBeEmpty();
+		->not->toBeEmpty();
 });

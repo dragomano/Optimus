@@ -62,8 +62,10 @@ final class BoardHandler
 	 */
 	public function menuButtons(): void
 	{
-		if (! empty(Board::$info['og_image']))
-			Theme::$current->settings['og_image'] = Board::$info['og_image'];
+		if (empty(Board::$info['og_image']))
+			return;
+
+		Theme::$current->settings['og_image'] = Board::$info['og_image'];
 	}
 
 	/**

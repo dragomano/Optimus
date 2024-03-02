@@ -56,9 +56,7 @@ final class Sitemap extends SMF_BackgroundTask
 
 		Theme::loadEssential();
 
-		if (! empty(Config::$modSettings['optimus_remove_previous_xml_files'])) {
-			array_map("unlink", glob(Config::$boarddir . "/sitemap*.xml*"));
-		}
+		$this->removeOldFiles();
 
 		$this->createXml();
 
@@ -75,16 +73,16 @@ final class Sitemap extends SMF_BackgroundTask
 		Db::$db->insert('insert',
 			'{db_prefix}background_tasks',
 			[
-				'task_file' => 'string-255',
-				'task_class' => 'string-255',
-				'task_data' => 'string',
-				'claimed_time' => 'int'
+				'task_file'    => 'string-255',
+				'task_class'   => 'string-255',
+				'task_data'    => 'string',
+				'claimed_time' => 'int',
 			],
 			[
 				'$sourcedir/Optimus/Tasks/Sitemap.php',
 				'\\' . self::class,
 				'',
-				time() + ($frequency * 24 * 60 * 60)
+				time() + ($frequency * 24 * 60 * 60),
 			],
 			['id_task']
 		);
@@ -92,7 +90,15 @@ final class Sitemap extends SMF_BackgroundTask
 		return true;
 	}
 
-	public function createXml(): void
+	private function removeOldFiles(): void
+	{
+		if (empty(Config::$modSettings['optimus_remove_previous_xml_files']))
+			return;
+
+		array_map("unlink", glob(Config::$boarddir . "/sitemap*.xml*"));
+	}
+
+	private function createXml(): void
 	{
 		ignore_user_abort(true);
 
@@ -182,22 +188,7 @@ final class Sitemap extends SMF_BackgroundTask
 		ignore_user_abort(false);
 	}
 
-	public function getLastDate(array $links): int
-	{
-		if (empty($links))
-			return time();
-
-		$data = array_values(array_values($links));
-
-		$dates = [];
-		foreach ($data as $value) {
-			$dates[] = (int) $value['lastmod'];
-		}
-
-		return max($dates);
-	}
-
-	public function getLinks(): array
+	private function getLinks(): array
 	{
 		$this->links = array_merge($this->getBoardLinks(), $this->getTopicLinks());
 
@@ -221,6 +212,21 @@ final class Sitemap extends SMF_BackgroundTask
 		array_unshift($this->links, $home);
 
 		return $this->links;
+	}
+
+	private function getLastDate(array $links): int
+	{
+		if (empty($links))
+			return time();
+
+		$data = array_values(array_values($links));
+
+		$dates = [];
+		foreach ($data as $value) {
+			$dates[] = (int) $value['lastmod'];
+		}
+
+		return max($dates);
 	}
 
 	private function getBoardLinks(): array
@@ -248,7 +254,7 @@ final class Sitemap extends SMF_BackgroundTask
 				'ignored_boards' => $this->ignoredBoards,
 				'empty_string'   => '',
 				'num_posts'      => 0,
-				'start_year'     => $this->startYear
+				'start_year'     => $this->startYear,
 			]
 		);
 
@@ -264,7 +270,7 @@ final class Sitemap extends SMF_BackgroundTask
 
 				$links[] = [
 					'loc'     => $boardUrl,
-					'lastmod' => $row['last_date']
+					'lastmod' => $row['last_date'],
 				];
 			}
 		}
@@ -330,7 +336,7 @@ final class Sitemap extends SMF_BackgroundTask
 						'is_approved' => 1,
 						'start_year'  => $this->startYear,
 						'start'       => $start,
-						'limit'       => $limit
+						'limit'       => $limit,
 					]
 				);
 
@@ -389,7 +395,7 @@ final class Sitemap extends SMF_BackgroundTask
 						'is_approved' => 1,
 						'start_year'  => $this->startYear,
 						'start'       => $start,
-						'limit'       => $limit
+						'limit'       => $limit,
 					]
 				);
 
@@ -410,7 +416,7 @@ final class Sitemap extends SMF_BackgroundTask
 					$links[$row['id_topic']] = [
 						'loc'     => $topicUrl,
 						'lastmod' => $row['last_date'],
-						'image'   => $images[$row['id_topic']] ?? []
+						'image'   => $images[$row['id_topic']] ?? [],
 					];
 				}
 			}
@@ -429,7 +435,7 @@ final class Sitemap extends SMF_BackgroundTask
 				$links[] = [
 					'loc'     => $topicUrl,
 					'lastmod' => max($dates),
-					'image'   => $images[$topic_id] ?? []
+					'image'   => $images[$topic_id] ?? [],
 				];
 			}
 		}

@@ -30,12 +30,12 @@ final class RedirectHandler
 	public function handle(): void
 	{
 		$redirects = empty(Config::$modSettings['optimus_redirect'])
-			? []
-			: unserialize(Config::$modSettings['optimus_redirect']);
+			? [] : unserialize(Config::$modSettings['optimus_redirect']);
 
 		if (empty($redirects) || empty($queryString = Input::server('query_string')))
 			return;
 
+		// @codeCoverageIgnoreStart
 		if (isset($redirects[$queryString])) {
 			$url = Config::$scripturl . '?';
 			$to = $redirects[$queryString];
@@ -45,5 +45,6 @@ final class RedirectHandler
 
 			header('location: ' . $url . $to, true, 302);
 		}
+		// @codeCoverageIgnoreEnd
 	}
 }

@@ -32,8 +32,7 @@ final class MetaHandler
 
 	public function handle(): void
 	{
-		if (! empty(Config::$modSettings['optimus_forum_index']))
-			Utils::$context['page_title_html_safe'] = Utils::htmlspecialcharsDecode(Utils::$context['page_title_html_safe']);
+		$this->prepareForumIndex();
 
 		if (! empty(Utils::$context['robot_no_index']))
 			return;
@@ -43,10 +42,8 @@ final class MetaHandler
 			'og:title',
 			'og:url',
 			'og:image',
-			'og:description'
+			'og:description',
 		];
-
-		$ogImageKey = 0;
 
 		$tags = Utils::$context['meta_tags'];
 
@@ -57,75 +54,107 @@ final class MetaHandler
 						['prefix' => 'og: https://ogp.me/ns#'], $value
 					);
 				}
+			}
+		}
 
+		$this->prepareOgImageTags($tags);
+
+		$this->prepareOgCustomType($tags);
+
+		$this->prepareOgProfile($tags);
+
+		$this->prepareOgTwitter($tags);
+
+		$this->prepareOgFacebook($tags);
+
+		$this->prepareMetaTags($tags);
+
+		Utils::$context['meta_tags'] = $tags;
+	}
+
+	private function prepareForumIndex(): void
+	{
+		if (empty(Config::$modSettings['optimus_forum_index']))
+			return;
+
+		Utils::$context['page_title_html_safe'] = Utils::htmlspecialcharsDecode(Utils::$context['page_title_html_safe']);
+	}
+
+	private function prepareOgImageTags(array &$tags): void
+	{
+		$imageKey = 0;
+
+		foreach ($tags as $key => $value) {
+			foreach ($value as $v) {
 				if ($v === 'og:image') {
-					$ogImageKey = $key;
-
-					if (! empty(Utils::$context['optimus_og_image'])) {
-						$imageData[0] = Utils::$context['optimus_og_image']['width'];
-						$imageData[1] = Utils::$context['optimus_og_image']['height'];
-						$imageData['mime'] = Utils::$context['optimus_og_image']['mime'];
-					}
+					$imageKey = $key;
 				}
 			}
 		}
 
-		if (! empty($imageData)) {
-			$tags = array_merge(
-				array_slice($tags, 0, $ogImageKey + 1, true),
-				[
-					[
-						'prefix'   => 'og: https://ogp.me/ns#',
-						'property' => 'og:image:type',
-						'content'  => $imageData['mime'],
-					]
-				],
-				[
-					[
-						'prefix'   => 'og: https://ogp.me/ns#',
-						'property' => 'og:image:width',
-						'content'  => $imageData[0],
-					]
-				],
-				[
-					[
-						'prefix'   => 'og: https://ogp.me/ns#',
-						'property' => 'og:image:height',
-						'content'  => $imageData[1],
-					]
-				],
-				array_slice($tags, $ogImageKey + 1, null, true)
-			);
-		}
+		if (empty(Utils::$context['optimus_og_image']))
+			return;
 
-		// Various types
-		if (! empty(Utils::$context['optimus_og_type'])) {
-			$type = key(Utils::$context['optimus_og_type']);
-			$tags[] = [
-				'prefix'   => 'og: https://ogp.me/ns#',
-				'property' => 'og:type',
-				'content'  => $type,
-			];
+		$tags = array_merge(
+			array_slice($tags, 0, $imageKey + 1, true),
+			[
+				[
+					'prefix'   => 'og: https://ogp.me/ns#',
+					'property' => 'og:image:type',
+					'content'  => Utils::$context['optimus_og_image']['mime'] ?? '',
+				]
+			],
+			[
+				[
+					'prefix'   => 'og: https://ogp.me/ns#',
+					'property' => 'og:image:width',
+					'content'  => Utils::$context['optimus_og_image']['width'] ?? 0,
+				]
+			],
+			[
+				[
+					'prefix'   => 'og: https://ogp.me/ns#',
+					'property' => 'og:image:height',
+					'content'  => Utils::$context['optimus_og_image']['height'] ?? 0,
+				]
+			],
+			array_slice($tags, $imageKey + 1, null, true)
+		);
+	}
 
-			$customTypes = array_filter(Utils::$context['optimus_og_type'][$type]);
+	private function prepareOgCustomType(array &$tags): void
+	{
+		if (empty(Utils::$context['optimus_og_type']))
+			return;
 
-			foreach ($customTypes as $property => $content) {
-				if (is_array($content)) {
-					foreach ($content as $value) {
-						$tags[] = [
-							'prefix'   => $type . ': https://ogp.me/ns/' . $type . '#',
-							'property' => $type . ':' . $property, 'content' => $value
-						];
-					}
-				} else {
+		$type = key(Utils::$context['optimus_og_type']);
+		$tags[] = [
+			'prefix'   => 'og: https://ogp.me/ns#',
+			'property' => 'og:type',
+			'content'  => $type,
+		];
+
+		$customTypes = array_filter(Utils::$context['optimus_og_type'][$type]);
+
+		foreach ($customTypes as $property => $content) {
+			if (is_array($content)) {
+				foreach ($content as $value) {
 					$tags[] = [
 						'prefix'   => $type . ': https://ogp.me/ns/' . $type . '#',
-						'property' => $type . ':' . $property, 'content' => $content
+						'property' => $type . ':' . $property, 'content' => $value,
 					];
 				}
+			} else {
+				$tags[] = [
+					'prefix'   => $type . ': https://ogp.me/ns/' . $type . '#',
+					'property' => $type . ':' . $property, 'content' => $content,
+				];
 			}
 		}
+	}
 
+	private function prepareOgProfile(array &$tags): void
+	{
 		if (Utils::$context['current_action'] == 'profile' && Input::isRequest('u')) {
 			$tags[] = [
 				'prefix'   => 'og: https://ogp.me/ns#',
@@ -133,34 +162,43 @@ final class MetaHandler
 				'content'  => 'profile',
 			];
 		}
+	}
 
-		// Twitter cards
-		if (! empty(Config::$modSettings['optimus_tw_cards']) && isset(Utils::$context['canonical_url'])) {
-			$tags[] = ['property' => 'twitter:card', 'content' => 'summary'];
-			$tags[] = ['property' => 'twitter:site', 'content' => '@' . Config::$modSettings['optimus_tw_cards']];
+	private function prepareOgTwitter(array &$tags): void
+	{
+		if (empty(Config::$modSettings['optimus_tw_cards']) || empty(Utils::$context['canonical_url']))
+			return;
 
-			if (! empty(Theme::$current->settings['og_image']))
-				$tags[] = ['property' => 'twitter:image', 'content' => Theme::$current->settings['og_image']];
+		$tags[] = ['property' => 'twitter:card', 'content' => 'summary'];
+		$tags[] = ['property' => 'twitter:site', 'content' => '@' . Config::$modSettings['optimus_tw_cards']];
+
+		if (empty(Theme::$current->settings['og_image']))
+			return;
+
+		$tags[] = ['property' => 'twitter:image', 'content' => Theme::$current->settings['og_image']];
+	}
+
+	private function prepareOgFacebook(array &$tags): void
+	{
+		if (empty(Config::$modSettings['optimus_fb_appid']))
+			return;
+
+		$tags[] = [
+			'prefix'   => 'fb: https://ogp.me/ns/fb#',
+			'property' => 'fb:app_id',
+			'content'  => Config::$modSettings['optimus_fb_appid'],
+		];
+	}
+
+	private function prepareMetaTags(array &$tags): void
+	{
+		if (empty(Config::$modSettings['optimus_meta']))
+			return;
+
+		$customTags = array_filter(unserialize(Config::$modSettings['optimus_meta']));
+
+		foreach ($customTags as $name => $value) {
+			$tags[] = ['name' => $name, 'content' => $value];
 		}
-
-		// Facebook
-		if (! empty(Config::$modSettings['optimus_fb_appid'])) {
-			$tags[] = [
-				'prefix'   => 'fb: https://ogp.me/ns/fb#',
-				'property' => 'fb:app_id',
-				'content'  => Config::$modSettings['optimus_fb_appid'],
-			];
-		}
-
-		// Meta-tags
-		if (! empty(Config::$modSettings['optimus_meta'])) {
-			$customTags = array_filter(unserialize(Config::$modSettings['optimus_meta']));
-
-			foreach ($customTags as $name => $value) {
-				$tags[] = ['name' => $name, 'content' => $value];
-			}
-		}
-
-		Utils::$context['meta_tags'] = $tags;
 	}
 }
