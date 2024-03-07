@@ -12,18 +12,15 @@ describe('request', function () {
 		$this->request->request->set('foo', 'bar');
 		$this->request->overrideGlobals();
 
-		expect(Input::request('foo'))
-			->toBe('bar');
+		expect(Input::request('foo'))->toBe('bar');
 	});
 
 	it('sets $_REQUEST foo with default value', function () {
-		expect(Input::request('foo', 'bar'))
-			->toBe('bar');
+		expect(Input::request('foo', 'bar'))->toBe('bar');
 	});
 
 	it('sets $_REQUEST foo without default value', function () {
-		expect(Input::request('foo'))
-			->toBeFalse();
+		expect(Input::request('foo'))->toBeFalse();
 	});
 
 	it('sets $_REQUEST with array dataset', function () {
@@ -48,18 +45,15 @@ describe('post', function () {
 		$this->request->request->set('foo', 'bar');
 		$this->request->overrideGlobals();
 
-		expect(Input::post('foo'))
-			->toBe('bar');
+		expect(Input::post('foo'))->toBe('bar');
 	});
 
 	it('sets $_POST foo with default value', function () {
-		expect(Input::post('foo', 'bar'))
-			->toBe('bar');
+		expect(Input::post('foo', 'bar'))->toBe('bar');
 	});
 
 	it('sets $_POST foo without default value', function () {
-		expect(Input::post('foo'))
-			->toBeFalse();
+		expect(Input::post('foo'))->toBeFalse();
 	});
 
 	it('sets $_POST with array dataset', function () {
@@ -86,8 +80,7 @@ describe('server', function () {
 	});
 
 	it('gets $_SERVER (whole array)', function () {
-		expect(Input::server())
-			->toBe($this->request->server->all());
+		expect(Input::server())->toBe($this->request->server->all());
 	});
 });
 
@@ -95,15 +88,13 @@ describe('session', function () {
 	it('sets $_SESSION foo with bar', function () {
 		$_SESSION['foo'] = 'bar';
 
-		expect(Input::session('foo'))
-			->toBe('bar');
+		expect(Input::session('foo'))->toBe('bar');
 	});
 
 	it('gets $_SESSION foo when it is unset', function () {
 		unset($_SESSION['foo']);
 
-		expect(Input::session('foo'))
-			->toBeNull();
+		expect(Input::session('foo'))->toBeNull();
 	});
 
 	it('sets $_SESSION with array dataset', function () {
@@ -157,27 +148,23 @@ describe('xss', function () {
 	});
 
 	it('checks xss (basic usage)', function () {
-		expect(Input::xss($this->source))
-			->toBe($this->result);
+		expect(Input::xss($this->source))->toBe($this->result);
 	});
 
 	it('checks xss with array param', function () {
 		$source = [$this->source, $this->source];
 		$result = [$this->result, $this->result];
 
-		expect(Input::xss($source))
-			->toBe($result);
+		expect(Input::xss($source))->toBe($result);
 	});
 });
 
 describe('filter', function () {
 	it('checks filter (basic usage)', function () {
-		expect(Input::filter('foo'))
-			->toBeNull();
+		expect(Input::filter('foo'))->toBeNull();
 	});
 
 	it('checks filter with wrong type', function () {
-		expect(Input::filter('foo', 'wrong'))
-			->toBeNull();
+		expect(Input::filter('foo', 'wrong'))->toBeNull();
 	});
 });

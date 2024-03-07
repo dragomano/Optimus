@@ -6,8 +6,7 @@ use Bugo\Optimus\Utils\Copyright;
 it('gets link', function () {
 	$link = Copyright::getLink();
 
-	expect($link)
-		->toContain('https://custom.simplemachines.org/mods/index.php?mod=2659');
+	expect($link)->toContain('https://custom.simplemachines.org/mods/index.php?mod=2659');
 });
 
 it('gets link for Russian language', function () {
@@ -15,8 +14,7 @@ it('gets link for Russian language', function () {
 
 	$link = Copyright::getLink();
 
-	expect($link)
-		->toContain('https://dragomano.ru/mods/optimus');
+	expect($link)->toContain('https://dragomano.ru/mods/optimus');
 
 	unset(Lang::$txt['lang_dictionary']);
 });
@@ -24,6 +22,5 @@ it('gets link for Russian language', function () {
 it('gets years', function () {
 	$years = Copyright::getYears();
 
-	expect($years)
-		->toEqual(' &copy; 2010&ndash;' . date('Y') . ', Bugo');
+	expect($years)->toEqual(' &copy; 2010&ndash;' . date('Y') . ', Bugo');
 });

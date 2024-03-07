@@ -30,9 +30,6 @@ use Bugo\Compat\Utils;
 |
 */
 
-/*expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});*/
 uses()->beforeAll(function () {
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
@@ -43,6 +40,12 @@ uses()->beforeAll(function () {
 	Config::$sourcedir = __DIR__ . '/files';
 
 	Theme::$current->settings['default_images_url'] = '';
+	Theme::$current->settings['theme_id'] = 'foo_bar';
+	Theme::$current->settings['theme_url'] = '';
+	Theme::$current->settings['default_theme_dir'] = dirname(__DIR__) . '/src/Themes/default';
+
+	Utils::$context['forum_name'] = 'Foo Bar';
+	Utils::$context['admin_menu_name'] = 'admin';
 
 	Utils::$smcFunc['substr'] = fn($string, $offset, $length) => substr($string, $offset, $length);
 	Utils::$smcFunc['strlen'] = fn($string) => strlen($string);
@@ -53,6 +56,7 @@ uses()->beforeAll(function () {
 	Utils::$smcFunc['db_fetch_row'] = fn($result) => ['bar'];
 	Utils::$smcFunc['db_free_result'] = fn($result) => true;
 	Utils::$smcFunc['db_insert'] = fn(...$params) => true;
+	Utils::$smcFunc['db_title'] = 'mysql';
 
 	loadLanguage('Optimus/Optimus');
 })->in(__DIR__);
@@ -100,6 +104,15 @@ function allowedTo(string $permission): bool
 	return !!$permission;
 }
 
+function isAllowedTo(string|array $permission): bool
+{
+	return !!$permission;
+}
+
+function db_extend(string $type): void
+{
+}
+
 function un_htmlspecialchars(string $string): string
 {
 	return 'decoded';
@@ -111,6 +124,10 @@ function cache_get_data(...$params): array
 }
 
 function cache_put_data(...$params): void
+{
+}
+
+function updateSettings(array $settings): void
 {
 }
 
@@ -165,4 +182,13 @@ function shorten_subject(string $subject, int $length): string
 		return $subject;
 
 	return Utils::$smcFunc['substr']($subject, 0, $length) . '...';
+}
+
+function checkSession(string $type = 'post'): string
+{
+	return $type;
+}
+
+function redirectexit(string $url = ''): void
+{
 }

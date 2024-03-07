@@ -44,6 +44,18 @@ test('handle with request xml', function () {
 	$this->request->overrideGlobals();
 });
 
+test('handle with ignored action', function () {
+	Utils::$context['html_headers'] = '';
+	Utils::$context['current_action'] = 'test';
+	Config::$modSettings['optimus_ignored_actions'] = 'test';
+
+	$this->handler->handle();
+
+	expect(Utils::$context['html_headers'])->toBeEmpty();
+
+	Config::$modSettings['optimus_ignored_actions'] = '';
+});
+
 test('handle with head code', function () {
 	Utils::$context['html_headers'] = '';
 	Utils::$context['current_action'] = 'forum';
@@ -53,6 +65,17 @@ test('handle with head code', function () {
 	$this->handler->handle();
 
 	$this->assertStringContainsString('bar', Utils::$context['html_headers']);
+});
+
+test('handle with empty head code', function () {
+	Utils::$context['html_headers'] = '';
+	Utils::$context['current_action'] = 'forum';
+
+	Config::$modSettings['optimus_head_code'] = '';
+
+	$this->handler->handle();
+
+	expect(Utils::$context['html_headers'])->toBeEmpty();
 });
 
 test('handle with stat code', function () {

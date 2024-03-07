@@ -10,13 +10,17 @@ beforeEach(function () {
 	$this->handler = new TopicHandler();
 });
 
+test('prepareOgImage method with empty optimus_og_image', function () {
+	Config::$modSettings['optimus_og_image'] = false;
+
+	expect($this->handler->prepareOgImage())->toBeNull();
+});
+
 test('prepareOgImage method', function () {
 	Config::$modSettings['optimus_og_image'] = true;
 
 	Utils::$context['topicinfo']['id_first_msg'] = 1;
-
 	Utils::$context['current_topic'] = 1;
-
 	Utils::$context['loaded_attachments'][1] = [
 		[
 			'width' => 600,
@@ -31,10 +35,24 @@ test('prepareOgImage method', function () {
 		->toBe(Theme::$current->settings['og_image']);
 });
 
-test('loadPermissions method', function () {
-	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
+test('prepareOgImage method with topic_first_image', function () {
+	Utils::$context['optimus_og_image'] = '';
+	Utils::$context['loaded_attachments'] = [];
+	Utils::$context['topicinfo']['topic_first_message'] = '[img]https://picsum.photos/seed/wPSdlIrIS3LM5vKU/400/200[/img][br]Deserunt velit sed inventore nostrum. Saepe ea quas occaecati non provident maiores';
 
+	$this->handler->prepareOgImage();
+
+	expect(Theme::$current->settings['og_image'])->toBe('https://picsum.photos/seed/wPSdlIrIS3LM5vKU/400/200');
+});
+
+test('loadPermissions method', function () {
 	$permissionList = [];
+
+	Config::$modSettings['optimus_allow_change_topic_desc'] = false;
+
+	expect($this->handler->loadPermissions([], $permissionList))->toBeNull();
+
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
 
 	$this->handler->loadPermissions([], $permissionList);
 
@@ -53,27 +71,31 @@ test('basicSettings method', function () {
 test('displayTopic method', function () {
 	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
 
-	$topic_selects = [];
+	$columns = [];
 
-	$this->handler->displayTopic($topic_selects);
+	$this->handler->displayTopic($columns);
 
-	expect($topic_selects)->toContain('t.optimus_description');
+	expect($columns)->toContain('t.optimus_description');
 
-	$topic_selects = ['ms.modified_time AS topic_modified_time'];
+	$columns = ['ms.modified_time AS topic_modified_time'];
 
-	$this->handler->displayTopic($topic_selects);
+	$this->handler->displayTopic($columns);
 
-	expect($topic_selects)->toContain('ms.modified_time AS topic_modified_time');
+	expect($columns)->toContain('ms.modified_time AS topic_modified_time');
+
+	Config::$modSettings['optimus_topic_description'] = false;
+	Config::$modSettings['optimus_og_image'] = false;
+
+	expect($this->handler->displayTopic($columns))->toBeNull();
 
 	Config::$modSettings['optimus_topic_description'] = true;
-
 	Config::$modSettings['optimus_og_image'] = true;
 
-	$topic_selects = ['ms.body AS topic_first_message'];
+	$columns = ['ms.body AS topic_first_message'];
 
-	$this->handler->displayTopic($topic_selects);
+	$this->handler->displayTopic($columns);
 
-	expect($topic_selects)->toContain('ms.body AS topic_first_message');
+	expect($columns)->toContain('ms.body AS topic_first_message');
 });
 
 test('menuButtons method', function () {
@@ -110,8 +132,7 @@ test('beforeCreateTopic method', function () {
 });
 
 test('modifyPost method', function () {
-	expect(method_exists(TopicHandler::class, 'modifyPost'))
-		->toBeTrue();
+	expect($this->handler->modifyPost([], [], [], []))->toBeNull();
 });
 
 test('postEnd method', function () {
@@ -124,4 +145,13 @@ test('postEnd method', function () {
 	$this->handler->postEnd();
 
 	$this->assertStringContainsString('bar', Utils::$context['optimus']['description']);
+
+	Utils::$context['is_new_topic'] = false;
+	Utils::$context['user']['id'] = 1;
+	Utils::$context['user']['is_guest'] = false;
+	Utils::$smcFunc['db_fetch_row'] = fn($result) => ['bar', 1];
+
+	$this->handler->postEnd();
+
+	expect(Utils::$context['optimus']['description'])->toBe('bar');
 });

@@ -10,19 +10,14 @@ beforeEach(function () {
 	$this->handler = new MetaHandler();
 
 	Utils::$context['robot_no_index'] = false;
-
 	Utils::$context['current_action'] = '';
-
 	Utils::$context['optimus_og_type'] = [];
-
 	Utils::$context['meta_tags'] = [];
 });
 
 test('handle with forum index', function () {
-	Config::$modSettings['optimus_forum_index'] = true;
-
+	Config::$modSettings['optimus_forum_index'] = 'bar';
 	Utils::$context['page_title_html_safe'] = 'bar';
-
 	Utils::$context['robot_no_index'] = true;
 
 	$this->handler->handle();
@@ -32,10 +27,8 @@ test('handle with forum index', function () {
 });
 
 test('handle with disabled forum index', function () {
-	Config::$modSettings['optimus_forum_index'] = false;
-
+	Config::$modSettings['optimus_forum_index'] = '';
 	Utils::$context['page_title_html_safe'] = 'bar';
-
 	Utils::$context['robot_no_index'] = true;
 
 	$this->handler->handle();
@@ -118,9 +111,7 @@ test('handle with profile', function () {
 describe('handle with twitter cards', function () {
 	test('with og_image', function () {
 		Config::$modSettings['optimus_tw_cards'] = true;
-
 		Utils::$context['canonical_url'] = 'https://foo.bar/some';
-
 		Theme::$current->settings['og_image'] = 'https://foo.bar/image.png';
 
 		$this->handler->handle();
@@ -136,7 +127,6 @@ describe('handle with twitter cards', function () {
 
 	test('without og_image', function () {
 		Config::$modSettings['optimus_tw_cards'] = true;
-
 		Utils::$context['canonical_url'] = 'https://foo.bar/some';
 
 		$this->handler->handle();

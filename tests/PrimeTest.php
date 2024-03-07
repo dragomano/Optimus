@@ -9,14 +9,7 @@ beforeEach(function () {
 });
 
 it('runs __invoke', function () {
-	try {
-		(new Prime())();
-		$result = 'success';
-	} catch (Exception $e) {
-		$result = $e->getMessage();
-	}
-
-	expect($result)->toEqual('success');
+	expect((new Prime())())->toBeNull();
 });
 
 it('loads languages', function () {

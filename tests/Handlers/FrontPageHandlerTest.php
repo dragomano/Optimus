@@ -24,7 +24,7 @@ describe('changeTitle method', function () {
 	});
 
 	it('checks case with disabled setting', function () {
-		Config::$modSettings['optimus_forum_index'] = false;
+		Config::$modSettings['optimus_forum_index'] = '';
 
 		Lang::$txt['forum_index'] = '';
 

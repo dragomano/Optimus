@@ -3,10 +3,13 @@
 use Bugo\Compat\Config;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
+use Bugo\Compat\Theme;
 use Bugo\Optimus\Handlers\SitemapLinkHandler;
 
 beforeEach(function () {
 	$this->handler = new SitemapLinkHandler();
+
+	Lang::$txt['url'] = '';
 });
 
 test('actions method', function () {
@@ -19,8 +22,13 @@ test('actions method', function () {
 });
 
 test('xsl method', function () {
-	expect(method_exists(SitemapLinkHandler::class, 'xsl'))
-		->toBeTrue();
+	ob_start();
+
+	$this->handler->xsl();
+
+	$result = ob_get_clean();
+
+	$this->assertStringContainsString(OP_NAME, $result);
 });
 
 test('preLogStats method', function () {
@@ -43,4 +51,12 @@ test('addLink method', function () {
 
 	$this->assertStringContainsString(Lang::$txt['optimus_sitemap_title'], Lang::$forum_copyright);
 	expect(Utils::$context['html_headers'])->not->toBeEmpty();
+
+	Config::$modSettings['optimus_sitemap_link'] = false;
+
+	Utils::$context['html_headers'] = '';
+
+	$this->handler->addLink();
+
+	expect(Utils::$context['html_headers'])->toBeEmpty();
 });
