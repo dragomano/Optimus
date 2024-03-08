@@ -22,7 +22,7 @@
 		<remove-file name="$themedir/images/optimus_large.png" />
 		<remove-dir name="$themedir/css/optimus" />
 		<remove-dir name="$sourcedir/Optimus" />
-		<remove-dir name="$languagedir/Optimus" />
+		<remove-dir name="$themedir/languages/Optimus" />
 	</uninstall>
 
 </package-info>
