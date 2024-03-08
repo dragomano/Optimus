@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="Test Suite">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <const name="SMF" value="true"/>
+    <const name="SMF_VERSION" value="2.1"/>
+  </php>
+  <source>
+    <include>
+      <directory>src/Sources</directory>
+    </include>
+    <exclude>
+      <directory>src/Sources/Optimus/Addons</directory>
+      <directory>src/Sources/Optimus/Events</directory>
+      <directory>src/Sources/Optimus/Libs</directory>
+      <file>src/Sources/Optimus/Handlers/index.php</file>
+      <file>src/Sources/Optimus/Robots/index.php</file>
+      <file>src/Sources/Optimus/Tasks/index.php</file>
+      <file>src/Sources/Optimus/Utils/index.php</file>
+      <file>src/Sources/Optimus/app.php</file>
+      <file>src/Sources/Optimus/index.php</file>
+    </exclude>
+  </source>
+</phpunit>

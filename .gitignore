@@ -1,6 +1,16 @@
 .idea/
 .vscode/
+vendor/
+/**/composer.lock
+coverage/
+.phpunit.cache/
+.phpunit.result.cache
 
-Themes/default/languages/Optimus/*
-Themes/default/languages/Optimus/index.php
-!Themes/default/languages/Optimus/Optimus.english.php
+src/Themes/default/languages/Optimus/*
+src/Themes/default/languages/Optimus/index.php
+!src/Themes/default/languages/Optimus/Optimus.english.php
+
+src/Sources/Optimus/Addons/*/
+
+src/Sources/Optimus/Libs/*
+!src/Sources/Optimus/Libs/index.php

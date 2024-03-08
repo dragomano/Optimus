@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>Bugo:Optimus</id>
+	<name>Optimus</name>
+	<version>3.0 Beta</version>
+	<type>modification</type>
+
+	<install for="2.1.*, 3.0.*">
+		<require-dir name="Themes" destination="$boarddir">Template &amp; Language files</require-dir>
+		<require-dir name="Sources" destination="$boarddir">Core files</require-dir>
+		<hook hook="integrate_pre_include" file="$sourcedir/Optimus/app.php" />
+		<database>database.php</database>
+		<redirect url="?action=admin;area=optimus" timeout="1000" />
+	</install>
+
+	<uninstall for="2.1.*, 3.0.*">
+		<hook hook="integrate_pre_include" file="$sourcedir/Optimus/app.php" reverse="true" />
+		<code>uninstall.php</code>
+		<remove-file name="$themedir/Optimus.template.php" />
+		<remove-file name="$themedir/images/optimus.png" />
+		<remove-file name="$themedir/images/optimus_large.png" />
+		<remove-dir name="$themedir/css/optimus" />
+		<remove-dir name="$sourcedir/Optimus" />
+		<remove-dir name="$themedir/languages/Optimus" />
+	</uninstall>
+
+</package-info>

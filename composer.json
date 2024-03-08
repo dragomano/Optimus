@@ -1,0 +1,35 @@
+{
+  "require": {
+    "php": "^8.0",
+    "ext-dom": "*"
+  },
+  "require-dev": {
+    "php": "^8.1",
+    "pestphp/pest": "^2.33.4",
+    "rector/rector": "^1.0",
+    "symfony/http-foundation": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bugo\\Optimus\\": "src\\Sources\\Optimus"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "alpha",
+  "scripts": {
+    "check": "vendor/bin/rector process --dry-run --clear-cache",
+    "tests": "vendor/bin/pest --colors=always",
+    "tests-coverage": "vendor/bin/pest --colors=always --coverage --min=70",
+    "tests-coverage-clover": "vendor/bin/pest --colors=always --min=70 --coverage-clover coverage.xml",
+    "tests-coverage-html": "vendor/bin/pest --colors=always --min=70 --coverage-html coverage"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}
