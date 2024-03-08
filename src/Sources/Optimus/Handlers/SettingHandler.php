@@ -182,12 +182,12 @@ final class SettingHandler
 				'text',
 				'optimus_forum_index',
 				80,
-				'value' => Utils::htmlspecialcharsDecode((string) Config::$modSettings['optimus_forum_index'] ?? '')
+				'value' => Utils::htmlspecialcharsDecode((string) (Config::$modSettings['optimus_forum_index'] ?? ''))
 			],
 			[
 				'large_text',
 				'optimus_description',
-				'value' => Utils::htmlspecialcharsDecode((string) Config::$modSettings['optimus_description'] ?? ''),
+				'value' => Utils::htmlspecialcharsDecode((string) (Config::$modSettings['optimus_description'] ?? '')),
 				'subtext' => Lang::$txt['optimus_description_subtext']
 			],
 			['large_text', 'meta_keywords', 'subtext' => Lang::$txt['meta_keywords_note']],
