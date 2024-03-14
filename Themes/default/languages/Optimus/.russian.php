@@ -10,7 +10,7 @@
 $txt['optimus_title'] = 'Поисковая оптимизация';
 
 $txt['optimus_base_title'] = 'Общие настройки';
-$txt['optimus_base_desc'] = 'Версия мода: <strong>%1$s</strong>, версия PHP: <strong>%2$s</strong>, версия %3$s: <strong>%4$s</strong>.<br>Обсудить баги и фичи мода можно на <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">официальном сайте</a>.<br>Вы также можете <a class="bbc_link" href="https://ko-fi.com/U7U41XD2G">купить разработчику чашку кофе</a> или пожертвовать любую сумму на <a class="bbc_link" href="https://qiwi.com/n/DRAGOMANO">QIWI Кошелёк</a>.';
+$txt['optimus_base_desc'] = 'Версия мода: <strong>%1$s</strong>, версия PHP: <strong>%2$s</strong>, версия %3$s: <strong>%4$s</strong>.<br>Обсудить баги и фичи мода можно на <a class="bbc_link" href="https://www.simplemachines.org/community/index.php?topic=422210.0">официальном сайте</a>.<br>Вы также можете <a class="bbc_link" href="https://ko-fi.com/U7U41XD2G">купить разработчику чашку кофе</a>.';
 
 $txt['optimus_main_page'] = 'Главная страница';
 $txt['optimus_base_info'] = 'Содержание мета-тега description может использоваться в сниппетах на странице результатов поиска.';
@@ -96,7 +96,7 @@ $txt['optimus_main_page_frequency'] = 'Частота изменения главной страницы';
 $txt['optimus_main_page_frequency_set'] = array('Постоянная (always)', 'В зависимости от даты последнего сообщения');
 $txt['optimus_sitemap_boards'] = 'Добавлять в карту ссылки на разделы форума';
 $txt['optimus_sitemap_boards_subtext'] = 'Разделы, закрытые для гостей, добавлены НЕ будут.';
-$txt['optimus_sitemap_topics_num_replies'] = 'Добавлять в карту только темы с количеством ответов более';
+$txt['optimus_sitemap_topics_num_replies'] = 'Добавлять в карту только темы с количеством ответов >=';
 $txt['optimus_sitemap_items_display'] = 'Максимальное количество элементов на странице';
 
 // Диспетчер задач

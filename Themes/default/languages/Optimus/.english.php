@@ -95,7 +95,7 @@ $txt['optimus_main_page_frequency'] = 'The update frequency of the main page';
 $txt['optimus_main_page_frequency_set'] = array('Constant (always)', 'Depending on the date of the last message');
 $txt['optimus_sitemap_boards'] = 'Add links to boards to the sitemap';
 $txt['optimus_sitemap_boards_subtext'] = 'Boards that closed to guests will NOT be added.';
-$txt['optimus_sitemap_topics_num_replies'] = 'Add to the sitemap only those topics that have the number of replies is more than';
+$txt['optimus_sitemap_topics_num_replies'] = 'Add to the sitemap only those topics that have the number of replies >=';
 $txt['optimus_sitemap_items_display'] = 'Maximum number of items per page';
 
 // Task Manager

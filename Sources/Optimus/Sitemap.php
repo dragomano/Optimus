@@ -8,10 +8,10 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2023 Bugo
+ * @copyright 2010-2024 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.5
+ * @version 2.7.6
  */
 
 if (!defined('SMF'))
@@ -207,7 +207,7 @@ class Sitemap
 				FROM {db_prefix}topics AS t
 					INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
 				WHERE t.id_board IN ({array_int:open_boards})
-					AND t.num_replies > {int:num_replies}
+					AND t.num_replies >= {int:num_replies}
 					AND t.approved = {int:is_approved}
 				ORDER BY t.id_topic DESC
 				LIMIT {int:start}, {int:limit}',

@@ -93,7 +93,7 @@ $txt['optimus_main_page_frequency'] = 'De vernieuwings frequentie van de hoofd p
 $txt['optimus_main_page_frequency_set'] = array('Direct (voortdurend)', 'Afhankelijk van de datum van het nieuwste bericht');
 $txt['optimus_sitemap_boards'] = 'Neem links naar de boards op in de sitemap';
 $txt['optimus_sitemap_boards_subtext'] = 'Boards die niet toegankelijk zijn voor gasten worden NIET opgenomen.';
-$txt['optimus_sitemap_topics_num_replies'] = 'Voeg alleen topics aan de sitemap toe die meer dan zoveel reacties hebben';
+$txt['optimus_sitemap_topics_num_replies'] = 'Voeg alleen topics aan de sitemap toe die meer dan zoveel reacties >=';
 $txt['optimus_sitemap_items_display'] = 'Maximum aantal items per pagina';
 
 // Task Manager
