@@ -6,10 +6,10 @@
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2023 Bugo
+ * @copyright 2010-2024 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.5
+ * @version 2.7.6
  */
 
 use Bugo\Optimus\Integration;
@@ -19,7 +19,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
-defined('OP_VERSION') || define('OP_VERSION', '2.7.5');
+defined('OP_VERSION') || define('OP_VERSION', '2.7.6');
 
 /**
  * @param $classname
