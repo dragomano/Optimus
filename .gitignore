@@ -1,1 +1,6 @@
 .idea/
+.phpunit.cache/
+coverage/
+src/
+vendor/
+composer.lock
