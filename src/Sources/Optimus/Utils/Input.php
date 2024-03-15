@@ -88,7 +88,7 @@ final class Input
 	public static function xss(string|array $data): string|array
 	{
 		if (is_array($data)) {
-			return array_map([__CLASS__, 'xss'], $data);
+			return array_map([self::class, 'xss'], $data);
 		}
 
 		return Utils::htmlspecialchars($data, ENT_QUOTES);
