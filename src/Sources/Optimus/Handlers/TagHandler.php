@@ -127,7 +127,6 @@ final class TagHandler
 				],
 				['check', 'optimus_show_keywords_block'],
 				['check', 'optimus_show_keywords_on_message_index'],
-				['check', 'optimus_allow_keyword_phrases'],
 				['check', 'optimus_use_color_tags'],
 			],
 			array_slice($config_vars, $counter, null, true)
@@ -186,6 +185,7 @@ final class TagHandler
 			return;
 
 		$keywords = Input::xss(Input::request('optimus_keywords', []));
+		$keywords = array_filter(explode(',', $keywords));
 
 		$this->add($keywords, $topicOptions['id'], $posterOptions['id']);
 	}
@@ -196,12 +196,11 @@ final class TagHandler
 			return;
 
 		if (Utils::$context['is_new_topic']) {
-			Utils::$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', ''));
+			Utils::$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', []));
 		} else {
 			$this->displayTopic();
 
-			Utils::$context['optimus']['keywords'] = empty(Utils::$context['optimus_keywords'])
-				? [] : array_values(Utils::$context['optimus_keywords']);
+			Utils::$context['optimus']['keywords'] = Utils::$context['optimus_keywords'] ?? [];
 		}
 
 		$this->addFields();
@@ -215,7 +214,7 @@ final class TagHandler
 		array $posterOptions
 	): void
 	{
-		if (empty($topicOptions['first_msg']) || $topicOptions['first_msg'] != $msgOptions['id'])
+		if (empty($topicOptions['first_msg']) || (int) $topicOptions['first_msg'] !== $msgOptions['id'])
 			return;
 
 		$this->modify($topicOptions['id'], $posterOptions['id']);
@@ -237,7 +236,7 @@ final class TagHandler
 
 	public function showTheSame(): void
 	{
-		if (Utils::$context['current_subaction'] == 'search') {
+		if (Utils::$context['current_subaction'] === 'search') {
 			$this->prepareSearchData();
 			return;
 		}
@@ -475,7 +474,7 @@ final class TagHandler
 
 		if (
 			! empty(Utils::$context['current_page'])
-			&& Utils::$context['current_page'] != (int) Input::request('start')
+			&& Utils::$context['current_page'] !== (int) Input::request('start', 0)
 		) {
 			Utils::sendHttpStatus(404);
 		}
@@ -598,17 +597,19 @@ final class TagHandler
 	/**
 	 * Request from the database 10 keywords similar to the entered
 	 *
-	 * Запрашиваем из базы данных 10 наиболее похожих ключевых слов (когда добавляем новое)
+	 * Запрашиваем из базы данных 10 наиболее похожих ключевых слов
 	 */
 	private function prepareSearchData(): void
 	{
-		$query = Utils::$smcFunc['htmltrim'](Input::filter('q') ?? '');
+		$input = file_get_contents('php://input');
+		$data  = json_decode($input, true) ?? [];
+		$query = Utils::$smcFunc['htmltrim']($data['search'] ?? '');
 
 		if (empty($query))
 			exit;
 
 		$result = Db::$db->query('', '
-			SELECT name
+			SELECT id, name
 			FROM {db_prefix}optimus_keywords
 			WHERE name LIKE {string:search}
 			ORDER BY name DESC
@@ -621,8 +622,8 @@ final class TagHandler
 		$data = [];
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$data[] = [
-				'id'   => $row['name'],
-				'text' => $row['name'],
+				'id'   => $row['id'],
+				'name' => $row['name'],
 			];
 		}
 
@@ -650,97 +651,77 @@ final class TagHandler
 		if (empty(Utils::$context['is_first_post']))
 			return;
 
-		Utils::$context['posting_fields']['optimus_keywords'] = [
-			'label' => [
-				'text' => Lang::$txt['optimus_seo_keywords']
-			],
-			'input' => [
-				'type' => 'select',
-				'attributes' => [
-					'id'       => 'optimus_keywords',
-					'name'     => 'optimus_keywords[]',
-					'multiple' => true
-				],
-				'options' => []
-			]
-		];
+		Utils::$context['posting_fields']['optimus_keywords']['label']['html'] = Lang::$txt['optimus_seo_keywords'];
+		Utils::$context['posting_fields']['optimus_keywords']['input']['html'] = '
+		<div id="optimus_keywords" name="optimus_keywords"></div>';
 
 		$this->loadAssets();
-
-		if (empty(Utils::$context['optimus']['keywords']))
-			return;
-
-		foreach (Utils::$context['optimus']['keywords'] as $key) {
-			Utils::$context['posting_fields']['optimus_keywords']['input']['options'][$key] = [
-				'value'    => $key,
-				'selected' => true,
-			];
-		}
 	}
 
-	/**
-	 * @see Select2 https://select2.github.io/select2/
-	 */
 	private function loadAssets(): void
 	{
-		Theme::loadCSSFile('https://cdn.jsdelivr.net/npm/select2@4/dist/css/select2.min.css', ['external' => true]);
-
-		Theme::loadJavaScriptFile(
-			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/select2.min.js',
+		Theme::loadCSSFile(
+			'https://cdn.jsdelivr.net/npm/virtual-select-plugin@1/dist/virtual-select.min.css',
 			['external' => true]
 		);
 
 		Theme::loadJavaScriptFile(
-			'https://cdn.jsdelivr.net/npm/select2@4/dist/js/i18n/' . Lang::$txt['lang_dictionary'] . '.js',
+			'https://cdn.jsdelivr.net/npm/virtual-select-plugin@1/dist/virtual-select.min.js',
 			['external' => true]
 		);
 
-		Theme::addInlineJavaScript('
-		jQuery(document).ready(function ($) {
-			$("#optimus_keywords").select2({
-				language: "' . Lang::$txt['lang_dictionary'] . '",
-				placeholder: "' . Lang::$txt['optimus_enter_keywords'] . '",
-				minimumInputLength: 2,
-				width: "100%",
-				cache: true,
-				tags: true,' . (Utils::$context['right_to_left'] ? '
-				dir: "rtl",' : '') . '
-				tokenSeparators: [","' . (empty(Config::$modSettings['optimus_allow_keyword_phrases']) ? ', " "' : '') . '],
-				ajax: {
-					url: smf_scripturl + "?action=keywords;sa=search",
-					type: "POST",
-					delay: 250,
-					dataType: "json",
-					data: function (params) {
-						return {
-							q: params.term
-						}
-					},
-					processResults: function (data, params) {
-						return {
-							results: data
-						}
-					}
-				}
-			});
-		});', true);
-	}
-
-	private function add(array $keywords, int $topic, int $user): void
-	{
-		if (empty($keywords) || empty($topic) || empty($user))
-			return;
-
-		foreach ($keywords as $keyword) {
-			$id = $this->getIdByName($keyword);
-
-			if (empty($id))
-				$id = $this->addToDatabase($keyword);
-
-			$this->addNoteToLogTable($id, $topic, $user);
+		$data = [];
+		foreach (Utils::$context['optimus']['keywords'] as $id => $name) {
+			$data[] = [
+				'label' => $name,
+				'value' => $id,
+			];
 		}
 
-		CacheApi::clean();
+		$values = array_keys(Utils::$context['optimus_keywords'] ?? []);
+
+		Theme::addInlineJavaScript('
+		VirtualSelect.init({
+			ele: "#optimus_keywords",' . (Utils::$context['right_to_left'] ? '
+			textDirection: "rtl",' : '') . '
+			dropboxWrapper: "body",
+			maxWidth: "100%",
+			multiple: true,
+			search: true,
+			markSearchResults: true,
+			showValueAsTags: true,
+			allowNewOption: true,
+			showSelectedOptionsFirst: true,
+			placeholder: "' . Lang::$txt['optimus_enter_keywords'] . '",
+			noSearchResultsText: "' . Lang::$txt['no_matches'] . '",
+			searchPlaceholderText: "' . Lang::$txt['search'] . '",
+			clearButtonText: "' . Lang::$txt['remove'] . '",
+			maxValues: 10,
+			options: ' . json_encode($data) . ',
+			selectedValue: [' . implode(',', $values) . '],
+			onServerSearch: async function (search, virtualSelect) {
+				try {
+					const response = await fetch(smf_scripturl + "?action=keywords;sa=search", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ search })
+					});
+
+					if (!response.ok) {
+						console.error(response);
+					}
+
+					const data = await response.json();
+					const tags = data.map(tag => ({ label: tag.name, value: tag.id }));
+
+					virtualSelect.setServerOptions(tags);
+				} catch (error) {
+					virtualSelect.setServerOptions(false)
+				}
+			}
+		});', true);
 	}
 
 	private function getIdByName(string $name): int
@@ -807,20 +788,46 @@ final class TagHandler
 			return;
 
 		$keywords = Input::xss(Input::request('optimus_keywords', []));
+		$keywords = array_filter(explode(',', $keywords));
 
-		// Check if the keywords have been changed
 		$this->displayTopic();
-		$currentKeywords = empty(Utils::$context['optimus_keywords'])
-			? [] : array_values(Utils::$context['optimus_keywords']);
 
-		if ($keywords == $currentKeywords)
-			return;
+		$currentKeywords = Utils::$context['optimus_keywords'] ?? [];
 
-		$newKeywords = array_diff($keywords, $currentKeywords);
+		$newKeywords = [];
+		foreach ($keywords as $id) {
+			if (isset($currentKeywords[$id]) === false) {
+				$newKeywords[] = $id;
+			}
+		}
+
 		$this->add($newKeywords, $topic, $user);
 
-		$delKeywords = array_diff($currentKeywords, $keywords);
+		$delKeywords = [];
+		foreach ($currentKeywords as $id => $name) {
+			if (in_array($id, $keywords) === false) {
+				$delKeywords[] = $id;
+			}
+		}
+
 		$this->remove($delKeywords, $topic);
+	}
+
+	private function add(array $keywords, int $topic, int $user): void
+	{
+		if (empty($keywords) || empty($topic) || empty($user))
+			return;
+
+		foreach ($keywords as $keyword) {
+			$id = is_int(intval($keyword)) ? (int) $keyword : $this->getIdByName($keyword);
+
+			if (empty($id))
+				$id = $this->addToDatabase($keyword);
+
+			$this->addNoteToLogTable($id, $topic, $user);
+		}
+
+		CacheApi::clean();
 	}
 
 	private function remove(array $keywords, int $topic): void
@@ -828,36 +835,12 @@ final class TagHandler
 		if (empty($keywords) || empty($topic))
 			return;
 
-		$result = Db::$db->query('', '
-			SELECT lk.keyword_id, lk.topic_id
-			FROM {db_prefix}optimus_log_keywords AS lk
-				INNER JOIN {db_prefix}optimus_keywords AS k ON (lk.keyword_id = k.id
-					AND lk.topic_id = {int:current_topic}
-					AND k.name IN ({array_string:keywords})
-				)',
-			[
-				'keywords'      => $keywords,
-				'current_topic' => $topic,
-			]
-		);
-
-		$delItems = [];
-		while ($row = Db::$db->fetch_assoc($result)) {
-			$delItems['keywords'][] = $row['keyword_id'];
-			$delItems['topics'][]   = $row['topic_id'];
-		}
-
-		Db::$db->free_result($result);
-
-		if (empty($delItems))
-			return;
-
 		Db::$db->query('', '
 			DELETE FROM {db_prefix}optimus_log_keywords
-			WHERE keyword_id IN ({array_int:keywords}) AND topic_id IN ({array_int:topics})',
+			WHERE keyword_id IN ({array_int:keywords}) AND topic_id = {int:topic}',
 			[
-				'keywords' => $delItems['keywords'],
-				'topics'   => $delItems['topics'],
+				'keywords' => $keywords,
+				'topic'    => $topic,
 			]
 		);
 

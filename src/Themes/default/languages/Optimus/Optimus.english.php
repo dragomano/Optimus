@@ -32,7 +32,6 @@ $txt['optimus_allow_change_topic_keywords'] = 'Allow a separate field for the to
 $txt['optimus_allow_change_topic_keywords_subtext'] = 'It is displayed when editing a topic.';
 $txt['optimus_show_keywords_block'] = 'Display a block with keywords above the first post of the topic';
 $txt['optimus_show_keywords_on_message_index'] = 'Display keywords in topic lists within boards';
-$txt['optimus_allow_keyword_phrases'] = 'Allow to add entire key phrases';
 $txt['optimus_use_color_tags'] = 'Use color tags';
 
 $txt['optimus_extra_settings'] = 'Additional settings';
