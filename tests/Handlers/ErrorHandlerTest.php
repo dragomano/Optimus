@@ -20,15 +20,6 @@ describe('fallbackAction method', function () {
 		expect(Utils::$context['error_link'])
 			->toBe('javascript:history.go(-1)');
 	});
-
-	it('checks case with disabled setting', function () {
-		Config::$modSettings['optimus_errors_for_wrong_actions'] = false;
-
-		$this->handler->fallbackAction();
-
-		expect(Utils::$context['error_link'])
-			->toBeEmpty();
-	});
 });
 
 describe('handleStatusErrors method', function () {

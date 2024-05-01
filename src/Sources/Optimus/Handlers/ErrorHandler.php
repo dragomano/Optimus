@@ -24,9 +24,11 @@ final class ErrorHandler
 {
 	public function __invoke(): void
 	{
-		IntegrationHook::add(
-			'integrate_fallback_action', self::class . '::fallbackAction#', false, __FILE__
-		);
+		if (! empty(Config::$modSettings['optimus_errors_for_wrong_actions'])) {
+			IntegrationHook::add(
+				'integrate_fallback_action', self::class . '::fallbackAction#', false, __FILE__
+			);
+		}
 
 		IntegrationHook::add(
 			'integrate_menu_buttons', self::class . '::handleStatusErrors#', false, __FILE__
@@ -35,9 +37,6 @@ final class ErrorHandler
 
 	public function fallbackAction(): void
 	{
-		if (empty(Config::$modSettings['optimus_errors_for_wrong_actions']))
-			return;
-
 		Theme::loadTemplate('Errors');
 
 		Utils::$context['sub_template'] = 'fatal_error';
