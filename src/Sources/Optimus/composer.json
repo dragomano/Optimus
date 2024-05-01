@@ -1,13 +1,15 @@
 {
   "require": {
-    "league/event": "^3.0",
-    "bugo/smf-compat": "^0.1"
+    "bugo/smf-compat": "^0.1",
+    "league/event": "^3.0"
   },
   "autoload": {
     "psr-4": {
       "Bugo\\Optimus\\": ""
     },
-    "exclude-from-classmap": ["Addons"]
+    "exclude-from-classmap": [
+      "Addons"
+    ]
   },
   "config": {
     "vendor-dir": "Libs",
