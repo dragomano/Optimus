@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 /**
- * AddonInterface.php
- *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus

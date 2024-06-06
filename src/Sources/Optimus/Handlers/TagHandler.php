@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 /**
- * TagHandler.php
- *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
@@ -652,7 +650,7 @@ final class TagHandler
 			return;
 
 		Utils::$context['posting_fields']['optimus_keywords']['label']['html'] = Lang::$txt['optimus_seo_keywords'];
-		Utils::$context['posting_fields']['optimus_keywords']['input']['html'] = '
+		Utils::$context['posting_fields']['optimus_keywords']['input']['html'] = /** @lang text */ '
 		<div id="optimus_keywords" name="optimus_keywords"></div>';
 
 		$this->loadAssets();

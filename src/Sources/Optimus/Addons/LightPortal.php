@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 /**
- * LightPortal.php
- *
  * @package LightPortal (Optimus)
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
@@ -10,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 28.02.24
+ * @version 06.06.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -49,7 +47,7 @@ final class LightPortal extends AbstractAddon
 	public function changeSitemap(object $sitemap): void
 	{
 		$result = Db::$db->query('', '
-			SELECT page_id, alias, GREATEST(created_at, updated_at) AS date
+			SELECT page_id, slug, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
 				AND created_at <= {int:current_time}
@@ -65,7 +63,7 @@ final class LightPortal extends AbstractAddon
 		);
 
 		while ($row = Db::$db->fetch_assoc($result)) {
-			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['alias'];
+			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['slug'];
 
 			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [

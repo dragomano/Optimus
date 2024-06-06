@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 /**
- * Sitemap.php
- *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
@@ -16,16 +14,16 @@ namespace Bugo\Optimus\Tasks;
 
 use Bugo\Compat\{Config, Db, IntegrationHook};
 use Bugo\Compat\{Sapi, Theme, Utils};
+use Bugo\Compat\Tasks\BackgroundTask;
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\EventDispatcher;
-use SMF_BackgroundTask;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class Sitemap extends SMF_BackgroundTask
+final class Sitemap extends BackgroundTask
 {
 	public const MAX_ITEMS = 50000;
 
@@ -41,7 +39,7 @@ final class Sitemap extends SMF_BackgroundTask
 
 	private EventDispatcher $dispatcher;
 
-	public function __construct($details)
+	public function __construct(array $details)
 	{
 		parent::__construct($details);
 

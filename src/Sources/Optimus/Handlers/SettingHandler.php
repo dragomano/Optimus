@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
 /**
- * SettingHandler.php
- *
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
@@ -14,7 +12,7 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{ACP, Config, Db, IntegrationHook};
+use Bugo\Compat\{Actions\ACP, Config, Db, IntegrationHook};
 use Bugo\Compat\{Lang, Theme, User, Utils};
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;

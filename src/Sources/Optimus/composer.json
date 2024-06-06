@@ -1,6 +1,6 @@
 {
   "require": {
-    "bugo/smf-compat": "^0.1",
+    "bugo/smf-compat": "^0.2",
     "league/event": "^3.0"
   },
   "autoload": {
