@@ -21,7 +21,7 @@ final class AddonEvent implements HasEventName
 {
 	public function __construct(
 		private string $name,
-		private object $target
+		private mixed $target
 	) {}
 
 	public function eventName(): string
@@ -29,7 +29,7 @@ final class AddonEvent implements HasEventName
 		return $this->name;
 	}
 
-	public function getTarget(): object
+	public function getTarget(): mixed
 	{
 		return $this->target;
 	}

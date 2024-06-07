@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 06.06.24
+ * @version 07.06.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -38,13 +38,12 @@ final class LightPortal extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(object $generator): void
+	public function changeRobots(Generator $generator): void
 	{
-		/* @var Generator $generator */
 		$generator->customRules[] = "Allow: " . $generator->urlPath . "/*" . LP_PAGE_PARAM;
 	}
 
-	public function changeSitemap(object $sitemap): void
+	public function changeSitemap(Sitemap $sitemap): void
 	{
 		$result = Db::$db->query('', '
 			SELECT page_id, slug, GREATEST(created_at, updated_at) AS date
@@ -65,7 +64,6 @@ final class LightPortal extends AbstractAddon
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['slug'];
 
-			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date'],

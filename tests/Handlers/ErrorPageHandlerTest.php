@@ -2,33 +2,34 @@
 
 use Bugo\Compat\Board;
 use Bugo\Compat\Config;
+use Bugo\Compat\Theme;
 use Bugo\Compat\Utils;
-use Bugo\Optimus\Handlers\ErrorHandler;
+use Bugo\Optimus\Handlers\ErrorPageHandler;
 
 beforeEach(function () {
-	$this->handler = new ErrorHandler();
+	$this->handler = new ErrorPageHandler();
 
 	Utils::$context['error_link'] = '';
 });
 
-describe('fallbackAction method', function () {
+describe('handleWrongActions method', function () {
 	it('checks basic usage', function () {
 		Config::$modSettings['optimus_errors_for_wrong_actions'] = true;
 
-		$this->handler->fallbackAction();
+		$this->handler->handleWrongActions();
 
-		expect(Utils::$context['error_link'])
-			->toBe('javascript:history.go(-1)');
+		expect(Theme::$current->settings['catch_action']['sub_template'])
+			->toBe('fatal_error');
 	});
 });
 
-describe('handleStatusErrors method', function () {
+describe('handleWrongBoardsTopics method', function () {
 	it('checks case when board_info[error] = exist', function () {
 		Config::$modSettings['optimus_errors_for_wrong_boards_topics'] = true;
 
 		Board::$info['error'] = 'exist';
 
-		$this->handler->handleStatusErrors();
+		$this->handler->handleWrongBoardsTopics();
 
 		expect(Utils::$context['error_link'])
 			->toBe('javascript:history.go(-1)');
@@ -39,7 +40,7 @@ describe('handleStatusErrors method', function () {
 
 		Board::$info['error'] = 'access';
 
-		$this->handler->handleStatusErrors();
+		$this->handler->handleWrongBoardsTopics();
 
 		expect(Utils::$context['error_link'])
 			->toBe('javascript:history.go(-1)');
@@ -48,7 +49,7 @@ describe('handleStatusErrors method', function () {
 	it('checks case with disabled setting', function () {
 		Config::$modSettings['optimus_errors_for_wrong_boards_topics'] = false;
 
-		$this->handler->handleStatusErrors();
+		$this->handler->handleWrongBoardsTopics();
 
 		expect(Utils::$context['error_link'])
 			->toBeEmpty();

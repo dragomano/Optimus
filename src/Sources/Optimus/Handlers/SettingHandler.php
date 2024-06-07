@@ -199,7 +199,7 @@ final class SettingHandler
 			['check', 'optimus_log_search'],
 		];
 
-		// Modders can add own options
+		// You can add your own options
 		IntegrationHook::call('integrate_optimus_basic_settings', [&$config_vars]);
 
 		if ($return_config)

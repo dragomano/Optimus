@@ -28,7 +28,7 @@ final class HandlerLoader
 		MetaHandler::class,
 		FaviconHandler::class,
 		SearchTermHandler::class,
-		ErrorHandler::class,
+		ErrorPageHandler::class,
 		SitemapLinkHandler::class,
 		RedirectHandler::class,
 		AddonHandler::class,

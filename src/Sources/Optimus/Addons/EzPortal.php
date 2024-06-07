@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 28.02.24
+ * @version 07.06.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -38,17 +38,16 @@ final class EzPortal extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(object $generator): void
+	public function changeRobots(Generator $generator): void
 	{
 		global $ezpSettings;
 
-		/* @var Generator $generator */
 		$generator->customRules[] = empty($ezpSettings['ezp_pages_seourls'])
 			? "Allow: " . $generator->urlPath . "/*ezportal;sa=page;p=*"
 			: "Allow: " . $generator->urlPath . "/pages/";
 	}
 
-	public function changeSitemap(object $sitemap): void
+	public function changeSitemap(Sitemap $sitemap): void
 	{
 		global $ezpSettings;
 
@@ -69,7 +68,6 @@ final class EzPortal extends AbstractAddon
 				? Config::$scripturl . '?action=ezportal;sa=page;p=' . $row['id_page']
 				: Config::$boardurl . '/pages/' . \MakeSEOUrl($row['title']) . '-' . $row['id_page'];
 
-			/* @var Sitemap $sitemap */
 			$sitemap->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date'],

@@ -18,31 +18,32 @@ use Bugo\Compat\{Board, Lang, Theme, Utils};
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class ErrorHandler
+final class ErrorPageHandler
 {
 	public function __invoke(): void
 	{
-		if (! empty(Config::$modSettings['optimus_errors_for_wrong_actions'])) {
-			IntegrationHook::add(
-				'integrate_fallback_action', self::class . '::fallbackAction#', false, __FILE__
-			);
-		}
+		IntegrationHook::add(
+			'integrate_load_theme', self::class . '::handleWrongActions#', false, __FILE__
+		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::handleStatusErrors#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::handleWrongBoardsTopics#', false, __FILE__
 		);
 	}
 
-	public function fallbackAction(): void
+	public function handleWrongActions(): void
 	{
-		Theme::loadTemplate('Errors');
+		if (empty(Config::$modSettings['optimus_errors_for_wrong_actions']))
+			return;
 
-		Utils::$context['sub_template'] = 'fatal_error';
-
-		$this->changeErrorPage();
+		Theme::$current->settings['catch_action'] = [
+			'template' => 'Errors',
+			'function' => self::class . '::changeErrorPage#',
+			'sub_template' => 'fatal_error',
+		];
 	}
 
-	public function handleStatusErrors(): void
+	public function handleWrongBoardsTopics(): void
 	{
 		if (empty(Config::$modSettings['optimus_errors_for_wrong_boards_topics']) || empty(Board::$info['error']))
 			return;
@@ -56,14 +57,13 @@ final class ErrorHandler
 		}
 	}
 
-	private function changeErrorPage(int $code = 404): void
+	public function changeErrorPage(int $code = 404): void
 	{
 		Utils::sendHttpStatus($code);
 
 		Theme::addInlineCss('#fatal_error { text-align: center }');
 
 		Utils::$context['page_title'] = Lang::$txt["optimus_{$code}_page_title"];
-
 		Utils::$context['error_code'] = '';
 		Utils::$context['error_link'] = 'javascript:history.go(-1)';
 		Utils::$context['error_title'] = Lang::$txt["optimus_{$code}_h2"];

@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 28.02.24
+ * @version 07.06.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -46,14 +46,13 @@ final class PrettyUrls extends AbstractAddon
 			Utils::$context['pretty']['action_array'][] = 'keywords';
 	}
 
-	public function changeRobots(object $generator): void
+	public function changeRobots(Generator $generator): void
 	{
-		/* @var Generator $generator */
 		$generator->useSef = ! empty(Config::$modSettings['pretty_enable_filters'])
 			&& is_file(dirname(__DIR__, 2) . '/PrettyUrls-Filters.php');
 	}
 
-	public function changeSitemapContent(object $sitemap): void
+	public function changeSitemapContent(Sitemap $sitemap): void
 	{
 		$pretty = Config::$sourcedir . '/PrettyUrls-Filters.php';
 		if (! file_exists($pretty) || empty(Config::$modSettings['pretty_enable_filters']))
@@ -73,7 +72,6 @@ final class PrettyUrls extends AbstractAddon
 		Utils::$context['pretty']['search_patterns']  = ['~(<loc>)([^#<]+)~'];
 		Utils::$context['pretty']['replace_patterns'] = ['~(<loc>)([^<]+)~'];
 
-		/* @var Sitemap $sitemap */
 		if (function_exists('pretty_rewrite_buffer'))
 			\pretty_rewrite_buffer($sitemap->content);
 	}

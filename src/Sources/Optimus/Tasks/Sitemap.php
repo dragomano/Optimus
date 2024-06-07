@@ -190,7 +190,7 @@ final class Sitemap extends BackgroundTask
 	{
 		$this->links = array_merge($this->getBoardLinks(), $this->getTopicLinks());
 
-		// Modders can add custom links
+		// You can add custom links
 		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_LINKS, $this));
 
 		// External integrations
@@ -204,7 +204,7 @@ final class Sitemap extends BackgroundTask
 				: $this->getLastDate($this->links)
 		];
 
-		// Modders can process links with SEF handler
+		// You can process links with SEF handler
 		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::CREATE_SEF_URLS, $this));
 
 		array_unshift($this->links, $home);
