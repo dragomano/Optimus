@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 07.06.24
+ * @version 19.07.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -42,8 +42,9 @@ final class PrettyUrls extends AbstractAddon
 
 	public function addSupportKeywordsAction(): void
 	{
-		if (isset(Utils::$context['pretty']['action_array']))
+		if (isset(Utils::$context['pretty']['action_array'])) {
 			Utils::$context['pretty']['action_array'][] = 'keywords';
+		}
 	}
 
 	public function changeRobots(Generator $generator): void
@@ -55,6 +56,7 @@ final class PrettyUrls extends AbstractAddon
 	public function changeSitemapContent(Sitemap $sitemap): void
 	{
 		$pretty = Config::$sourcedir . '/PrettyUrls-Filters.php';
+
 		if (! file_exists($pretty) || empty(Config::$modSettings['pretty_enable_filters']))
 			return;
 
@@ -69,10 +71,13 @@ final class PrettyUrls extends AbstractAddon
 			);
 		}
 
-		Utils::$context['pretty']['search_patterns']  = ['~(<loc>)([^#<]+)~'];
-		Utils::$context['pretty']['replace_patterns'] = ['~(<loc>)([^<]+)~'];
+		Utils::$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
+		Utils::$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';
 
-		if (function_exists('pretty_rewrite_buffer'))
-			\pretty_rewrite_buffer($sitemap->content);
+		Config::$modSettings['pretty_bufferusecache'] = false;
+
+		if (function_exists('pretty_rewrite_buffer')) {
+			$sitemap->content =	\pretty_rewrite_buffer($sitemap->content);
+		}
 	}
 }

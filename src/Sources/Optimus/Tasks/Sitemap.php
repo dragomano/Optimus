@@ -103,7 +103,6 @@ final class Sitemap extends BackgroundTask
 		Sapi::setTimeLimit();
 
 		Config::$modSettings['disableQueryCheck'] = true;
-		Config::$modSettings['pretty_bufferusecache'] = false;
 
 		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
 
