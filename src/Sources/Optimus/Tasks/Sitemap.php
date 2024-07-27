@@ -113,8 +113,9 @@ final class Sitemap extends BackgroundTask
 		$getLinks = fn() => yield from $this->getLinks();
 
 		foreach ($getLinks() as $counter => $entry) {
-			if (! empty($counter) && $counter % $maxItems == 0)
+			if (! empty($counter) && $counter % $maxItems == 0) {
 				$sitemapCounter++;
+			}
 
 			$entry['lastmod'] = (int) ($entry['lastmod'] ?? 0);
 
@@ -145,15 +146,11 @@ final class Sitemap extends BackgroundTask
 
 		if ($sitemapCounter > 0) {
 			$gzMaps = [];
+
 			for ($number = 0; $number <= $sitemapCounter; $number++) {
 				Utils::$context['sitemap'] = $items[$number];
 
-				ob_start();
-				template_sitemap_xml();
-				$this->content = ob_get_clean();
-
-				// Some mods should rewrite full content (PrettyURLs, etc.)
-				$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
+				$this->prepareContent();
 
 				$gzMaps[$number] = $this->createFile(
 					Config::$boarddir . '/sitemap_' . $number . '.xml', $this->content
@@ -161,23 +158,17 @@ final class Sitemap extends BackgroundTask
 			}
 
 			Utils::$context['sitemap'] = [];
+
 			for ($number = 0; $number <= $sitemapCounter; $number++) {
 				$gz = empty($gzMaps[$number]) ? '' : '.gz';
 				Utils::$context['sitemap'][$number]['loc'] = Config::$boardurl . '/sitemap_' . $number . '.xml' . $gz;
 			}
 
-			ob_start();
-			template_sitemapindex_xml();
-			$this->content = ob_get_clean();
+			$this->prepareContent(true);
 		} else {
 			Utils::$context['sitemap'] = $items[0];
 
-			ob_start();
-			template_sitemap_xml();
-			$this->content = ob_get_clean();
-
-			// Some mods should rewrite full content (PrettyURLs, etc.)
-			$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
+			$this->prepareContent();
 		}
 
 		$this->createFile(Config::$boarddir . '/sitemap.xml', $this->content);
@@ -226,10 +217,25 @@ final class Sitemap extends BackgroundTask
 		return max($dates);
 	}
 
+	private function prepareContent(bool $indexOnly = false): void
+	{
+		ob_start();
+
+		$indexOnly ? template_sitemapindex_xml() : template_sitemap_xml();
+
+		$this->content = ob_get_clean();
+
+		if ($indexOnly) return;
+
+		// Some mods should rewrite full content (PrettyURLs, etc.)
+		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
+	}
+
 	private function getBoardLinks(): array
 	{
-		if (! empty(Config::$modSettings['recycle_board']))
+		if (! empty(Config::$modSettings['recycle_board'])) {
 			$this->ignoredBoards[] = (int) Config::$modSettings['recycle_board'];
+		}
 
 		$result = Db::$db->query('', /** @lang text */ '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
@@ -262,8 +268,9 @@ final class Sitemap extends BackgroundTask
 			if (! empty(Config::$modSettings['optimus_sitemap_boards'])) {
 				$boardUrl = Config::$scripturl . '?board=' . $row['id_board'] . '.0';
 
-				if (! empty(Config::$modSettings['queryless_urls']))
+				if (! empty(Config::$modSettings['queryless_urls'])) {
 					$boardUrl = Config::$scripturl . '/board,' . $row['id_board'] . '.0.html';
+				}
 
 				$links[] = [
 					'loc'     => $boardUrl,
@@ -303,8 +310,10 @@ final class Sitemap extends BackgroundTask
 
 		while ($start < $totalRows) {
 			@set_time_limit(600);
-			if (function_exists('apache_reset_timeout'))
+
+			if (function_exists('apache_reset_timeout')) {
 				@apache_reset_timeout();
+			}
 
 			if (! empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
 				$result = Db::$db->query('', '
@@ -399,8 +408,9 @@ final class Sitemap extends BackgroundTask
 				while ($row = Db::$db->fetch_assoc($result)) {
 					$topicUrl = Config::$scripturl . '?topic=' . $row['id_topic'] . '.0';
 
-					if (! empty(Config::$modSettings['queryless_urls']))
+					if (! empty(Config::$modSettings['queryless_urls'])) {
 						$topicUrl = Config::$scripturl . '/topic,' . $row['id_topic'] . '.0.html';
+					}
 
 					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
 						$images[$row['id_topic']] = [
@@ -485,9 +495,9 @@ final class Sitemap extends BackgroundTask
 
 	private function createFile(string $path, string $data): bool
 	{
-		fclose(fopen($path, "a+b"));
+		fclose(fopen($path, 'a+b'));
 
-		if (! $fp = fopen($path, "w+b"))
+		if (! $fp = fopen($path, 'w+b'))
 			return false;
 
 		flock($fp, LOCK_EX);
@@ -498,7 +508,7 @@ final class Sitemap extends BackgroundTask
 
 		// If filesize > 50 MB, then create sitemap.xml.gz version
 		if (function_exists('gzencode') && filesize($path) > (50 * 1024 * 1024)) {
-			fclose(fopen($path . '.gz', "a+b"));
+			fclose(fopen($path . '.gz', 'a+b'));
 
 			if (! $fpgz = fopen($path . '.gz', 'w+b'))
 				return false;
