@@ -12,8 +12,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{Actions\ACP, Config, Db, IntegrationHook};
-use Bugo\Compat\{Lang, Theme, User, Utils};
+use Bugo\Compat\{Actions\ACP, Config, Db, ErrorHandler};
+use Bugo\Compat\{IntegrationHook, Lang, Theme, User, Utils};
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
 use Bugo\Optimus\Utils\Input;
@@ -477,6 +477,10 @@ final class SettingHandler
 		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_sitemap_title'];
 		Utils::$context['settings_title'] = Lang::$txt['optimus_sitemap_title'];
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=sitemap;save';
+
+		if (! Utils::makeWritable(Config::$boarddir)) {
+			ErrorHandler::fatalLang('optimus_root_is_not_writable');
+		}
 
 		Lang::load('ManageMaintenance');
 

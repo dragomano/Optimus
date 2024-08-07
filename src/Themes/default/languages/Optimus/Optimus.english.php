@@ -109,6 +109,7 @@ $txt['optimus_sitemap_title'] = 'Sitemap';
 $txt['optimus_sitemap_desc'] = '%1$s can generate a simple XML map in accordance with the settings below.';
 /* Argument: string */
 $txt['optimus_sitemap_info'] = 'If you do not see recent boards or topics in the map, check the %s';
+$txt['optimus_root_is_not_writable'] = 'Make sure that the forum root directory is writable!';
 $txt['optimus_sitemap_enable'] = 'Activate the Sitemap';
 $txt['optimus_sitemap_enable_subtext'] = 'The map will be created/updated after saving the settings.';
 $txt['optimus_sitemap_link'] = 'Show the Sitemap link on the footer';
