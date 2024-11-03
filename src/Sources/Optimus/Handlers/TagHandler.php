@@ -194,12 +194,14 @@ final class TagHandler
 			return;
 
 		if (Utils::$context['is_new_topic']) {
-			Utils::$context['optimus']['keywords'] = Input::xss(Input::request('optimus_keywords', []));
+			$keywords = Input::xss(Input::request('optimus_keywords', []));
 		} else {
 			$this->displayTopic();
 
-			Utils::$context['optimus']['keywords'] = Utils::$context['optimus_keywords'] ?? [];
+			$keywords = Utils::$context['optimus_keywords'] ?? [];
 		}
+
+		Utils::$context['optimus']['keywords'] = (array) $keywords;
 
 		$this->addFields();
 	}
