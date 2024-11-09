@@ -8,12 +8,15 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 07.06.24
+ * @version 08.11.24
  */
 
 namespace Bugo\Optimus\Addons;
 
 use Bugo\Compat\{Config, Db};
+use Bugo\LightPortal\Enums\EntryType;
+use Bugo\LightPortal\Enums\Permission;
+use Bugo\LightPortal\Enums\Status;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
@@ -49,14 +52,16 @@ final class LightPortal extends AbstractAddon
 			SELECT page_id, slug, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
+				AND entry_type = {string:entry_type}
 				AND created_at <= {int:current_time}
 				AND permissions IN ({array_int:permissions})' . ($sitemap->startYear ? '
 				AND YEAR(FROM_UNIXTIME(created_at)) >= {int:start_year}' : '') . '
 			ORDER BY page_id DESC',
 			[
-				'status'       => 1, // The page must be active
+				'status'       => Status::ACTIVE->value,
+				'entry_type'   => EntryType::DEFAULT->name(),
 				'current_time' => time(),
-				'permissions'  => [1, 3], // The page must be available to guests
+				'permissions'  => [Permission::GUEST->value, Permission::ALL->value],
 				'start_year'   => $sitemap->startYear,
 			]
 		);
