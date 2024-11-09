@@ -684,6 +684,7 @@ final class TagHandler
 			ele: "#optimus_keywords",' . (Utils::$context['right_to_left'] ? '
 			textDirection: "rtl",' : '') . '
 			dropboxWrapper: "body",
+			zIndex: 1000,
 			maxWidth: "100%",
 			multiple: true,
 			search: true,
