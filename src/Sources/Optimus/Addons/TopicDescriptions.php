@@ -8,12 +8,12 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 03.02.24
+ * @version 08.11.24
  */
 
 namespace Bugo\Optimus\Addons;
 
-use Bugo\Compat\Utils;
+use Bugo\Compat\{IntegrationHook, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 
 if (! defined('SMF'))
@@ -29,9 +29,19 @@ final class TopicDescriptions extends AbstractAddon
 
 	public function __invoke(AddonEvent $event): void
 	{
-		if ($event->eventName() !== self::HOOK_EVENT || empty(Utils::$context['topic_description']))
+		if ($event->eventName() !== self::HOOK_EVENT)
 			return;
 
-		Utils::$context['meta_description'] = Utils::$context['topic_description'];
+		IntegrationHook::add(
+			'integrate_menu_buttons', self::class . '::useTopicDescription#', false, __FILE__
+		);
+	}
+
+	public function useTopicDescription(): void
+	{
+		if (empty(Utils::$context['topicinfo']['description']))
+			return;
+
+		Utils::$context['meta_description'] = Utils::$context['topicinfo']['description'];
 	}
 }
