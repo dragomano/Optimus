@@ -160,8 +160,7 @@ final class TagHandler
 			? Utils::$context['start'] : Utils::$context['total_visible_posts'] - Utils::$context['start'];
 
 		if ($counter == $output['counter'] && empty(Utils::$context['start'])) {
-			$keywords = '<fieldset class="roundframe" style="overflow: unset">
-				<legend class="amt" style="padding: .2em .4em"> ' . Lang::$txt['optimus_seo_keywords'] . ' </legend>';
+			$keywords = '<fieldset class="roundframe" style="overflow: unset">';
 
 			$class = empty(Config::$modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
 
