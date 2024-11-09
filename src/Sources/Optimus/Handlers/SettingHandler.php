@@ -17,6 +17,7 @@ use Bugo\Compat\{IntegrationHook, Lang, Theme, User, Utils};
 use Bugo\Optimus\Robots\Generator;
 use Bugo\Optimus\Tasks\Sitemap;
 use Bugo\Optimus\Utils\Input;
+use Bugo\Optimus\Utils\Str;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -492,19 +493,11 @@ final class SettingHandler
 		]);
 
 		$title = Lang::$txt['admin_maintenance'] . ' - ' . Lang::$txt['maintain_recount'];
-		Lang::$txt['optimus_sitemap_info'] = sprintf(
-			Lang::$txt['optimus_sitemap_info'],
-			sprintf(
-				'<a class="bbc_link" href="%s?action=admin;area=maintain;sa=routine">' . $title . '</a>',
-				Config::$scripturl
-			)
-		);
+		$link = Str::html('a', $title)->class('bbc_link')
+			->href(sprintf('%s?action=admin;area=maintain;sa=routine', Config::$scripturl));
 
-		Utils::$context['settings_insert_above'] = implode('', [
-			'<div class="roundframe">',
-			Lang::$txt['optimus_sitemap_info'],
-			'</div>',
-		]);
+		Utils::$context['settings_insert_above'] = Str::html('div')->class('roundframe')
+			->setHtml(sprintf(Lang::$txt['optimus_sitemap_info'], $link));
 
 		$config_vars = [
 			['check', 'optimus_sitemap_enable', 'subtext' => Lang::$txt['optimus_sitemap_enable_subtext']],
@@ -526,7 +519,7 @@ final class SettingHandler
 			['select', 'optimus_update_frequency', Lang::$txt['optimus_update_frequency_set']],
 		];
 
-		// Modders can add own options
+		// Mod authors can add own options
 		IntegrationHook::call('integrate_optimus_sitemap_settings', [&$config_vars]);
 
 		if ($return_config)

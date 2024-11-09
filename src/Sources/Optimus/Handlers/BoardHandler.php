@@ -14,7 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Board, Config, IntegrationHook};
 use Bugo\Compat\{Lang, Theme, Utils};
-use Bugo\Optimus\Utils\Input;
+use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -113,17 +113,17 @@ final class BoardHandler
 		Utils::$context['custom_board_settings'] = array_merge(
 			[
 				[
-					'dt' => '
-						<strong>' . Lang::$txt['og_image'] . ':</strong><br>
-						<span class="smalltext">' . Lang::$txt['og_image_desc'] . '</span><br>',
-					'dd' => '
-						<input
-							type="url"
-							name="optimus_og_image"
-							id="optimus_og_image"
-							value="' . (Utils::$context['board']['optimus_og_image'] ?? '') . '"
-							style="width: 100%"
-						>',
+					'dt' => Str::html('strong')->setHtml(Lang::$txt['og_image'] . ':') .
+						Str::html('br') .
+						Str::html('span', ['class' => 'smalltext'])->setHtml(Lang::$txt['og_image_desc']) .
+						Str::html('br'),
+					'dd' => Str::html('input', [
+						'type' => 'url',
+						'name' => 'optimus_og_image',
+						'id' => 'optimus_og_image',
+						'value' => Utils::$context['board']['optimus_og_image'] ?? '',
+						'style' => 'width: 100%'
+					])
 				]
 			],
 			Utils::$context['custom_board_settings'] ?? []

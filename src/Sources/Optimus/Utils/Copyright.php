@@ -25,7 +25,12 @@ final class Copyright
 			? 'https://dragomano.ru/mods/optimus'
 			: 'https://custom.simplemachines.org/mods/index.php?mod=2659';
 
-		return '<a href="' . $link . '" target="_blank" rel="noopener" title="' . OP_VERSION . '">' . OP_NAME . '</a>';
+		return Str::html('a', OP_NAME)
+			->href($link)
+			->setAttribute('target', '_blank')
+			->setAttribute('rel', 'noopener')
+			->setAttribute('title', OP_VERSION)
+			->toHtml();
 	}
 
 	public static function getYears(): string

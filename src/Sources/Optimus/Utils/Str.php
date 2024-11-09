@@ -13,6 +13,7 @@
 namespace Bugo\Optimus\Utils;
 
 use Bugo\Compat\{BBCodeParser, IntegrationHook, Utils};
+use Nette\Utils\Html;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -55,5 +56,10 @@ final class Str
 		$stopAt += ($sentencesCount * 2);
 
 		return trim(Utils::$smcFunc['substr']($text, 0, $stopAt));
+	}
+
+	public static function html(string $name, array|string|null $params = null): Html
+	{
+		return Html::el($name, $params);
 	}
 }

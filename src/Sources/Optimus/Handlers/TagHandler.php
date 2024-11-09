@@ -14,7 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{CacheApi, Config, IntegrationHook, Db};
 use Bugo\Compat\{ItemList, Lang, Theme, Topic, User, Utils};
-use Bugo\Optimus\Utils\{Copyright, Input};
+use Bugo\Optimus\Utils\{Copyright, Input, Str};
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -145,8 +145,10 @@ final class TagHandler
 				$link = Config::$scripturl . '?action=keywords;id=' . $id;
 				$style = ' style="' . $this->getRandomColor($key) . '"';
 
-				$data['first_post']['link'] .= /** @lang text */
-					' <a class="optimus_keywords amt" href="' . $link . '"' . $style . '>' . $key . '</a>';
+				$data['first_post']['link'] .= ' ' . Str::html('a', $key)
+					->class('optimus_keywords amt')
+					->href($link)
+					->setAttribute('style', $style);
 			}
 		}
 	}
@@ -160,17 +162,22 @@ final class TagHandler
 			? Utils::$context['start'] : Utils::$context['total_visible_posts'] - Utils::$context['start'];
 
 		if ($counter == $output['counter'] && empty(Utils::$context['start'])) {
-			$keywords = '<fieldset class="roundframe" style="overflow: unset">';
+			$keywords = Str::html('fieldset')->class('roundframe')
+				->setAttribute('style', 'overflow: unset');
 
 			$class = empty(Config::$modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
 
 			foreach (Utils::$context['optimus_keywords'] as $id => $keyword) {
 				$href = Config::$scripturl . '?action=keywords;id=' . $id;
-				$style = ' style="margin-right: 2px;' . $this->getRandomColor($keyword) . '"';
-				$keywords .= '<a class="' . $class . '" href="' . $href . '"' . $style . '>' . $keyword . '</a>';
-			}
+				$style = 'margin-right: 2px;' . $this->getRandomColor($keyword);
 
-			$keywords .= '</fieldset>';
+				$link = Str::html('a', $keyword)
+					->class($class)
+					->href($href)
+					->setAttribute('style', $style);
+
+				$keywords->addHtml($link);
+			}
 
 			echo $keywords;
 		}
@@ -375,12 +382,12 @@ final class TagHandler
 			$href = Config::$scripturl . '?action=profile;u=' . $row['id_member'];
 
 			$topics[] = [
-				'topic'  => '<a href="' . Config::$scripturl . '?topic=' . $row['id_topic'] . '.0">'
-					. $row['subject'] . '</a>',
-				'board'  => '<a href="' . Config::$scripturl . '?board=' . $row['id_board'] . '.0">'
-					. $row['name'] . '</a>',
-				'author' => empty($row['real_name']) ? Lang::$txt['guest'] : '<a href="' . $href . '">'
-					. $row['real_name'] . '</a>'
+				'topic'  => Str::html('a', $row['subject'])
+					->href(Config::$scripturl . '?topic=' . $row['id_topic'] . '.0'),
+				'board'  => Str::html('a', $row['name'])
+					->href(Config::$scripturl . '?board=' . $row['id_board'] . '.0'),
+				'author' => empty($row['real_name']) ? Lang::$txt['guest'] : Str::html('a', $row['real_name'])
+					->href($href)
 			];
 		}
 
@@ -503,7 +510,7 @@ final class TagHandler
 			$link = Config::$scripturl . '?action=keywords;id=' . $row['id'];
 
 			$keywords[] = [
-				'keyword'   => '<a href="' . $link . '">' . $row['name'] . '</a>',
+				'keyword'   => Str::html('a', $row['name'])->href($link),
 				'frequency' => $row['frequency'],
 			];
 		}
@@ -651,8 +658,9 @@ final class TagHandler
 			return;
 
 		Utils::$context['posting_fields']['optimus_keywords']['label']['html'] = Lang::$txt['optimus_seo_keywords'];
-		Utils::$context['posting_fields']['optimus_keywords']['input']['html'] = /** @lang text */ '
-		<div id="optimus_keywords" name="optimus_keywords"></div>';
+		Utils::$context['posting_fields']['optimus_keywords']['input']['html'] = Str::html('div')
+			->id('optimus_keywords')
+			->name('optimus_keywords');
 
 		$this->loadAssets();
 	}

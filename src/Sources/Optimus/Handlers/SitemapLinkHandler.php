@@ -14,6 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Config, IntegrationHook};
 use Bugo\Compat\{Lang, Theme, Utils};
+use Bugo\Optimus\Utils\Str;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -85,10 +86,13 @@ final class SitemapLinkHandler
 		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::$txt['optimus_sitemap_title']))
 			return;
 
-		Lang::$forum_copyright .= ' | <a href="' . Config::$boardurl . '/sitemap.xml">'
-			. Lang::$txt['optimus_sitemap_title'] . '</a>';
+		Lang::$forum_copyright .= ' | ' . Str::html('a', Lang::$txt['optimus_sitemap_title'])
+			->href(Config::$boardurl . '/sitemap.xml');
 
-		Utils::$context['html_headers'] .= "\n\t" . '<link rel="sitemap" type="application/xml" title="Sitemap" href="'
-			. Config::$boardurl . '/sitemap.xml">';
+		Utils::$context['html_headers'] .= "\n\t" . Str::html('link')
+			->rel('sitemap')
+			->type('application/xml')
+			->title('Sitemap')
+			->href(Config::$boardurl . '/sitemap.xml');
 	}
 }
