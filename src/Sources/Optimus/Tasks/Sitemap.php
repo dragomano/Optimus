@@ -39,15 +39,6 @@ final class Sitemap extends BackgroundTask
 
 	private EventDispatcher $dispatcher;
 
-	public function __construct(array $details)
-	{
-		parent::__construct($details);
-
-		$this->dispatcher = (new DispatcherFactory())();
-
-		$this->startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-	}
-
 	public function execute(): bool
 	{
 		@ini_set('opcache.enable', '0');
@@ -57,16 +48,6 @@ final class Sitemap extends BackgroundTask
 		$this->removeOldFiles();
 
 		$this->createXml();
-
-		$frequency = 1;
-		if (! empty(Config::$modSettings['optimus_update_frequency'])) {
-			$frequency = match (Config::$modSettings['optimus_update_frequency']) {
-				1 => 3,
-				2 => 7,
-				3 => 14,
-				default => 30,
-			};
-		}
 
 		Db::$db->insert('insert',
 			'{db_prefix}background_tasks',
@@ -80,12 +61,25 @@ final class Sitemap extends BackgroundTask
 				'$sourcedir/Optimus/Tasks/Sitemap.php',
 				'\\' . self::class,
 				'',
-				time() + ($frequency * 24 * 60 * 60),
+				time() + ($this->getTaskUpdateIntervalInDays() * 24 * 60 * 60),
 			],
 			['id_task']
 		);
 
 		return true;
+	}
+
+	private function getTaskUpdateIntervalInDays(): int
+	{
+		if (empty(Config::$modSettings['optimus_update_frequency']))
+			return 1;
+
+		return match (Config::$modSettings['optimus_update_frequency']) {
+			1 => 3,
+			2 => 7,
+			3 => 14,
+			default => 30,
+		};
 	}
 
 	private function removeOldFiles(): void
@@ -103,6 +97,10 @@ final class Sitemap extends BackgroundTask
 		Sapi::setTimeLimit();
 
 		Config::$modSettings['disableQueryCheck'] = true;
+
+		$this->startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
+
+		$this->dispatcher = (new DispatcherFactory())();
 
 		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
 
