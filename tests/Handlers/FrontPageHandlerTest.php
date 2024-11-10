@@ -6,9 +6,12 @@ use Bugo\Compat\Theme;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\FrontPageHandler;
 use Bugo\Optimus\Utils\Input;
+use Symfony\Component\HttpFoundation\Request;
 
 beforeEach(function () {
 	$this->handler = new FrontPageHandler();
+
+	$this->request = Request::createFromGlobals();
 
 	Theme::$current->settings['og_image'] = '';
 });
@@ -37,6 +40,10 @@ describe('changeTitle method', function () {
 
 describe('addDescription method', function () {
 	it('checks basic usage', function () {
+		$this->request->server->remove('QUERY_STRING');
+		$this->request->server->remove('argv');
+		$this->request->overrideGlobals();
+
 		Config::$modSettings['optimus_description'] = 'bar';
 
 		Utils::$context['meta_description'] = Utils::$context['current_action'] = '';

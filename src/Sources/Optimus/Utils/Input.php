@@ -50,7 +50,9 @@ final class Input
 		if (empty($name))
 			return $_SERVER;
 
-		$name = strtoupper($name);
+		if ($name !== 'argv') {
+			$name = strtoupper($name);
+		}
 
 		return $_SERVER[$name] ?? getenv($name) ?? null;
 	}
