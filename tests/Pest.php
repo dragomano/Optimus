@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
+use Bugo\Compat\Board;
 use Bugo\Compat\Config;
+use Bugo\Compat\Db;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Theme;
+use Bugo\Compat\Topic;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 
@@ -31,6 +34,17 @@ use Bugo\Compat\Utils;
 */
 
 uses()->beforeAll(function () {
+	array_map(fn($u) => new $u(), [
+		Db::class,
+		Lang::class,
+		User::class,
+		Theme::class,
+		Board::class,
+		Topic::class,
+		Utils::class,
+		Config::class,
+	]);
+
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
 	User::$info['language'] = 'english';
@@ -191,4 +205,9 @@ function checkSession(string $type = 'post'): string
 
 function redirectexit(string $url = ''): void
 {
+}
+
+function smf_chmod(string $file): bool
+{
+	return true;
 }

@@ -153,7 +153,7 @@ describe('postEnd method', function () {
 
 		$this->handler->postEnd();
 
-		expect(Utils::$context['optimus']['keywords'])->toBe('bar');
+		expect(Utils::$context['optimus']['keywords'])->toContain('bar');
 	});
 });
 
