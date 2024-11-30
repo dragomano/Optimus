@@ -112,7 +112,6 @@
 					<xsl:if test="sm:url/sm:changefreq"><th>{frequency}</th></xsl:if>
 					<xsl:if test="sm:url/sm:priority"><th>{priority}</th></xsl:if>
 					<xsl:if test="sm:url/image:image/image:loc"><th>{direct_link}</th></xsl:if>
-					<xsl:if test="sm:url/image:image/image:caption"><th>{caption}</th></xsl:if>
 					<xsl:if test="sm:url/video:video/video:content_loc"><th>{direct_link}</th></xsl:if>
 					<xsl:if test="sm:url/video:video/video:thumbnail_loc"><th>{thumbnail}</th></xsl:if>
 					<xsl:if test="sm:url/video:video/video:title"><th>{caption}</th></xsl:if>
@@ -136,7 +135,7 @@
 </xsl:template>
 <xsl:template match="sm:loc|image:loc|video:content_loc|video:*">
 </xsl:template>
-<xsl:template match="sm:lastmod|sm:changefreq|sm:priority|image:caption|video:title">
+<xsl:template match="sm:lastmod|sm:changefreq|sm:priority|video:title">
 	<td><xsl:apply-templates/></td>
 </xsl:template>
 <xsl:template match="image:image">
