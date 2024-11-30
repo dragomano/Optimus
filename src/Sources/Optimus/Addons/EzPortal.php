@@ -8,15 +8,15 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 07.06.24
+ * @version 01.12.24
  */
 
 namespace Bugo\Optimus\Addons;
 
 use Bugo\Compat\{Config, Db};
 use Bugo\Optimus\Events\AddonEvent;
-use Bugo\Optimus\Robots\Generator;
-use Bugo\Optimus\Tasks\Sitemap;
+use Bugo\Optimus\Services\RobotsGenerator;
+use Bugo\Optimus\Services\SitemapGenerator;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -38,16 +38,16 @@ final class EzPortal extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(Generator $generator): void
+	public function changeRobots(RobotsGenerator $robots): void
 	{
 		global $ezpSettings;
 
-		$generator->customRules[] = empty($ezpSettings['ezp_pages_seourls'])
-			? "Allow: " . $generator->urlPath . "/*ezportal;sa=page;p=*"
-			: "Allow: " . $generator->urlPath . "/pages/";
+		$robots->customRules[] = empty($ezpSettings['ezp_pages_seourls'])
+			? "Allow: " . $robots->urlPath . "/*ezportal;sa=page;p=*"
+			: "Allow: " . $robots->urlPath . "/pages/";
 	}
 
-	public function changeSitemap(Sitemap $sitemap): void
+	public function changeSitemap(SitemapGenerator $sitemap): void
 	{
 		global $ezpSettings;
 

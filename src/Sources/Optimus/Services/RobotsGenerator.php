@@ -10,7 +10,7 @@
  * @version 3.0 RC1
  */
 
-namespace Bugo\Optimus\Robots;
+namespace Bugo\Optimus\Services;
 
 use Bugo\Compat\{BBCodeParser, Config, Utils};
 use Bugo\Optimus\Addons\AddonInterface;
@@ -18,10 +18,7 @@ use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\EventDispatcher;
 
-if (! defined('SMF'))
-	die('No direct access...');
-
-final class Generator
+final class RobotsGenerator
 {
 	public const MAP_FILE = 'sitemap.xml';
 
@@ -40,7 +37,7 @@ final class Generator
 
 	private array $rules = [];
 
-	private EventDispatcher $dispatcher;
+	private readonly EventDispatcher $dispatcher;
 
 	public function __construct()
 	{

@@ -67,7 +67,6 @@ final class AddonHandler implements ListenerSubscriber
 				SELECT package_id
 				FROM {db_prefix}log_packages
 				WHERE install_state = 1',
-				[]
 			);
 
 			$mods = [];

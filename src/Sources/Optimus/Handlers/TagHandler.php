@@ -81,7 +81,7 @@ final class TagHandler
 			return;
 		}
 
-		$actions['keywords'] = [false, [$this, 'showTheSame']];
+		$actions['keywords'] = [false, $this->showTheSame(...)];
 	}
 
 	public function menuButtons(array &$buttons): void
@@ -291,10 +291,10 @@ final class TagHandler
 			'base_href'        => Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'],
 			'default_sort_col' => 'topic',
 			'get_items' => [
-				'function' => [$this, 'getAllByKeyId']
+				'function' => $this->getAllByKeyId(...)
 			],
 			'get_count' => [
-				'function' => [$this, 'getTotalCountByKeyId']
+				'function' => $this->getTotalCountByKeyId(...)
 			],
 			'columns' => [
 				'topic' => [
@@ -432,10 +432,10 @@ final class TagHandler
 			'base_href'        => Config::$scripturl . '?action=keywords',
 			'default_sort_col' => 'frequency',
 			'get_items' => [
-				'function' => [$this, 'getAll']
+				'function' => $this->getAll(...)
 			],
 			'get_count' => [
-				'function' => [$this, 'getTotalCount']
+				'function' => $this->getTotalCount(...)
 			],
 			'columns' => [
 				'keyword' => [
@@ -526,7 +526,6 @@ final class TagHandler
 			SELECT COUNT(id)
 			FROM {db_prefix}optimus_keywords
 			LIMIT 1',
-			[]
 		);
 
 		[$count] = Db::$db->fetch_row($result);
@@ -563,7 +562,6 @@ final class TagHandler
 				FROM {db_prefix}optimus_keywords AS k
 					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
 				ORDER BY lk.topic_id, k.id',
-				[]
 			);
 
 			$keywords = [];
@@ -855,7 +853,6 @@ final class TagHandler
 		Db::$db->query('', /** @lang text */ '
 			DELETE FROM {db_prefix}optimus_keywords
 			WHERE id NOT IN (SELECT keyword_id FROM {db_prefix}optimus_log_keywords)',
-			[]
 		);
 
 		CacheApi::clean();

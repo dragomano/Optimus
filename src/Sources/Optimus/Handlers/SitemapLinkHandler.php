@@ -38,7 +38,7 @@ final class SitemapLinkHandler
 
 	public function actions(array &$actions): void
 	{
-		$actions['sitemap_xsl'] = [false, [$this, 'xsl']];
+		$actions['sitemap_xsl'] = [false, $this->xsl(...)];
 	}
 
 	public function xsl(): void

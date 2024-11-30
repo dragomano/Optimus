@@ -14,7 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Actions\ACP, Config, Db, ErrorHandler};
 use Bugo\Compat\{IntegrationHook, Lang, Theme, User, Utils};
-use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Services\RobotsGenerator;
 use Bugo\Optimus\Tasks\Sitemap;
 use Bugo\Optimus\Utils\Input;
 use Bugo\Optimus\Utils\Str;
@@ -71,7 +71,7 @@ final class SettingHandler
 
 		$admin_areas['config']['areas']['optimus'] = [
 			'label' => Lang::$txt['optimus_title'],
-			'function' => [$this, 'actions'],
+			'function' => $this->actions(...),
 			'icon' => 'optimus',
 			'subsections' => [
 				'basic'    => [Lang::$txt['optimus_basic_title']],
@@ -89,10 +89,10 @@ final class SettingHandler
 
 	public function adminSearch(array $language_files, array $include_files, array &$settings_search): void
 	{
-		$settings_search[] = [[$this, 'basicTabSettings'], 'area=optimus;sa=basic'];
-		$settings_search[] = [[$this, 'extraTabSettings'], 'area=optimus;sa=extra'];
-		$settings_search[] = [[$this, 'faviconTabSettings'], 'area=optimus;sa=favicon'];
-		$settings_search[] = [[$this, 'sitemapTabSettings'], 'area=optimus;sa=sitemap'];
+		$settings_search[] = [$this->basicTabSettings(...), 'area=optimus;sa=basic'];
+		$settings_search[] = [$this->extraTabSettings(...), 'area=optimus;sa=extra'];
+		$settings_search[] = [$this->faviconTabSettings(...), 'area=optimus;sa=favicon'];
+		$settings_search[] = [$this->sitemapTabSettings(...), 'area=optimus;sa=sitemap'];
 	}
 
 	public function actions(): void
@@ -256,7 +256,7 @@ final class SettingHandler
 			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'],
 		];
 
-		// Modders can add own options
+		// You can add your own options
 		IntegrationHook::call('integrate_optimus_extra_settings', [&$config_vars]);
 
 		if ($return_config)
@@ -425,7 +425,7 @@ final class SettingHandler
 		$path = (Input::server('document_root') ?: Config::$boarddir) . '/robots.txt';
 		Utils::$context['robots_content'] = is_writable($path) ? file_get_contents($path) : '';
 
-		(new Generator())->generate();
+		(new RobotsGenerator())->generate();
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
@@ -519,7 +519,7 @@ final class SettingHandler
 			['select', 'optimus_update_frequency', Lang::$txt['optimus_update_frequency_set']],
 		];
 
-		// Mod authors can add own options
+		// You can add your own options
 		IntegrationHook::call('integrate_optimus_sitemap_settings', [&$config_vars]);
 
 		if ($return_config)
@@ -584,12 +584,7 @@ final class SettingHandler
 		if (empty($settings))
 			return;
 
-		$vars = [];
-		foreach ($settings as $key => $value) {
-			if (! isset(Config::$modSettings[$key])) {
-				$vars[$key] = $value;
-			}
-		}
+		$vars = array_filter($settings, fn($key) => ! isset(Config::$modSettings[$key]), ARRAY_FILTER_USE_KEY);
 
 		Config::updateModSettings($vars);
 	}

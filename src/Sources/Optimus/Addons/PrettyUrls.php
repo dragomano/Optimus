@@ -8,15 +8,15 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 19.07.24
+ * @version 01.12.24
  */
 
 namespace Bugo\Optimus\Addons;
 
 use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
-use Bugo\Optimus\Robots\Generator;
-use Bugo\Optimus\Tasks\Sitemap;
+use Bugo\Optimus\Services\RobotsGenerator;
+use Bugo\Optimus\Services\SitemapContent;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -47,13 +47,13 @@ final class PrettyUrls extends AbstractAddon
 		}
 	}
 
-	public function changeRobots(Generator $generator): void
+	public function changeRobots(RobotsGenerator $robots): void
 	{
-		$generator->useSef = ! empty(Config::$modSettings['pretty_enable_filters'])
+		$robots->useSef = ! empty(Config::$modSettings['pretty_enable_filters'])
 			&& is_file(dirname(__DIR__, 2) . '/PrettyUrls-Filters.php');
 	}
 
-	public function changeSitemapContent(Sitemap $sitemap): void
+	public function changeSitemapContent(SitemapContent $content): void
 	{
 		$pretty = Config::$sourcedir . '/PrettyUrls-Filters.php';
 
@@ -77,7 +77,7 @@ final class PrettyUrls extends AbstractAddon
 		Config::$modSettings['pretty_bufferusecache'] = false;
 
 		if (function_exists('pretty_rewrite_buffer')) {
-			$sitemap->content =	\pretty_rewrite_buffer($sitemap->content);
+			$content->xml = pretty_rewrite_buffer($content->xml);
 		}
 	}
 }

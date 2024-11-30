@@ -12,42 +12,46 @@
 
 namespace Bugo\Optimus\Tasks;
 
-use Bugo\Compat\{Config, Db, IntegrationHook};
-use Bugo\Compat\{Sapi, Theme, Utils};
+use Bugo\Compat\{Config, Db};
 use Bugo\Compat\Tasks\BackgroundTask;
-use Bugo\Optimus\Addons\AddonInterface;
-use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
-use League\Event\EventDispatcher;
+use Bugo\Optimus\Services\FileSystem;
+use Bugo\Optimus\Services\SitemapDataService;
+use Bugo\Optimus\Services\SitemapGenerator;
+use Bugo\Optimus\Services\XmlGenerator;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class Sitemap extends BackgroundTask
+class Sitemap extends BackgroundTask
 {
-	public const MAX_ITEMS = 50000;
-
-	public int $startYear = 0;
-
-	public array $links = [];
-
-	public string $content = '';
-
-	private array $openBoards = [];
-
-	private array $ignoredBoards = [];
-
-	private EventDispatcher $dispatcher;
-
 	public function execute(): bool
 	{
-		@ini_set('opcache.enable', '0');
+		if (empty(Config::$modSettings['optimus_sitemap_enable']))
+			return false;
 
-		Theme::loadEssential();
+		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
-		$this->removeOldFiles();
+		$generator = new SitemapGenerator(
+			new SitemapDataService($startYear),
+			new FileSystem(Config::$boarddir),
+			new XmlGenerator(Config::$scripturl),
+			(new DispatcherFactory())(),
+			$startYear
+		);
 
-		$this->createXml();
+		$result = $generator->generate();
+
+		if ($result) {
+			$this->scheduleNextRun();
+		}
+
+		return $result;
+	}
+
+	private function scheduleNextRun(): void
+	{
+		$interval = $this->getTaskUpdateIntervalInDays() * 24 * 60 * 60;
 
 		Db::$db->insert('insert',
 			'{db_prefix}background_tasks',
@@ -61,12 +65,10 @@ final class Sitemap extends BackgroundTask
 				'$sourcedir/Optimus/Tasks/Sitemap.php',
 				'\\' . self::class,
 				'',
-				time() + ($this->getTaskUpdateIntervalInDays() * 24 * 60 * 60),
+				time() + $interval,
 			],
 			['id_task']
 		);
-
-		return true;
 	}
 
 	private function getTaskUpdateIntervalInDays(): int
@@ -80,448 +82,5 @@ final class Sitemap extends BackgroundTask
 			3 => 14,
 			default => 30,
 		};
-	}
-
-	private function removeOldFiles(): void
-	{
-		if (empty(Config::$modSettings['optimus_remove_previous_xml_files']))
-			return;
-
-		array_map("unlink", glob(Config::$boarddir . "/sitemap*.xml*"));
-	}
-
-	private function createXml(): void
-	{
-		ignore_user_abort(true);
-
-		Sapi::setTimeLimit();
-
-		Config::$modSettings['disableQueryCheck'] = true;
-
-		$this->startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-
-		$this->dispatcher = (new DispatcherFactory())();
-
-		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
-
-		$sitemapCounter = 0;
-
-		$items = [];
-
-		$getLinks = fn() => yield from $this->getLinks();
-
-		foreach ($getLinks() as $counter => $entry) {
-			if (! empty($counter) && $counter % $maxItems == 0) {
-				$sitemapCounter++;
-			}
-
-			$entry['lastmod'] = (int) ($entry['lastmod'] ?? 0);
-
-			$items[$sitemapCounter][] = [
-				'loc'        => $entry['loc'],
-				'lastmod'    => empty($entry['lastmod']) ? null : $this->getDateIso8601($entry['lastmod']),
-				'changefreq' => empty($entry['lastmod']) ? null : $this->getFrequency($entry['lastmod']),
-				'priority'   => empty($entry['lastmod']) ? null : $this->getPriority($entry['lastmod']),
-				'image'      => empty(Config::$modSettings['optimus_sitemap_add_found_images'])
-					? null
-					: $entry['image'] ?? null
-			];
-		}
-
-		if (empty($items))
-			return;
-
-		// The update frequency of the main page
-		if (empty(Config::$modSettings['optimus_main_page_frequency']))
-			$items[0][0]['changefreq'] = 'always';
-
-		// The priority of the main page
-		$items[0][0]['priority'] = '1.0';
-
-		Utils::$context['sitemap'] = [];
-
-		Theme::loadTemplate('Optimus');
-
-		if ($sitemapCounter > 0) {
-			$gzMaps = [];
-
-			for ($number = 0; $number <= $sitemapCounter; $number++) {
-				Utils::$context['sitemap'] = $items[$number];
-
-				$this->prepareContent();
-
-				$gzMaps[$number] = $this->createFile(
-					Config::$boarddir . '/sitemap_' . $number . '.xml', $this->content
-				);
-			}
-
-			Utils::$context['sitemap'] = [];
-
-			for ($number = 0; $number <= $sitemapCounter; $number++) {
-				$gz = empty($gzMaps[$number]) ? '' : '.gz';
-				Utils::$context['sitemap'][$number]['loc'] = Config::$boardurl . '/sitemap_' . $number . '.xml' . $gz;
-			}
-
-			$this->prepareContent(true);
-		} else {
-			Utils::$context['sitemap'] = $items[0];
-
-			$this->prepareContent();
-		}
-
-		$this->createFile(Config::$boarddir . '/sitemap.xml', $this->content);
-
-		ignore_user_abort(false);
-	}
-
-	private function getLinks(): array
-	{
-		$this->links = array_merge($this->getBoardLinks(), $this->getTopicLinks());
-
-		// You can add custom links
-		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_LINKS, $this));
-
-		// External integrations
-		IntegrationHook::call('integrate_optimus_sitemap_links', [&$this->links]);
-
-		// Adding the main page
-		$home = [
-			'loc'     => Config::$boardurl . '/',
-			'lastmod' => empty(Config::$modSettings['optimus_main_page_frequency'])
-				? time()
-				: $this->getLastDate($this->links)
-		];
-
-		// You can process links with SEF handler
-		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::CREATE_SEF_URLS, $this));
-
-		array_unshift($this->links, $home);
-
-		return $this->links;
-	}
-
-	private function getLastDate(array $links): int
-	{
-		if (empty($links))
-			return time();
-
-		$data = array_values(array_values($links));
-
-		$dates = [];
-		foreach ($data as $value) {
-			$dates[] = (int) $value['lastmod'];
-		}
-
-		return max($dates);
-	}
-
-	private function prepareContent(bool $indexOnly = false): void
-	{
-		ob_start();
-
-		$indexOnly ? template_sitemapindex_xml() : template_sitemap_xml();
-
-		$this->content = ob_get_clean();
-
-		if ($indexOnly) return;
-
-		// Some mods should rewrite full content (PrettyURLs, etc.)
-		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, $this));
-	}
-
-	private function getBoardLinks(): array
-	{
-		if (! empty(Config::$modSettings['recycle_board'])) {
-			$this->ignoredBoards[] = (int) Config::$modSettings['recycle_board'];
-		}
-
-		$result = Db::$db->query('', /** @lang text */ '
-			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
-			FROM {db_prefix}boards AS b
-				LEFT JOIN {db_prefix}messages AS m ON (b.id_last_msg = m.id_msg)
-			WHERE EXISTS (
-					SELECT DISTINCT bpv.id_board
-					FROM {db_prefix}board_permissions_view bpv
-					WHERE bpv.id_group = -1
-						AND bpv.deny = 0
-						AND bpv.id_board = b.id_board
-				)' . (empty($this->ignoredBoards) ? '' : '
-				AND b.id_board NOT IN ({array_int:ignored_boards})') . '
-				AND b.redirect = {string:empty_string}
-				AND b.num_posts > {int:num_posts}' . ($this->startYear ? '
-				AND YEAR(FROM_UNIXTIME(m.poster_time)) >= {int:start_year}' : '') . '
-			ORDER BY b.id_board DESC',
-			[
-				'ignored_boards' => $this->ignoredBoards,
-				'empty_string'   => '',
-				'num_posts'      => 0,
-				'start_year'     => $this->startYear,
-			]
-		);
-
-		$links = [];
-		while ($row = Db::$db->fetch_assoc($result)) {
-			$this->openBoards[] = $row['id_board'];
-
-			if (! empty(Config::$modSettings['optimus_sitemap_boards'])) {
-				$boardUrl = Config::$scripturl . '?board=' . $row['id_board'] . '.0';
-
-				if (! empty(Config::$modSettings['queryless_urls'])) {
-					$boardUrl = Config::$scripturl . '/board,' . $row['id_board'] . '.0.html';
-				}
-
-				$links[] = [
-					'loc'     => $boardUrl,
-					'lastmod' => $row['last_date'],
-				];
-			}
-		}
-
-		Db::$db->free_result($result);
-
-		return $links;
-	}
-
-	private function getTopicLinks(): array
-	{
-		if (empty($this->openBoards))
-			return [];
-
-		$start = 0;
-		$limit = 1000;
-
-		// Don't allow the cache to get too full
-		$tempCache = Db::$cache;
-		Db::$cache = [];
-
-		$this->startYear  = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
-		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
-		$totalRows  = (int) (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])
-			? (Config::$modSettings['totalTopics'] ?? 0)
-			: (Config::$modSettings['totalMessages'] ?? 0));
-
-		$links  = [];
-		$topics = [];
-		$images = [];
-
-		$messagesPerPage = (int) (Config::$modSettings['defaultMaxMessages'] ?? 0);
-
-		while ($start < $totalRows) {
-			@set_time_limit(600);
-
-			if (function_exists('apache_reset_timeout')) {
-				@apache_reset_timeout();
-			}
-
-			if (! empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
-				$result = Db::$db->query('', '
-					SELECT t.id_topic, t.num_replies,
-						m.id_msg, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
-							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ',
-						a.id_attach, a.filename') . '
-					FROM {db_prefix}messages AS m
-						INNER JOIN {db_prefix}topics AS t ON (t.id_topic = m.id_topic)' . (
-							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : '
-						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
-							AND a.attachment_type = 0
-							AND a.width <> 0
-							AND a.height <> 0
-							AND a.approved = 1
-						)') . '
-					WHERE t.id_board IN ({array_int:open_boards})
-						AND t.num_replies >= {int:num_replies}
-						AND t.approved = {int:is_approved}' . ($this->startYear ? '
-						AND YEAR(FROM_UNIXTIME(GREATEST(m.poster_time, m.modified_time))) >= {int:start_year}' : '') . '
-					ORDER BY t.id_topic DESC, last_date
-					LIMIT {int:start}, {int:limit}',
-					[
-						'open_boards' => $this->openBoards,
-						'num_replies' => $numReplies,
-						'is_approved' => 1,
-						'start_year'  => $this->startYear,
-						'start'       => $start,
-						'limit'       => $limit,
-					]
-				);
-
-				while ($row = Db::$db->fetch_assoc($result)) {
-					$totalPages = ceil($row['num_replies'] / $messagesPerPage);
-					$pageStart = 0;
-
-					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
-						$images[$row['id_topic']] = [
-							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach='
-								. $row['id_attach'] . ';image',
-							'title' => $row['filename']
-						];
-					}
-
-					if (empty($totalPages)) {
-						$topics[$row['id_topic']][$pageStart][$row['id_msg']] = $row['last_date'];
-					} else {
-						for ($i = 0; $i <= $totalPages; $i++) {
-							$topics[$row['id_topic']][$pageStart][$row['id_msg']] = $row['last_date'];
-
-							if (count($topics[$row['id_topic']][$pageStart]) <= $messagesPerPage)
-								break;
-
-							$topics[$row['id_topic']][$pageStart] = array_slice(
-								$topics[$row['id_topic']][$pageStart], 0, $messagesPerPage, true
-							);
-
-							$pageStart += $messagesPerPage;
-						}
-					}
-				}
-			} else {
-				$result = Db::$db->query('', '
-					SELECT t.id_topic, GREATEST(m.poster_time, m.modified_time) AS last_date' . (
-						empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ',
-						a.id_attach, a.filename') . '
-					FROM {db_prefix}topics AS t
-						INNER JOIN {db_prefix}messages AS m ON (t.id_last_msg = m.id_msg)' . (
-							empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : '
-						LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
-							AND a.attachment_type = 0
-							AND a.width <> 0
-							AND a.height <> 0
-							AND a.approved = 1
-						)') . '
-					WHERE t.id_board IN ({array_int:open_boards})
-						AND t.num_replies >= {int:num_replies}
-						AND t.approved = {int:is_approved}' . ($this->startYear ? '
-						AND YEAR(FROM_UNIXTIME(GREATEST(m.poster_time, m.modified_time))) >= {int:start_year}' : '') . '
-					ORDER BY t.id_topic DESC, last_date DESC
-					LIMIT {int:start}, {int:limit}',
-					[
-						'open_boards' => $this->openBoards,
-						'num_replies' => $numReplies,
-						'is_approved' => 1,
-						'start_year'  => $this->startYear,
-						'start'       => $start,
-						'limit'       => $limit,
-					]
-				);
-
-				while ($row = Db::$db->fetch_assoc($result)) {
-					$topicUrl = Config::$scripturl . '?topic=' . $row['id_topic'] . '.0';
-
-					if (! empty(Config::$modSettings['queryless_urls'])) {
-						$topicUrl = Config::$scripturl . '/topic,' . $row['id_topic'] . '.0.html';
-					}
-
-					if (! empty($row['id_attach']) && ! isset($images[$row['id_topic']])) {
-						$images[$row['id_topic']] = [
-							'loc'   => Config::$scripturl . '?action=dlattach;topic=' . $row['id_topic'] . '.0;attach='
-								. $row['id_attach'] . ';image',
-							'title' => $row['filename']
-						];
-					}
-
-					$links[$row['id_topic']] = [
-						'loc'     => $topicUrl,
-						'lastmod' => $row['last_date'],
-						'image'   => $images[$row['id_topic']] ?? [],
-					];
-				}
-			}
-
-			Db::$db->free_result($result);
-
-			$start += $limit;
-		}
-
-		foreach ($topics as $topic_id => $topic_data) {
-			foreach ($topic_data as $pageStart => $dates) {
-				$topicUrl = empty(Config::$modSettings['queryless_urls'])
-					? Config::$scripturl . '?topic=' . $topic_id . '.' . $pageStart
-					: Config::$scripturl . '/topic,' . $topic_id . '.' . $pageStart . '.html';
-
-				$links[] = [
-					'loc'     => $topicUrl,
-					'lastmod' => max($dates),
-					'image'   => $images[$topic_id] ?? [],
-				];
-			}
-		}
-
-		// Restore the cache
-		Db::$cache = $tempCache;
-
-		return array_values($links);
-	}
-
-	private function getDateIso8601(int $timestamp): string
-	{
-		if (empty($timestamp))
-			return '';
-
-		$gmt = substr(date("O", $timestamp), 0, 3) . ':00';
-
-		return date('Y-m-d\TH:i:s', $timestamp) . $gmt;
-	}
-
-	private function getFrequency(int $timestamp): string
-	{
-		$frequency = time() - $timestamp;
-
-		if ($frequency < (24 * 60 * 60))
-			return 'hourly';
-		elseif ($frequency < (24 * 60 * 60 * 7))
-			return 'daily';
-		elseif ($frequency < (24 * 60 * 60 * 7 * (52 / 12)))
-			return 'weekly';
-		elseif ($frequency < (24 * 60 * 60 * 365))
-			return 'monthly';
-
-		return 'yearly';
-	}
-
-	private function getPriority(int $timestamp): string
-	{
-		$diff = floor((time() - $timestamp) / 60 / 60 / 24);
-
-		if ($diff <= 30)
-			return '0.8';
-		elseif ($diff <= 60)
-			return '0.6';
-		elseif ($diff <= 90)
-			return '0.4';
-
-		return '0.2';
-	}
-
-	private function createFile(string $path, string $data): bool
-	{
-		fclose(fopen($path, 'a+b'));
-
-		if (! $fp = fopen($path, 'w+b'))
-			return false;
-
-		flock($fp, LOCK_EX);
-		fwrite($fp, $data);
-		fflush($fp);
-		flock($fp, LOCK_UN);
-		fclose($fp);
-
-		// If filesize > 50 MB, then create sitemap.xml.gz version
-		if (function_exists('gzencode') && filesize($path) > (50 * 1024 * 1024)) {
-			fclose(fopen($path . '.gz', 'a+b'));
-
-			if (! $fpgz = fopen($path . '.gz', 'w+b'))
-				return false;
-
-			flock($fpgz, LOCK_EX);
-			$data = implode('', file($path));
-			$gzdata = gzencode($data, 9);
-			fwrite($fpgz, $gzdata);
-			fflush($fpgz);
-			flock($fpgz, LOCK_UN);
-			fclose($fpgz);
-
-			return true;
-		}
-
-		return false;
 	}
 }

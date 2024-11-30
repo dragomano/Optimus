@@ -58,7 +58,6 @@ final class SearchTermHandler
 				FROM {db_prefix}optimus_search_terms
 				ORDER BY hit DESC
 				LIMIT 30',
-				[]
 			);
 
 			$scale = 1;

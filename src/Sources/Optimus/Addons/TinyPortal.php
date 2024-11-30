@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 07.06.24
+ * @version 01.12.24
  */
 
 namespace Bugo\Optimus\Addons;
@@ -16,8 +16,8 @@ namespace Bugo\Optimus\Addons;
 use Bugo\Compat\{Config, Db, IntegrationHook};
 use Bugo\Compat\{Theme, Utils};
 use Bugo\Optimus\Events\AddonEvent;
-use Bugo\Optimus\Robots\Generator;
-use Bugo\Optimus\Tasks\Sitemap;
+use Bugo\Optimus\Services\RobotsGenerator;
+use Bugo\Optimus\Services\SitemapGenerator;
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
@@ -66,12 +66,12 @@ final class TinyPortal extends AbstractAddon
 		Utils::$context['canonical_url'] = Config::$scripturl . '?page=' . ($article['shortname'] ?: $article['id']);
 	}
 
-	public function changeRobots(Generator $generator): void
+	public function changeRobots(RobotsGenerator $robots): void
 	{
-		$generator->customRules[] = "Allow: " . $generator->urlPath . "/*page";
+		$robots->customRules[] = "Allow: " . $robots->urlPath . "/*page";
 	}
 
-	public function changeSitemap(Sitemap $sitemap): void
+	public function changeSitemap(SitemapGenerator $sitemap): void
 	{
 		$result = Db::$db->query('', '
 			SELECT a.id, a.date, a.shortname

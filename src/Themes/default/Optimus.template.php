@@ -318,63 +318,6 @@ function template_footer_counters_below(): void
 	<div class="counters">', Config::$modSettings['optimus_count_code'], '</div>';
 }
 
-function template_sitemap_xml(): void
-{
-	$imageNamespace = empty(Config::$modSettings['optimus_sitemap_add_found_images']) ? '' : ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
-
-	echo /** @lang text */ '<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="' . Config::$scripturl . '?action=sitemap_xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . $imageNamespace . '>';
-
-	foreach (Utils::$context['sitemap'] as $item) {
-		echo '
-	<url>
-		<loc>', $item['loc'], '</loc>';
-
-		if (! empty($item['lastmod']))
-			echo '
-		<lastmod>', $item['lastmod'], '</lastmod>';
-
-		if (! empty($item['changefreq']))
-			echo '
-		<changefreq>', $item['changefreq'], '</changefreq>';
-
-		if (! empty($item['priority']))
-			echo '
-		<priority>', $item['priority'], '</priority>';
-
-		if (! empty($item['image'])) {
-			echo '
-		<image:image>
-			<image:loc>' . $item['image']['loc'] . '</image:loc>
-			<image:title>' . $item['image']['title'] . '</image:title>
-		</image:image>';
-		}
-
-		echo '
-	</url>';
-	}
-
-	echo '
-</urlset>';
-}
-
-function template_sitemapindex_xml(): void
-{
-	echo '<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="' . Config::$scripturl . '?action=sitemap_xsl"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-
-	foreach (Utils::$context['sitemap'] as $item)
-		echo '
-	<sitemap>
-		<loc>', $item['loc'], '</loc>
-	</sitemap>';
-
-	echo '
-</sitemapindex>';
-}
-
 function template_keywords_above(): void
 {
 	echo '

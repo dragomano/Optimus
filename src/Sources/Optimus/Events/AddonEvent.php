@@ -20,8 +20,8 @@ if (! defined('SMF'))
 final class AddonEvent implements HasEventName
 {
 	public function __construct(
-		private string $name,
-		private mixed $target
+		private readonly string $name,
+		private readonly mixed $target
 	) {}
 
 	public function eventName(): string
