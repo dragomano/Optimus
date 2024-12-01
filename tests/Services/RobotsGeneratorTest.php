@@ -2,10 +2,10 @@
 
 use Bugo\Compat\Config;
 use Bugo\Compat\Utils;
-use Bugo\Optimus\Robots\Generator;
+use Bugo\Optimus\Services\RobotsGenerator;
 
 beforeEach(function () {
-	$this->generator = new Generator();
+	$this->generator = new RobotsGenerator();
 });
 
 it('generator method', function () {

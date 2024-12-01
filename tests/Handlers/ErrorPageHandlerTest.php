@@ -13,14 +13,40 @@ beforeEach(function () {
 });
 
 describe('handleWrongActions method', function () {
-	it('checks basic usage', function () {
-		Config::$modSettings['optimus_errors_for_wrong_actions'] = true;
+    beforeEach(function () {
+        Config::$modSettings['optimus_errors_for_wrong_actions'] = false;
 
-		$this->handler->handleWrongActions();
+        Theme::$current->settings['catch_action'] = [];
+    });
 
-		expect(Theme::$current->settings['catch_action']['sub_template'])
-			->toBe('fatal_error');
-	});
+    it('sets fatal_error template when setting is enabled', function () {
+        Config::$modSettings['optimus_errors_for_wrong_actions'] = true;
+
+        $this->handler->handleWrongActions();
+
+        expect(Theme::$current->settings['catch_action']['sub_template'])
+            ->toBe('fatal_error');
+    });
+
+    it('does not set template when setting is disabled', function () {
+        Config::$modSettings['optimus_errors_for_wrong_actions'] = false;
+
+        $this->handler->handleWrongActions();
+
+        expect(Theme::$current->settings['catch_action'])
+            ->toBeEmpty();
+    });
+
+    it('handles null catch_action settings', function () {
+        Config::$modSettings['optimus_errors_for_wrong_actions'] = true;
+        Theme::$current->settings['catch_action'] = null;
+
+        $this->handler->handleWrongActions();
+
+        expect(Theme::$current->settings['catch_action'])
+            ->toBeArray()
+            ->toHaveKey('sub_template', 'fatal_error');
+    });
 });
 
 describe('handleWrongBoardsTopics method', function () {

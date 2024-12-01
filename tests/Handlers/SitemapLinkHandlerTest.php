@@ -3,7 +3,6 @@
 use Bugo\Compat\Config;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
-use Bugo\Compat\Theme;
 use Bugo\Optimus\Handlers\SitemapLinkHandler;
 
 beforeEach(function () {

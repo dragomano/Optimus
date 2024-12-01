@@ -65,11 +65,12 @@ uses()->beforeAll(function () {
 	Utils::$smcFunc['strlen'] = fn($string) => strlen($string);
 	Utils::$smcFunc['htmltrim'] = fn($string) => trim($string);
 	Utils::$smcFunc['htmlspecialchars'] = fn($string, $flags) => htmlspecialchars($string, $flags);
-	Utils::$smcFunc['db_query'] = fn(...$params) => ['foo' => 'bar'];
+	Utils::$smcFunc['db_query'] = fn(...$params) => new stdClass();
 	Utils::$smcFunc['db_fetch_assoc'] = fn($result) => ['foo' => 'bar'];
 	Utils::$smcFunc['db_fetch_row'] = fn($result) => ['bar'];
 	Utils::$smcFunc['db_free_result'] = fn($result) => true;
-	Utils::$smcFunc['db_insert'] = fn(...$params) => true;
+	Utils::$smcFunc['db_insert'] = fn(...$params) => count($params);
+	Utils::$smcFunc['db_get_version'] = fn() => '';
 	Utils::$smcFunc['db_title'] = 'mysql';
 
 	loadLanguage('Optimus/Optimus');
@@ -210,4 +211,9 @@ function redirectexit(string $url = ''): void
 function smf_chmod(string $file): bool
 {
 	return true;
+}
+
+function log_error(string $message, string $level = 'user'): string
+{
+	return $message;
 }

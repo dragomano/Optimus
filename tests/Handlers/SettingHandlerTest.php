@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-use Bugo\Compat\Config;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\SettingHandler;
@@ -48,8 +47,8 @@ test('actions method', function () {
 
 	$this->handler->actions();
 
-	expect(Utils::$context['template_layers'])->toContain('tips');
-	expect(Utils::$context['sub_template'])->toBe('show_settings');
+	expect(Utils::$context['template_layers'])->toContain('tips')
+		->and(Utils::$context['sub_template'])->toBe('show_settings');
 
 	unset($_REQUEST['area']);
 });
@@ -117,7 +116,6 @@ test('htaccessTabSettings method', function () {
 });
 
 test('sitemapTabSettings method', function () {
-	expect($this->handler->sitemapTabSettings())->toBeNull();
-
-	expect($this->handler->sitemapTabSettings(true))->toBeArray();
+	expect($this->handler->sitemapTabSettings())->toBeNull()
+		->and($this->handler->sitemapTabSettings(true))->toBeArray();
 });

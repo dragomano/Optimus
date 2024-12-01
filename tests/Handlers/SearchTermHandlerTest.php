@@ -7,6 +7,40 @@ use Bugo\Optimus\Utils\Input;
 
 beforeEach(function () {
 	$this->handler = new SearchTermHandler();
+
+	Utils::$context['page_title'] = '';
+    Utils::$context['canonical_url'] = '';
+	Config::$modSettings['optimus_search_page_title'] = '';
+	Config::$scripturl = 'https://example.com';
+});
+
+describe('__invoke method', function () {
+    it('does nothing when search_params is not set', function () {
+        Utils::$context['search_params'] = null;
+
+        $this->handler->__invoke();
+
+        expect(Utils::$context['page_title'])->toBeEmpty();
+    });
+
+    it('does nothing when search term is empty', function () {
+        Utils::$context['search_params'] = ['search' => ''];
+
+        $this->handler->__invoke();
+
+        expect(Utils::$context['page_title'])->toBeEmpty();
+    });
+
+    it('preserves existing page title when template is empty', function () {
+        Utils::$context['search_params'] = ['search' => 'test query'];
+        Utils::$context['page_title'] = 'Existing Title';
+        Config::$modSettings['optimus_search_page_title'] = '';
+
+        $this->handler->__invoke();
+
+        expect(Utils::$context['page_title'])
+            ->toBe('Existing Title');
+    });
 });
 
 describe('loadPermissions method', function () {

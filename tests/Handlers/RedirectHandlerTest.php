@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-use Bugo\Compat\Config;
 use Bugo\Optimus\Handlers\RedirectHandler;
 
 beforeEach(function () {

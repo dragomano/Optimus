@@ -22,7 +22,7 @@
       <directory>src/Sources/Optimus/Events</directory>
       <directory>src/Sources/Optimus/Libs</directory>
       <file>src/Sources/Optimus/Handlers/index.php</file>
-      <file>src/Sources/Optimus/Robots/index.php</file>
+      <file>src/Sources/Optimus/Services/index.php</file>
       <file>src/Sources/Optimus/Tasks/index.php</file>
       <file>src/Sources/Optimus/Utils/index.php</file>
       <file>src/Sources/Optimus/app.php</file>
