@@ -33,6 +33,7 @@ $txt['optimus_allow_change_topic_keywords_subtext'] = 'It is displayed when edit
 $txt['optimus_show_keywords_block'] = 'Display a block with keywords above the first post of the topic';
 $txt['optimus_show_keywords_on_message_index'] = 'Display keywords in topic lists within boards';
 $txt['optimus_use_color_tags'] = 'Use color tags';
+$txt['optimus_max_allowed_tags'] = 'Maximum number of tags per topic';
 
 $txt['optimus_extra_settings'] = 'Additional settings';
 $txt['optimus_errors_for_wrong_actions'] = 'Display a 404 page for non-existent forum areas';

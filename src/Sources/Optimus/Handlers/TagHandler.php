@@ -126,6 +126,7 @@ final class TagHandler
 				['check', 'optimus_show_keywords_block'],
 				['check', 'optimus_show_keywords_on_message_index'],
 				['check', 'optimus_use_color_tags'],
+				['int', 'optimus_max_allowed_tags', 'min' => 1],
 			],
 			array_slice($config_vars, $counter, null, true)
 		);
@@ -685,6 +686,8 @@ final class TagHandler
 
 		$values = array_keys(Utils::$context['optimus_keywords'] ?? []);
 
+		$maxTags = Config::$modSettings['optimus_max_allowed_tags'] ?? 10;
+
 		Theme::addInlineJavaScript('
 		VirtualSelect.init({
 			ele: "#optimus_keywords",' . (Utils::$context['right_to_left'] ? '
@@ -702,7 +705,7 @@ final class TagHandler
 			noSearchResultsText: "' . Lang::$txt['no_matches'] . '",
 			searchPlaceholderText: "' . Lang::$txt['search'] . '",
 			clearButtonText: "' . Lang::$txt['remove'] . '",
-			maxValues: 10,
+			maxValues: ' . $maxTags . ',
 			options: ' . json_encode($data) . ',
 			selectedValue: [' . implode(',', $values) . '],
 			onServerSearch: async function (search, virtualSelect) {
