@@ -97,7 +97,7 @@ class XmlGenerator implements XmlGeneratorInterface
 			}
 
 			if (isset($item['mobile:mobile'])) {
-				$prepared['mobile:mobile'] = $item['mobile'];
+				$prepared['mobile:mobile'] = $item['mobile:mobile'];
 			}
 
 			if (isset($item['image:image'])) {
