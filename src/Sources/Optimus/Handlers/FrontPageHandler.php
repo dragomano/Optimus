@@ -47,6 +47,7 @@ final class FrontPageHandler
 
 		if (empty(Utils::$context['current_action'])
 			&& empty(Input::server('query_string'))
+			&& empty(Input::server('path_info'))
 			&& empty(Input::server('argv'))
 		) {
 			Utils::$context['meta_description'] = Input::xss(Config::$modSettings['optimus_description']);
