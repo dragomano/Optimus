@@ -221,3 +221,8 @@ function log_error(string $message, string $level = 'user'): string
 {
 	return $message;
 }
+
+function fatal_lang_error(...$params): void
+{
+	Utils::$context['error_title'] = $params[0];
+}
