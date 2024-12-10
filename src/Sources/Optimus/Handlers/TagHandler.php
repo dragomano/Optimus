@@ -86,14 +86,16 @@ final class TagHandler
 
 	public function menuButtons(array &$buttons): void
 	{
-		if (isset($buttons['home']) && Utils::$context['current_action'] === 'keywords')
+		if (isset($buttons['home']) && Utils::$context['current_action'] === 'keywords') {
 			$buttons['home']['action_hook'] = true;
+		}
 	}
 
 	public function currentAction(string &$action): void
 	{
-		if (Utils::$context['current_action'] === 'keywords')
+		if (Utils::$context['current_action'] === 'keywords') {
 			$action = 'home';
+		}
 	}
 
 	public function loadPermissions(array $permissionGroups, array &$permissionList): void
@@ -245,6 +247,7 @@ final class TagHandler
 	{
 		if (Utils::$context['current_subaction'] === 'search') {
 			$this->prepareSearchData();
+
 			return;
 		}
 
@@ -256,10 +259,12 @@ final class TagHandler
 		Utils::$context['optimus_keyword_id'] = (int) Input::request('id', 0);
 
 		Theme::loadTemplate('Optimus');
+
 		Utils::$context['template_layers'][] = 'keywords';
 
 		if (empty(Utils::$context['optimus_keyword_id'])) {
 			$this->showAllWithFrequency();
+
 			return;
 		}
 
@@ -600,11 +605,9 @@ final class TagHandler
 	}
 
 	/**
-	 * Request from the database 10 keywords similar to the entered
-	 *
-	 * Запрашиваем из базы данных 10 наиболее похожих ключевых слов
+	 * @codeCoverageIgnore
 	 */
-	private function prepareSearchData(): void
+	private function prepareSearchData(): never
 	{
 		$input = file_get_contents('php://input');
 		$data  = json_decode($input, true) ?? [];
@@ -664,6 +667,9 @@ final class TagHandler
 		$this->loadAssets();
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function loadAssets(): void
 	{
 		Theme::loadCSSFile(
@@ -733,6 +739,9 @@ final class TagHandler
 		});', true);
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function getIdByName(string $name): int
 	{
 		$result = Db::$db->query('', '
@@ -752,9 +761,7 @@ final class TagHandler
 	}
 
 	/**
-	 * Add keyword to the optimus_keywords table, get id
-	 *
-	 * Добавляем ключевое слово в таблицу optimus_keywords и получаем его id
+	 * @codeCoverageIgnore
 	 */
 	private function addToDatabase(string $keyword): int
 	{
@@ -769,6 +776,9 @@ final class TagHandler
 		);
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function addNoteToLogTable(int $keyword_id, int $topic, int $user): void
 	{
 		Db::$db->insert('replace',
@@ -791,6 +801,9 @@ final class TagHandler
 		);
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function modify(int $topic, int $user): void
 	{
 		if (! $this->canChange())
@@ -822,6 +835,10 @@ final class TagHandler
 		$this->remove($delKeywords, $topic);
 	}
 
+
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function add(array $keywords, int $topic, int $user): void
 	{
 		if (empty($keywords) || empty($topic) || empty($user))
@@ -839,6 +856,9 @@ final class TagHandler
 		CacheApi::clean();
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function remove(array $keywords, int $topic): void
 	{
 		if (empty($keywords) || empty($topic))
@@ -863,8 +883,9 @@ final class TagHandler
 
 	private function canChange(): bool
 	{
-		if (! isset(Utils::$context['user']['started']))
+		if (! isset(Utils::$context['user']['started'])) {
 			Utils::$context['user']['started'] = empty(Topic::$id);
+		}
 
 		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords']))
 			return false;

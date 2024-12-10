@@ -40,9 +40,9 @@ final class SettingHandler
 	}
 
 	/**
-	 * Remove meta_keywords setting (it moved to Optimus settings) and disable queryless_urls settings
+	 * Remove meta_keywords setting and move it to the Optimus settings
 	 *
-	 * Удаляем настройку meta_keywords из её стандартного места и помещаем на страницу настроек Optimus
+	 * Удаляем настройку meta_keywords и помещаем на страницу настроек Optimus
 	 */
 	public function modifyBasicSettings(array &$config_vars): void
 	{
@@ -66,8 +66,9 @@ final class SettingHandler
 			content: "\f717";
 		}');
 
-		if (Input::request('area') === 'optimus')
+		if (Input::request('area') === 'optimus') {
 			Theme::loadCSSFile('optimus/optimus.css');
+		}
 
 		$admin_areas['config']['areas']['optimus'] = [
 			'label' => Lang::$txt['optimus_title'],
@@ -209,11 +210,13 @@ final class SettingHandler
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
 
-			if (Input::isPost('optimus_forum_index'))
+			if (Input::isPost('optimus_forum_index')) {
 				Input::post(['optimus_forum_index' => Input::filter('optimus_forum_index')]);
+			}
 
-			if (Input::isPost('optimus_description'))
+			if (Input::isPost('optimus_description')) {
 				Input::post(['optimus_description' => Input::filter('optimus_description')]);
+			}
 
 			IntegrationHook::call('integrate_save_optimus_basic_settings');
 
@@ -265,8 +268,9 @@ final class SettingHandler
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
 
-			if (Input::isPost('optimus_fb_appid'))
+			if (Input::isPost('optimus_fb_appid')) {
 				Input::post(['optimus_fb_appid' => Input::filter('optimus_fb_appid')]);
+			}
 
 			if (Input::isPost('optimus_tw_cards')) {
 				Input::post([

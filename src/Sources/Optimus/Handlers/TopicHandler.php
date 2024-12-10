@@ -134,11 +134,13 @@ final class TopicHandler
 
 	public function displayTopic(array &$columns): void
 	{
-		if (! empty(Config::$modSettings['optimus_allow_change_topic_desc']))
+		if (! empty(Config::$modSettings['optimus_allow_change_topic_desc'])) {
 			$columns[] = 't.optimus_description';
+		}
 
-		if (! in_array('ms.modified_time AS topic_modified_time', $columns))
+		if (! in_array('ms.modified_time AS topic_modified_time', $columns)) {
 			$columns[] = 'ms.modified_time AS topic_modified_time';
+		}
 
 		if (
 			empty(Config::$modSettings['optimus_topic_description'])
@@ -147,8 +149,9 @@ final class TopicHandler
 			return;
 		}
 
-		if (! in_array('ms.body AS topic_first_message', $columns))
+		if (! in_array('ms.body AS topic_first_message', $columns)) {
 			$columns[] = 'ms.body AS topic_first_message';
+		}
 	}
 
 	/**
@@ -230,6 +233,9 @@ final class TopicHandler
 		$this->addFields();
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function addFields(): void
 	{
 		if (! $this->canChangeDescription() || empty(Utils::$context['is_first_post']))
@@ -267,6 +273,9 @@ final class TopicHandler
 		Utils::$context['meta_description'] = Utils::$context['topicinfo']['optimus_description'];
 	}
 
+	/**
+	 * @codeCoverageIgnore
+	 */
 	private function modifyDescription(int $topic): void
 	{
 		if (! $this->canChangeDescription())
@@ -287,8 +296,9 @@ final class TopicHandler
 
 	private function canChangeDescription(): bool
 	{
-		if (! isset(Utils::$context['user']['started']))
+		if (! isset(Utils::$context['user']['started'])) {
 			Utils::$context['user']['started'] = empty(Topic::$id);
+		}
 
 		if (empty(Config::$modSettings['optimus_allow_change_topic_desc']))
 			return false;

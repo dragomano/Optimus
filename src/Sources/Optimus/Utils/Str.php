@@ -58,7 +58,7 @@ final class Str
 		return trim(Utils::$smcFunc['substr']($text, 0, $stopAt));
 	}
 
-	public static function html(string $name, array|string|null $params = null): Html
+	public static function html(?string $name = null, array|string|null $params = null): Html
 	{
 		return Html::el($name, $params);
 	}

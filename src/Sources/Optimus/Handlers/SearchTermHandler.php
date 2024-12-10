@@ -62,8 +62,7 @@ final class SearchTermHandler
 
 			$scale = 1;
 			while ($row = Db::$db->fetch_assoc($result)) {
-				if ($scale < $row['hit'])
-					$scale = $row['hit'];
+				$scale < $row['hit'] && $scale = $row['hit'];
 
 				Utils::$context['search_terms'][] = [
 					'text'  => $row['phrase'],

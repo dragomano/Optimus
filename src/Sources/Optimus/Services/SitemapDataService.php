@@ -20,6 +20,12 @@ class SitemapDataService
 
 	private array $ignoredBoards = [];
 
+	private array $links = [];
+
+	private array $topics = [];
+
+	private array $images = [];
+
 	public function __construct(private readonly int $startYear) {}
 
 	public function getBoardLinks(): array
@@ -54,7 +60,7 @@ class SitemapDataService
 
 		$links = [];
 		while ($row = Db::$db->fetch_assoc($result)) {
-			$this->openBoards[] = $row['id_board'];
+			$this->openBoards[] = (int) $row['id_board'];
 
 			if (empty(Config::$modSettings['optimus_sitemap_boards']))
 				continue;
@@ -81,31 +87,24 @@ class SitemapDataService
 		if (empty($this->openBoards))
 			return [];
 
-		$start = 0;
-		$limit = 1000;
-		$links = [];
-
-		$topics = [];
-		$images = [];
-
 		$tempCache = Db::$cache;
-
 		Db::$cache = [];
 
-		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
+		$start = 0;
+		$limit = 1000;
 
 		$totalRows = $this->getTotalRows();
 
 		while ($start < $totalRows) {
-			$this->processTopicBatch($start, $limit, $numReplies, $links, $topics, $images);
+			$this->processTopicBatch($start, $limit);
 			$start += $limit;
 		}
 
-		$this->processTopicPages($topics, $images, $links);
+		$this->processTopicPages();
 
 		Db::$cache = $tempCache;
 
-		return array_values($links);
+		return array_values($this->links);
 	}
 
 	private function getTotalRows(): int
@@ -116,15 +115,11 @@ class SitemapDataService
 		);
 	}
 
-	private function processTopicBatch(
-		int $start,
-		int $limit,
-		int $numReplies,
-		array &$links,
-		array &$topics,
-		array &$images
-	): void {
-		$query = Db::$db->query('', '
+	private function processTopicBatch(int $start, int $limit): void
+	{
+		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
+
+		$result = Db::$db->query('', '
 			SELECT t.id_topic, t.id_board, t.num_replies, t.id_first_msg, t.id_last_msg,
 				GREATEST(m.poster_time, m.modified_time) AS last_date, m.subject,
 				a.id_attach, a.filename, a.fileext, a.attachment_type
@@ -153,16 +148,13 @@ class SitemapDataService
 			]
 		);
 
-		while ($row = Db::$db->fetch_assoc($query)) {
+		while ($row = Db::$db->fetch_assoc($result)) {
 			$topicUrl = $this->buildTopicUrl($row['id_topic']);
 
 			if (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
-				$links[$row['id_topic']] = [
-					'loc'     => $topicUrl,
-					'lastmod' => $row['last_date'],
-				];
+				$this->links[$row['id_topic']] = ['loc' => $topicUrl, 'lastmod' => $row['last_date']];
 			} else {
-				$topics[$row['id_topic']] = [
+				$this->topics[$row['id_topic']] = [
 					'url'         => $topicUrl,
 					'last_date'   => $row['last_date'],
 					'num_replies' => $row['num_replies'],
@@ -175,7 +167,7 @@ class SitemapDataService
 				&& ! empty($row['id_attach'])
 				&& $this->isImageFile($row['fileext'])
 			) {
-				$images[$row['id_topic']] = [
+				$this->images[$row['id_topic']] = [
 					'loc' => implode('', [
 						Config::$scripturl . '?action=dlattach;topic=',
 						$row['id_topic'] . '.0;attach=',
@@ -185,7 +177,7 @@ class SitemapDataService
 			}
 		}
 
-		Db::$db->free_result($query);
+		Db::$db->free_result($result);
 	}
 
 	private function buildTopicUrl(string $topicId): string
@@ -198,31 +190,26 @@ class SitemapDataService
 		return in_array($extension, ['jpg', 'png', 'gif', 'webp', 'svg']);
 	}
 
-	private function processTopicPages(array $topics, array $images, array &$links): void
+	private function processTopicPages(): void
 	{
-		if (empty($topics))
+		if (empty($this->topics))
 			return;
 
 		$messagesPerPage = (int) (Config::$modSettings['defaultMaxMessages'] ?? 20);
 
-		foreach ($topics as $topicId => $topic) {
+		foreach ($this->topics as $topicId => $topic) {
 			$numPages = ceil(($topic['num_replies'] + 1) / $messagesPerPage);
 
 			for ($page = 0; $page < $numPages; $page++) {
 				$pageUrl = $this->buildTopicPageUrl($topicId, $page, $messagesPerPage);
 
-				$entry = [
-					'loc'     => $pageUrl,
-					'lastmod' => $topic['last_date'],
-				];
+				$entry = ['loc' => $pageUrl, 'lastmod' => $topic['last_date']];
 
-				if (isset($images[$topicId])) {
-					$entry['image'] = [
-						'image:loc' => $images[$topicId]['loc'],
-					];
+				if (isset($this->images[$topicId])) {
+					$entry['image'] = ['image:loc' => $this->images[$topicId]['loc']];
 				}
 
-				$links[] = $entry;
+				$this->links[] = $entry;
 			}
 		}
 	}

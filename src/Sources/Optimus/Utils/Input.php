@@ -94,20 +94,18 @@ final class Input
 		return Utils::htmlspecialchars($data, ENT_QUOTES);
 	}
 
-	public static function filter(
-		string $key,
-		string $type = 'string',
-		int $input = INPUT_POST
-	): mixed
+	public static function filter(string $key, string $type = 'string'): mixed
 	{
 		$filter = match ($type) {
-			'int'   => FILTER_VALIDATE_INT,
-			'bool'  => FILTER_VALIDATE_BOOLEAN,
 			'url'   => FILTER_VALIDATE_URL,
 			default => FILTER_DEFAULT,
 		};
 
-		$result = filter_input($input, $key, $filter);
+		if (! self::isPost($key)) {
+			return null;
+		}
+
+		$result = filter_var($_POST[$key], $filter);
 
 		return empty($result) ? $result : self::xss($result);
 	}
