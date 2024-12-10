@@ -15,7 +15,7 @@ jobs:
         php-version: '8.1'
 
     - name: Install dependencies
-      run: composer install
+      run: composer update
 
     - name: Run tests
       run: vendor/bin/pest --coverage-clover build/logs/clover.xml
