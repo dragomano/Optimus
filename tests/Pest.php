@@ -51,6 +51,8 @@ uses()->beforeAll(function () {
 
 	Lang::$txt['lang_dictionary'] = 'en';
 
+	Config::$boardurl = 'https://example.com';
+	Config::$scripturl = Config::$boardurl . '/index.php';
 	Config::$sourcedir = __DIR__ . '/files';
 
 	Theme::$current->settings['default_images_url'] = '';
@@ -58,20 +60,13 @@ uses()->beforeAll(function () {
 	Theme::$current->settings['theme_url'] = '';
 	Theme::$current->settings['default_theme_dir'] = dirname(__DIR__) . '/src/Themes/default';
 
-	Utils::$context['forum_name'] = 'Foo Bar';
+	Utils::$context['forum_name'] = 'Test Forum';
 	Utils::$context['admin_menu_name'] = 'admin';
 
 	Utils::$smcFunc['substr'] = fn($string, $offset, $length) => substr($string, $offset, $length);
 	Utils::$smcFunc['strlen'] = fn($string) => strlen($string);
 	Utils::$smcFunc['htmltrim'] = fn($string) => trim($string);
 	Utils::$smcFunc['htmlspecialchars'] = fn($string, $flags) => htmlspecialchars($string, $flags);
-	Utils::$smcFunc['db_query'] = fn(...$params) => new stdClass();
-	Utils::$smcFunc['db_fetch_assoc'] = fn($result) => ['foo' => 'bar'];
-	Utils::$smcFunc['db_fetch_row'] = fn($result) => ['bar'];
-	Utils::$smcFunc['db_free_result'] = fn($result) => true;
-	Utils::$smcFunc['db_insert'] = fn(...$params) => count($params);
-	Utils::$smcFunc['db_get_version'] = fn() => '';
-	Utils::$smcFunc['db_title'] = 'mysql';
 
 	loadLanguage('Optimus/Optimus');
 })->in(__DIR__);
@@ -130,19 +125,18 @@ function db_extend(string $type): void
 
 function un_htmlspecialchars(string $string): string
 {
-	return 'decoded';
+	return htmlspecialchars_decode($string);
 }
 
-function cache_get_data(...$params): array
+function cache_get_data(string $key, int $ttl = 120): ?array
 {
-	return [$params];
+	if ($key == 'optimus_search_terms') return null;
+	if ($key == 'optimus_topic_keywords') return null;
+
+	return [];
 }
 
-function cache_put_data(...$params): void
-{
-}
-
-function updateSettings(array $settings): void
+function cache_put_data(string $key, mixed $value, int $ttl = 120): void
 {
 }
 
@@ -150,12 +144,22 @@ function clean_cache(): void
 {
 }
 
-function loadCSSFile(string $name): void
+function updateSettings(array $settings): void
 {
 }
 
-function loadJavaScriptFile(string $name): void
+function loadCSSFile(string $fileName): void
 {
+	$id = (empty($id) ? strtr(str_replace('.css', '', basename($fileName)), '?', '_') : $id) . '_css';
+
+	Utils::$context['css_files'][$id] = ['fileName' => $fileName];
+}
+
+function loadJavaScriptFile(string $fileName): void
+{
+	$id = (empty($id) ? strtr(str_replace('.js', '', basename($fileName)), '?', '_') : $id) . '_js';
+
+	Utils::$context['javascript_files'][$id] = ['fileName' => $fileName];
 }
 
 function addInlineJavaScript(string $javascript, bool $defer = false): bool
@@ -210,7 +214,7 @@ function redirectexit(string $url = ''): void
 
 function smf_chmod(string $file): bool
 {
-	return true;
+	return !!$file;
 }
 
 function log_error(string $message, string $level = 'user'): string

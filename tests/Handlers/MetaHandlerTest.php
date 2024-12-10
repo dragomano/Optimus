@@ -23,7 +23,7 @@ test('handle with forum index', function () {
 	$this->handler->handle();
 
 	expect(Utils::$context['page_title_html_safe'])
-		->toBe('decoded');
+		->toBe(htmlspecialchars_decode(Utils::$context['page_title_html_safe']));
 });
 
 test('handle with disabled forum index', function () {

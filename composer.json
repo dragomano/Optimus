@@ -6,9 +6,9 @@
   },
   "require-dev": {
     "bugo/smf-compat": "^0.2",
-    "pestphp/pest": "^2.33.4",
-    "rector/rector": "^1.0",
-    "symfony/http-foundation": "^6.0"
+    "pestphp/pest": "^2.36",
+    "rector/rector": "^1.2",
+    "symfony/http-foundation": "^6.1"
   },
   "autoload": {
     "psr-4": {

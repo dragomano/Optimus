@@ -18,19 +18,20 @@ beforeEach(function () {
 	mkdir($this->tempDir, 0777, true);
 
 	Config::$boarddir = $this->tempDir;
-	Config::$boardurl = 'https://example.com';
-	Config::$scripturl = 'https://example.com/index.php';
 
 	Config::$modSettings = [
-		'optimus_sitemap_enable' => true,
-		'optimus_start_year' => 2020,
-		'optimus_update_frequency' => 1,
+		'optimus_sitemap_enable'   => true,
+		'optimus_start_year'       => 2020,
+		'optimus_update_frequency' => 0,
 	];
 
 	Db::$db = new class {
 		public function query(): object|bool { return true; }
+
 		public function fetch_assoc(): array|false|null { return false; }
+
 		public function free_result(): bool { return false; }
+
 		public function insert(): int|array|null { return null; }
 	};
 
@@ -61,7 +62,9 @@ it('schedules next run after successful generation', function () {
 		}
 
 		public function query(): object|bool { return true; }
+
 		public function fetch_assoc(): array|false|null { return false; }
+
 		public function free_result(): bool { return false; }
 
 		public function insert(
@@ -108,7 +111,9 @@ it('uses correct update interval based on settings', function () {
 			}
 
 			public function query(): object|bool { return true; }
+
 			public function fetch_assoc(): array|false|null { return false; }
+
 			public function free_result(): bool { return false; }
 
 			public function insert(

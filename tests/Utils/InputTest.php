@@ -64,7 +64,6 @@ describe('post', function () {
 
 		expect(Input::post('foo'))->toBe('bar')
 			->and(Input::post('bar'))->toBe('foo');
-
 	});
 
 	afterEach(function () {
@@ -144,7 +143,7 @@ describe('isRequest, isPost, isGet', function () {
 describe('xss', function () {
 	beforeEach(function () {
 		$this->source = /** @lang text */ '<a href="foo">bar</a>';
-		$this->result = '&lt;a href=&quot;foo&quot;&gt;bar&lt;/a&gt;';
+		$this->result = htmlspecialchars($this->source, ENT_QUOTES, 'UTF-8');
 	});
 
 	it('checks xss (basic usage)', function () {
@@ -160,11 +159,15 @@ describe('xss', function () {
 });
 
 describe('filter', function () {
-	it('checks filter (basic usage)', function () {
+	it('checks with unknown variable', function () {
 		expect(Input::filter('foo'))->toBeNull();
 	});
 
-	it('checks filter with wrong type', function () {
-		expect(Input::filter('foo', 'wrong'))->toBeNull();
+	it('checks with unknown type', function () {
+		$this->request->request->set('foo', '<script>console.log("bar")</script>');
+		$this->request->overrideGlobals();
+
+		expect(Input::filter('foo', 'unknown'))->toBe(Input::filter('foo'))
+			->and(Input::filter('foo', 'unknown'))->toBe(Input::xss($this->request->get('foo')));
 	});
 });

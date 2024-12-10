@@ -15,8 +15,6 @@ beforeEach(function () {
 	mkdir($this->tempDir, 0777, true);
 
 	Config::$boarddir = $this->tempDir;
-	Config::$boardurl = 'https://example.com';
-	Config::$scripturl = 'https://example.com/index.php';
 
 	Config::$modSettings = [
 		'optimus_sitemap_enable' => true,
@@ -209,6 +207,7 @@ it('allows adding custom links through event dispatcher', function () {
 	$this->generator->generate();
 
 	$content = file_get_contents($this->tempDir . '/sitemap.xml');
+
 	expect($content)
 		->toContain('<loc>https://example.com/custom</loc>')
 		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue();

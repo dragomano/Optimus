@@ -1,15 +1,91 @@
 <?php declare(strict_types=1);
 
 use Bugo\Compat\Config;
+use Bugo\Compat\Db;
+use Bugo\Compat\DbFuncMapper;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\TagHandler;
 use Symfony\Component\HttpFoundation\Request;
+use Tests\TestDbMapper;
 
 beforeEach(function () {
 	$this->handler = new TagHandler();
 
 	loadLanguage('Optimus/Optimus');
+
+	Db::$db = new class extends TestDbMapper {
+		public function testQuery($query, $params = []): array
+		{
+			if (str_contains($query, 'SELECT t.id_topic, ms.subject')) {
+				return [
+					[
+						'id_topic' => '1',
+						'subject' => 'Test Topic',
+						'id_board' => '1',
+						'name' => 'Test Board',
+						'id_member' => '1',
+						'id_group' => '1',
+						'real_name' => 'Test User',
+						'group_name' => 'Test Group',
+					],
+					[
+						'id_topic' => '2',
+						'subject' => 'Another Topic',
+						'id_board' => '2',
+						'name' => 'Another Board',
+						'id_member' => '2',
+						'id_group' => '2',
+						'real_name' => 'Another User',
+						'group_name' => 'Another Group',
+					],
+				];
+			}
+
+			if (str_contains($query, 'SELECT COUNT(topic_id)')) {
+				return ['1'];
+			}
+
+			if (str_contains($query, 'SELECT ok.id, ok.name, COUNT(olk.keyword_id) AS frequency')) {
+				return [
+					['id' => '1', 'name' => 'Keyword 1', 'frequency' => '2'],
+					['id' => '2', 'name' => 'Keyword 2', 'frequency' => '4'],
+				];
+			}
+
+			if (str_contains($query, 'SELECT COUNT(id)')) {
+				return ['1'];
+			}
+
+			if (str_contains($query, 'SELECT k.id, k.name, lk.topic_id')) {
+				return [
+					['id' => '1', 'name' => 'Keyword 1', 'topic_id' => '1'],
+					['id' => '2', 'name' => 'Keyword 2', 'topic_id' => '2'],
+				];
+			}
+
+			if (str_contains($query, 'SELECT name')) {
+				return ['Keyword 1'];
+			}
+
+			if (str_contains($query, 'WHERE name LIKE {string:search}')) {
+				return [
+					['id' => '1', 'name' => 'Keyword 1'],
+					['id' => '2', 'name' => 'Keyword 2'],
+				];
+			}
+
+			if (str_contains($query, 'WHERE name = {string:name}')) {
+				return ['id' => '1'];
+			}
+
+			return [];
+		}
+	};
+});
+
+afterEach(function () {
+	Db::$db = new DbFuncMapper();
 });
 
 describe('actions method', function () {
@@ -94,7 +170,18 @@ test('messageindexButtons method', function () {
 
 	Config::$modSettings['optimus_show_keywords_on_message_index'] = true;
 
-	Utils::$context['topics'] = ['foo' => 'bar'];
+	Utils::$context['topics'] = [
+		1 => [
+			'first_post' => [
+				'link' => '<a href="https://example.com/index.php?topic=1.0">Test Topic</a>',
+			]
+		],
+		2 => [
+			'first_post' => [
+				'link' => '<a href="https://example.com/index.php?topic=2.0">Another Topic</a>',
+			]
+		],
+	];
 
 	$this->handler->messageindexButtons();
 
@@ -137,7 +224,8 @@ describe('postEnd method', function () {
 
 		$this->handler->postEnd();
 
-		expect(Utils::$context['optimus']['keywords'])->toContain('bar');
+		expect(Utils::$context['optimus']['keywords'])->toContain('bar')
+			->and(Utils::$context['css_files'])->not->toBeEmpty();
 
 		unset(Utils::$context['optimus_keywords']);
 	});
@@ -153,7 +241,8 @@ describe('postEnd method', function () {
 
 		$this->handler->postEnd();
 
-		expect(Utils::$context['optimus']['keywords'])->toContain('bar');
+		expect(Utils::$context['optimus']['keywords'])->toContain('bar')
+			->and(Utils::$context['css_files'])->not->toBeEmpty();
 	});
 });
 
@@ -162,7 +251,7 @@ test('modifyPost method', function () {
 });
 
 test('removeTopics method', function () {
-	expect($this->handler->removeTopics([]))->toBeNull();
+	expect($this->handler->removeTopics([1, 2]))->toBeNull();
 });
 
 test('showTheSame method', function () {
@@ -183,7 +272,7 @@ test('showTheSame method with keyword_id', function () {
 
 	$this->handler->showTheSame();
 
-	expect(Utils::$context['page_title'])->toContain('bar')
+	expect(Utils::$context['page_title'])->toContain('Keyword 1')
 		->and(Utils::$context['canonical_url'])->toContain(Utils::$context['optimus_keyword_id']);
 });
 
@@ -221,12 +310,12 @@ describe('displayTopic method', function () {
 	it('checks basic usage', function () {
 		Config::$modSettings['optimus_show_keywords_block'] = true;
 
-		Utils::$context['current_topic'] = 1;
+		Utils::$context['current_topic'] = '1';
 		Utils::$context['optimus_keywords'] = Utils::$context['optimus']['keywords'] = [];
 
 		$this->handler->displayTopic();
 
-		expect(Utils::$context['optimus_keywords'])->toBeEmpty();
+		expect(Utils::$context['optimus_keywords'])->toBe(['1' => 'Keyword 1']);
 
 		unset(Utils::$context['optimus_keywords']);
 	});

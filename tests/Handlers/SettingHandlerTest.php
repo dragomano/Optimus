@@ -10,6 +10,10 @@ beforeEach(function () {
 	Lang::$txt['meta_keywords_note'] = '';
 	Lang::$txt['admin_maintenance'] = '';
 	Lang::$txt['maintain_recount'] = '';
+
+	Utils::$smcFunc['db_query'] = fn(...$params) => new stdClass();
+	Utils::$smcFunc['db_get_version'] = fn() => 'v1.0';
+	Utils::$smcFunc['db_title'] = 'mysql';
 });
 
 test('modifyBasicSettings method', function () {
@@ -53,69 +57,63 @@ test('actions method', function () {
 	unset($_REQUEST['area']);
 });
 
-test('basicTabSettings method', function () {
-	$_GET['save'] = true;
+describe('Tabs', function () {
+	beforeEach(function () {
+		$_GET['save'] = true;
+	});
 
-	expect($this->handler->basicTabSettings())->toBeNull();
+	test('basicTabSettings method', function () {
+		expect($this->handler->basicTabSettings())->toBeNull();
 
-	unset($_GET['save']);
+		unset($_GET['save']);
 
-	expect($this->handler->basicTabSettings(true))->toBeArray();
-});
+		expect($this->handler->basicTabSettings(true))->toBeArray();
+	});
 
-test('extraTabSettings method', function () {
-	$_GET['save'] = true;
+	test('extraTabSettings method', function () {
+		expect($this->handler->extraTabSettings())->toBeNull();
 
-	expect($this->handler->extraTabSettings())->toBeNull();
+		unset($_GET['save']);
 
-	unset($_GET['save']);
+		expect($this->handler->extraTabSettings(true))->toBeArray();
+	});
 
-	expect($this->handler->extraTabSettings(true))->toBeArray();
-});
+	test('faviconTabSettings method', function () {
+		expect($this->handler->faviconTabSettings())->toBeNull();
 
-test('faviconTabSettings method', function () {
-	$_GET['save'] = true;
+		unset($_GET['save']);
 
-	expect($this->handler->faviconTabSettings())->toBeNull();
+		expect($this->handler->faviconTabSettings(true))->toBeArray();
+	});
 
-	unset($_GET['save']);
+	test('metatagsTabSettings method', function () {
+		expect($this->handler->metatagsTabSettings())->toBeNull();
+	});
 
-	expect($this->handler->faviconTabSettings(true))->toBeArray();
-});
+	test('redirectTabSettings method', function () {
+		expect($this->handler->redirectTabSettings())->toBeNull();
+	});
 
-test('metatagsTabSettings method', function () {
-	$_GET['save'] = true;
+	test('counterTabSettings method', function () {
+		expect($this->handler->counterTabSettings())->toBeNull();
+	});
 
-	expect($this->handler->metatagsTabSettings())->toBeNull();
+	test('robotsTabSettings method', function () {
+		expect($this->handler->robotsTabSettings())->toBeNull();
+	});
 
-	unset($_GET['save']);
-});
+	test('htaccessTabSettings method', function () {
+		$_POST['optimus_htaccess'] = '# comment';
 
-test('redirectTabSettings method', function () {
-	$_GET['save'] = true;
+		expect($this->handler->htaccessTabSettings())->toBeNull();
+	});
 
-	expect($this->handler->redirectTabSettings())->toBeNull();
+	test('sitemapTabSettings method', function () {
+		expect($this->handler->sitemapTabSettings())->toBeNull()
+			->and($this->handler->sitemapTabSettings(true))->toBeArray();
+	});
 
-	unset($_GET['save']);
-});
-
-test('counterTabSettings method', function () {
-	$_GET['save'] = true;
-
-	expect($this->handler->counterTabSettings())->toBeNull();
-
-	unset($_GET['save']);
-});
-
-test('robotsTabSettings method', function () {
-	expect($this->handler->robotsTabSettings())->toBeNull();
-});
-
-test('htaccessTabSettings method', function () {
-	expect($this->handler->htaccessTabSettings())->toBeNull();
-});
-
-test('sitemapTabSettings method', function () {
-	expect($this->handler->sitemapTabSettings())->toBeNull()
-		->and($this->handler->sitemapTabSettings(true))->toBeArray();
+	afterEach(function () {
+		unset($_GET['save']);
+	});
 });

@@ -1,13 +1,31 @@
 <?php declare(strict_types=1);
 
 use Bugo\Compat\Config;
+use Bugo\Compat\Db;
+use Bugo\Compat\DbFuncMapper;
 use Bugo\Compat\Theme;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\TopicHandler;
 use Symfony\Component\HttpFoundation\Request;
+use Tests\TestDbMapper;
 
 beforeEach(function () {
+	Db::$db = new class extends TestDbMapper {
+		public function testQuery($query, $params = []): array
+		{
+			if (str_contains($query, 'SELECT optimus_description, id_member_started')) {
+				return ['Some description', '2'];
+			}
+
+			return [];
+		}
+	};
+
 	$this->handler = new TopicHandler();
+});
+
+afterEach(function () {
+	Db::$db = new DbFuncMapper();
 });
 
 test('prepareOgImage method with empty optimus_og_image', function () {
@@ -38,7 +56,8 @@ test('prepareOgImage method', function () {
 test('prepareOgImage method with topic_first_image', function () {
 	Utils::$context['optimus_og_image'] = '';
 	Utils::$context['loaded_attachments'] = [];
-	Utils::$context['topicinfo']['topic_first_message'] = '[img]https://picsum.photos/seed/wPSdlIrIS3LM5vKU/400/200[/img][br]Deserunt velit sed inventore nostrum. Saepe ea quas occaecati non provident maiores';
+	Utils::$context['topicinfo']['topic_first_message']
+		= '[img]https://picsum.photos/seed/wPSdlIrIS3LM5vKU/400/200[/img][br]Deserunt velit sed inventore nostrum. Saepe ea quas occaecati non provident maiores';
 
 	$this->handler->prepareOgImage();
 
@@ -135,7 +154,7 @@ test('modifyPost method', function () {
 	expect($this->handler->modifyPost([], [], [], []))->toBeNull();
 });
 
-test('postEnd method', function () {
+test('postEnd method - create', function () {
 	Utils::$context['is_new_topic'] = true;
 
 	$this->request = Request::createFromGlobals();
@@ -144,14 +163,19 @@ test('postEnd method', function () {
 
 	$this->handler->postEnd();
 
-	$this->assertStringContainsString('bar', Utils::$context['optimus']['description']);
+	expect(Utils::$context['optimus']['description'])->toBe('bar');
+});
 
+test('postEnd method - edit', function () {
 	Utils::$context['is_new_topic'] = false;
 	Utils::$context['user']['id'] = 1;
 	Utils::$context['user']['is_guest'] = false;
-	Utils::$smcFunc['db_fetch_row'] = fn($result) => ['bar', 1];
+
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('optimus_description', 'Some description');
+	$this->request->overrideGlobals();
 
 	$this->handler->postEnd();
 
-	expect(Utils::$context['optimus']['description'])->toBe('bar');
+	expect(Utils::$context['optimus']['description'])->toBe('Some description');
 });
