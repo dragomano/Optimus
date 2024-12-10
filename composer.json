@@ -26,7 +26,8 @@
     "tests": "vendor/bin/pest --colors=always",
     "tests-coverage": "vendor/bin/pest --colors=always --coverage --min=70",
     "tests-coverage-clover": "vendor/bin/pest --colors=always --min=70 --coverage-clover coverage.xml",
-    "tests-coverage-html": "vendor/bin/pest --colors=always --min=70 --coverage-html coverage"
+    "tests-coverage-html": "vendor/bin/pest --colors=always --min=70 --coverage-html coverage",
+    "post-update-cmd": "cd src/Sources/Optimus && composer update --no-dev -o"
   },
   "config": {
     "allow-plugins": {
