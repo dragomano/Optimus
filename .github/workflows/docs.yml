@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd docs
-          pnpm install --no-frozen-lockfile
+          pnpm install
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
