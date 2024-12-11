@@ -3,6 +3,9 @@ import nextra from 'nextra';
 const nextConfig = {
   output: 'export',
   basePath: '/Optimus',
+  images: {
+    unoptimized: true,
+  },
   i18n: {
     locales: ['en', 'ru'],
     defaultLocale: 'en',
