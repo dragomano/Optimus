@@ -54,7 +54,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
       - name: Install dependencies
         working-directory: docs
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
       - name: Build site with Next.js
         working-directory: docs
         run: |
