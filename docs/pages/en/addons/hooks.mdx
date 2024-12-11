@@ -1,0 +1,14 @@
+# Built-in Hooks
+
+If you are already familiar with SMF hooks, you will easily be able to set up interaction between the modification you need and Optimus's own hooks:
+
+| Hook                               |               Parameters              |                                                                                     Description |
+| :--------------------------------- | :-----------------------------------: | ----------------------------------------------------------------------------------------------: |
+| `integrate_optimus_addons`         |              `&$addons`               |         Add a custom addon identifier to the general list of "active" addons                    |
+| `integrate_optimus_basic_settings` |            `&$config_vars`            |                           Add your options to the "General Settings" tab                        |
+| `integrate_optimus_extra_settings` |            `&$config_vars`            |                             Add your options to the "Microdata" tab                             |
+| `integrate_optimus_robots_rules`   | `&$this->customRules, $this->urlPath` |                               Add your rules to the robots.txt generator                        |
+| `integrate_optimus_sitemap_links`  |            `&$this->links`            |                                         Add your links to the sitemap                           |
+| `integrate_optimus_teaser`         |           `&$replacements`            | Ability to set up replacement rules in the function that retrieves the topic teaser description |
+
+In this case, you can place your addon anywhere or not create it at all; you can simply connect the corresponding hooks in your own modification, starting with `integrate_optimus_addons`.

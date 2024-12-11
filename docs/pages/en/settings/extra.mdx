@@ -1,0 +1,25 @@
+# Metadata
+
+On this tab, you can enable the generation of some additional meta tags for [Open Graph](https://ogp.me/).
+
+import { Steps } from 'nextra/components'
+
+## Available Settings
+
+<Steps>
+### Use the Image from the First Topic Message in the Meta Tag `og:image`
+
+If enabled, when there is an image in the first message of any topic, that image will be specified in the `og:image` meta tag. This way, when you share a link to this topic on any social network that supports microdata, the image will be displayed along with the topic title.
+
+### Allow a Separate Field for the Board OG Image
+
+Enable this if you want to specify a unique image for each section separately.
+
+### Facebook Application ID (if you have)
+
+Generates a special tag for Facebook: `fb:app_id`.
+
+### X Account Name (if you have)
+
+Generates special tags for the social network X (formerly known as Twitter): `twitter:card`, `twitter:site`, etc.
+</Steps>

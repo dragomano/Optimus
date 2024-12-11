@@ -1,0 +1,50 @@
+# Поддерживаемые события
+
+Здесь перечислены все события, генерируемые Optimus, которые можно перехватить аддонами:
+
+| Событие                           |                                                                                   Описание |
+| :-------------------------------- | -----------------------------------------------------------------------------------------: |
+| `AddonInterface::HOOK_EVENT`      |                                              универсальное событие для работы с хуками SMF |
+| `AddonInterface::ROBOTS_RULES`    |                                        событие для работы с генератором правил `robots.txt |
+| `AddonInterface::SITEMAP_LINKS`   |                                                 событие для работы с генератором xml-карты |
+| `AddonInterface::SITEMAP_CONTENT` | специальное событие для обработки контента xml-карты сразу после формирования её структуры |
+| `AddonInterface::CREATE_SEF_URLS` |          специальное событие для обработки ссылок в xml-карте до формирования её структуры |
+
+Для реализации связи с выбранным событием в классе аддона нужно заполнить поле `$events` и создать метод `__invoke`. На примере аддона `LightPortal` это выглядит так:
+
+```php
+public static array $events = [
+	self::ROBOTS_RULES,
+	self::SITEMAP_LINKS,
+];
+
+public function __invoke(AddonEvent $event): void
+{
+	match ($event->eventName()) {
+		self::ROBOTS_RULES  => $this->changeRobots($event->getTarget()),
+		self::SITEMAP_LINKS => $this->changeSitemap($event->getTarget()),
+	};
+}
+```
+
+Затем мы создаем соответствующие методы `changeRobots` и `changeSitemap` (названия вы регулируете сами):
+
+```php
+public function changeRobots(RobotsGenerator $robots): void
+{
+	var_dump($robots);
+}
+
+public function changeSitemap(SitemapGenerator $sitemap): void
+{
+	var_dump($sitemap);
+}
+```
+
+Как видите, в качестве объекта события `self::ROBOTS_RULES` передается класс `RobotsGenerator` для работы с генератором `robots.txt`.
+
+Соответственно, в качестве объекта события `self::SITEMAP_LINKS` передается класс `SitemapGenerator` для работы с генератором xml-карты.
+
+А дальше уже всё зависит от полёта вашей фантазии и конкретных целей. Примеры реализаций встроенных аддонов можно увидеть на [GitHub](https://github.com/dragomano/Optimus/blob/main/src/Sources/Optimus/Addons).
+
+Если событий вам мало или они вас пугают, в качестве альтернативы можно использовать [встроенные хуки](hooks) Optimus.
