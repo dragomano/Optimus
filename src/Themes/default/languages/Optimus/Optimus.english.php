@@ -28,10 +28,10 @@ $txt['optimus_topic_extend_title_set'] = ['Don\'t add', 'Before topic title', 'A
 $txt['optimus_topic_description'] = 'Display the topic first message snippet as the meta-tag <strong>description</strong>';
 $txt['optimus_allow_change_topic_desc'] = 'Allow a separate field for the topic description';
 $txt['optimus_allow_change_topic_desc_subtext'] = 'It is displayed when editing a topic.';
-$txt['optimus_allow_change_topic_keywords'] = 'Allow a separate field for the topic keywords';
+$txt['optimus_allow_change_topic_keywords'] = 'Allow a separate field for the topic tags';
 $txt['optimus_allow_change_topic_keywords_subtext'] = 'It is displayed when editing a topic.';
-$txt['optimus_show_keywords_block'] = 'Display a block with keywords above the first post of the topic';
-$txt['optimus_show_keywords_on_message_index'] = 'Display keywords in topic lists within boards';
+$txt['optimus_show_keywords_block'] = 'Display a block with tags above the first post of the topic';
+$txt['optimus_show_keywords_on_message_index'] = 'Display tags in topic lists within boards';
 $txt['optimus_use_color_tags'] = 'Use color tags';
 $txt['optimus_max_allowed_tags'] = 'Maximum number of tags per topic';
 
@@ -53,8 +53,8 @@ $txt['optimus_allow_change_board_og_image'] = 'Allow a separate field for the bo
 $txt['optimus_allow_change_board_og_image_subtext'] = 'It is displayed when editing a board.';
 $txt['optimus_fb_appid'] = 'Facebook Application ID (if you have)';
 $txt['optimus_fb_appid_help'] = 'Create an application <a href="https://developers.facebook.com/apps" target="_blank" rel="noopener" class="bbc_link"><strong>here</strong></a>, copy its ID and fill this field.';
-$txt['optimus_tw_cards'] = 'Twitter account name (if you have)';
-$txt['optimus_tw_cards_help'] = 'Read more about Twitter cards <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener" class="bbc_link"><strong>here</strong></a>.';
+$txt['optimus_tw_cards'] = 'X account name (if you have)';
+$txt['optimus_tw_cards_help'] = 'Read more about X Cards <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener" class="bbc_link"><strong>here</strong></a>.';
 
 $txt['optimus_favicon_title'] = 'Favicon';
 $txt['optimus_favicon_desc'] = 'Create your own forum icon. It will be displayed by the browser as an image next to the open tab and other interface elements.';
@@ -144,8 +144,8 @@ $txt['optimus_thumbnail'] = 'Thumbnail';
 
 $txt['permissionname_optimus_add_descriptions'] = $txt['group_perms_name_optimus_add_descriptions'] = 'Add descriptions for topics';
 $txt['permissionhelp_optimus_add_descriptions'] = 'Ability to add a description when creating/editing a topic.';
-$txt['permissionname_optimus_add_keywords'] = $txt['group_perms_name_optimus_add_keywords'] = 'Add keywords for topics';
-$txt['permissionhelp_optimus_add_keywords'] = 'Ability to add keywords when creating/editing a topic.';
+$txt['permissionname_optimus_add_keywords'] = $txt['group_perms_name_optimus_add_keywords'] = 'Add tags for topics';
+$txt['permissionhelp_optimus_add_keywords'] = 'Ability to add tags when creating/editing a topic.';
 $txt['permissionname_optimus_add_descriptions_own'] = $txt['permissionname_optimus_add_keywords_own'] = 'Own topic';
 $txt['permissionname_optimus_add_descriptions_any'] = $txt['permissionname_optimus_add_keywords_any'] = 'Any topic';
 $txt['group_perms_name_optimus_add_descriptions_own'] = 'Add descriptions for own topics';
@@ -163,14 +163,14 @@ $txt['optimus_403_h3'] = 'You have no access to this page.';
 $txt['optimus_goto_main_page'] = 'Go to the <a class="bbc_link" href="%1$s">main page</a>.';
 $txt['optimus_seo_description'] = 'Description';
 $txt['optimus_enter_description'] = 'Enter a short description of this topic';
-$txt['optimus_seo_keywords'] = 'Keywords';
-$txt['optimus_enter_keywords'] = 'Enter one or more keywords';
+$txt['optimus_seo_keywords'] = 'Tags';
+$txt['optimus_enter_keywords'] = 'Enter one or more tags';
 /* Argument: $keyword_name */
-$txt['optimus_topics_with_keyword'] = 'Forum topics with keyword "%s"';
-$txt['optimus_keyword_id_not_found'] = 'The specified keyword ID was not found.';
-$txt['optimus_no_keywords'] = 'There is no information about this keyword identifier.';
-$txt['optimus_all_keywords'] = 'All keywords in the forum topics';
-$txt['optimus_keyword_column'] = 'Keyword';
+$txt['optimus_topics_with_keyword'] = 'Forum topics with tag "%s"';
+$txt['optimus_keyword_id_not_found'] = 'The specified tag ID was not found.';
+$txt['optimus_no_keywords'] = 'There is no information about this tag identifier.';
+$txt['optimus_all_keywords'] = 'All tags in the forum topics';
+$txt['optimus_keyword_column'] = 'Tag';
 $txt['optimus_frequency_column'] = 'Frequency';
 $txt['optimus_top_queries'] = 'Popular search queries';
 /* Argument: $i  */
