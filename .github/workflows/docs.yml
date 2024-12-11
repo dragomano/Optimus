@@ -53,6 +53,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd docs
           pnpm install --no-frozen-lockfile
 
       - name: Setup Pages
@@ -60,7 +61,7 @@ jobs:
 
       - name: Build with VitePress
         run: |
-          pnpm run docs:build
+          pnpm run build
 
   # Deployment job
   deploy:
