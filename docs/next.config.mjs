@@ -1,15 +1,17 @@
 import nextra from 'nextra';
 
-const withNextra = nextra({
+const nextConfig = {
   output: 'export',
   //basePath: '/Optimus',
+};
+
+const withNextra = nextra({
   theme: 'nextra-theme-docs',
   themeConfig: './theme.config.jsx',
-});
-
-export default withNextra({
   i18n: {
     locales: ['en', 'ru'],
     defaultLocale: 'en',
   },
 });
+
+export default withNextra(nextConfig)
