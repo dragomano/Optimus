@@ -1,0 +1,69 @@
+---
+title: Введение
+tableOfContents: false
+---
+
+Аддоны предназначены для взаимодействия с другими модификациями, например, с порталами. Зачем? А вот возникают иногда такие задачи, как добавление страниц порталов в карту форума. Набор установленных модификаций у всех разный, и, чтобы не забивать ядро Optimus всеми существующими хаками для поддержки всего и вся, соответствующий код и был вынесен в отдельные классы и файлы. Отныне при первом запуске Optimus проверяется и кэшируется (а затем регулярно синхронизируется) список установленных на форуме модификаций, и при обнаружении поддерживаемых задействуются соответствующие аддоны.
+
+Кроме того, есть собственные аддоны Optimus, добавляющие ту или иную фичу, например, расширенные настройки.
+
+Некоторые аддоны уже включены в дистрибутив Optimus, некоторые скачиваются и добавляются по желанию.
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+<CardGrid>
+    <LinkCard
+        title="ExtraSettings"
+        href="https://ko-fi.com/post/All-premium-addons-for-Optimus-U7U3VKQHJ"
+        description="несколько дополнительных настроек для Optimus (доступен для спонсоров проекта)"
+    />
+    <LinkCard
+        title="IndexNow"
+        href="https://ko-fi.com/post/All-premium-addons-for-Optimus-U7U3VKQHJ"
+        description="взаимодействие Optimus с поисковиками (доступен для спонсоров проекта)"
+    />
+    <LinkCard
+        title="EhPortal"
+        description="поддержка соответствующего портала генератором robots.txt и картой форума"
+    />
+    <LinkCard
+        title="ExampleAddon"
+        href="https://github.com/dragomano/Optimus/blob/main/src/Sources/Optimus/Addons/ExampleAddon.php"
+        description="пример аддона, вполне рабочий"
+    />
+    <LinkCard
+        title="EzPortal"
+        description="поддержка соответствующего портала генератором robots.txt и картой форума"
+    />
+    <LinkCard
+        title="LightPortal"
+        description="поддержка соответствующего портала генератором robots.txt и картой форума"
+    />
+    <LinkCard
+        title="PrettyUrls"
+        description="поддержка соответствующей модификации, чтобы ссылки в карте сайта выглядели как надо"
+    />
+    <LinkCard
+        title="SafeLinks"
+        href="https://github.com/dragomano/Optimus/blob/main/src/Sources/Optimus/Addons/SafeLinks.php"
+        description="все ссылки в сообщениях форума получают атрибут `rel='noopener noreferrer nofollow'`"
+    />
+    <LinkCard
+        title="SimpleSEF"
+        description="поддержка соответствующей модификации, чтобы ссылки в карте сайта выглядели как надо"
+    />
+    <LinkCard
+        title="StructuredData"
+        href="https://ko-fi.com/post/All-premium-addons-for-Optimus-U7U3VKQHJ"
+        description="генерация разметки Open Graph для «хлебных крошек» и тем форума (доступен для спонсоров проекта)"
+    />
+    <LinkCard
+        title="TinyPortal"
+        description="поддержка соответствующего портала генератором robots.txt и картой форума"
+    />
+    <LinkCard
+        title="TopicDescriptions"
+        href="https://github.com/dragomano/Optimus/blob/main/src/Sources/Optimus/Addons/TopicDescriptions.php"
+        description="поддержка описаний тем, созданных с помощью соответствующей модификации"
+    />
+</CardGrid>

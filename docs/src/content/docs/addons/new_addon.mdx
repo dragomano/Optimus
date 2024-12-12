@@ -1,0 +1,52 @@
+---
+title: How to Create Your Own Addon
+tableOfContents: false
+---
+
+Anyone interested can write their own addon. The main rule is to know at least the basics of working with PHP code (ideally, Object-Oriented Programming). In the repository, there is an [example of a simple addon](https://github.com/dragomano/Optimus/blob/main/src/Sources/Optimus/Addons/ExampleAddon.php), let's break it down:
+
+```php {6, 8-10, 18, 22}
+// ExampleAddon.php
+<?php declare(strict_types=1);
+
+final class ExampleAddon extends AbstractAddon
+{
+	public const PACKAGE_ID = 'Optimus:ExampleAddon';
+
+	public static array $events = [
+		self::HOOK_EVENT,
+	];
+
+	public function __invoke(AddonEvent $event): void
+	{
+		if ($event->eventName() !== self::HOOK_EVENT)
+			return;
+
+		IntegrationHook::add(
+			'integrate_theme_context', self::class . '::hideSomeTopicsFromSpiders#', false, __FILE__
+		);
+	}
+
+	public function hideSomeTopicsFromSpiders(): void
+	{
+		if (empty(Utils::$context['topicinfo']))
+			return;
+
+		if (Utils::$context['topicinfo']['locked'] || Utils::$context['topicinfo']['num_replies'] < 2) {
+			Utils::$context['meta_tags'][] = ['name' => 'robots', 'content' => 'noindex,nofollow'];
+		}
+	}
+}
+```
+
+The addon class must extend the existing abstract class `AbstractAddon` and have a constant `PACKAGE_ID` that specifies the package identifier. If the addon is intended to connect with an existing modification, its ID can be found in `package-info.xml` under the `id` node — for example, `<id>Bugo:Optimus</id>`.
+
+If it is a built-in Optimus addon, the identifier starts with `Optimus:`, followed by the name of the current class. If your addon is not related to any existing modification but you want it to work with Optimus, use a similar identifier.
+
+Next, in the static property `$events`, you specify an array that returns the events supported specifically by this addon. `self::HOOK_EVENT` is a [universal event](../events) designed for interaction with SMF hooks. An example of working with it is provided in the `__invoke` method.
+
+Using `IntegrationHook::add`, we specify the hook we need and link it to a method within the addon class.
+
+Then, the linked method performs its task. Specifically, in this addon — `ExampleAddon` — a meta tag `<meta name="robots" content="noindex,nofollow">` is added to the pages of blocked topics, as well as to topics with fewer than two replies. If you need such an addon, save its code in the corresponding file `ExampleAddon.php` and place it in the `Sources/Optimus/Addons` directory. You won't need to enable anything separately; it will work immediately.
+
+All available addons operate on the same principle.

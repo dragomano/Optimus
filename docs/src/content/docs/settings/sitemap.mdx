@@ -1,0 +1,61 @@
+---
+title: Sitemap
+---
+
+One of the most popular features of Optimus is the generation of an XML sitemap for the forum. This tab contains the settings for this generation.
+
+However, first and foremost, know that having a sitemap does not guarantee quick indexing of your forum, nor does it ensure increased traffic or popularity.
+
+Similarly, the absence of a particular link in the sitemap does not protect it from being indexed by search bots.
+
+Content is what matters most. Create interesting and valuable content, and people will come without any sitemap.
+
+import { Steps } from '@astrojs/starlight/components';
+
+## Available Settings
+---
+<Steps>
+1. ### Activate the Sitemap
+
+    No comments needed.
+
+2. ### Show the Sitemap Link on the Footer
+
+    Displays the "Sitemap" link immediately after the "Simple Machines Forum" text.
+
+3. ### Remove Previously Generated sitemap*.xml Files
+
+    An option for those who like order, so that old sitemaps are automatically cleaned up when generating a new one.
+
+4. ### The Update Frequency of the Main Page
+
+    Here you can directly specify how active your forum is.
+
+5. ### Add Links to Boards to the Sitemap
+
+    Do you need links to the sections?
+
+6. ### Add ALL Topic Pages to the Sitemap
+
+    For those who want more links in the sitemap.
+
+7. ### Add Links to Topics That Have the Number of Replies >= X
+
+    This option ensures that empty topics (with no replies or very few replies) do not make it into the sitemap. However, this does not protect them from indexing if bots notice them.
+
+8. ### Add Links to Detected Images to the Sitemap
+
+    If an image is found in the first post of a topic (either within the message or as an attachment), it will also be added to the sitemap.
+
+9. ### Maximum Number of Items Per Page
+
+    This is for pagination of `sitemap.xml` when viewed in a browser. It does not affect anything else.
+
+10. ### The Sitemap Must Contain Entries Starting from the Specified Year
+
+    This is for very large and old forums where many entries have accumulated, and it is important to index only the most recent ones.
+
+11. ### How Often the Sitemap is Updated
+
+    A key setting that affects the frequency of the background task that creates the sitemap.
+</Steps>

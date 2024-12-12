@@ -1,17 +1,18 @@
 {
+  "name": "optimus-docs",
+  "type": "module",
+  "version": "0.0.1",
   "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "next": "^15.0.4",
-    "nextra": "^3.2.5",
-    "nextra-theme-docs": "^3.2.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "22.10.1"
+    "@astrojs/starlight": "^0.29.3",
+    "astro": "^4.16.17",
+    "sharp": "^0.33.5",
+    "starlight-links-validator": "^0.13.4"
   }
 }
