@@ -7,6 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/dragomano/Optimus/badge.svg?branch=main)](https://coveralls.io/github/dragomano/Optimus?branch=main)
 ![PHP](https://img.shields.io/badge/PHP-^8.1-blue.svg?style=flat)
 [![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
+[![](https://img.shields.io/badge/Docs-Site-orange.svg)](https://dragomano.github.io/Optimus/)
 
 - **Tested on:** PHP 8.3.14 / MariaDB 11.2.2
 - **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian, Polish
