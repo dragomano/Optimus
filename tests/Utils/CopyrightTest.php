@@ -14,13 +14,8 @@ it('gets link for Russian language', function () {
 
 	$link = Copyright::getLink();
 
-	expect($link)->toContain('https://dragomano.ru/mods/optimus');
+	expect($link)->toContain('https://dragomano.ru/mods/optimus')
+		->and($link)->toContain(' &copy; 2010&ndash;' . date('Y') . ', Bugo');
 
 	unset(Lang::$txt['lang_dictionary']);
-});
-
-it('gets years', function () {
-	$years = Copyright::getYears();
-
-	expect($years)->toEqual(' &copy; 2010&ndash;' . date('Y') . ', Bugo');
 });

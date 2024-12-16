@@ -18,6 +18,7 @@ if (! defined('SMF'))
 final class HandlerLoader
 {
 	private array $handlers = [
+		CoreHandler::class,
 		SettingHandler::class,
 		BoardHandler::class,
 		TagHandler::class,
