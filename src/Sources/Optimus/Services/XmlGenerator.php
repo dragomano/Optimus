@@ -13,7 +13,6 @@
 namespace Bugo\Optimus\Services;
 
 use DOMException;
-use RuntimeException;
 use Spatie\ArrayToXml\ArrayToXml;
 
 class XmlGenerator implements XmlGeneratorInterface
@@ -45,7 +44,7 @@ class XmlGenerator implements XmlGeneratorInterface
 
 			return $arrayToXml->prettify()->toXml();
 		} catch (DOMException $e) {
-			throw new RuntimeException('XML generation failed: ' . $e->getMessage());
+			throw new XmlGeneratorException('Failed to generate sitemap xml: ' . $e->getMessage());
 		}
 	}
 
@@ -67,6 +66,9 @@ class XmlGenerator implements XmlGeneratorInterface
 		return $root;
 	}
 
+	/**
+	 * @throws DOMException
+	 */
 	private function prepareData(array $data, array $options): array
 	{
 		$isIndex = $options['isIndex'] ?? false;
@@ -77,8 +79,15 @@ class XmlGenerator implements XmlGeneratorInterface
 		];
 	}
 
+	/**
+	 * @throws DOMException
+	 */
 	private function prepareItem(array $item, bool $isIndex): array
 	{
+		if (empty($item['loc'])) {
+			throw new DOMException('URL of the item is requred!');
+		}
+
 		$prepared = [
 			'loc' => $item['loc'],
 		];

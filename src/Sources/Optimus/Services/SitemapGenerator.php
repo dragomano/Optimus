@@ -16,7 +16,6 @@ use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Compat\{Config, ErrorHandler};
 use Bugo\Compat\{IntegrationHook, Sapi, Theme};
 use Bugo\Optimus\Events\AddonEvent;
-use Exception;
 use League\Event\EventDispatcher;
 
 class SitemapGenerator
@@ -37,20 +36,14 @@ class SitemapGenerator
 
 	public function generate(): bool
 	{
-		try {
-			if (empty(Config::$modSettings['optimus_sitemap_enable']))
-				return false;
-
-			$this->initialize();
-			$this->removeOldFiles();
-			$this->createXml();
-
-			return true;
-		} catch (Exception $e) {
-			ErrorHandler::log(OP_NAME . ' says: Sitemap generation failed. ' . $e->getMessage(), 'critical');
-
+		if (empty(Config::$modSettings['optimus_sitemap_enable']))
 			return false;
-		}
+
+		$this->initialize();
+		$this->removeOldFiles();
+		$this->createXml();
+
+		return true;
 	}
 
 	private function initialize(): void
@@ -157,7 +150,9 @@ class SitemapGenerator
 					'loc'     => Config::$boardurl . '/' . $filename,
 					'lastmod' => date('Y-m-d'),
 				];
-			} catch (Exception $e) {
+			} catch (XmlGeneratorException $e) {
+				ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
+			} catch (FileSystemException $e) {
 				ErrorHandler::log(OP_NAME . ' says: Error creating ' . $filename . '. ' . $e->getMessage(), 'critical');
 			}
 		}
@@ -176,7 +171,9 @@ class SitemapGenerator
 			if (! empty($gzMaps)) {
 				$this->fileSystem->writeGzFile('sitemap.xml.gz', $indexXml);
 			}
-		} catch (Exception $e) {
+		} catch (XmlGeneratorException $e) {
+			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
+		} catch (FileSystemException $e) {
 			ErrorHandler::log(OP_NAME . ' says: Error creating sitemap index. ' . $e->getMessage(), 'critical');
 		}
 	}
@@ -196,8 +193,10 @@ class SitemapGenerator
 			if (function_exists('gzencode') && strlen($xml) > (self::MAX_FILESIZE)) {
 				$this->fileSystem->writeGzFile('sitemap.xml.gz', $xml);
 			}
-		} catch (Exception $e) {
-			ErrorHandler::log(OP_NAME . ' says: Error creating sitemap: ' . $e->getMessage(), 'critical');
+		} catch (XmlGeneratorException $e) {
+			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
+		} catch (FileSystemException $e) {
+			ErrorHandler::log(OP_NAME . ' says: Error creating sitemap. ' . $e->getMessage(), 'critical');
 		}
 	}
 
