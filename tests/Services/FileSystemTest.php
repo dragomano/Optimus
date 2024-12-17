@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Bugo\Optimus\Services\FileSystem;
+use Bugo\Optimus\Services\FileSystemException;
 
 beforeEach(function () {
 	$this->tempDir = sys_get_temp_dir() . '/optimus_test_' . uniqid();
@@ -28,7 +29,7 @@ describe('FileSystem', function () {
 	});
 
 	it('writes gzipped file successfully', function () {
-		if (!function_exists('gzopen')) {
+		if (! function_exists('gzopen')) {
 			$this->markTestSkipped('Gzip functions are not available');
 		}
 
@@ -51,7 +52,7 @@ describe('FileSystem', function () {
 
 		try {
 			expect(fn() => $fileSystem->writeFile('test.txt', 'content'))
-				->toThrow(RuntimeException::class);
+				->toThrow(FileSystemException::class);
 		} finally {
 			restore_error_handler();
 		}

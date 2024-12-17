@@ -121,7 +121,6 @@ describe('SitemapDataService', function () {
 
 		$topics = $topicsProperty->getValue($this->sitemapDataService);
 
-
 		expect($topics)->toHaveCount(2)
 			->and($topics[1])->toHaveKeys(['url', 'last_date', 'num_replies', 'subject'])
 			->and($topics[1]['subject'])->toBe('Test Topic')
