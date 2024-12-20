@@ -233,9 +233,6 @@ final class TopicHandler
 		$this->addFields();
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function addFields(): void
 	{
 		if (! $this->canChangeDescription() || empty(Utils::$context['is_first_post']))
@@ -273,9 +270,6 @@ final class TopicHandler
 		Utils::$context['meta_description'] = Utils::$context['topicinfo']['optimus_description'];
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function modifyDescription(int $topic): void
 	{
 		if (! $this->canChangeDescription())

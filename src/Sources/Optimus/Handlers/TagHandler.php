@@ -191,8 +191,7 @@ final class TagHandler
 		if (! $this->canChange())
 			return;
 
-		$keywords = Input::xss(Input::request('optimus_keywords', []));
-		$keywords = array_filter(explode(',', $keywords));
+		$keywords = $this->preparedKeywords();
 
 		$this->add($keywords, $topicOptions['id'], $posterOptions['id']);
 	}
@@ -245,12 +244,6 @@ final class TagHandler
 
 	public function showTheSame(): void
 	{
-		if (Utils::$context['current_subaction'] === 'search') {
-			$this->prepareSearchData();
-
-			return;
-		}
-
 		Theme::addInlineCss('
 		.main_icons.optimus::before {
 			background:url(' . Theme::$current->settings['default_images_url'] . '/optimus.png) no-repeat 0 0 !important;
@@ -583,6 +576,27 @@ final class TagHandler
 		return $keywords;
 	}
 
+	private function getAllKeywords(): array
+	{
+		if (($keywords = CacheApi::get('optimus_all_keywords', 3600)) === null) {
+			$result = Db::$db->query('', /** @lang text */ '
+				SELECT id, name
+				FROM {db_prefix}optimus_keywords',
+			);
+
+			$keywords = [];
+			while ($row = Db::$db->fetch_assoc($result)) {
+				$keywords[$row['id']] = $row['name'];
+			}
+
+			Db::$db->free_result($result);
+
+			CacheApi::put('optimus_all_keywords', $keywords, 3600);
+		}
+
+		return $keywords;
+	}
+
 	private function getNameById(int $id = 0): string
 	{
 		if (empty($id))
@@ -602,42 +616,6 @@ final class TagHandler
 		Db::$db->free_result($result);
 
 		return $name;
-	}
-
-	/**
-	 * @codeCoverageIgnore
-	 */
-	private function prepareSearchData(): never
-	{
-		$input = file_get_contents('php://input');
-		$data  = json_decode($input, true) ?? [];
-		$query = Utils::$smcFunc['htmltrim']($data['search'] ?? '');
-
-		if (empty($query))
-			exit;
-
-		$result = Db::$db->query('', '
-			SELECT id, name
-			FROM {db_prefix}optimus_keywords
-			WHERE name LIKE {string:search}
-			ORDER BY name DESC
-			LIMIT 10',
-			[
-				'search' => '%' . $query . '%',
-			]
-		);
-
-		$data = [];
-		while ($row = Db::$db->fetch_assoc($result)) {
-			$data[] = [
-				'id'   => $row['id'],
-				'name' => $row['name'],
-			];
-		}
-
-		Db::$db->free_result($result);
-
-		exit(json_encode($data));
 	}
 
 	private function getRandomColor(string $key): string
@@ -667,9 +645,6 @@ final class TagHandler
 		$this->loadAssets();
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function loadAssets(): void
 	{
 		Theme::loadCSSFile(
@@ -682,15 +657,17 @@ final class TagHandler
 			['external' => true]
 		);
 
-		$data = [];
-		foreach (Utils::$context['optimus']['keywords'] as $id => $name) {
+		$data = $values = [];
+		foreach ($this->getAllKeywords() as $id => $name) {
 			$data[] = [
 				'label' => $name,
-				'value' => $id,
+				'value' => 'key_' . $id,
 			];
-		}
 
-		$values = array_keys(Utils::$context['optimus_keywords'] ?? []);
+			if (isset(Utils::$context['optimus_keywords'][$id])) {
+				$values[] = Utils::escapeJavaScript('key_' . $id);
+			}
+		}
 
 		$maxTags = Config::$modSettings['optimus_max_allowed_tags'] ?? 10;
 
@@ -713,35 +690,10 @@ final class TagHandler
 			clearButtonText: "' . Lang::$txt['remove'] . '",
 			maxValues: ' . $maxTags . ',
 			options: ' . json_encode($data) . ',
-			selectedValue: [' . implode(',', $values) . '],
-			onServerSearch: async function (search, virtualSelect) {
-				try {
-					const response = await fetch(smf_scripturl + "?action=keywords;sa=search", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json"
-						},
-						body: JSON.stringify({ search })
-					});
-
-					if (!response.ok) {
-						console.error(response);
-					}
-
-					const data = await response.json();
-					const tags = data.map(tag => ({ label: tag.name, value: tag.id }));
-
-					virtualSelect.setServerOptions(tags);
-				} catch (error) {
-					virtualSelect.setServerOptions(false)
-				}
-			}
+			selectedValue: [' . implode(',', $values) . ']
 		});', true);
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function getIdByName(string $name): int
 	{
 		$result = Db::$db->query('', '
@@ -760,9 +712,6 @@ final class TagHandler
 		return (int) $id;
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function addToDatabase(string $keyword): int
 	{
 		return Db::$db->insert('insert',
@@ -801,16 +750,12 @@ final class TagHandler
 		);
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function modify(int $topic, int $user): void
 	{
 		if (! $this->canChange())
 			return;
 
-		$keywords = Input::xss(Input::request('optimus_keywords', []));
-		$keywords = array_filter(explode(',', $keywords));
+		$keywords = $this->preparedKeywords();
 
 		$this->displayTopic();
 
@@ -818,7 +763,7 @@ final class TagHandler
 
 		$newKeywords = [];
 		foreach ($keywords as $id) {
-			if (isset($currentKeywords[$id]) === false) {
+			if (! isset($currentKeywords[$id])) {
 				$newKeywords[] = $id;
 			}
 		}
@@ -827,7 +772,7 @@ final class TagHandler
 
 		$delKeywords = [];
 		foreach ($currentKeywords as $id => $name) {
-			if (in_array($id, $keywords) === false) {
+			if (! in_array('key_' . $id, $keywords)) {
 				$delKeywords[] = $id;
 			}
 		}
@@ -835,20 +780,19 @@ final class TagHandler
 		$this->remove($delKeywords, $topic);
 	}
 
-
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function add(array $keywords, int $topic, int $user): void
 	{
 		if (empty($keywords) || empty($topic) || empty($user))
 			return;
 
 		foreach ($keywords as $keyword) {
-			$id = is_int(intval($keyword)) ? (int) $keyword : $this->getIdByName($keyword);
+			$id = str_starts_with($keyword, 'key_')
+				? (int) ltrim($keyword, 'key_')
+				: $this->getIdByName($keyword);
 
-			if (empty($id))
+			if (empty($id)) {
 				$id = $this->addToDatabase($keyword);
+			}
 
 			$this->addNoteToLogTable($id, $topic, $user);
 		}
@@ -856,9 +800,6 @@ final class TagHandler
 		CacheApi::clean();
 	}
 
-	/**
-	 * @codeCoverageIgnore
-	 */
 	private function remove(array $keywords, int $topic): void
 	{
 		if (empty($keywords) || empty($topic))
@@ -879,6 +820,13 @@ final class TagHandler
 		);
 
 		CacheApi::clean();
+	}
+
+	private function preparedKeywords(): array
+	{
+		$keywords = Input::xss(Input::request('optimus_keywords', ''));
+
+		return array_filter(explode(',', $keywords));
 	}
 
 	private function canChange(): bool

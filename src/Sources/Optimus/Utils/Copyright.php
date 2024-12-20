@@ -30,10 +30,10 @@ final class Copyright
 			->setAttribute('target', '_blank')
 			->setAttribute('rel', 'noopener')
 			->setAttribute('title', OP_VERSION)
-			->toHtml() . self::getYears();
+			->toHtml();
 	}
 
-	protected static function getYears(): string
+	public static function getYears(): string
 	{
 		return ' &copy; 2010&ndash;' . date('Y') . ', Bugo';
 	}

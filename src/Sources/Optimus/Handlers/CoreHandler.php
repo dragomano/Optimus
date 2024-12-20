@@ -40,6 +40,6 @@ final class CoreHandler
 
 	public function credits(): void
 	{
-		Utils::$context['credits_modifications'][] = Copyright::getLink();
+		Utils::$context['credits_modifications'][] = Copyright::getLink() . Copyright::getYears();
 	}
 }
