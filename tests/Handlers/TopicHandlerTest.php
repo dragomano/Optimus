@@ -151,7 +151,7 @@ test('beforeCreateTopic method', function () {
 });
 
 test('modifyPost method', function () {
-	expect($this->handler->modifyPost([], [], [], []))->toBeNull();
+	expect($this->handler->modifyPost([], [], ['id' => 10], ['id' => 1, 'first_msg' => 10]))->toBeNull();
 });
 
 test('postEnd method - create', function () {

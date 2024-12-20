@@ -50,6 +50,9 @@ uses()->beforeAll(function () {
 	User::$info['language'] = 'english';
 
 	Lang::$txt['lang_dictionary'] = 'en';
+	Lang::$txt['no_matches'] = 'No matches';
+	Lang::$txt['search'] = 'Search';
+	Lang::$txt['remove'] = 'Remove';
 
 	Config::$boardurl = 'https://example.com';
 	Config::$scripturl = Config::$boardurl . '/index.php';
@@ -62,6 +65,7 @@ uses()->beforeAll(function () {
 
 	Utils::$context['forum_name'] = 'Test Forum';
 	Utils::$context['admin_menu_name'] = 'admin';
+	Utils::$context['right_to_left'] = false;
 
 	Utils::$smcFunc['substr'] = fn($string, $offset, $length) => substr($string, $offset, $length);
 	Utils::$smcFunc['strlen'] = fn($string) => strlen($string);
@@ -132,6 +136,7 @@ function cache_get_data(string $key, int $ttl = 120): ?array
 {
 	if ($key == 'optimus_search_terms') return null;
 	if ($key == 'optimus_topic_keywords') return null;
+	if ($key == 'optimus_all_keywords') return null;
 
 	return [];
 }

@@ -155,13 +155,26 @@ describe('searchParams method', function () {
 	});
 });
 
-it('checks showChart method', function () {
-	Config::$modSettings['optimus_log_search'] = true;
+describe('showChart method', function () {
+	it('checks case with disabled optimus_log_search', function () {
+		Utils::$context['template_layers'] = [];
 
-	Utils::$context['search_terms'] = [['test']];
+		Config::$modSettings['optimus_log_search'] = false;
 
-	$showChart = new ReflectionMethod($this->handler, 'showChart');
-	$showChart->invoke($this->handler);
+		$showChart = new ReflectionMethod($this->handler, 'showChart');
+		$showChart->invoke($this->handler);
 
-	expect(Utils::$context['template_layers'])->toContain('search_terms');
+		expect(Utils::$context['template_layers'])->toBeEmpty();
+	});
+
+	it('checks normal case', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		Utils::$context['search_terms'] = [['test']];
+
+		$showChart = new ReflectionMethod($this->handler, 'showChart');
+		$showChart->invoke($this->handler);
+
+		expect(Utils::$context['template_layers'])->toContain('search_terms');
+	});
 });

@@ -64,22 +64,35 @@ beforeEach(function () {
 				];
 			}
 
-			if (str_contains($query, 'SELECT name')) {
-				return ['Keyword 1'];
-			}
-
-			if (str_contains($query, 'WHERE name LIKE {string:search}')) {
+			if (str_contains($query, 'SELECT id, name')) {
 				return [
 					['id' => '1', 'name' => 'Keyword 1'],
 					['id' => '2', 'name' => 'Keyword 2'],
 				];
 			}
 
+			if (str_contains($query, 'SELECT name')) {
+				return ['Keyword 1'];
+			}
+
 			if (str_contains($query, 'WHERE name = {string:name}')) {
 				return ['id' => '1'];
 			}
 
+/* 			if (str_contains($query, 'DELETE FROM {db_prefix}optimus_log_keywords')) {
+				return ['1'];
+			} */
+
 			return [];
+		}
+
+		public function fetch_row($result): array|false|null
+		{
+			if ($result === ['id' => '1']) {
+				return ['1'];
+			}
+
+			return $result ?? false;
 		}
 	};
 });
@@ -191,6 +204,7 @@ test('messageindexButtons method', function () {
 
 test('prepareDisplayContext method', function () {
 	Config::$modSettings['optimus_show_keywords_block'] = false;
+	Config::$modSettings['optimus_use_color_tags'] = true;
 
 	expect($this->handler->prepareDisplayContext([]))->toBeNull();
 
@@ -211,7 +225,11 @@ test('prepareDisplayContext method', function () {
 });
 
 test('createTopic method', function () {
-	expect($this->handler->createTopic([], [], []))
+	Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
+
+	$_REQUEST['optimus_keywords'] = 'key_1,key_2';
+
+	expect($this->handler->createTopic([], ['id' => 1], ['id' => 1]))
 		->toBeNull();
 });
 
@@ -234,6 +252,7 @@ describe('postEnd method', function () {
 		Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
 
 		Utils::$context['is_new_topic'] = true;
+		Utils::$context['is_first_post'] = true;
 
 		$this->request = Request::createFromGlobals();
 		$this->request->request->set('optimus_keywords', 'bar');
@@ -329,4 +348,60 @@ describe('displayTopic method', function () {
 
 		expect(isset(Utils::$context['optimus_keywords']))->toBeFalse();
 	});
+});
+
+test('getAllKeywords method', function () {
+	$getAllKeywords = new ReflectionMethod($this->handler, 'getAllKeywords');
+	$result = $getAllKeywords->invoke($this->handler);
+
+	expect($result)->toBeArray();
+});
+
+test('loadAssets method', function () {
+	$loadAssets = new ReflectionMethod($this->handler, 'loadAssets');
+	$loadAssets->invoke($this->handler);
+
+	expect(Utils::$context['css_files'])->toHaveKey('virtual-select.min_css')
+		->and(Utils::$context['javascript_files'])->toHaveKey('virtual-select.min_js');
+});
+
+test('getIdByName method', function () {
+	$getIdByName = new ReflectionMethod($this->handler, 'getIdByName');
+	$result = $getIdByName->invoke($this->handler, 'id');
+
+	expect($result)->toBe(1);
+});
+
+test('addToDatabase method', function () {
+	$addToDatabase = new ReflectionMethod($this->handler, 'addToDatabase');
+	$result = $addToDatabase->invoke($this->handler, 'test');
+
+	expect($result)->toBe(1);
+});
+
+test('preparedKeywords method', function () {
+	$_REQUEST['optimus_keywords'] = 'foo,bar';
+
+	$preparedKeywords = new ReflectionMethod($this->handler, 'preparedKeywords');
+	$result = $preparedKeywords->invoke($this->handler);
+
+	expect($result)->toBe(['foo', 'bar']);
+});
+
+test('modify method', function () {
+	Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
+
+	$_REQUEST['optimus_keywords'] = 'key_1,key_2';
+
+	$modify = new ReflectionMethod($this->handler, 'modify');
+	$result = $modify->invoke($this->handler, 1, 1);
+
+	expect($result)->toBeNull();
+});
+
+test('remove method', function () {
+	$remove = new ReflectionMethod($this->handler, 'remove');
+	$result = $remove->invoke($this->handler, [1, 2], 1);
+
+	expect($result)->toBeNull();
 });
