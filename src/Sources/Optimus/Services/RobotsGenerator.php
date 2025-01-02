@@ -20,6 +20,10 @@ use League\Event\EventDispatcher;
 
 final class RobotsGenerator
 {
+	public const RULE_DISALLOW = 'Disallow';
+
+	public const RULE_ALLOW = 'Allow';
+
 	public const MAP_FILE = 'sitemap.xml';
 
 	public const MAP_GZ_FILE = 'sitemap.xml.gz';
@@ -35,21 +39,27 @@ final class RobotsGenerator
 
 	public string $urlPath = '';
 
-	private array $rules = [];
+	private array $rules = [
+		'*' => [
+			self::RULE_DISALLOW => [],
+			self::RULE_ALLOW    => [],
+		],
+	];
+
+	private array $sitemaps = [];
 
 	private readonly EventDispatcher $dispatcher;
 
 	public function __construct()
 	{
 		$this->dispatcher = (new DispatcherFactory())();
+
+		$this->urlPath = parse_url(Config::$boardurl, PHP_URL_PATH) ?? '';
 	}
 
 	public function generate(): void
 	{
 		clearstatcache();
-
-		$this->urlPath = parse_url(Config::$boardurl, PHP_URL_PATH) ?? '';
-		$this->rules[] = 'User-agent: *';
 
 		// You can change generated rules
 		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::ROBOTS_RULES, $this));
@@ -57,55 +67,84 @@ final class RobotsGenerator
 		// External integrations
 		call_integration_hook('integrate_optimus_robots_rules', [&$this->customRules, $this->urlPath]);
 
-		$this->addRules();
+		$this->addBaseRules();
 		$this->addFeeds();
 		$this->addAssets();
 		$this->addSitemaps();
 
-		$content = implode('<br>', str_replace("|", '', $this->rules));
+		$content = $this->generateContent();
 		Utils::$context['new_robots_content'] = BBCodeParser::load()->parse('[code]' . $content . '[/code]');
 	}
 
-	private function addRules(): void
+	private function addBaseRules(): void
+	{
+		$this->addActionsRules();
+		$this->addSessionRules();
+		$this->addFrontPageRule();
+		$this->addContentRules();
+
+		foreach ($this->customRules as $userAgent => $rules) {
+			if (! isset($this->rules[$userAgent])) {
+				$this->rules[$userAgent] = [self::RULE_DISALLOW => [], self::RULE_ALLOW => []];
+			}
+
+			$this->rules[$userAgent][self::RULE_DISALLOW] = array_merge($this->rules[$userAgent][self::RULE_DISALLOW], $rules[self::RULE_DISALLOW] ?? []);
+			$this->rules[$userAgent][self::RULE_ALLOW] = array_merge($this->rules[$userAgent][self::RULE_ALLOW], $rules[self::RULE_ALLOW] ?? []);
+		}
+	}
+
+	private function addActionsRules(): void
 	{
 		if ($this->useSef) {
 			foreach ($this->actions as $action) {
-				$this->rules[] = 'Disallow: ' . $this->urlPath . '/' . $action . '/';
+				$this->rules['*'][self::RULE_DISALLOW][] = $this->urlPath . '/' . $action . '/';
 			}
 		} else {
-			$this->rules[] = 'Disallow: ' . $this->urlPath . '/*action';
+			$this->rules['*'][self::RULE_DISALLOW][] = $this->urlPath . '/*action';
 		}
+	}
 
-		$this->rules[] = 'Disallow: ' . $this->urlPath . '/*PHPSESSID';
+	private function addSessionRules(): void
+	{
+		$this->rules['*'][self::RULE_DISALLOW][] = $this->urlPath . '/*PHPSESSID';
+	}
 
-		if (! $this->useSef) {
-			$this->rules[] = 'Disallow: ' . $this->urlPath . '/*;';
+	private function addFrontPageRule(): void
+	{
+		$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/$';
+	}
+
+	private function addContentRules(): void
+	{
+		if ($this->useSef)
+			return;
+
+		$this->rules['*'][self::RULE_DISALLOW][] = $this->urlPath . '/*;';
+
+		if (empty(Config::$modSettings['queryless_urls'])) {
+			$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/*board=*.0$';
+			$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/*topic=*.0$';
+		} else {
+			$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/*board,*.0.html$';
+			$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/*topic,*.0.html$';
 		}
-
-		// Front page
-		$this->rules[] = 'Allow: ' . $this->urlPath . '/$';
-
-		// Content
-		if (! $this->useSef) {
-			if (empty(Config::$modSettings['queryless_urls'])) {
-				$this->rules[] = 'Allow: ' . $this->urlPath . "/*board=*.0$\nAllow: " . $this->urlPath . '/*topic=*.0$';
-			} else {
-				$this->rules[] = 'Allow: ' . $this->urlPath . "/*board,*.0.html$\nAllow: " . $this->urlPath . '/*topic,*.0.html$';
-			}
-		}
-
-		// Add custom rules
-		$this->rules = array_merge($this->rules, $this->customRules);
 	}
 
 	private function addFeeds(): void
 	{
-		$this->rules[] = empty(Config::$modSettings['xmlnews_enable']) ? '' : 'Allow: ' . $this->urlPath . '/*.xml';
+		if (empty(Config::$modSettings['xmlnews_enable']))
+			return;
+
+		$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/*.xml';
 	}
 
 	private function addAssets(): void
 	{
-		$this->rules[] = "Allow: /*.css$\nAllow: /*.js$\nAllow: /*.png$\nAllow: /*.jpg$\nAllow: /*.gif$";
+		$assets = ['.css$', '.js$', '.png$', '.jpg$', '.gif$'];
+
+		foreach ($assets as $asset) {
+			$this->rules['*'][self::RULE_ALLOW][] = '/*' . $asset;
+		}
 	}
 
 	private function addSitemaps(): void
@@ -118,12 +157,37 @@ final class RobotsGenerator
 			? Config::$boardurl . '/' . self::MAP_GZ_FILE
 			: '';
 
-		if (! empty($mapFile) || ! empty($mapGzFile))
-			$this->rules[] = '|';
+		if (! empty($mapFile) || ! empty($mapGzFile)) {
+			if (! empty($mapFile)) {
+				$this->sitemaps[] = $mapFile;
+			}
 
-		if (! empty($mapGzFile))
-			$this->rules[] = 'Sitemap: ' . $mapGzFile;
-		elseif (! empty($mapFile))
-			$this->rules[] = 'Sitemap: ' . $mapFile;
+			if (! empty($mapGzFile)) {
+				$this->sitemaps[] = $mapGzFile;
+			}
+		}
+	}
+
+	private function generateContent(): string
+	{
+		$output = '';
+
+		foreach ($this->rules as $userAgent => $rules) {
+			$output .= "User-agent: $userAgent\n";
+
+			foreach ([self::RULE_DISALLOW, self::RULE_ALLOW] as $ruleType) {
+				foreach ($rules[$ruleType] as $rule) {
+					$output .= $ruleType . ": $rule\n";
+				}
+			}
+
+			$output .= "\n";
+		}
+
+		foreach ($this->sitemaps as $sitemap) {
+			$output .= "Sitemap: $sitemap\n";
+		}
+
+		return $output;
 	}
 }

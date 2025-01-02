@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 01.12.24
+ * @version 02.01.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -42,9 +42,9 @@ final class EzPortal extends AbstractAddon
 	{
 		global $ezpSettings;
 
-		$robots->customRules[] = empty($ezpSettings['ezp_pages_seourls'])
-			? "Allow: " . $robots->urlPath . "/*ezportal;sa=page;p=*"
-			: "Allow: " . $robots->urlPath . "/pages/";
+		$robots->customRules['*'][$robots::RULE_ALLOW][] = empty($ezpSettings['ezp_pages_seourls'])
+			? $robots->urlPath . '/*ezportal;sa=page;p=*'
+			: $robots->urlPath . '/pages/';
 	}
 
 	public function changeSitemap(SitemapGenerator $sitemap): void

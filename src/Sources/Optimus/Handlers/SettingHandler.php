@@ -427,7 +427,8 @@ final class SettingHandler
 		$config_vars = [];
 
 		$path = (Input::server('document_root') ?: Config::$boarddir) . '/robots.txt';
-		Utils::$context['robots_content'] = is_writable($path) ? file_get_contents($path) : '';
+
+		Utils::$context['robots_content'] = Utils::makeWritable($path) ? file_get_contents($path) : '';
 
 		(new RobotsGenerator())->generate();
 
@@ -454,7 +455,8 @@ final class SettingHandler
 		$config_vars = [];
 
 		$path = (Input::server('document_root') ?: Config::$boarddir) . '/.htaccess';
-		Utils::$context['htaccess_content'] = is_writable($path) ? file_get_contents($path) : '';
+
+		Utils::$context['htaccess_content'] = Utils::makeWritable($path) ? file_get_contents($path) : '';
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
