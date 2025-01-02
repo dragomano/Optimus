@@ -212,3 +212,20 @@ it('allows adding custom links through event dispatcher', function () {
 		->toContain('<loc>https://example.com/custom</loc>')
 		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue();
 });
+
+it('gets last date from links array', function () {
+	$maxDate = time();
+	$links = [
+		['loc' => 'https://example.com/page1', 'lastmod' => strtotime('-3 days', $maxDate)],
+		['loc' => 'https://example.com/page2', 'lastmod' => $maxDate]
+	];
+
+	$method = new ReflectionMethod($this->generator, 'getLastDate');
+	$result = $method->invoke($this->generator, $links);
+
+	expect($result)->toBe($maxDate);
+
+	$result = $method->invoke($this->generator, []);
+
+	expect($result)->toBe($maxDate);
+});
