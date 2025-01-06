@@ -17,3 +17,5 @@ src/Sources/Optimus/Addons/StructuredData.php
 
 src/Sources/Optimus/Libs/*
 !src/Sources/Optimus/Libs/index.php
+
+*.zip
