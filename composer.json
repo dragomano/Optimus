@@ -7,6 +7,7 @@
   "require-dev": {
     "bugo/smf-compat": "^0.2",
     "pestphp/pest": "^2.36",
+    "phing/phing": "^3.0",
     "rector/rector": "^2.0",
     "symfony/http-foundation": "^6.4"
   },
@@ -27,7 +28,11 @@
     "tests-coverage": "vendor/bin/pest --colors=always --coverage --min=90",
     "tests-coverage-clover": "vendor/bin/pest --colors=always --min=90 --coverage-clover coverage.xml",
     "tests-coverage-html": "vendor/bin/pest --colors=always --min=90 --coverage-html coverage",
-    "post-update-cmd": "cd src/Sources/Optimus && composer update --no-dev -o"
+    "post-update-cmd": "cd src/Sources/Optimus && composer update --no-dev -o",
+    "build": [
+      "composer update",
+      "vendor/bin/phing"
+    ]
   },
   "config": {
     "allow-plugins": {
