@@ -12,7 +12,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{CacheApi, Db, IntegrationHook};
+use Bugo\Compat\Cache\CacheApi;
+use Bugo\Compat\{Db, IntegrationHook};
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\ListenerRegistry;
 use League\Event\ListenerSubscriber;

@@ -13,8 +13,8 @@
 namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Board, Config, IntegrationHook};
-use Bugo\Compat\{BBCodeParser, Lang, Theme};
-use Bugo\Compat\{Db, Topic, User, Utils};
+use Bugo\Compat\{Lang, Theme, Db, Topic, User, Utils};
+use Bugo\Compat\Parsers\BBCodeParser;
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))

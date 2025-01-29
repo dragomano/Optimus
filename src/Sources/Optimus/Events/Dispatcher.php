@@ -12,19 +12,12 @@
 
 namespace Bugo\Optimus\Events;
 
-if (! defined('SMF'))
-	die('No direct access...');
+use League\Event\EventDispatcher;
 
-final class DispatcherFactory
+final class Dispatcher extends EventDispatcher
 {
-	private static Dispatcher $dispatcher;
-
-	public function __invoke(): Dispatcher
+	public function dispatchEvent(string $name, mixed $target): object
 	{
-		if (! isset(self::$dispatcher)) {
-			self::$dispatcher = new Dispatcher();
-		}
-
-		return self::$dispatcher;
+		return $this->dispatch(new AddonEvent($name, $target));
 	}
 }

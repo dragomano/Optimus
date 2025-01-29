@@ -56,15 +56,10 @@ final class MetaHandler
 		}
 
 		$this->prepareOgImageTags($tags);
-
 		$this->prepareOgCustomType($tags);
-
 		$this->prepareOgProfile($tags);
-
 		$this->prepareOgTwitter($tags);
-
 		$this->prepareOgFacebook($tags);
-
 		$this->prepareMetaTags($tags);
 
 		Utils::$context['meta_tags'] = $tags;

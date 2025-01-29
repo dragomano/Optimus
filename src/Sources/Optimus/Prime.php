@@ -13,7 +13,6 @@
 namespace Bugo\Optimus;
 
 use Bugo\Optimus\Addons\AddonInterface;
-use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Events\DispatcherFactory;
 use Bugo\Optimus\Handlers\HandlerLoader;
 
@@ -29,6 +28,6 @@ final class Prime
 
 	public function __invoke(): void
 	{
-		(new DispatcherFactory())()->dispatch(new AddonEvent(AddonInterface::HOOK_EVENT, $this));
+		(new DispatcherFactory())()->dispatchEvent(AddonInterface::HOOK_EVENT, $this);
 	}
 }

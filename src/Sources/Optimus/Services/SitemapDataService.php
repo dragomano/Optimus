@@ -13,6 +13,7 @@
 namespace Bugo\Optimus\Services;
 
 use Bugo\Compat\{Config, Db};
+use Bugo\Optimus\Enums\Entity;
 
 class SitemapDataService
 {
@@ -65,11 +66,7 @@ class SitemapDataService
 			if (empty(Config::$modSettings['optimus_sitemap_boards']))
 				continue;
 
-			$boardUrl = Config::$scripturl . '/board,' . $row['id_board'] . '.0.html';
-
-			if (empty(Config::$modSettings['queryless_urls'])) {
-				$boardUrl = Config::$scripturl . '?board=' . $row['id_board'] . '.0';
-			}
+			$boardUrl = Entity::BOARD->buildUrl($row['id_board'] . '.0');
 
 			$links[] = [
 				'loc'     => $boardUrl,
@@ -219,10 +216,6 @@ class SitemapDataService
 		$start = $page * $messagesPerPage;
 		$suffix = $start === 0 ? '.0' : '.' . $start;
 
-		if (empty(Config::$modSettings['queryless_urls'])) {
-			return Config::$scripturl . '?topic=' . $topicId . $suffix;
-		}
-
-		return Config::$scripturl . '/topic,' . $topicId . $suffix . '.html';
+		return Entity::TOPIC->buildUrl($topicId . $suffix);
 	}
 }

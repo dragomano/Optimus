@@ -10,21 +10,9 @@
  * @version 3.0 RC2
  */
 
-namespace Bugo\Optimus\Events;
+namespace Bugo\Optimus\Enums;
 
-if (! defined('SMF'))
-	die('No direct access...');
-
-final class DispatcherFactory
+enum Action: string
 {
-	private static Dispatcher $dispatcher;
-
-	public function __invoke(): Dispatcher
-	{
-		if (! isset(self::$dispatcher)) {
-			self::$dispatcher = new Dispatcher();
-		}
-
-		return self::$dispatcher;
-	}
+	case XSL = 'sitemap_xsl';
 }

@@ -12,7 +12,8 @@
 
 namespace Bugo\Optimus\Utils;
 
-use Bugo\Compat\{BBCodeParser, IntegrationHook, Utils};
+use Bugo\Compat\{IntegrationHook, Utils};
+use Bugo\Compat\Parsers\BBCodeParser;
 use Nette\Utils\Html;
 
 if (! defined('SMF'))

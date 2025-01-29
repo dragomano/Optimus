@@ -12,6 +12,7 @@
 
 namespace Bugo\Optimus\Services;
 
+use Bugo\Optimus\Enums\Action;
 use DOMException;
 use Spatie\ArrayToXml\ArrayToXml;
 
@@ -60,6 +61,10 @@ class XmlGenerator implements XmlGeneratorInterface
 
 			if ($options['images'] ?? false) {
 				$root['_attributes']['xmlns:image'] = 'http://www.google.com/schemas/sitemap-image/1.1';
+			}
+
+			if ($options['videos'] ?? false) {
+				$root['_attributes']['xmlns:video'] = 'http://www.google.com/schemas/sitemap-video/1.1';
 			}
 		}
 
@@ -112,6 +117,10 @@ class XmlGenerator implements XmlGeneratorInterface
 			if (isset($item['image:image'])) {
 				$prepared['image:image'] = $item['image:image'];
 			}
+
+			if (isset($item['video:video'])) {
+				$prepared['video:video'] = $item['video:video'];
+			}
 		}
 
 		return array_filter($prepared);
@@ -121,7 +130,7 @@ class XmlGenerator implements XmlGeneratorInterface
 	{
 		$arrayToXml->addProcessingInstruction(
 			'xml-stylesheet',
-			'type="text/xsl" href="' . $this->scripturl . '?action=sitemap_xsl"'
+			'type="text/xsl" href="' . $this->scripturl . '?action=' . Action::XSL->value . '"'
 		);
 	}
 }

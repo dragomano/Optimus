@@ -12,11 +12,13 @@
 
 namespace Bugo\Optimus\Services;
 
-use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Compat\{Config, ErrorHandler};
 use Bugo\Compat\{IntegrationHook, Sapi, Theme};
-use Bugo\Optimus\Events\AddonEvent;
-use League\Event\EventDispatcher;
+use Bugo\Optimus\Addons\AddonInterface;
+use Bugo\Optimus\Enums\Frequency;
+use Bugo\Optimus\Enums\Priority;
+use Bugo\Optimus\Enums\SitemapFeature;
+use Bugo\Optimus\Events\Dispatcher;
 
 class SitemapGenerator
 {
@@ -24,13 +26,17 @@ class SitemapGenerator
 
 	public const MAX_FILESIZE = 50 * 1024 * 1024;
 
+	public const XML_FILE = 'sitemap.xml';
+
+	public const XML_GZ_FILE = 'sitemap.xml.gz';
+
 	public array $links = [];
 
 	public function __construct(
 		private readonly SitemapDataService    $dataService,
 		private readonly FileSystemInterface   $fileSystem,
 		private readonly XmlGeneratorInterface $xmlGenerator,
-		private readonly EventDispatcher       $dispatcher,
+		private readonly Dispatcher            $dispatcher,
 		public readonly int                    $startYear = 0,
 	) {}
 
@@ -95,9 +101,9 @@ class SitemapGenerator
 		return array_merge([
 			'loc'        => $entry['loc'],
 			'lastmod'    => $entry['lastmod'] ? $this->getDateIso8601($entry['lastmod']) : null,
-			'changefreq' => $entry['lastmod'] ? $this->getFrequency($entry['lastmod']) : null,
-			'priority'   => $entry['lastmod'] ? $this->getPriority($entry['lastmod']) : null,
-		], $this->getImageData($entry));
+			'changefreq' => $entry['lastmod'] ? Frequency::fromTimestamp($entry['lastmod'])->value : null,
+			'priority'   => $entry['lastmod'] ? Priority::fromTimestamp($entry['lastmod'])->value : null,
+		], $this->getImageData($entry), $this->getVideoData($entry));
 	}
 
 	private function getImageData(array $entry): array
@@ -105,13 +111,18 @@ class SitemapGenerator
 		return empty($entry['image']) ? [] : ['image:image' => $entry['image']];
 	}
 
+	private function getVideoData(array $entry): array
+	{
+		return empty($entry['video']) ? [] : ['video:video' => $entry['video']];
+	}
+
 	private function processItems(array $items, int $sitemapCounter): void
 	{
 		if (empty(Config::$modSettings['optimus_main_page_frequency'])) {
-			$items[0][0]['changefreq'] = 'always';
+			$items[0][0]['changefreq'] = Frequency::Always->value;
 		}
 
-		$items[0][0]['priority'] = '1.0';
+		$items[0][0]['priority'] = Priority::Supreme->value;
 
 		if ($sitemapCounter > 0) {
 			$this->processMultipleSitemaps($items, $sitemapCounter);
@@ -132,12 +143,9 @@ class SitemapGenerator
 			$filename = 'sitemap_' . $i . '.xml';
 
 			try {
-				$xml = $this->xmlGenerator->generate($items[$i], [
-					'mobile' => ! empty(Config::$modSettings['optimus_sitemap_mobile']),
-					'images' => ! empty(Config::$modSettings['optimus_sitemap_add_found_images']),
-				]);
+				$xml = $this->xmlGenerator->generate($items[$i], SitemapFeature::getOptions());
 
-				$this->prepareContent($xml);
+				$this->handleContent($xml);
 
 				$this->fileSystem->writeFile($filename, $xml);
 
@@ -166,10 +174,10 @@ class SitemapGenerator
 				'isIndex'     => true,
 			]);
 
-			$this->fileSystem->writeFile('sitemap.xml', $indexXml);
+			$this->fileSystem->writeFile(self::XML_FILE, $indexXml);
 
 			if (! empty($gzMaps)) {
-				$this->fileSystem->writeGzFile('sitemap.xml.gz', $indexXml);
+				$this->fileSystem->writeGzFile(self::XML_GZ_FILE, $indexXml);
 			}
 		} catch (XmlGeneratorException $e) {
 			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
@@ -181,17 +189,14 @@ class SitemapGenerator
 	private function processSingleSitemap(array $items): void
 	{
 		try {
-			$xml = $this->xmlGenerator->generate($items, [
-				'mobile' => ! empty(Config::$modSettings['optimus_sitemap_mobile']),
-				'images' => ! empty(Config::$modSettings['optimus_sitemap_add_found_images']),
-			]);
+			$xml = $this->xmlGenerator->generate($items, SitemapFeature::getOptions());
 
-			$this->prepareContent($xml);
+			$this->handleContent($xml);
 
-			$this->fileSystem->writeFile('sitemap.xml', $xml);
+			$this->fileSystem->writeFile(self::XML_FILE, $xml);
 
 			if (function_exists('gzencode') && strlen($xml) > (self::MAX_FILESIZE)) {
-				$this->fileSystem->writeGzFile('sitemap.xml.gz', $xml);
+				$this->fileSystem->writeGzFile(self::XML_GZ_FILE, $xml);
 			}
 		} catch (XmlGeneratorException $e) {
 			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
@@ -205,7 +210,7 @@ class SitemapGenerator
 		$this->links = array_merge($this->dataService->getBoardLinks(), $this->dataService->getTopicLinks());
 
 		// You can add custom links
-		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_LINKS, $this));
+		$this->dispatcher->dispatchEvent(AddonInterface::SITEMAP_LINKS, $this);
 
 		// External integrations
 		IntegrationHook::call('integrate_optimus_sitemap_links', [&$this->links]);
@@ -219,7 +224,7 @@ class SitemapGenerator
 		];
 
 		// You can process links with SEF handler
-		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::CREATE_SEF_URLS, $this));
+		$this->dispatcher->dispatchEvent(AddonInterface::CREATE_SEF_URLS, $this);
 
 		array_unshift($this->links, $home);
 
@@ -251,39 +256,9 @@ class SitemapGenerator
 		return date('Y-m-d\TH:i:s', $timestamp) . $gmt;
 	}
 
-	private function getFrequency(int $timestamp): string
-	{
-		$frequency = time() - $timestamp;
-
-		if ($frequency < (24 * 60 * 60))
-			return 'hourly';
-		elseif ($frequency < (24 * 60 * 60 * 7))
-			return 'daily';
-		elseif ($frequency < (24 * 60 * 60 * 7 * (52 / 12)))
-			return 'weekly';
-		elseif ($frequency < (24 * 60 * 60 * 365))
-			return 'monthly';
-
-		return 'yearly';
-	}
-
-	private function getPriority(int $timestamp): string
-	{
-		$diff = floor((time() - $timestamp) / 60 / 60 / 24);
-
-		if ($diff <= 30)
-			return '0.8';
-		elseif ($diff <= 60)
-			return '0.6';
-		elseif ($diff <= 90)
-			return '0.4';
-
-		return '0.2';
-	}
-
-	private function prepareContent(string &$xml): void
+	private function handleContent(string &$xml): void
 	{
 		// Some mods want to rewrite whole content (PrettyURLs)
-		$this->dispatcher->dispatch(new AddonEvent(AddonInterface::SITEMAP_CONTENT, new SitemapContent($xml)));
+		$this->dispatcher->dispatchEvent(AddonInterface::SITEMAP_CONTENT, new SitemapContent($xml));
 	}
 }

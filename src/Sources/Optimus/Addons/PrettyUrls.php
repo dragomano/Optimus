@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 01.12.24
+ * @version 29.01.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -60,8 +60,9 @@ final class PrettyUrls extends AbstractAddon
 		if (! file_exists($pretty) || empty(Config::$modSettings['pretty_enable_filters']))
 			return;
 
-		if (! function_exists('pretty_rewrite_buffer'))
+		if (! function_exists('pretty_rewrite_buffer')) {
 			require_once($pretty);
+		}
 
 		if (! isset(Utils::$context['session_var'])) {
 			Utils::$context['session_var'] = substr(
@@ -79,5 +80,12 @@ final class PrettyUrls extends AbstractAddon
 		if (function_exists('pretty_rewrite_buffer')) {
 			$content->xml = pretty_rewrite_buffer($content->xml);
 		}
+	}
+}
+
+if (! function_exists('pretty_rewrite_buffer')) {
+	function pretty_rewrite_buffer(string $buffer): string
+	{
+		return $buffer;
 	}
 }

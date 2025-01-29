@@ -14,6 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Config, IntegrationHook};
 use Bugo\Compat\{Lang, Theme, Utils};
+use Bugo\Optimus\Enums\Action;
 use Bugo\Optimus\Utils\Str;
 
 if (! defined('SMF'))
@@ -38,7 +39,7 @@ final class SitemapLinkHandler
 
 	public function actions(array &$actions): void
 	{
-		$actions['sitemap_xsl'] = [false, $this->xsl(...)];
+		$actions[Action::XSL->value] = [false, $this->xsl(...)];
 	}
 
 	public function xsl(): void
@@ -78,7 +79,7 @@ final class SitemapLinkHandler
 
 	public function preLogStats(array &$no_stat_actions): void
 	{
-		$no_stat_actions['sitemap_xsl'] = true;
+		$no_stat_actions[Action::XSL->value] = true;
 	}
 
 	public function addLink(): void
