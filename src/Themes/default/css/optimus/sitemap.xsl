@@ -53,7 +53,7 @@
 				display: block;
 				margin: 1px !important;
 			}
-			thead, td:first-child {
+			thead {
 				display: none;
 			}
 			td {
@@ -89,13 +89,13 @@
 			</thead>
 			<tbody>
 				<xsl:for-each select="sm:sitemap">
-				<tr class="windowbg">
-					<xsl:variable name="loc"><xsl:value-of select="sm:loc"/></xsl:variable>
-					<xsl:variable name="pno"><xsl:value-of select="position()"/></xsl:variable>
-					<td><xsl:value-of select="$pno"/></td>
-					<td><a href="{$loc}"><xsl:value-of select="sm:loc"/></a></td>
-					<xsl:apply-templates/>
-				</tr>
+					<tr class="windowbg">
+						<xsl:variable name="loc"><xsl:value-of select="sm:loc"/></xsl:variable>
+						<xsl:variable name="pno"><xsl:value-of select="position()"/></xsl:variable>
+						<td><xsl:value-of select="$pno"/></td>
+						<td><a href="{$loc}"><xsl:value-of select="sm:loc"/></a></td>
+						<xsl:apply-templates/>
+					</tr>
 				</xsl:for-each>
 			</tbody>
 		</table>
@@ -111,43 +111,78 @@
 					<xsl:if test="sm:url/sm:lastmod"><th>{last_modified}</th></xsl:if>
 					<xsl:if test="sm:url/sm:changefreq"><th>{frequency}</th></xsl:if>
 					<xsl:if test="sm:url/sm:priority"><th>{priority}</th></xsl:if>
-					<xsl:if test="sm:url/image:image/image:loc"><th>{direct_link}</th></xsl:if>
-					<xsl:if test="sm:url/video:video/video:content_loc"><th>{direct_link}</th></xsl:if>
-					<xsl:if test="sm:url/video:video/video:thumbnail_loc"><th>{thumbnail}</th></xsl:if>
-					<xsl:if test="sm:url/video:video/video:title"><th>{caption}</th></xsl:if>
 				</tr>
 			</thead>
 			<tbody>
 				<xsl:for-each select="sm:url">
-				<tr class="windowbg">
 					<xsl:variable name="loc"><xsl:value-of select="sm:loc"/></xsl:variable>
 					<xsl:variable name="pno"><xsl:value-of select="position()"/></xsl:variable>
-					<td><xsl:value-of select="$pno"/></td>
-					<td><a href="{$loc}"><xsl:value-of select="sm:loc"/></a></td>
-					<xsl:apply-templates select="sm:*"/>
-					<xsl:apply-templates select="image:*"/>
-					<xsl:apply-templates select="video:*"/>
-				</tr>
+					<xsl:variable name="hasMedia" select="count(image:*) + 2 * count(video:video)"/>
+
+					<tr class="windowbg">
+						<td rowspan="{1 + $hasMedia}"><xsl:value-of select="$pno"/></td>
+						<td><a href="{$loc}"><xsl:value-of select="sm:loc"/></a></td>
+						<xsl:apply-templates select="sm:*"/>
+					</tr>
+
+					<xsl:if test="image:*">
+						<tr class="windowbg">
+							<td><strong>{direct_link}</strong></td>
+							<td>
+								<xsl:apply-templates select="image:*"/>
+							</td>
+							<td><strong>{thumbnail}</strong></td>
+							<td>
+								<xsl:if test="image:image/image:loc">
+									<img src="{image:image/image:loc}" alt="" width="100"/>
+								</xsl:if>
+							</td>
+						</tr>
+					</xsl:if>
+
+					<xsl:if test="video:video">
+						<tr class="windowbg">
+							<td>
+								<xsl:if test="video:video/video:title">
+									<strong><xsl:value-of select="video:video/video:title"/></strong>
+								</xsl:if>
+							</td>
+							<td colspan="3">
+								<xsl:if test="video:video/video:description">
+									<xsl:value-of select="video:video/video:description"/>
+								</xsl:if>
+							</td>
+						</tr>
+						<tr class="windowbg">
+							<td><strong>{direct_link}</strong></td>
+							<td>
+								<xsl:if test="video:video/video:content_loc">
+									<a href="{video:video/video:content_loc}">
+										<xsl:value-of select="video:video/video:content_loc"/>
+									</a>
+								</xsl:if>
+							</td>
+							<td><strong>{thumbnail}</strong></td>
+							<td>
+								<xsl:if test="video:video/video:thumbnail_loc">
+									<img src="{video:video/video:thumbnail_loc}" alt="{video:video/video:title}" width="100"/>
+								</xsl:if>
+							</td>
+						</tr>
+					</xsl:if>
 				</xsl:for-each>
 			</tbody>
 		</table>
 	</div>
 </xsl:template>
-<xsl:template match="sm:loc|image:loc|video:content_loc|video:*">
+<xsl:template match="sm:loc|image:loc">
 </xsl:template>
-<xsl:template match="sm:lastmod|sm:changefreq|sm:priority|video:title">
+<xsl:template match="sm:lastmod|sm:changefreq|sm:priority">
 	<td><xsl:apply-templates/></td>
 </xsl:template>
 <xsl:template match="image:image">
 	<xsl:variable name="loc"><xsl:value-of select="image:loc"/></xsl:variable>
-	<td class="url2"><a href="{$loc}"><xsl:value-of select="image:loc"/></a></td>
-	<xsl:apply-templates/>
-</xsl:template>
-<xsl:template match="video:video">
-	<xsl:variable name="loc"><xsl:choose><xsl:when test="video:player_loc != ''"><xsl:value-of select="video:player_loc"/></xsl:when><xsl:otherwise><xsl:value-of select="video:content_loc"/></xsl:otherwise></xsl:choose></xsl:variable>
-	<xsl:variable name="thumb"><xsl:value-of select="video:thumbnail_loc"/></xsl:variable>
-	<td class="url2"><a href="{$loc}"><xsl:choose><xsl:when test="video:player_loc != ''"><xsl:value-of select="video:player_loc"/></xsl:when><xsl:otherwise><xsl:value-of select="video:content_loc"/></xsl:otherwise></xsl:choose></a></td>
-	<td><xsl:if test="video:thumbnail_loc != ''"><img src="{$thumb}" alt=""/></xsl:if></td>
+	<a href="{$loc}"><xsl:value-of select="image:loc"/></a>
 	<xsl:apply-templates/>
 </xsl:template>
 </xsl:stylesheet>
