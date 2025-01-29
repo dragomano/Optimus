@@ -2,7 +2,7 @@
   "require": {
     "ext-dom": "*",
     "ext-zlib": "*",
-    "bugo/smf-compat": "^0.2",
+    "bugo/smf-compat": "^0.3",
     "league/event": "^3.0",
     "nette/utils": "^4.0",
     "spatie/array-to-xml": "^3.3"
