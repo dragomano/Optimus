@@ -44,17 +44,19 @@ it('generates XML with extended data types', function () {
 	$data = [
 		[
 			'loc' => 'https://example.com/item1',
-			'image:image' => ['image:loc' => 'https://example.com/image.png'],
 			'mobile:mobile' => ['mobile:loc' => 'https://example.com/mobile'],
+			'image:image' => ['image:loc' => 'https://example.com/image.png'],
+			'video:video' => ['video:content_loc' => 'https://example.com/video.mp4'],
 		],
 	];
 
-	$xml = $this->xmlGenerator->generate($data, ['mobile' => true, 'images' => true]);
+	$xml = $this->xmlGenerator->generate($data, ['mobile' => true, 'images' => true, 'videos' => true]);
 
 	expect($xml)->toContain('http://www.google.com/schemas/sitemap-mobile/1.0')
 		->and($xml)->toContain('http://www.google.com/schemas/sitemap-image/1.1')
+		->and($xml)->toContain('<mobile:loc>https://example.com/mobile</mobile:loc>')
 		->and($xml)->toContain('<image:loc>https://example.com/image.png</image:loc>')
-		->and($xml)->toContain('<mobile:loc>https://example.com/mobile</mobile:loc>');
+		->and($xml)->toContain('<video:content_loc>https://example.com/video.mp4</video:content_loc>');
 });
 
 it('generates empty XML node for invalid data', function () {

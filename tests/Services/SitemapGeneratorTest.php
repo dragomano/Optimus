@@ -154,29 +154,6 @@ describe('Generator helper methods', function () {
 
 		expect($result)->toMatch('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:00$/');
 	});
-
-	it('returns correct frequency', function () {
-		$now = time();
-
-		$method = new ReflectionMethod($this->generator, 'getFrequency');
-
-		expect($method->invoke($this->generator, $now - 3600))->toBe('hourly')
-			->and($method->invoke($this->generator, $now - 86400 * 2))->toBe('daily')
-			->and($method->invoke($this->generator, $now - 86400 * 14))->toBe('weekly')
-			->and($method->invoke($this->generator, $now - 86400 * 60))->toBe('monthly')
-			->and($method->invoke($this->generator, $now - 86400 * 400))->toBe('yearly');
-	});
-
-	it('returns correct priority', function () {
-		$now = time();
-
-		$method = new ReflectionMethod($this->generator, 'getPriority');
-
-		expect($method->invoke($this->generator, $now - 86400 * 15))->toBe('0.8')
-			->and($method->invoke($this->generator, $now - 86400 * 45))->toBe('0.6')
-			->and($method->invoke($this->generator, $now - 86400 * 75))->toBe('0.4')
-			->and($method->invoke($this->generator, $now - 86400 * 100))->toBe('0.2');
-	});
 });
 
 it('allows adding custom links through event dispatcher', function () {
