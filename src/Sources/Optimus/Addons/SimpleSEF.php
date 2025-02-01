@@ -17,6 +17,7 @@ use Bugo\Compat\Config;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Services\RobotsGenerator;
 use Bugo\Optimus\Services\SitemapGenerator;
+use League\Event\ListenerPriority;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -24,6 +25,8 @@ if (! defined('SMF'))
 final class SimpleSEF extends AbstractAddon
 {
 	public const PACKAGE_ID = 'slammeddime:simplesef';
+
+	public const PRIORITY = ListenerPriority::HIGH;
 
 	public static array $events = [
 		self::ROBOTS_RULES,

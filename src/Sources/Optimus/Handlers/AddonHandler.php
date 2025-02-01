@@ -53,7 +53,7 @@ final class AddonHandler implements ListenerSubscriber
 			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
 				/* @var array $events */
 				for ($i = 0; $i < count($listener::$events); $i++) {
-					$acceptor->subscribeTo($listener::$events[$i], new $listener);
+					$acceptor->subscribeTo($listener::$events[$i], new $listener, $listener::PRIORITY);
 				}
 			}
 		}

@@ -13,10 +13,13 @@
 namespace Bugo\Optimus\Addons;
 
 use Bugo\Compat\{Lang, User};
+use League\Event\ListenerPriority;
 
 abstract class AbstractAddon implements AddonInterface
 {
 	public const PACKAGE_ID = '';
+
+	public const PRIORITY = ListenerPriority::NORMAL;
 
 	public static array $events = [];
 

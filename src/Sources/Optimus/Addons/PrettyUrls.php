@@ -17,6 +17,7 @@ use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Services\RobotsGenerator;
 use Bugo\Optimus\Services\SitemapContent;
+use League\Event\ListenerPriority;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -24,6 +25,8 @@ if (! defined('SMF'))
 final class PrettyUrls extends AbstractAddon
 {
 	public const PACKAGE_ID = 'el:prettyurls';
+
+	public const PRIORITY = ListenerPriority::HIGH;
 
 	public static array $events = [
 		self::HOOK_EVENT,
