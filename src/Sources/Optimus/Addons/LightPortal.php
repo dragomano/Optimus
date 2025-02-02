@@ -43,7 +43,13 @@ final class LightPortal extends AbstractAddon
 
 	public function changeRobots(RobotsGenerator $robots): void
 	{
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . '/*' . LP_PAGE_PARAM;
+		$rule = $robots->urlPath . '/*' . LP_PAGE_PARAM;
+
+		if ($robots->useSef) {
+			$rule = $robots->urlPath . '/pages/';
+		}
+
+		$robots->customRules['*'][$robots::RULE_ALLOW][] = $rule;
 	}
 
 	public function changeSitemap(SitemapGenerator $sitemap): void

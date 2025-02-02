@@ -12,7 +12,8 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{CacheApi, Config, Db, IntegrationHook};
+use Bugo\Compat\Cache\CacheApi;
+use Bugo\Compat\{Config, Db, IntegrationHook};
 use Bugo\Compat\{Theme, User, Utils};
 use Bugo\Optimus\Utils\Input;
 
