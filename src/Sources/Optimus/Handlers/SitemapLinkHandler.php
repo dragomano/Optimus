@@ -7,7 +7,7 @@
  * @copyright 2010-2025 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC2
+ * @version 3.0 RC3
  */
 
 namespace Bugo\Optimus\Handlers;
@@ -84,6 +84,9 @@ final class SitemapLinkHandler
 
 	public function addLink(): void
 	{
+		if (isset(Utils::$context['uninstalling']))
+			return;
+
 		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::$txt['optimus_sitemap_title']))
 			return;
 

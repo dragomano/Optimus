@@ -7,7 +7,7 @@
  * @copyright 2010-2025 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC2
+ * @version 3.0 RC3
  */
 
 namespace Bugo\Optimus\Handlers;
@@ -838,7 +838,7 @@ final class TagHandler
 		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords']))
 			return false;
 
-		return User::hasPermission('optimus_add_keywords_any')
-			|| (User::hasPermission('optimus_add_keywords_own') && ! empty(Utils::$context['user']['started']));
+		return User::$me->allowedTo('optimus_add_keywords_any')
+			|| (User::$me->allowedTo('optimus_add_keywords_own') && ! empty(Utils::$context['user']['started']));
 	}
 }

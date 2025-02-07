@@ -7,7 +7,7 @@
  * @copyright 2010-2025 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC2
+ * @version 3.0 RC3
  */
 
 namespace Bugo\Optimus\Handlers;
@@ -100,7 +100,7 @@ final class SettingHandler
 
 	public function actions(): void
 	{
-		User::mustHavePermission('admin_forum');
+		User::$me->isAllowedTo('admin_forum');
 
 		Utils::$context['page_title'] = OP_NAME;
 
@@ -119,8 +119,6 @@ final class SettingHandler
 			'htaccess' => 'htaccessTabSettings',
 			'sitemap'  => 'sitemapTabSettings',
 		];
-
-		Db::extend();
 
 		Utils::$context[Utils::$context['admin_menu_name']]['tab_data'] = [
 			'title' => Lang::$txt['optimus_title'],

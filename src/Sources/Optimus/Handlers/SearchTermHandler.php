@@ -7,7 +7,7 @@
  * @copyright 2010-2025 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC2
+ * @version 3.0 RC3
  */
 
 namespace Bugo\Optimus\Handlers;
@@ -142,6 +142,6 @@ final class SearchTermHandler
 		if (empty(Config::$modSettings['optimus_log_search']))
 			return false;
 
-		return User::hasPermission('optimus_view_search_terms');
+		return User::$me->allowedTo('optimus_view_search_terms');
 	}
 }

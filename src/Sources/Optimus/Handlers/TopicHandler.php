@@ -7,7 +7,7 @@
  * @copyright 2010-2025 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC2
+ * @version 3.0 RC3
  */
 
 namespace Bugo\Optimus\Handlers;
@@ -297,9 +297,9 @@ final class TopicHandler
 		if (empty(Config::$modSettings['optimus_allow_change_topic_desc']))
 			return false;
 
-		return User::hasPermission('optimus_add_descriptions_any')
+		return User::$me->allowedTo('optimus_add_descriptions_any')
 			|| (
-				User::hasPermission('optimus_add_descriptions_own')
+				User::$me->allowedTo('optimus_add_descriptions_own')
 				&& ! empty(Utils::$context['user']['started'])
 			);
 	}
