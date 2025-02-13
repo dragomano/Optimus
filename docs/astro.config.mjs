@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import starlightLinksValidator from 'starlight-links-validator'
+import starlightLinksValidator from 'starlight-links-validator';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,11 +8,15 @@ export default defineConfig({
 	base: '/Optimus/',
 	integrations: [
 		starlight({
-			plugins: [starlightLinksValidator({errorOnRelativeLinks: false})],
-			customCss: [
-				'./src/styles/custom.css',
+			plugins: [
+				starlightLinksValidator({
+					errorOnRelativeLinks: false
+				})
 			],
-			title: 'Optimus Docs',
+			customCss: [
+				'./src/styles/custom.scss',
+			],
+			title: '🤖 Optimus Docs',
 			description: 'Guide to Setting Up and Using Optimus',
 			defaultLocale: 'root',
 			locales: {

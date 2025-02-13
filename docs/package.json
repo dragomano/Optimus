@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.31.1",
-    "astro": "^5.1.10",
+    "@yohns/picocss": "^2.2.10",
+    "astro": "^5.2.6",
+    "sass": "^1.84.0",
     "sharp": "^0.33.5",
-    "starlight-links-validator": "^0.14.1"
+    "starlight-links-validator": "^0.14.2"
   }
 }

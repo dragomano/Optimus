@@ -1,0 +1,34 @@
+@use "node_modules/@yohns/picocss/scss/pico" with (
+    $parent-selector: ".pico",
+    $theme-color: "orange"
+);
+
+/* Dark mode colors. */
+:root {
+	--sl-color-accent-low: #332000;
+	--sl-color-accent: #8d5f00;
+	--sl-color-accent-high: #e9c189;
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #e0f0ff;
+	--sl-color-gray-2: #9cc8ee;
+	--sl-color-gray-3: #2b92dc;
+	--sl-color-gray-4: #005c94;
+	--sl-color-gray-5: #003b61;
+	--sl-color-gray-6: #002946;
+	--sl-color-black: #001a2e;
+}
+/* Light mode colors. */
+:root[data-theme='light'] {
+	--sl-color-accent-low: #f0d2a8;
+	--sl-color-accent: #906100;
+	--sl-color-accent-high: #452d00;
+	--sl-color-white: #001a2e;
+	--sl-color-gray-1: #002946;
+	--sl-color-gray-2: #003b61;
+	--sl-color-gray-3: #005c94;
+	--sl-color-gray-4: #2b92dc;
+	--sl-color-gray-5: #9cc8ee;
+	--sl-color-gray-6: #e0f0ff;
+	--sl-color-gray-7: #eff7ff;
+	--sl-color-black: #ffffff;
+}
