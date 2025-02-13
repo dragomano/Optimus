@@ -11,6 +11,7 @@
       <equals arg1="${release.type}" arg2="thesame" />
       <then>
         <property name="release.version" value="${version}" />
+        <propertyregex property="release.version" override="true" subject="${release.version}" pattern="(.*) (.*)" replace="$1_$2" />
       </then>
       <else>
         <version releasetype="${release.type}" startingVersion="${version}" property="release.version" />
