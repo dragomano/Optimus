@@ -12,8 +12,9 @@
 
 namespace Bugo\Optimus\Handlers;
 
-use Bugo\Compat\{Cache\CacheApi, Config, IntegrationHook, Db};
-use Bugo\Compat\{ItemList, Lang, Theme, Topic, User, Utils};
+use Bugo\Compat\{Cache\CacheApi, Config, IntegrationHook, Db, ItemList};
+use Bugo\Compat\{Lang, QueryString, Theme, Topic, User, Utils};
+use Bugo\Optimus\Routes\Keywords;
 use Bugo\Optimus\Utils\{Copyright, Input, Str};
 
 if (! defined('SMF'))
@@ -25,6 +26,10 @@ final class TagHandler
 	{
 		IntegrationHook::add(
 			'integrate_actions', self::class . '::actions#', false, __FILE__
+		);
+
+		IntegrationHook::add(
+			'integrate_parse_route', self::class . '::parseRoute#', false, __FILE__
 		);
 
 		IntegrationHook::add(
@@ -82,6 +87,11 @@ final class TagHandler
 		}
 
 		$actions['keywords'] = [false, $this->showTheSame(...)];
+	}
+
+	public function parseRoute(): void
+	{
+		QueryString::$route_parsers['keywords'] = Keywords::class;
 	}
 
 	public function menuButtons(array &$buttons): void
@@ -428,7 +438,7 @@ final class TagHandler
 			'items_per_page'   => 30,
 			'title'            => '',
 			'no_items_label'   => '',
-			'base_href'        => Config::$scripturl . '?action=keywords',
+			'base_href'        => Utils::$context['canonical_url'],
 			'default_sort_col' => 'frequency',
 			'get_items' => [
 				'function' => $this->getAll(...)
@@ -464,7 +474,7 @@ final class TagHandler
 				]
 			],
 			'form' => [
-				'href' => Config::$scripturl . '?action=keywords'
+				'href' => Utils::$context['canonical_url']
 			],
 			'additional_rows' => [
 				[

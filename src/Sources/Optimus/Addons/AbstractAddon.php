@@ -29,8 +29,8 @@ abstract class AbstractAddon implements AddonInterface
 			return;
 
 		$userLang = property_exists(Lang::class, 'LANG_TO_LOCALE')
-			? array_flip(Lang::LANG_TO_LOCALE)[User::$info['language']] ?? 'english'
-			: User::$info['language'];
+			? array_flip(Lang::LANG_TO_LOCALE)[User::$me->language] ?? 'english'
+			: User::$me->language;
 
 		$languages = array_merge(['english'], [$userLang ?? null]);
 
