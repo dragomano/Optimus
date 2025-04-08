@@ -30,9 +30,9 @@ export default defineConfig({
 					lanag: 'ru',
 				}
 			},
-			social: {
-				github: 'https://github.com/dragomano/Optimus',
-			},
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/dragomano/Optimus' },
+			],
 			sidebar: [
 				{
 					label: 'Greetings',
