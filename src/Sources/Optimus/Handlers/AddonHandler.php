@@ -67,7 +67,7 @@ final class AddonHandler implements ListenerSubscriber
 			$result = Db::$db->query('', /** @lang text */ '
 				SELECT package_id
 				FROM {db_prefix}log_packages
-				WHERE install_state = 1',
+				WHERE install_state <> 0',
 			);
 
 			$mods = [];

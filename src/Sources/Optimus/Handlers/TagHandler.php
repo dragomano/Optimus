@@ -348,13 +348,6 @@ final class TagHandler
 			'form' => [
 				'href' => Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id']
 			],
-			'additional_rows' => [
-				[
-					'position' => 'below_table_data',
-					'value'    => 'Powered by ' . Copyright::getLink(),
-					'class'    => 'smalltext centertext'
-				]
-			]
 		];
 
 		new ItemList($listOptions);
@@ -476,13 +469,6 @@ final class TagHandler
 			'form' => [
 				'href' => Utils::$context['canonical_url']
 			],
-			'additional_rows' => [
-				[
-					'position' => 'below_table_data',
-					'value'    => 'Powered by ' . Copyright::getLink(),
-					'class'    => 'smalltext centertext',
-				]
-			]
 		];
 
 		new ItemList($listOptions);

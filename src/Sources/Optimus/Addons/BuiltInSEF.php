@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 05.02.25
+ * @version 04.03.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -49,6 +49,7 @@ class BuiltInSEF extends AbstractAddon
 
 		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . Entity::BOARD->buildPattern();
 		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . Entity::TOPIC->buildPattern();
+		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . Entity::MSG->buildPattern();
 	}
 
 	public function changeSitemapContent(SitemapContent $content): void

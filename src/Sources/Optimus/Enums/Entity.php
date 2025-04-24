@@ -18,6 +18,7 @@ enum Entity: string
 {
 	case TOPIC = 'topic';
 	case BOARD = 'board';
+	case MSG   = 'msg';
 
 	public function buildUrl(string $id): string
 	{

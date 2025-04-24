@@ -12,11 +12,11 @@
 
 namespace Bugo\Optimus\Services;
 
-use Bugo\Optimus\Events\Dispatcher;
 use Bugo\Compat\{Config, Utils};
 use Bugo\Compat\Parsers\BBCodeParser;
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Enums\Entity;
+use Bugo\Optimus\Events\Dispatcher;
 use Bugo\Optimus\Events\DispatcherFactory;
 
 final class RobotsGenerator
@@ -127,6 +127,7 @@ final class RobotsGenerator
 
 		$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . Entity::BOARD->buildPattern();
 		$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . Entity::TOPIC->buildPattern();
+		$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . Entity::MSG->buildPattern();
 	}
 
 	private function addFeeds(): void

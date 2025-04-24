@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 02.01.25
+ * @version 17.04.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -58,6 +58,7 @@ final class LightPortal extends AbstractAddon
 			SELECT page_id, slug, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}
+				AND deleted_at = 0
 				AND entry_type = {string:entry_type}
 				AND created_at <= {int:current_time}
 				AND permissions IN ({array_int:permissions})' . ($sitemap->startYear ? '
