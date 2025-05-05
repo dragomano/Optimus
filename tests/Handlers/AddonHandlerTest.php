@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-use Bugo\Compat\CacheApi;
 use Bugo\Compat\Db;
-use Bugo\Compat\DbFuncMapper;
+use Bugo\Compat\Db\FuncMapper;
 use Bugo\Optimus\Handlers\AddonHandler;
 use Tests\TestDbMapper;
 
@@ -22,7 +21,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-	Db::$db = new DbFuncMapper();
+	Db::$db = new FuncMapper();
 });
 
 test('handler subscribes only once', function () {

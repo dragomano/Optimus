@@ -59,7 +59,7 @@ describe('handleWrongBoardsTopics method', function () {
 		$this->handler->handleWrongBoardsTopics();
 
 		expect(Utils::$context['page_title'])
-			->toBe(Lang::$txt["optimus_404_page_title"]);
+			->toBe(Lang::getTxt('optimus_404_page_title'));
 	});
 
 	it('checks case when board has no access', function () {
@@ -70,7 +70,7 @@ describe('handleWrongBoardsTopics method', function () {
 		$this->handler->handleWrongBoardsTopics();
 
 		expect(Utils::$context['page_title'])
-			->toBe(Lang::$txt["optimus_403_page_title"]);
+			->toBe(Lang::getTxt('optimus_403_page_title'));
 	});
 
 	it('checks case with disabled setting', function () {

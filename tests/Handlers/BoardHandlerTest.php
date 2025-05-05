@@ -93,7 +93,8 @@ test('boardtreeBoard method', function () {
 test('editBoard method', function () {
 	Utils::$context['custom_board_settings'] = [];
 
-	Lang::$txt['og_image'] = Lang::$txt['og_image_desc'] = '';
+	Lang::setTxt('og_image', '');
+	Lang::setTxt('og_image_desc', '');
 
 	$this->handler->editBoard();
 

@@ -7,9 +7,9 @@ use Bugo\Optimus\Handlers\SettingHandler;
 beforeEach(function () {
 	$this->handler = new SettingHandler();
 
-	Lang::$txt['meta_keywords_note'] = '';
-	Lang::$txt['admin_maintenance'] = '';
-	Lang::$txt['maintain_recount'] = '';
+	Lang::setTxt('meta_keywords_note', '');
+	Lang::setTxt('admin_maintenance', '');
+	Lang::setTxt('maintain_recount', '');
 
 	Utils::$smcFunc['db_query'] = fn(...$params) => new stdClass();
 	Utils::$smcFunc['db_get_version'] = fn() => 'v1.0';

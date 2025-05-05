@@ -10,7 +10,7 @@ it('gets link', function () {
 });
 
 it('gets link for Russian language', function () {
-	Lang::$txt['lang_dictionary'] = 'ru';
+	Lang::setTxt('lang_dictionary', 'ru');
 
 	$link = Copyright::getLink();
 

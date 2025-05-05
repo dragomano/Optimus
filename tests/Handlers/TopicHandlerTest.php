@@ -2,7 +2,7 @@
 
 use Bugo\Compat\Config;
 use Bugo\Compat\Db;
-use Bugo\Compat\DbFuncMapper;
+use Bugo\Compat\Db\FuncMapper;
 use Bugo\Compat\Theme;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\TopicHandler;
@@ -25,7 +25,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-	Db::$db = new DbFuncMapper();
+	Db::$db = new FuncMapper();
 });
 
 test('prepareOgImage method with empty optimus_og_image', function () {

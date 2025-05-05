@@ -34,7 +34,10 @@ use Bugo\Compat\Utils;
 */
 
 uses()->beforeAll(function () {
+	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
+
 	array_map(fn($u) => new $u(), [
+		Config::class,
 		Db::class,
 		Lang::class,
 		User::class,
@@ -42,17 +45,14 @@ uses()->beforeAll(function () {
 		Board::class,
 		Topic::class,
 		Utils::class,
-		Config::class,
 	]);
 
-	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
+	User::$me->language = 'english';
 
-	User::$info['language'] = 'english';
-
-	Lang::$txt['lang_dictionary'] = 'en';
-	Lang::$txt['no_matches'] = 'No matches';
-	Lang::$txt['search'] = 'Search';
-	Lang::$txt['remove'] = 'Remove';
+	Lang::setTxt('lang_dictionary', 'en');
+	Lang::setTxt('no_matches', 'No matches');
+	Lang::setTxt('search', 'Search');
+	Lang::setTxt('remove', 'Remove');
 
 	Config::$boardurl = 'https://example.com';
 	Config::$scripturl = Config::$boardurl . '/index.php';

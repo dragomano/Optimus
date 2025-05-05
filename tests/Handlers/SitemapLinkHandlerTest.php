@@ -8,7 +8,7 @@ use Bugo\Optimus\Handlers\SitemapLinkHandler;
 beforeEach(function () {
 	$this->handler = new SitemapLinkHandler();
 
-	Lang::$txt['url'] = '';
+	Lang::setTxt('url', '');
 });
 
 test('actions method', function () {
@@ -42,13 +42,13 @@ test('preLogStats method', function () {
 test('addLink method', function () {
 	Config::$modSettings['optimus_sitemap_link'] = true;
 
-	Lang::$txt['optimus_sitemap_title'] = 'foo';
+	Lang::setTxt('optimus_sitemap_title', 'foo');
 
 	Utils::$context['html_headers'] = '';
 
 	$this->handler->addLink();
 
-	$this->assertStringContainsString(Lang::$txt['optimus_sitemap_title'], Lang::$forum_copyright);
+	$this->assertStringContainsString(Lang::getTxt('optimus_sitemap_title'), Lang::$forum_copyright);
 	expect(Utils::$context['html_headers'])->not->toBeEmpty();
 
 	Config::$modSettings['optimus_sitemap_link'] = false;

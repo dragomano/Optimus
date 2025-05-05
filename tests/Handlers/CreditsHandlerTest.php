@@ -1,18 +1,10 @@
 <?php declare(strict_types=1);
 
-use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
-use Bugo\Optimus\Handlers\CoreHandler;
+use Bugo\Optimus\Handlers\CreditsHandler;
 
 beforeEach(function () {
-	$this->handler = new CoreHandler();
-});
-
-it('loads languages', function () {
-	$this->handler->loadTheme();
-
-	expect(Lang::$txt['optimus_title'])
-		->toEqual('Search Engine Optimization');
+	$this->handler = new CreditsHandler();
 });
 
 it('adds copyright', function () {

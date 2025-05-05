@@ -22,18 +22,18 @@ describe('changeTitle method', function () {
 
 		$this->handler->changeTitle();
 
-		expect(Lang::$txt['forum_index'])
+		expect(Lang::getTxt('forum_index'))
 			->toBe('bar');
 	});
 
 	it('checks case with disabled setting', function () {
 		Config::$modSettings['optimus_forum_index'] = '';
 
-		Lang::$txt['forum_index'] = '';
+		Lang::setTxt('forum_index', '');
 
 		$this->handler->changeTitle();
 
-		expect(Lang::$txt['forum_index'])
+		expect(Lang::getTxt('forum_index'))
 			->toBeEmpty();
 	});
 });

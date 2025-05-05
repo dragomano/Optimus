@@ -2,7 +2,7 @@
 
 use Bugo\Compat\Config;
 use Bugo\Compat\Db;
-use Bugo\Compat\DbFuncMapper;
+use Bugo\Compat\Db\FuncMapper;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\TagHandler;
@@ -98,7 +98,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-	Db::$db = new DbFuncMapper();
+	Db::$db = new FuncMapper();
 });
 
 describe('actions method', function () {
@@ -285,7 +285,9 @@ test('showTheSame method', function () {
 test('showTheSame method with keyword_id', function () {
 	Utils::$context['current_subaction'] = '';
 
-	Lang::$txt['topic'] = Lang::$txt['board'] = Lang::$txt['author'] = '';
+	Lang::setTxt('topic', '');
+	Lang::setTxt('board', '');
+	Lang::setTxt('author', '');
 
 	$_REQUEST['id'] = 1;
 

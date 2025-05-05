@@ -2,7 +2,7 @@
 
 use Bugo\Compat\Config;
 use Bugo\Compat\Db;
-use Bugo\Compat\DbFuncMapper;
+use Bugo\Compat\Db\FuncMapper;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\SearchTermHandler;
 use Bugo\Optimus\Utils\Input;
@@ -59,7 +59,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-	Db::$db = new DbFuncMapper();
+	Db::$db = new FuncMapper();
 });
 
 describe('__invoke method', function () {

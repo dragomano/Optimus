@@ -2,7 +2,7 @@
 
 use Bugo\Compat\Config;
 use Bugo\Compat\Db;
-use Bugo\Compat\DbFuncMapper;
+use Bugo\Compat\Db\FuncMapper;
 use Bugo\Optimus\Services\SitemapDataService;
 use Tests\TestDbMapper;
 
@@ -61,7 +61,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-	Db::$db = new DbFuncMapper();
+	Db::$db = new FuncMapper();
 });
 
 describe('SitemapDataService', function () {
