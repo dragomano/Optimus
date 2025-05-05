@@ -49,7 +49,7 @@ final class SettingHandler
 	public function modifyBasicSettings(array &$config_vars): void
 	{
 		foreach ($config_vars as $key => $dump) {
-			if (isset($dump[1]) && $dump[1] == 'meta_keywords') {
+			if (isset($dump[1]) && $dump[1] === 'meta_keywords') {
 				unset($config_vars[$key]);
 			}
 		}
@@ -73,19 +73,19 @@ final class SettingHandler
 		}
 
 		$admin_areas['config']['areas']['optimus'] = [
-			'label' => Lang::$txt['optimus_title'],
+			'label' => Lang::getTxt('optimus_title', file: 'Optimus/Optimus'),
 			'function' => $this->actions(...),
 			'icon' => 'optimus',
 			'subsections' => [
-				'basic'    => [Lang::$txt['optimus_basic_title']],
-				'extra'    => [Lang::$txt['optimus_extra_title']],
-				'favicon'  => [Lang::$txt['optimus_favicon_title']],
-				'metatags' => [Lang::$txt['optimus_meta_title']],
-				'redirect' => [Lang::$txt['optimus_redirect_title']],
-				'counters' => [Lang::$txt['optimus_counters']],
-				'robots'   => [Lang::$txt['optimus_robots_title']],
-				'htaccess' => [Lang::$txt['optimus_htaccess_title']],
-				'sitemap'  => [Lang::$txt['optimus_sitemap_title']],
+				'basic'    => [Lang::getTxt('optimus_basic_title')],
+				'extra'    => [Lang::getTxt('optimus_extra_title')],
+				'favicon'  => [Lang::getTxt('optimus_favicon_title')],
+				'metatags' => [Lang::getTxt('optimus_meta_title')],
+				'redirect' => [Lang::getTxt('optimus_redirect_title')],
+				'counters' => [Lang::getTxt('optimus_counters')],
+				'robots'   => [Lang::getTxt('optimus_robots_title')],
+				'htaccess' => [Lang::getTxt('optimus_htaccess_title')],
+				'sitemap'  => [Lang::getTxt('optimus_sitemap_title')],
 			]
 		];
 	}
@@ -104,8 +104,6 @@ final class SettingHandler
 
 		Utils::$context['page_title'] = OP_NAME;
 
-		Lang::load('ManageSettings');
-
 		Theme::loadTemplate('Optimus');
 
 		$subActions = [
@@ -121,11 +119,11 @@ final class SettingHandler
 		];
 
 		Utils::$context[Utils::$context['admin_menu_name']]['tab_data'] = [
-			'title' => Lang::$txt['optimus_title'],
+			'title' => Lang::getTxt('optimus_title'),
 			'tabs' => [
 				'basic' => [
 					'description' => sprintf(
-						Lang::$txt['optimus_basic_desc'],
+						Lang::getTxt('optimus_basic_desc'),
 						OP_VERSION,
 						PHP_VERSION,
 						Utils::$smcFunc['db_title'],
@@ -133,28 +131,28 @@ final class SettingHandler
 					)
 				],
 				'extra' => [
-					'description' => Lang::$txt['optimus_extra_desc']
+					'description' => Lang::getTxt('optimus_extra_desc')
 				],
 				'favicon' => [
-					'description' => Lang::$txt['optimus_favicon_desc']
+					'description' => Lang::getTxt('optimus_favicon_desc')
 				],
 				'metatags' => [
-					'description' => Lang::$txt['optimus_meta_desc']
+					'description' => Lang::getTxt('optimus_meta_desc')
 				],
 				'redirect' => [
-					'description' => Lang::$txt['optimus_redirect_desc']
+					'description' => Lang::getTxt('optimus_redirect_desc')
 				],
 				'counters' => [
-					'description' => Lang::$txt['optimus_counters_desc']
+					'description' => Lang::getTxt('optimus_counters_desc')
 				],
 				'robots' => [
-					'description' => Lang::$txt['optimus_robots_desc']
+					'description' => Lang::getTxt('optimus_robots_desc')
 				],
 				'htaccess' => [
-					'description' => Lang::$txt['optimus_htaccess_desc']
+					'description' => Lang::getTxt('optimus_htaccess_desc')
 				],
 				'sitemap' => [
-					'description' => sprintf(Lang::$txt['optimus_sitemap_desc'], OP_NAME)
+					'description' => sprintf(Lang::getTxt('optimus_sitemap_desc'), OP_NAME)
 				]
 			]
 		];
@@ -169,11 +167,11 @@ final class SettingHandler
 	 */
 	public function basicTabSettings(bool $return_config = false)
 	{
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_basic_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_basic_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=basic;save';
 
 		$this->addDefaultSettings(
-			['optimus_forum_index' => sprintf(Lang::$txt['forum_index'], Utils::$context['forum_name'])]
+			['optimus_forum_index' => sprintf(Lang::getTxt('forum_index'), Utils::$context['forum_name'])]
 		);
 
 		$config_vars = [
@@ -188,12 +186,17 @@ final class SettingHandler
 				'large_text',
 				'optimus_description',
 				'value' => Utils::htmlspecialcharsDecode((string) (Config::$modSettings['optimus_description'] ?? '')),
-				'subtext' => Lang::$txt['optimus_description_subtext']
+				'subtext' => Lang::getTxt('optimus_description_subtext')
 			],
-			['large_text', 'meta_keywords', 'subtext' => Lang::$txt['meta_keywords_note']],
+			[
+				'large_text',
+				'meta_keywords',
+				'label' => Lang::getTxt('meta_keywords', file: 'Search'),
+				'subtext' => Lang::getTxt('meta_keywords_note', file: 'ManageSettings')
+			],
 			['title', 'optimus_all_pages'],
-			['select', 'optimus_board_extend_title', Lang::$txt['optimus_board_extend_title_set']],
-			['select', 'optimus_topic_extend_title', Lang::$txt['optimus_topic_extend_title_set']],
+			['select', 'optimus_board_extend_title', Lang::getTxt('optimus_board_extend_title_set')],
+			['select', 'optimus_topic_extend_title', Lang::getTxt('optimus_topic_extend_title_set')],
 			'',
 			['title', 'optimus_extra_settings'],
 			['check', 'optimus_errors_for_wrong_actions'],
@@ -234,12 +237,10 @@ final class SettingHandler
 	 */
 	public function extraTabSettings(bool $return_config = false)
 	{
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_extra_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_extra_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=extra;save';
 
-		Lang::$txt['optimus_extra_info'] = sprintf(Lang::$txt['optimus_extra_info'], Config::$scripturl);
-		$ogImageLink = Config::$scripturl . '?action=admin;area=theme;sa=list;th='
-			. Theme::$current->settings['theme_id']  . '#options_og_image';
+		Lang::setTxt('optimus_extra_info', sprintf(Lang::getTxt('optimus_extra_info'), Config::$scripturl));
 
 		$config_vars = [
 			['title', 'optimus_extra_title'],
@@ -248,12 +249,15 @@ final class SettingHandler
 				'check',
 				'optimus_og_image',
 				'help' => 'optimus_og_image_help',
-				'subtext' => sprintf(Lang::$txt['optimus_og_image_subtext'], $ogImageLink)
+				'subtext' => sprintf(Lang::getTxt('optimus_og_image_subtext'), implode('', [
+					Config::$scripturl . '?action=admin;area=theme;sa=list;th=',
+					Theme::$current->settings['theme_id']  . '#options_og_image',
+				]))
 			],
 			[
 				'check',
 				'optimus_allow_change_board_og_image',
-				'subtext' => Lang::$txt['optimus_allow_change_board_og_image_subtext']
+				'subtext' => Lang::getTxt('optimus_allow_change_board_og_image_subtext')
 			],
 			['text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'],
 			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'],
@@ -295,7 +299,7 @@ final class SettingHandler
 	 */
 	public function faviconTabSettings(bool $return_config = false)
 	{
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_favicon_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_favicon_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=favicon;save';
 
 		$config_vars = [
@@ -322,7 +326,7 @@ final class SettingHandler
 	public function metatagsTabSettings(): void
 	{
 		Utils::$context['sub_template'] = 'metatags';
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_meta_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_meta_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
 		Utils::$context['optimus_metatags_rules'] = empty(Config::$modSettings['optimus_meta'])
@@ -356,7 +360,7 @@ final class SettingHandler
 	public function redirectTabSettings(): void
 	{
 		Utils::$context['sub_template'] = 'redirect';
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_redirect_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_redirect_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=redirect;save';
 
 		Utils::$context['optimus_redirect_rules'] = empty(Config::$modSettings['optimus_redirect'])
@@ -390,7 +394,7 @@ final class SettingHandler
 	public function counterTabSettings(): void
 	{
 		Utils::$context['sub_template'] = 'counters';
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_counters'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_counters');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=counters;save';
 
 		$this->addDefaultSettings([
@@ -421,7 +425,7 @@ final class SettingHandler
 	public function robotsTabSettings(): void
 	{
 		Utils::$context['sub_template'] = 'robots';
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_robots_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_robots_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=robots;save';
 
 		$config_vars = [];
@@ -449,7 +453,7 @@ final class SettingHandler
 	public function htaccessTabSettings(): void
 	{
 		Utils::$context['sub_template'] = 'htaccess';
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_htaccess_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_htaccess_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=htaccess;save';
 
 		$config_vars = [];
@@ -481,15 +485,13 @@ final class SettingHandler
 	 */
 	public function sitemapTabSettings(bool $return_config = false)
 	{
-		Utils::$context['page_title'] .= ' - ' . Lang::$txt['optimus_sitemap_title'];
-		Utils::$context['settings_title'] = Lang::$txt['optimus_sitemap_title'];
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_sitemap_title');
+		Utils::$context['settings_title'] = Lang::getTxt('optimus_sitemap_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
 		if (! Utils::makeWritable(Config::$boarddir)) {
 			ErrorHandler::fatalLang('optimus_root_is_not_writable');
 		}
-
-		Lang::load('ManageMaintenance');
 
 		$this->addDefaultSettings([
 			'optimus_sitemap_topics_num_replies' => 5,
@@ -498,31 +500,31 @@ final class SettingHandler
 			'optimus_update_frequency'           => 1,
 		]);
 
-		$title = Lang::$txt['admin_maintenance'] . ' - ' . Lang::$txt['maintain_recount'];
+		$title = Lang::getTxt('admin_maintenance', file: 'ManageMaintenance') . ' - ' . Lang::getTxt('maintain_recount');
 		$link = Str::html('a', $title)->class('bbc_link')
 			->href(sprintf('%s?action=admin;area=maintain;sa=routine', Config::$scripturl));
 
 		Utils::$context['settings_insert_above'] = Str::html('div')->class('roundframe')
-			->setHtml(sprintf(Lang::$txt['optimus_sitemap_info'], $link));
+			->setHtml(sprintf(Lang::getTxt('optimus_sitemap_info'), $link));
 
 		$config_vars = [
-			['check', 'optimus_sitemap_enable', 'subtext' => Lang::$txt['optimus_sitemap_enable_subtext']],
+			['check', 'optimus_sitemap_enable', 'subtext' => Lang::getTxt('optimus_sitemap_enable_subtext')],
 			['check', 'optimus_sitemap_link'],
 			['check', 'optimus_remove_previous_xml_files'],
 			'',
-			['select', 'optimus_main_page_frequency', Lang::$txt['optimus_main_page_frequency_set']],
-			['check', 'optimus_sitemap_boards', 'subtext' => Lang::$txt['optimus_sitemap_boards_subtext']],
+			['select', 'optimus_main_page_frequency', Lang::getTxt('optimus_main_page_frequency_set')],
+			['check', 'optimus_sitemap_boards', 'subtext' => Lang::getTxt('optimus_sitemap_boards_subtext')],
 			[
 				'check',
 				'optimus_sitemap_all_topic_pages',
-				'subtext' => Lang::$txt['optimus_sitemap_all_topic_pages_subtext']
+				'subtext' => Lang::getTxt('optimus_sitemap_all_topic_pages_subtext')
 			],
 			['int', 'optimus_sitemap_topics_num_replies', 'min' => 0],
 			['check', 'optimus_sitemap_add_found_images'],
 			'',
 			['int', 'optimus_sitemap_items_display', 'min' => 1, 'max' => 50000],
 			['int', 'optimus_start_year', 'min' => 1994, 'max' => date('Y')],
-			['select', 'optimus_update_frequency', Lang::$txt['optimus_update_frequency_set']],
+			['select', 'optimus_update_frequency', Lang::getTxt('optimus_update_frequency_set')],
 		];
 
 		// You can add your own options

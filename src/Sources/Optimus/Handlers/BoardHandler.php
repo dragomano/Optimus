@@ -108,19 +108,17 @@ final class BoardHandler
 
 	public function editBoard(): void
 	{
-		Lang::load('Themes');
-
 		Utils::$context['custom_board_settings'] = array_merge(
 			[
 				[
-					'dt' => Str::html('strong')->setHtml(Lang::$txt['og_image'] . ':') .
+					'dt' => Str::html('strong')->setHtml(Lang::getTxt('og_image', file: 'Themes') . ':') .
 						Str::html('br') .
-						Str::html('span', ['class' => 'smalltext'])->setHtml(Lang::$txt['og_image_desc']) .
+						Str::html('span', ['class' => 'smalltext'])->setHtml(Lang::getTxt('og_image_desc')) .
 						Str::html('br'),
 					'dd' => Str::html('input', [
-						'type' => 'url',
-						'name' => 'optimus_og_image',
-						'id' => 'optimus_og_image',
+						'type'  => 'url',
+						'name'  => 'optimus_og_image',
+						'id'    => 'optimus_og_image',
 						'value' => Utils::$context['board']['optimus_og_image'] ?? '',
 						'style' => 'width: 100%'
 					])

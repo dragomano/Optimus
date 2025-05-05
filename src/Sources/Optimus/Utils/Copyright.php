@@ -21,7 +21,7 @@ final class Copyright
 {
 	public static function getLink(): string
 	{
-		$link = Lang::$txt['lang_dictionary'] === 'ru'
+		$link = Lang::getTxt('lang_dictionary') === 'ru'
 			? 'https://dragomano.ru/mods/optimus'
 			: 'https://custom.simplemachines.org/mods/index.php?mod=2659';
 

@@ -54,21 +54,21 @@ final class SitemapLinkHandler
 
 		$content = strtr($content, [
 			'{link}'          => Theme::$current->settings['theme_url'] . '/css/index.css',
-			'{sitemap}'       => Lang::$txt['optimus_sitemap_title'],
-			'{mobile}'        => Lang::$txt['optimus_mobile'],
-			'{images}'        => Lang::$txt['optimus_images'],
-			'{news}'          => Lang::$txt['optimus_news'],
-			'{video}'         => Lang::$txt['optimus_video'],
-			'{index}'         => Lang::$txt['optimus_index'],
-			'{total_files}'   => Lang::$txt['optimus_total_files'],
-			'{total_urls}'    => Lang::$txt['optimus_total_urls'],
-			'{url}'           => Lang::$txt['url'],
-			'{last_modified}' => Lang::$txt['optimus_last_modified'],
-			'{frequency}'     => Lang::$txt['optimus_frequency'],
-			'{priority}'      => Lang::$txt['optimus_priority'],
-			'{direct_link}'   => Lang::$txt['optimus_direct_link'],
-			'{caption}'       => Lang::$txt['optimus_caption'],
-			'{thumbnail}'     => Lang::$txt['optimus_thumbnail'],
+			'{sitemap}'       => Lang::getTxt('optimus_sitemap_title'),
+			'{mobile}'        => Lang::getTxt('optimus_mobile'),
+			'{images}'        => Lang::getTxt('optimus_images'),
+			'{news}'          => Lang::getTxt('optimus_news'),
+			'{video}'         => Lang::getTxt('optimus_video'),
+			'{index}'         => Lang::getTxt('optimus_index'),
+			'{total_files}'   => Lang::getTxt('optimus_total_files'),
+			'{total_urls}'    => Lang::getTxt('optimus_total_urls'),
+			'{url}'           => Lang::getTxt('url'),
+			'{last_modified}' => Lang::getTxt('optimus_last_modified'),
+			'{frequency}'     => Lang::getTxt('optimus_frequency'),
+			'{priority}'      => Lang::getTxt('optimus_priority'),
+			'{direct_link}'   => Lang::getTxt('optimus_direct_link'),
+			'{caption}'       => Lang::getTxt('optimus_caption'),
+			'{thumbnail}'     => Lang::getTxt('optimus_thumbnail'),
 			'{optimus}'       => OP_NAME,
 		]);
 
@@ -87,10 +87,10 @@ final class SitemapLinkHandler
 		if (isset(Utils::$context['uninstalling']))
 			return;
 
-		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::$txt['optimus_sitemap_title']))
+		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::getTxt('optimus_sitemap_title')))
 			return;
 
-		Lang::$forum_copyright .= ' | ' . Str::html('a', Lang::$txt['optimus_sitemap_title'])
+		Lang::$forum_copyright .= ' | ' . Str::html('a', Lang::getTxt('optimus_sitemap_title'))
 			->href(Config::$boardurl . '/sitemap.xml');
 
 		Utils::$context['html_headers'] .= "\n\t" . Str::html('link')

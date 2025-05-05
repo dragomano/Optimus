@@ -125,7 +125,7 @@ final class TopicHandler
 				[
 					'check',
 					'optimus_allow_change_topic_desc',
-					'subtext' => Lang::$txt['optimus_allow_change_topic_desc_subtext']
+					'subtext' => Lang::getTxt('optimus_allow_change_topic_desc_subtext')
 				],
 			],
 			array_slice($config_vars, $counter, null, true)
@@ -238,14 +238,14 @@ final class TopicHandler
 		if (! $this->canChangeDescription() || empty(Utils::$context['is_first_post']))
 			return;
 
-		Utils::$context['posting_fields']['optimus_description']['label']['text'] = Lang::$txt['optimus_seo_description'];
+		Utils::$context['posting_fields']['optimus_description']['label']['text'] = Lang::getTxt('optimus_seo_description');
 		Utils::$context['posting_fields']['optimus_description']['input'] = [
 			'type' => 'textarea',
 			'attributes' => [
 				'id'          => 'optimus_description',
 				'maxlength'   => 255,
 				'value'       => Utils::$context['optimus']['description'],
-				'placeholder' => Lang::$txt['optimus_enter_description'],
+				'placeholder' => Lang::getTxt('optimus_enter_description'),
 			],
 		];
 	}

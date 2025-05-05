@@ -37,7 +37,7 @@ final class FrontPageHandler
 		if (empty(Config::$modSettings['optimus_forum_index']))
 			return;
 
-		Lang::$txt['forum_index'] = Config::$modSettings['optimus_forum_index'];
+		Lang::setTxt('forum_index', Config::$modSettings['optimus_forum_index']);
 	}
 
 	public function addDescription(): void

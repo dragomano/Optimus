@@ -13,29 +13,19 @@
 namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\IntegrationHook;
-use Bugo\Compat\Lang;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Utils\Copyright;
 
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class CoreHandler
+final class CreditsHandler
 {
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_load_theme', self::class . '::loadTheme#', false, __FILE__
-		);
-
-		IntegrationHook::add(
 			'integrate_credits', self::class . '::credits#', false, __FILE__
 		);
-	}
-
-	public function loadTheme(): void
-	{
-		Lang::load('Optimus/Optimus');
 	}
 
 	public function credits(): void

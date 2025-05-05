@@ -41,7 +41,7 @@ abstract class AbstractAddon implements AddonInterface
 				$addonStrings = (array) require_once $langFile;
 
 				foreach ($addonStrings as $key => $value) {
-					Lang::$txt[$key] = $value;
+					Lang::setTxt($key, $value);
 				}
 			}
 		}

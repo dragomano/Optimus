@@ -37,8 +37,8 @@ final class ErrorPageHandler
 			return;
 
 		Theme::$current->settings['catch_action'] = [
-			'template' => 'Errors',
-			'function' => self::class . '::changeErrorPage#',
+			'template'     => 'Errors',
+			'function'     => self::class . '::changeErrorPage#',
 			'sub_template' => 'fatal_error',
 		];
 	}
@@ -63,11 +63,11 @@ final class ErrorPageHandler
 
 		Theme::addInlineCss('#fatal_error { text-align: center }');
 
-		Utils::$context['page_title'] = Lang::$txt["optimus_{$code}_page_title"];
+		Utils::$context['page_title'] = Lang::getTxt("optimus_{$code}_page_title");
 		Utils::$context['error_code'] = '';
 		Utils::$context['error_link'] = 'javascript:history.go(-1)';
-		Utils::$context['error_title'] = Lang::$txt["optimus_{$code}_h2"];
-		Utils::$context['error_message'] = Lang::$txt["optimus_{$code}_h3"];
-		Utils::$context['error_message'] .= '<br>' . sprintf(Lang::$txt['optimus_goto_main_page'], Config::$scripturl);
+		Utils::$context['error_title'] = Lang::getTxt("optimus_{$code}_h2");
+		Utils::$context['error_message'] = Lang::getTxt("optimus_{$code}_h3");
+		Utils::$context['error_message'] .= '<br>' . sprintf(Lang::getTxt('optimus_goto_main_page'), Config::$scripturl);
 	}
 }

@@ -15,7 +15,7 @@ namespace Bugo\Optimus\Handlers;
 use Bugo\Compat\{Cache\CacheApi, Config, IntegrationHook, Db, ItemList};
 use Bugo\Compat\{Lang, QueryString, Theme, Topic, User, Utils};
 use Bugo\Optimus\Routes\Keywords;
-use Bugo\Optimus\Utils\{Copyright, Input, Str};
+use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -133,7 +133,7 @@ final class TagHandler
 				[
 					'check',
 					'optimus_allow_change_topic_keywords',
-					'subtext' => Lang::$txt['optimus_allow_change_topic_keywords_subtext']
+					'subtext' => Lang::getTxt('optimus_allow_change_topic_keywords_subtext')
 				],
 				['check', 'optimus_show_keywords_block'],
 				['check', 'optimus_show_keywords_on_message_index'],
@@ -273,17 +273,17 @@ final class TagHandler
 
 		$keywordName = $this->getNameById(Utils::$context['optimus_keyword_id']);
 
-		Utils::$context['page_title']    = sprintf(Lang::$txt['optimus_topics_with_keyword'], $keywordName);
+		Utils::$context['page_title']    = sprintf(Lang::getTxt('optimus_topics_with_keyword', file: 'Optimus/Optimus'), $keywordName);
 		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'];
 
 		if (empty($keywordName)) {
-			Utils::$context['page_title'] = Lang::$txt['optimus_404_page_title'];
+			Utils::$context['page_title'] = Lang::getTxt('optimus_404_page_title');
 
 			Utils::sendHttpStatus(404);
 		}
 
 		Utils::$context['linktree'][] = [
-			'name' => Lang::$txt['optimus_all_keywords'],
+			'name' => Lang::getTxt('optimus_all_keywords'),
 			'url'  => Config::$scripturl . '?action=keywords',
 		];
 
@@ -296,7 +296,7 @@ final class TagHandler
 			'id'               => 'topics',
 			'items_per_page'   => 30,
 			'title'            => '',
-			'no_items_label'   => Lang::$txt['optimus_no_keywords'],
+			'no_items_label'   => Lang::getTxt('optimus_no_keywords'),
 			'base_href'        => Config::$scripturl . '?action=keywords;id=' . Utils::$context['optimus_keyword_id'],
 			'default_sort_col' => 'topic',
 			'get_items' => [
@@ -308,7 +308,7 @@ final class TagHandler
 			'columns' => [
 				'topic' => [
 					'header' => [
-						'value' => Lang::$txt['topic']
+						'value' => Lang::getTxt('topic')
 					],
 					'data' => [
 						'db' => 'topic'
@@ -320,7 +320,7 @@ final class TagHandler
 				],
 				'board' => [
 					'header' => [
-						'value' => Lang::$txt['board']
+						'value' => Lang::getTxt('board')
 					],
 					'data' => [
 						'db'    => 'board',
@@ -333,7 +333,7 @@ final class TagHandler
 				],
 				'author' => [
 					'header' => [
-						'value' => Lang::$txt['author']
+						'value' => Lang::getTxt('author')
 					],
 					'data' => [
 						'db'    => 'author',
@@ -388,7 +388,7 @@ final class TagHandler
 					->href(Config::$scripturl . '?topic=' . $row['id_topic'] . '.0'),
 				'board'  => Str::html('a', $row['name'])
 					->href(Config::$scripturl . '?board=' . $row['id_board'] . '.0'),
-				'author' => empty($row['real_name']) ? Lang::$txt['guest'] : Str::html('a', $row['real_name'])
+				'author' => empty($row['real_name']) ? Lang::getTxt('guest') : Str::html('a', $row['real_name'])
 					->href($href)
 			];
 		}
@@ -418,7 +418,7 @@ final class TagHandler
 
 	public function showAllWithFrequency(): void
 	{
-		Utils::$context['page_title']    = Lang::$txt['optimus_all_keywords'];
+		Utils::$context['page_title']    = Lang::getTxt('optimus_all_keywords', file: 'Optimus/Optimus');
 		Utils::$context['canonical_url'] = Config::$scripturl . '?action=keywords';
 
 		Utils::$context['linktree'][] = [
@@ -442,7 +442,7 @@ final class TagHandler
 			'columns' => [
 				'keyword' => [
 					'header' => [
-						'value' => Lang::$txt['optimus_keyword_column']
+						'value' => Lang::getTxt('optimus_keyword_column')
 					],
 					'data' => [
 						'db' => 'keyword'
@@ -454,7 +454,7 @@ final class TagHandler
 				],
 				'frequency' => [
 					'header' => [
-						'value' => Lang::$txt['optimus_frequency_column']
+						'value' => Lang::getTxt('optimus_frequency_column')
 					],
 					'data' => [
 						'db'    => 'frequency',
@@ -633,7 +633,10 @@ final class TagHandler
 		if (empty(Utils::$context['is_first_post']))
 			return;
 
-		Utils::$context['posting_fields']['optimus_keywords']['label']['html'] = Lang::$txt['optimus_seo_keywords'];
+		Utils::$context['posting_fields']['optimus_keywords']['label']['html'] = Lang::getTxt(
+			'optimus_seo_keywords', file: 'Optimus/Optimus'
+		);
+
 		Utils::$context['posting_fields']['optimus_keywords']['input']['html'] = Str::html('div')
 			->id('optimus_keywords')
 			->name('optimus_keywords');
@@ -680,10 +683,10 @@ final class TagHandler
 			showValueAsTags: true,
 			allowNewOption: true,
 			showSelectedOptionsFirst: true,
-			placeholder: "' . Lang::$txt['optimus_enter_keywords'] . '",
-			noSearchResultsText: "' . Lang::$txt['no_matches'] . '",
-			searchPlaceholderText: "' . Lang::$txt['search'] . '",
-			clearButtonText: "' . Lang::$txt['remove'] . '",
+			placeholder: "' . Lang::getTxt('optimus_enter_keywords') . '",
+			noSearchResultsText: "' . Lang::getTxt('no_matches') . '",
+			searchPlaceholderText: "' . Lang::getTxt('search') . '",
+			clearButtonText: "' . Lang::getTxt('remove') . '",
 			maxValues: ' . $maxTags . ',
 			options: ' . json_encode($data) . ',
 			selectedValue: [' . implode(',', $values) . ']
