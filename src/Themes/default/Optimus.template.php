@@ -339,7 +339,7 @@ function template_search_terms_above(): void
 {
 	echo '
 	<div class="cat_bar">
-		<h3 class="catbg">', Lang::getTxt('optimus_top_queries'), '</h3>
+		<h3 class="catbg">', Lang::getTxt('optimus_top_queries', file: 'Optimus/Optimus'), '</h3>
 	</div>';
 
 	if (! empty(Utils::$context['search_terms'])) {

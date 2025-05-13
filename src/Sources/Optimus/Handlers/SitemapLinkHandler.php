@@ -54,7 +54,7 @@ final class SitemapLinkHandler
 
 		$content = strtr($content, [
 			'{link}'          => Theme::$current->settings['theme_url'] . '/css/index.css',
-			'{sitemap}'       => Lang::getTxt('optimus_sitemap_title'),
+			'{sitemap}'       => Lang::getTxt('optimus_sitemap_title', file: 'Optimus/Optimus'),
 			'{mobile}'        => Lang::getTxt('optimus_mobile'),
 			'{images}'        => Lang::getTxt('optimus_images'),
 			'{news}'          => Lang::getTxt('optimus_news'),
@@ -84,10 +84,10 @@ final class SitemapLinkHandler
 
 	public function addLink(): void
 	{
-		if (isset(Utils::$context['uninstalling']))
+		if (isset(Utils::$context['uninstalling']) || empty(Config::$modSettings['optimus_sitemap_link']))
 			return;
 
-		if (empty(Config::$modSettings['optimus_sitemap_link']) || empty(Lang::getTxt('optimus_sitemap_title')))
+		if (empty(Lang::getTxt('optimus_sitemap_title', file: 'Optimus/Optimus')))
 			return;
 
 		Lang::$forum_copyright .= ' | ' . Str::html('a', Lang::getTxt('optimus_sitemap_title'))

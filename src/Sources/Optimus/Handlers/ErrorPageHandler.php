@@ -63,7 +63,7 @@ final class ErrorPageHandler
 
 		Theme::addInlineCss('#fatal_error { text-align: center }');
 
-		Utils::$context['page_title'] = Lang::getTxt("optimus_{$code}_page_title");
+		Utils::$context['page_title'] = Lang::getTxt("optimus_{$code}_page_title", file: 'Optimus/Optimus');
 		Utils::$context['error_code'] = '';
 		Utils::$context['error_link'] = 'javascript:history.go(-1)';
 		Utils::$context['error_title'] = Lang::getTxt("optimus_{$code}_h2");

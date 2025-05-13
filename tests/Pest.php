@@ -36,17 +36,6 @@ use Bugo\Compat\Utils;
 uses()->beforeAll(function () {
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
-	array_map(fn($u) => new $u(), [
-		Config::class,
-		Db::class,
-		Lang::class,
-		User::class,
-		Theme::class,
-		Board::class,
-		Topic::class,
-		Utils::class,
-	]);
-
 	User::$me->language = 'english';
 
 	Lang::setTxt('lang_dictionary', 'en');
