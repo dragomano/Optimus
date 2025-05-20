@@ -1,27 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":semanticCommits"
+    "config:recommended"
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "Non-major Starlight dependencies",
-      "groupSlug": "starlight-non-major",
-      "automergeType": "branch",
-      "matchPackagePatterns": ["*"]
+      "groupName": "GitHub Actions",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ]
     },
     {
-      "matchUpdateTypes": ["major"],
-      "dependencyDashboardApproval": true
-    },
-    {
-      "matchPackageNames": ["@astrojs/starlight", "astro"],
-      "groupName": "Starlight and Astro core dependencies",
-      "groupSlug": "starlight-core",
-      "matchUpdateTypes": ["minor", "patch"]
+      "groupName": "Dependencies",
+      "groupSlug": "dependencies",
+      "matchPackageNames": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
     }
-  ],
-  "labels": ["dependencies"]
+  ]
 }
