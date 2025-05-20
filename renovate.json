@@ -5,9 +5,6 @@
   ],
   "dependencyDashboard": true,
   "dependencyDashboardAutoclose": true,
-  "vulnerabilityAlerts": {
-    "enabled": true
-  },
   "packageRules": [
     {
       "groupName": "dependencies",
