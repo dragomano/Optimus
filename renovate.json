@@ -5,6 +5,9 @@
   ],
   "dependencyDashboard": true,
   "dependencyDashboardAutoclose": true,
+  "vulnerabilityAlerts": {
+    "enabled": true
+  },
   "packageRules": [
     {
       "groupName": "dependencies",
@@ -19,6 +22,12 @@
         "minor",
         "major"
       ]
+    },
+    {
+      "matchDatasources": [
+        "packagist"
+      ],
+      "enabled": false
     },
     {
       "groupName": "workflows",
