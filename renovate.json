@@ -33,9 +33,6 @@
     "enabled": true,
     "extends": ["schedule:weekly"]
   },
-  "pnpm": {
-    "lockfile": true
-  },
   "dependencyDashboard": true,
   "labels": ["dependencies", "docs"],
   "schedule": ["before 7am on Monday"],
