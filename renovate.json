@@ -6,22 +6,37 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "groupName": "Non-major Starlight dependencies",
       "groupSlug": "starlight-non-major",
       "automergeType": "branch",
-      "matchPackagePatterns": ["*"]
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
-      "matchUpdateTypes": ["major"],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "dependencyDashboardApproval": true
     },
     {
-      "matchPackageNames": ["@astrojs/starlight", "astro"],
+      "matchPackageNames": [
+        "@astrojs/starlight",
+        "astro"
+      ],
       "groupName": "Starlight and Astro core dependencies",
       "groupSlug": "starlight-core",
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
     }
   ],
-  "labels": ["dependencies"]
+  "labels": [
+    "dependencies"
+  ]
 }
