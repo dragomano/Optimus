@@ -9,7 +9,6 @@
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "Non-major Starlight dependencies",
       "groupSlug": "starlight-non-major",
-      "automerge": true,
       "automergeType": "branch",
       "matchPackagePatterns": ["*"]
     },
@@ -21,20 +20,8 @@
       "matchPackageNames": ["@astrojs/starlight", "astro"],
       "groupName": "Starlight and Astro core dependencies",
       "groupSlug": "starlight-core",
-      "automerge": true,
       "matchUpdateTypes": ["minor", "patch"]
-    },
-    {
-      "matchPackageNames": ["node"],
-      "enabled": false
     }
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "extends": ["schedule:weekly"]
-  },
-  "dependencyDashboard": true,
-  "labels": ["dependencies", "docs"],
-  "schedule": ["before 7am on Monday"],
-  "timezone": "Europe/Moscow"
+  "labels": ["dependencies"]
 }
