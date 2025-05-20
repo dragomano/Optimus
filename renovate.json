@@ -1,6 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ]
+    "config:recommended",
+    ":semanticCommits"
+  ],
+  "enabledManagers": ["pnpm"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "Non-major Starlight dependencies",
+      "groupSlug": "starlight-non-major",
+      "automerge": true,
+      "automergeType": "branch",
+      "matchPackagePatterns": ["*"],
+      "matchManagers": ["pnpm"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "matchManagers": ["pnpm"]
+    },
+    {
+      "matchPackageNames": ["@astrojs/starlight", "astro"],
+      "groupName": "Starlight and Astro core dependencies",
+      "groupSlug": "starlight-core",
+      "automerge": true,
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": ["pnpm"]
+    },
+    {
+      "matchPackageNames": ["node"],
+      "enabled": false
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "extends": ["schedule:weekly"]
+  },
+  "pnpm": {
+    "lockfile": true
+  },
+  "dependencyDashboard": true,
+  "labels": ["dependencies", "docs"]
 }
