@@ -6,8 +6,7 @@
   "dependencyDashboard": true,
   "dependencyDashboardAutoclose": true,
   "vulnerabilityAlerts": {
-    "enabled": true,
-    "severity": "critical"
+    "enabled": true
   },
   "packageRules": [
     {
