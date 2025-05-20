@@ -3,25 +3,34 @@
   "extends": [
     "config:recommended"
   ],
+  "dependencyDashboard": true,
+  "dependencyDashboardAutoclose": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "severity": "critical"
+  },
   "packageRules": [
     {
-      "groupName": "GitHub Actions",
+      "groupName": "dependencies",
+      "matchDatasources": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor",
+        "major"
+      ]
+    },
+    {
+      "groupName": "workflows",
       "matchManagers": [
         "github-actions"
       ],
       "matchUpdateTypes": [
         "major"
-      ]
-    },
-    {
-      "groupName": "Dependencies",
-      "groupSlug": "dependencies",
-      "matchPackageNames": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
       ]
     }
   ]
