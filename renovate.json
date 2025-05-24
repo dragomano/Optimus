@@ -19,9 +19,9 @@
       ],
       "matchUpdateTypes": [
         "patch",
-        "minor",
-        "major"
-      ]
+        "minor"
+      ],
+      "automerge": true
     },
     {
       "matchDatasources": [
