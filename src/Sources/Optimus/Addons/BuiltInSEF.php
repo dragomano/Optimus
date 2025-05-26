@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 04.03.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -18,7 +18,7 @@ use Bugo\Compat\QueryString;
 use Bugo\Optimus\Enums\Entity;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Services\RobotsGenerator;
-use Bugo\Optimus\Services\SitemapContent;
+use Bugo\Optimus\Services\SitemapGenerator;
 use League\Event\ListenerPriority;
 
 class BuiltInSEF extends AbstractAddon
@@ -43,17 +43,17 @@ class BuiltInSEF extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
-		$robots->useSef = true;
+		$generator->useSef = true;
 
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . Entity::BOARD->buildPattern();
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . Entity::TOPIC->buildPattern();
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . Entity::MSG->buildPattern();
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = $generator->urlPath . Entity::BOARD->buildPattern();
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = $generator->urlPath . Entity::TOPIC->buildPattern();
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = $generator->urlPath . Entity::MSG->buildPattern();
 	}
 
-	public function changeSitemapContent(SitemapContent $content): void
+	public function changeSitemapContent(SitemapGenerator $generator): void
 	{
-		$content->xml = QueryString::rewriteAsQueryless($content->xml);
+		$generator->content = QueryString::rewriteAsQueryless($generator->content);
 	}
 }

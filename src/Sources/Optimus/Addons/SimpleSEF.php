@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 29.01.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -48,18 +48,18 @@ final class SimpleSEF extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
-		$robots->useSef = ! empty(Config::$modSettings['simplesef_enable'])
+		$generator->useSef = ! empty(Config::$modSettings['simplesef_enable'])
 			&& is_file(dirname(__DIR__, 2) . '/SimpleSEF.php');
 	}
 
-	public function createSefUrls(SitemapGenerator $sitemap): void
+	public function createSefUrls(SitemapGenerator $generator): void
 	{
 		$engine = new \SimpleSEF();
 		$method = method_exists('\SimpleSEF', 'getSefUrl') ? 'getSefUrl' : 'create_sef_url';
 
-		foreach ($sitemap->links as &$url) {
+		foreach ($generator->links as &$url) {
 			$url['loc'] = $engine->$method($url['loc']);
 		}
 	}

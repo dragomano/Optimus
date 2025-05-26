@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 02.01.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -38,28 +38,28 @@ final class EzPortal extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
 		global $ezpSettings;
 
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = empty($ezpSettings['ezp_pages_seourls'])
-			? $robots->urlPath . '/*ezportal;sa=page;p=*'
-			: $robots->urlPath . '/pages/';
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = empty($ezpSettings['ezp_pages_seourls'])
+			? $generator->urlPath . '/*ezportal;sa=page;p=*'
+			: $generator->urlPath . '/pages/';
 	}
 
-	public function changeSitemap(SitemapGenerator $sitemap): void
+	public function changeSitemap(SitemapGenerator $generator): void
 	{
 		global $ezpSettings;
 
 		$result = Db::$db->query('', '
 			SELECT id_page, date, title, permissions
 			FROM {db_prefix}ezp_page
-			WHERE {int:guests} IN (permissions)' . ($sitemap->startYear ? '
+			WHERE {int:guests} IN (permissions)' . ($generator->startYear ? '
 				AND YEAR(FROM_UNIXTIME(date)) >= {int:start_year}' : '') . '
 			ORDER BY id_page DESC',
 			[
 				'guests'     => -1, // The page must be available to guests
-				'start_year' => $sitemap->startYear,
+				'start_year' => $generator->startYear,
 			]
 		);
 
@@ -68,7 +68,7 @@ final class EzPortal extends AbstractAddon
 				? Config::$scripturl . '?action=ezportal;sa=page;p=' . $row['id_page']
 				: Config::$boardurl . '/pages/' . \MakeSEOUrl($row['title']) . '-' . $row['id_page'];
 
-			$sitemap->links[] = [
+			$generator->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date'],
 			];

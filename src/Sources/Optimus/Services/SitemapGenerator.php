@@ -32,6 +32,8 @@ class SitemapGenerator
 
 	public array $links = [];
 
+	public string $content = '';
+
 	public function __construct(
 		private readonly SitemapDataService    $dataService,
 		private readonly FileSystemInterface   $fileSystem,
@@ -143,14 +145,14 @@ class SitemapGenerator
 			$filename = 'sitemap_' . $i . '.xml';
 
 			try {
-				$xml = $this->xmlGenerator->generate($items[$i], SitemapFeature::getOptions());
+				$this->content = $this->xmlGenerator->generate($items[$i], SitemapFeature::getOptions());
 
-				$this->handleContent($xml);
+				$this->handleContent();
 
-				$this->fileSystem->writeFile($filename, $xml);
+				$this->fileSystem->writeFile($filename, $this->content);
 
-				if (function_exists('gzencode') && strlen($xml) > (self::MAX_FILESIZE)) {
-					$this->fileSystem->writeGzFile($filename . '.gz', $xml);
+				if (function_exists('gzencode') && strlen($this->content) > (self::MAX_FILESIZE)) {
+					$this->fileSystem->writeGzFile($filename . '.gz', $this->content);
 					$gzMaps[] = $filename . '.gz';
 				}
 
@@ -189,14 +191,14 @@ class SitemapGenerator
 	private function processSingleSitemap(array $items): void
 	{
 		try {
-			$xml = $this->xmlGenerator->generate($items, SitemapFeature::getOptions());
+			$this->content = $this->xmlGenerator->generate($items, SitemapFeature::getOptions());
 
-			$this->handleContent($xml);
+			$this->handleContent();
 
-			$this->fileSystem->writeFile(self::XML_FILE, $xml);
+			$this->fileSystem->writeFile(self::XML_FILE, $this->content);
 
-			if (function_exists('gzencode') && strlen($xml) > (self::MAX_FILESIZE)) {
-				$this->fileSystem->writeGzFile(self::XML_GZ_FILE, $xml);
+			if (function_exists('gzencode') && strlen($this->content) > (self::MAX_FILESIZE)) {
+				$this->fileSystem->writeGzFile(self::XML_GZ_FILE, $this->content);
 			}
 		} catch (XmlGeneratorException $e) {
 			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
@@ -256,9 +258,9 @@ class SitemapGenerator
 		return date('Y-m-d\TH:i:s', $timestamp) . $gmt;
 	}
 
-	private function handleContent(string &$xml): void
+	private function handleContent(): void
 	{
 		// Some mods want to rewrite whole content (PrettyURLs)
-		$this->dispatcher->dispatchEvent(AddonInterface::SITEMAP_CONTENT, new SitemapContent($xml));
+		$this->dispatcher->dispatchEvent(AddonInterface::SITEMAP_CONTENT, $this);
 	}
 }

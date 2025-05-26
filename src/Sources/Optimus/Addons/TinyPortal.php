@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 02.01.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -66,12 +66,12 @@ final class TinyPortal extends AbstractAddon
 		Utils::$context['canonical_url'] = Config::$scripturl . '?page=' . ($article['shortname'] ?: $article['id']);
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . '/*page';
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = $generator->urlPath . '/*page';
 	}
 
-	public function changeSitemap(SitemapGenerator $sitemap): void
+	public function changeSitemap(SitemapGenerator $generator): void
 	{
 		$result = Db::$db->query('', '
 			SELECT a.id, a.date, a.shortname
@@ -79,21 +79,21 @@ final class TinyPortal extends AbstractAddon
 				INNER JOIN {db_prefix}tp_variables AS v ON (a.category = v.id)
 			WHERE a.approved = {int:approved}
 				AND a.off = {int:off_status}
-				AND {int:guests} IN (v.value3)' . ($sitemap->startYear ? '
+				AND {int:guests} IN (v.value3)' . ($generator->startYear ? '
 				AND YEAR(FROM_UNIXTIME(a.date)) >= {int:start_year}' : '') . '
 			ORDER BY a.id DESC',
 			[
 				'approved'   => 1, // The article must be approved
 				'off_status' => 0, // The article must be active
 				'guests'     => -1, // The article category must be available to guests
-				'start_year' => $sitemap->startYear,
+				'start_year' => $generator->startYear,
 			]
 		);
 
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?page=' . ($row['shortname'] ?: $row['id']);
 
-			$sitemap->links[] = [
+			$generator->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date'],
 			];

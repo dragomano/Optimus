@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 17.04.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -41,18 +41,18 @@ final class LightPortal extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
-		$rule = $robots->urlPath . '/*' . LP_PAGE_PARAM;
+		$rule = $generator->urlPath . '/*' . LP_PAGE_PARAM;
 
-		if ($robots->useSef) {
-			$rule = $robots->urlPath . '/pages/';
+		if ($generator->useSef) {
+			$rule = $generator->urlPath . '/pages/';
 		}
 
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $rule;
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = $rule;
 	}
 
-	public function changeSitemap(SitemapGenerator $sitemap): void
+	public function changeSitemap(SitemapGenerator $generator): void
 	{
 		$result = Db::$db->query('', '
 			SELECT page_id, slug, GREATEST(created_at, updated_at) AS date
@@ -61,7 +61,7 @@ final class LightPortal extends AbstractAddon
 				AND deleted_at = 0
 				AND entry_type = {string:entry_type}
 				AND created_at <= {int:current_time}
-				AND permissions IN ({array_int:permissions})' . ($sitemap->startYear ? '
+				AND permissions IN ({array_int:permissions})' . ($generator->startYear ? '
 				AND YEAR(FROM_UNIXTIME(created_at)) >= {int:start_year}' : '') . '
 			ORDER BY page_id DESC',
 			[
@@ -69,14 +69,14 @@ final class LightPortal extends AbstractAddon
 				'entry_type'   => EntryType::DEFAULT->name(),
 				'current_time' => time(),
 				'permissions'  => [Permission::GUEST->value, Permission::ALL->value],
-				'start_year'   => $sitemap->startYear,
+				'start_year'   => $generator->startYear,
 			]
 		);
 
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?' . (Config::$modSettings['lp_page_param'] ?? 'page') . '=' . $row['slug'];
 
-			$sitemap->links[] = [
+			$generator->links[] = [
 				'loc'     => $url,
 				'lastmod' => $row['date'],
 			];

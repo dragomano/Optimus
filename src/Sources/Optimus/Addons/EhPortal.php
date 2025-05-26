@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 02.01.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -38,12 +38,12 @@ final class EhPortal extends AbstractAddon
 		};
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
-		$robots->customRules['*'][$robots::RULE_ALLOW][] = $robots->urlPath . '/*page=*';
+		$generator->customRules['*'][$generator::RULE_ALLOW][] = $generator->urlPath . '/*page=*';
 	}
 
-	public function changeSitemap(SitemapGenerator $sitemap): void
+	public function changeSitemap(SitemapGenerator $generator): void
 	{
 		$result = Db::$db->query('', '
 			SELECT namespace
@@ -62,7 +62,7 @@ final class EhPortal extends AbstractAddon
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$url = Config::$scripturl . '?page=' . $row['namespace'];
 
-			$sitemap->links[] = [
+			$generator->links[] = [
 				'loc' => $url,
 			];
 		}

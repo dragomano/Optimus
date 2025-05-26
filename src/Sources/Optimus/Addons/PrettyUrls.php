@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 29.01.25
+ * @version 26.05.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -16,7 +16,7 @@ namespace Bugo\Optimus\Addons;
 use Bugo\Compat\{Config, Utils};
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Services\RobotsGenerator;
-use Bugo\Optimus\Services\SitemapContent;
+use Bugo\Optimus\Services\SitemapGenerator;
 use League\Event\ListenerPriority;
 
 if (! defined('SMF'))
@@ -50,13 +50,13 @@ final class PrettyUrls extends AbstractAddon
 		}
 	}
 
-	public function changeRobots(RobotsGenerator $robots): void
+	public function changeRobots(RobotsGenerator $generator): void
 	{
-		$robots->useSef = ! empty(Config::$modSettings['pretty_enable_filters'])
+		$generator->useSef = ! empty(Config::$modSettings['pretty_enable_filters'])
 			&& is_file(dirname(__DIR__, 2) . '/PrettyUrls-Filters.php');
 	}
 
-	public function changeSitemapContent(SitemapContent $content): void
+	public function changeSitemapContent(SitemapGenerator $generator): void
 	{
 		$pretty = Config::$sourcedir . '/PrettyUrls-Filters.php';
 
@@ -81,14 +81,7 @@ final class PrettyUrls extends AbstractAddon
 		Config::$modSettings['pretty_bufferusecache'] = false;
 
 		if (function_exists('pretty_rewrite_buffer')) {
-			$content->xml = pretty_rewrite_buffer($content->xml);
+			$generator->content = \pretty_rewrite_buffer($generator->content);
 		}
-	}
-}
-
-if (! function_exists('pretty_rewrite_buffer')) {
-	function pretty_rewrite_buffer(string $buffer): string
-	{
-		return $buffer;
 	}
 }
