@@ -3,11 +3,16 @@
   "extends": [
     "config:recommended"
   ],
-  "dependencyDashboard": true,
-  "dependencyDashboardAutoclose": true,
   "vulnerabilityAlerts": {
     "enabled": true
   },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "schedule": [
+    "every weekend"
+  ],
   "packageRules": [
     {
       "groupName": "dependencies",
