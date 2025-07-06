@@ -13,7 +13,7 @@
 namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\{Config, IntegrationHook};
-use Bugo\Compat\{Lang, Theme, Utils};
+use Bugo\Compat\{Lang, Sapi, Theme, Utils};
 use Bugo\Optimus\Enums\Action;
 use Bugo\Optimus\Utils\Str;
 
@@ -53,7 +53,7 @@ final class SitemapLinkHandler
 		$content = file_get_contents(Theme::$current->settings['default_theme_dir'] . '/css/optimus/sitemap.xsl');
 
 		$content = strtr($content, [
-			'{link}'          => Theme::$current->settings['theme_url'] . '/css/index.css',
+			'{link}'          => $this->getFixedLink(),
 			'{sitemap}'       => Lang::getTxt('optimus_sitemap_title', file: 'Optimus/Optimus'),
 			'{mobile}'        => Lang::getTxt('optimus_mobile'),
 			'{images}'        => Lang::getTxt('optimus_images'),
@@ -98,5 +98,16 @@ final class SitemapLinkHandler
 			->type('application/xml')
 			->title('Sitemap')
 			->href(Config::$boardurl . '/sitemap.xml');
+	}
+
+	private function getFixedLink(): string
+	{
+		$themeLink = Theme::$current->settings['theme_url'] . '/css/index.css';
+
+		if (Sapi::httpsOn()) {
+			$themeLink  = str_replace('http:', 'https:', $themeLink);
+		}
+
+		return $themeLink;
 	}
 }
