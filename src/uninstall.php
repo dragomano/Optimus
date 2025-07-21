@@ -18,5 +18,7 @@ $smcFunc['db_query']('', '
 	]
 );
 
+updateSettings(['optimus_sitemap_enable' => 0]);
+
 if (SMF === 'SSI')
 	echo 'Database changes are complete! Please wait...';
