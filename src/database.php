@@ -136,6 +136,14 @@ $smcFunc['db_add_column'](
 	'do_nothing'
 );
 
+$smcFunc['db_query']('', '
+	DELETE FROM {db_prefix}background_tasks
+	WHERE task_file LIKE {string:task_file}',
+	[
+		'task_file' => '%$sourcedir/Optimus%'
+	]
+);
+
 updateSettings(['optimus_sitemap_enable' => 0]);
 
 if (SMF === 'SSI')
