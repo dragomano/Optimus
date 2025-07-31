@@ -220,3 +220,10 @@ function fatal_lang_error(...$params): void
 {
 	Utils::$context['error_title'] = $params[0];
 }
+
+if (! function_exists('httpsOn')) {
+	function httpsOn(): bool
+	{
+		return true;
+	}
+}

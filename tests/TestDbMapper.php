@@ -6,7 +6,7 @@ abstract class TestDbMapper
 {
 	abstract public function testQuery($query, $params = []): array;
 
-	public function query($id, $query, $params = []): array
+	public function query($query, $params = [], $connection = null, $id = ''): array
 	{
 		expect($id)->toBeString()
 			->and($query)->toBeString()
