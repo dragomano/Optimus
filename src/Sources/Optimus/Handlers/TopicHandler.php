@@ -212,7 +212,7 @@ final class TopicHandler
 				Input::request('optimus_description', '')
 			);
 		} else {
-			$result = Db::$db->query('', '
+			$result = Db::$db->query('
 				SELECT optimus_description, id_member_started
 				FROM {db_prefix}topics
 				WHERE id_topic = {int:id_topic}
@@ -277,7 +277,7 @@ final class TopicHandler
 
 		$description = Input::xss(Input::request('optimus_description', ''));
 
-		Db::$db->query('', '
+		Db::$db->query('
 			UPDATE {db_prefix}topics
 			SET optimus_description = {string:description}
 			WHERE id_topic = {int:current_topic}',

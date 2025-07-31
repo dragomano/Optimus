@@ -73,7 +73,7 @@ final class TinyPortal extends AbstractAddon
 
 	public function changeSitemap(SitemapGenerator $generator): void
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT a.id, a.date, a.shortname
 			FROM {db_prefix}tp_articles AS a
 				INNER JOIN {db_prefix}tp_variables AS v ON (a.category = v.id)

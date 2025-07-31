@@ -537,7 +537,7 @@ final class SettingHandler
 			User::$me->checkSession();
 
 			// Recreate a sitemap after save settings
-			Db::$db->query('', '
+			Db::$db->query('
 				DELETE FROM {db_prefix}background_tasks
 				WHERE task_class = {string:task_class}',
 				[

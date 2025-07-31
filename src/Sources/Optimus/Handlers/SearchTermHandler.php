@@ -54,7 +54,7 @@ final class SearchTermHandler
 			return;
 
 		if ((Utils::$context['search_terms'] = CacheApi::get('optimus_search_terms', 3600)) === null) {
-			$result = Db::$db->query('', /** @lang text */ '
+			$result = Db::$db->query(/** @lang text */ '
 				SELECT phrase, hit
 				FROM {db_prefix}optimus_search_terms
 				ORDER BY hit DESC
@@ -90,7 +90,7 @@ final class SearchTermHandler
 		if (empty($searchString))
 			return false;
 
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT id_term
 			FROM {db_prefix}optimus_search_terms
 			WHERE phrase = {string:phrase}
@@ -114,7 +114,7 @@ final class SearchTermHandler
 				['id_term'],
 			);
 		} else {
-			Db::$db->query('', '
+			Db::$db->query('
 				UPDATE {db_prefix}optimus_search_terms
 				SET hit = hit + 1
 				WHERE id_term = {int:id_term}',

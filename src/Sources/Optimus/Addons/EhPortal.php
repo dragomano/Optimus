@@ -45,7 +45,7 @@ final class EhPortal extends AbstractAddon
 
 	public function changeSitemap(SitemapGenerator $generator): void
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT namespace
 			FROM {db_prefix}sp_pages
 			WHERE status = {int:status}

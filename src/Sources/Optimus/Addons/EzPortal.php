@@ -51,7 +51,7 @@ final class EzPortal extends AbstractAddon
 	{
 		global $ezpSettings;
 
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT id_page, date, title, permissions
 			FROM {db_prefix}ezp_page
 			WHERE {int:guests} IN (permissions)' . ($generator->startYear ? '

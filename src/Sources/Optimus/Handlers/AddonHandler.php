@@ -64,7 +64,7 @@ final class AddonHandler implements ListenerSubscriber
 	private function getInstalledMods(): array
 	{
 		if (($mods = CacheApi::get('optimus_installed_mods', self::TTL)) === null) {
-			$result = Db::$db->query('', /** @lang text */ '
+			$result = Db::$db->query(/** @lang text */ '
 				SELECT package_id
 				FROM {db_prefix}log_packages
 				WHERE install_state <> 0',

@@ -243,7 +243,7 @@ final class TagHandler
 		if (empty($topics))
 			return;
 
-		Db::$db->query('', '
+		Db::$db->query('
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE topic_id IN ({array_int:topics})',
 			[
@@ -358,7 +358,7 @@ final class TagHandler
 
 	public function getAllByKeyId(int $start, int $limit, string $sort): array
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT t.id_topic, ms.subject, b.id_board, b.name, m.id_member, m.id_group, m.real_name, mg.group_name
 			FROM {db_prefix}topics AS t
 				LEFT JOIN {db_prefix}optimus_log_keywords AS olk ON (t.id_topic = olk.topic_id)
@@ -400,7 +400,7 @@ final class TagHandler
 
 	public function getTotalCountByKeyId(): int
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT COUNT(topic_id)
 			FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id = {int:keyword}
@@ -486,7 +486,7 @@ final class TagHandler
 
 	public function getAll(int $start, int $limit, string $sort): array
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT ok.id, ok.name, COUNT(olk.keyword_id) AS frequency
 			FROM {db_prefix}optimus_keywords AS ok
 				LEFT JOIN {db_prefix}optimus_log_keywords AS olk ON (ok.id = olk.keyword_id)
@@ -517,7 +517,7 @@ final class TagHandler
 
 	public function getTotalCount(): int
 	{
-		$result = Db::$db->query('', /** @lang text */ '
+		$result = Db::$db->query(/** @lang text */ '
 			SELECT COUNT(id)
 			FROM {db_prefix}optimus_keywords
 			LIMIT 1',
@@ -552,7 +552,7 @@ final class TagHandler
 	private function getKeywords(): array
 	{
 		if (($keywords = CacheApi::get('optimus_topic_keywords', 3600)) === null) {
-			$result = Db::$db->query('', /** @lang text */ '
+			$result = Db::$db->query(/** @lang text */ '
 				SELECT k.id, k.name, lk.topic_id
 				FROM {db_prefix}optimus_keywords AS k
 					INNER JOIN {db_prefix}optimus_log_keywords AS lk ON (k.id = lk.keyword_id)
@@ -575,7 +575,7 @@ final class TagHandler
 	private function getAllKeywords(): array
 	{
 		if (($keywords = CacheApi::get('optimus_all_keywords', 3600)) === null) {
-			$result = Db::$db->query('', /** @lang text */ '
+			$result = Db::$db->query(/** @lang text */ '
 				SELECT id, name
 				FROM {db_prefix}optimus_keywords',
 			);
@@ -598,7 +598,7 @@ final class TagHandler
 		if (empty($id))
 			return '';
 
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT name
 			FROM {db_prefix}optimus_keywords
 			WHERE id = {int:id}
@@ -695,7 +695,7 @@ final class TagHandler
 
 	private function getIdByName(string $name): int
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT id
 			FROM {db_prefix}optimus_keywords
 			WHERE name = {string:name}
@@ -804,7 +804,7 @@ final class TagHandler
 		if (empty($keywords) || empty($topic))
 			return;
 
-		Db::$db->query('', '
+		Db::$db->query('
 			DELETE FROM {db_prefix}optimus_log_keywords
 			WHERE keyword_id IN ({array_int:keywords}) AND topic_id = {int:topic}',
 			[
@@ -813,7 +813,7 @@ final class TagHandler
 			]
 		);
 
-		Db::$db->query('', /** @lang text */ '
+		Db::$db->query(/** @lang text */ '
 			DELETE FROM {db_prefix}optimus_keywords
 			WHERE id NOT IN (SELECT keyword_id FROM {db_prefix}optimus_log_keywords)',
 		);

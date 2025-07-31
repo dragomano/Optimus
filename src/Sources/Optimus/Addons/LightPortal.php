@@ -54,7 +54,7 @@ final class LightPortal extends AbstractAddon
 
 	public function changeSitemap(SitemapGenerator $generator): void
 	{
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT page_id, slug, GREATEST(created_at, updated_at) AS date
 			FROM {db_prefix}lp_pages
 			WHERE status = {int:status}

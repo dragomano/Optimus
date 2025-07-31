@@ -35,7 +35,7 @@ class SitemapDataService
 			$this->ignoredBoards[] = (int) Config::$modSettings['recycle_board'];
 		}
 
-		$result = Db::$db->query('', /** @lang text */ '
+		$result = Db::$db->query(/** @lang text */ '
 			SELECT b.id_board, GREATEST(m.poster_time, m.modified_time) AS last_date
 			FROM {db_prefix}boards AS b
 				LEFT JOIN {db_prefix}messages AS m ON (b.id_last_msg = m.id_msg)
@@ -116,7 +116,7 @@ class SitemapDataService
 	{
 		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
 
-		$result = Db::$db->query('', '
+		$result = Db::$db->query('
 			SELECT t.id_topic, t.id_board, t.num_replies, t.id_first_msg, t.id_last_msg,
 				GREATEST(m.poster_time, m.modified_time) AS last_date, m.subject,
 				a.id_attach, a.filename, a.fileext, a.attachment_type
