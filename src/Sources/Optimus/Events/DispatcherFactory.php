@@ -17,11 +17,11 @@ if (! defined('SMF'))
 
 final class DispatcherFactory
 {
-	private static Dispatcher $dispatcher;
+	private static ?Dispatcher $dispatcher = null;
 
 	public function __invoke(): Dispatcher
 	{
-		if (! isset(self::$dispatcher)) {
+		if (self::$dispatcher === null) {
 			self::$dispatcher = new Dispatcher();
 		}
 

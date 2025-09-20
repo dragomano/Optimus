@@ -342,11 +342,12 @@ final class SettingHandler
 
 			$meta = [];
 			if (Input::isPost('custom_tag_name') && Input::isPost('custom_tag_value')) {
-				$custom_tag = filter_input_array(INPUT_POST);
-				$custom_tag['custom_tag_name'] = array_filter($custom_tag['custom_tag_name']);
+				$custom_tag_name = Input::post('custom_tag_name');
+				$custom_tag_value = Input::post('custom_tag_value');
+				$custom_tag_name = array_filter($custom_tag_name);
 
-				foreach ($custom_tag['custom_tag_name'] as $key => $value) {
-					$meta[$value] = $custom_tag['custom_tag_value'][$key];
+				foreach ($custom_tag_name as $key => $value) {
+					$meta[$value] = $custom_tag_value[$key];
 				}
 			}
 
@@ -376,11 +377,12 @@ final class SettingHandler
 
 			$redirect = [];
 			if (Input::isPost('custom_redirect_from') && Input::isPost('custom_redirect_to')) {
-				$custom_redirect = filter_input_array(INPUT_POST);
-				$custom_redirect['custom_redirect_from'] = array_filter($custom_redirect['custom_redirect_from']);
+				$custom_redirect_from = Input::post('custom_redirect_from');
+				$custom_redirect_to = Input::post('custom_redirect_to');
+				$custom_redirect_from = array_filter($custom_redirect_from);
 
-				foreach ($custom_redirect['custom_redirect_from'] as $to => $from) {
-					$redirect[$from] = $custom_redirect['custom_redirect_to'][$to];
+				foreach ($custom_redirect_from as $to => $from) {
+					$redirect[$from] = $custom_redirect_to[$to];
 				}
 			}
 
@@ -432,7 +434,7 @@ final class SettingHandler
 
 		$path = (Input::server('document_root') ?: Config::$boarddir) . '/robots.txt';
 
-		Utils::$context['robots_content'] = Utils::makeWritable($path) ? file_get_contents($path) : '';
+		Utils::$context['robots_content'] = Utils::makeWritable($path) ? @file_get_contents($path) : '';
 
 		(new RobotsGenerator())->generate();
 
@@ -460,7 +462,7 @@ final class SettingHandler
 
 		$path = (Input::server('document_root') ?: Config::$boarddir) . '/.htaccess';
 
-		Utils::$context['htaccess_content'] = Utils::makeWritable($path) ? file_get_contents($path) : '';
+		Utils::$context['htaccess_content'] = Utils::makeWritable($path) ? @file_get_contents($path) : '';
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();

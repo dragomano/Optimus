@@ -14,29 +14,36 @@ namespace Bugo\Optimus\Services;
 
 final class FileSystem implements FileSystemInterface
 {
-	public function __construct(private readonly string $basePath) {}
+	public function __construct(
+		private readonly string $basePath,
+		private readonly mixed $fopenFunc = 'fopen',
+		private readonly mixed $gzopenFunc = 'gzopen',
+		private readonly mixed $gzwriteFunc = 'gzwrite',
+		private readonly mixed $flockFunc = 'flock',
+		private readonly mixed $fwriteFunc = 'fwrite'
+	) {}
 
 	public function writeFile(string $filename, string $content): void
 	{
 		$path = $this->getFullPath($filename);
 
-		$fp = fopen($path, 'w+b');
+		$fp = ($this->fopenFunc)($path, 'w+b');
 		if ($fp === false) {
 			throw new FileSystemException("Cannot create file: $path");
 		}
 
 		try {
-			if (! flock($fp, LOCK_EX)) {
+			if (! ($this->flockFunc)($fp, LOCK_EX)) {
 				throw new FileSystemException("Cannot lock file: $path");
 			}
 
-			if (fwrite($fp, $content) === false) {
+			if (($this->fwriteFunc)($fp, $content) === false) {
 				throw new FileSystemException("Cannot write to file: $path");
 			}
 
 			fflush($fp);
 
-			flock($fp, LOCK_UN);
+			($this->flockFunc)($fp, LOCK_UN);
 		} finally {
 			fclose($fp);
 		}
@@ -50,13 +57,13 @@ final class FileSystem implements FileSystemInterface
 
 		$path = $this->getFullPath($filename);
 
-		$gz = gzopen($path, 'wb9');
+		$gz = ($this->gzopenFunc)($path, 'wb9');
 		if ($gz === false) {
 			throw new FileSystemException("Cannot create gzip file: $path");
 		}
 
 		try {
-			if (gzwrite($gz, $content) === false) {
+			if (($this->gzwriteFunc)($gz, $content) === false) {
 				throw new FileSystemException("Cannot write to gzip file: $path");
 			}
 		} finally {
