@@ -2,6 +2,7 @@
 
 use Bugo\Compat\{Config, Db};
 use Bugo\Optimus\Tasks\Sitemap;
+use Tests\TestDbMapper;
 
 abstract class SMF_BackgroundTask
 {
@@ -25,14 +26,11 @@ beforeEach(function () {
 		'optimus_update_frequency' => 0,
 	];
 
-	Db::$db = new class {
-		public function query(): object|bool { return true; }
-
-		public function fetch_assoc(): array|false|null { return false; }
-
-		public function free_result(): bool { return false; }
-
-		public function insert(): int|array|null { return null; }
+	Db::$db = new class extends TestDbMapper {
+		public function testQuery($query, $params = []): array
+		{
+			return [];
+		}
 	};
 
 	$this->sitemap = new Sitemap(['id' => 1]);
@@ -54,25 +52,25 @@ it('returns false when sitemap is disabled', function () {
 it('schedules next run after successful generation', function () {
 	$insertCalled = false;
 
-	Db::$db = new class($insertCalled) {
+	Db::$db = new class($insertCalled) extends TestDbMapper {
 		private bool $insertCalled;
 
 		public function __construct(&$insertCalled) {
 			$this->insertCalled = &$insertCalled;
 		}
 
-		public function query(): object|bool { return true; }
-
-		public function fetch_assoc(): array|false|null { return false; }
-
-		public function free_result(): bool { return false; }
+		public function testQuery($query, $params = []): array
+		{
+			return [];
+		}
 
 		public function insert(
 			string $method = '',
 			string $table = '',
 			array $columns = [],
 			array $data = [],
-			array $keys = []
+			array $keys = [],
+			int $returnmode = 0
 		): int|array|null {
 			$this->insertCalled = true;
 
@@ -103,25 +101,25 @@ it('uses correct update interval based on settings', function () {
 
 		$nextRunTime = 0;
 
-		Db::$db = new class($nextRunTime) {
+		Db::$db = new class($nextRunTime) extends TestDbMapper {
 			private int $nextRunTime;
 
 			public function __construct(&$nextRunTime) {
 				$this->nextRunTime = &$nextRunTime;
 			}
 
-			public function query(): object|bool { return true; }
-
-			public function fetch_assoc(): array|false|null { return false; }
-
-			public function free_result(): bool { return false; }
+			public function testQuery($query, $params = []): array
+			{
+				return [];
+			}
 
 			public function insert(
 				string $method = '',
 				string $table = '',
 				array $columns = [],
 				array $data = [],
-				array $keys = []
+				array $keys = [],
+				int $returnmode = 0
 			): int|array|null {
 				$this->nextRunTime = $data[3] - time();
 
@@ -134,4 +132,15 @@ it('uses correct update interval based on settings', function () {
 		expect($nextRunTime)->toBeGreaterThanOrEqual($expectedInterval - 1)
 			->toBeLessThanOrEqual($expectedInterval + 1);
 	}
+});
+
+it('returns true when generation is successful', function () {
+	expect($this->sitemap->execute())->toBeTrue();
+});
+
+
+it('handles missing start_year setting correctly', function () {
+	unset(Config::$modSettings['optimus_start_year']);
+
+	expect($this->sitemap->execute())->toBeTrue();
 });

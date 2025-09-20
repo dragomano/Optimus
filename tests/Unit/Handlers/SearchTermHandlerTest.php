@@ -3,6 +3,7 @@
 use Bugo\Compat\Config;
 use Bugo\Compat\Db;
 use Bugo\Compat\Db\FuncMapper;
+use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\SearchTermHandler;
 use Bugo\Optimus\Utils\Input;
@@ -133,6 +134,18 @@ describe('prepareSearchTerms method', function () {
 		expect(isset(Utils::$context['search_terms']))->toBeTrue()
 			->and(Utils::$context['search_terms'])->toHaveCount(2);
 	});
+
+	it('checks case with current_action search2', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		Utils::$context['current_action'] = 'search2';
+
+		$this->handler->prepareSearchTerms();
+
+		expect(isset(Utils::$context['search_terms']))->toBeTrue()
+			->and(Utils::$context['search_terms'])->toHaveCount(2);
+	});
+
 });
 
 describe('searchParams method', function () {
@@ -152,6 +165,14 @@ describe('searchParams method', function () {
 		Input::request(['search' => 'bar']);
 
 		expect($this->handler->searchParams())->toBeTrue();
+	});
+
+	it('checks case with empty search string', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		Input::request(['search' => '']);
+
+		expect($this->handler->searchParams())->toBeFalse();
 	});
 });
 
@@ -176,5 +197,34 @@ describe('showChart method', function () {
 		$showChart->invoke($this->handler);
 
 		expect(Utils::$context['template_layers'])->toContain('search_terms');
+	});
+
+	it('checks case with empty search_terms', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		Utils::$context['search_terms'] = [];
+		Utils::$context['template_layers'] = [];
+
+		$showChart = new ReflectionMethod($this->handler, 'showChart');
+		$showChart->invoke($this->handler);
+
+		expect(Utils::$context['template_layers'])->toBeEmpty();
+	});
+});
+
+describe('canView method', function () {
+	it('checks case with allowedTo false', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		$userMock = Mockery::mock('Bugo\Compat\User');
+		$userMock->shouldReceive('allowedTo')->with('optimus_view_search_terms')->andReturn(false);
+		User::$me = $userMock;
+
+		$canView = new ReflectionMethod($this->handler, 'canView');
+		$result = $canView->invoke($this->handler);
+
+		expect($result)->toBeFalse();
+
+		Mockery::close();
 	});
 });

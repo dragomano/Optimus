@@ -81,6 +81,19 @@ describe('server', function () {
 	it('gets $_SERVER (whole array)', function () {
 		expect(Input::server())->toBe($this->request->server->all());
 	});
+
+	it('gets $_SERVER[argv] without strtoupper', function () {
+		$this->request->server->set('argv', ['script', 'arg1']);
+		$this->request->overrideGlobals();
+
+		expect(Input::server('argv'))->toBe(['script', 'arg1']);
+	});
+
+	it('gets $_SERVER with getenv fallback', function () {
+		putenv('TEST_VAR=test_value');
+
+		expect(Input::server('test_var'))->toBe('test_value');
+	});
 });
 
 describe('session', function () {
@@ -105,6 +118,12 @@ describe('session', function () {
 		expect(Input::session('foo'))->toBe('bar')
 			->and(Input::session('bar'))->toBe('foo');
 
+	});
+
+	it('gets $_SESSION with empty string name', function () {
+		$_SESSION[''] = 'empty_key';
+
+		expect(Input::session(''))->toBe('empty_key');
 	});
 });
 
@@ -169,5 +188,19 @@ describe('filter', function () {
 
 		expect(Input::filter('foo', 'unknown'))->toBe(Input::filter('foo'))
 			->and(Input::filter('foo', 'unknown'))->toBe(Input::xss($this->request->get('foo')));
+	});
+
+	it('checks with url type and valid URL', function () {
+		$this->request->request->set('url', 'https://example.com');
+		$this->request->overrideGlobals();
+
+		expect(Input::filter('url', 'url'))->toBe(Input::xss('https://example.com'));
+	});
+
+	it('checks with url type and invalid URL', function () {
+		$this->request->request->set('url', 'not-a-valid-url');
+		$this->request->overrideGlobals();
+
+		expect(Input::filter('url', 'url'))->toBeFalse();
 	});
 });

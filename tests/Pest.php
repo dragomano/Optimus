@@ -1,11 +1,8 @@
 <?php declare(strict_types=1);
 
-use Bugo\Compat\Board;
 use Bugo\Compat\Config;
-use Bugo\Compat\Db;
 use Bugo\Compat\Lang;
 use Bugo\Compat\Theme;
-use Bugo\Compat\Topic;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 
@@ -211,6 +208,8 @@ function smf_chmod(string $file): bool
 	return !!$file;
 }
 
+$makeWritableReturn = true;
+
 function log_error(string $message, string $level = 'user'): string
 {
 	return $message;
@@ -218,7 +217,7 @@ function log_error(string $message, string $level = 'user'): string
 
 function fatal_lang_error(...$params): void
 {
-	Utils::$context['error_title'] = $params[0];
+	Utils::$context['error_title'] = Lang::getTxt($params[0]);
 }
 
 if (! function_exists('httpsOn')) {
@@ -226,4 +225,22 @@ if (! function_exists('httpsOn')) {
 	{
 		return true;
 	}
+}
+
+if (! function_exists('filter_input_array')) {
+	function filter_input_array($type) {
+		return $GLOBALS['_POST'] ?? [];
+	}
+}
+
+if (! function_exists('prepareDBSettingContext')) {
+    function prepareDBSettingContext(array &$vars): void
+    {
+    }
+}
+
+if (! function_exists('saveDBSettings')) {
+    function saveDBSettings(array &$vars): void
+    {
+    }
 }

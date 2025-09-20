@@ -6,6 +6,7 @@
   },
   "require-dev": {
     "pestphp/pest": "^2.36",
+    "mockery/mockery": "^1.6",
     "phing/phing": "^3.0",
     "rector/rector": "^2.0",
     "symfony/http-foundation": "^6.4"
