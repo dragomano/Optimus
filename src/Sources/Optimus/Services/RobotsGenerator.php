@@ -12,7 +12,7 @@
 
 namespace Bugo\Optimus\Services;
 
-use Bugo\Compat\{Config, Utils};
+use Bugo\Compat\{Config, IntegrationHook, Utils};
 use Bugo\Compat\Parsers\BBCodeParser;
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Enums\Entity;
@@ -62,7 +62,7 @@ final class RobotsGenerator
 		$this->dispatcher->dispatchEvent(AddonInterface::ROBOTS_RULES, $this);
 
 		// External integrations
-		call_integration_hook('integrate_optimus_robots_rules', [&$this->customRules, $this->urlPath]);
+		IntegrationHook::call('integrate_optimus_robots_rules', [&$this->customRules, $this->urlPath]);
 
 		$this->addBaseRules();
 		$this->addFeeds();
