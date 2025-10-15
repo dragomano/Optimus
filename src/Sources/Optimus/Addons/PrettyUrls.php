@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 26.05.25
+ * @version 15.10.25
  */
 
 namespace Bugo\Optimus\Addons;
@@ -75,10 +75,12 @@ final class PrettyUrls extends AbstractAddon
 			);
 		}
 
+		if (isset(Config::$modSettings['pretty_board_urls'])) {
+			Utils::$context['pretty']['board_urls'] = @unserialize(Config::$modSettings['pretty_board_urls']);
+		}
+
 		Utils::$context['pretty']['search_patterns'][]  = '~(<loc>)([^#<]+)~';
 		Utils::$context['pretty']['replace_patterns'][] = '~(<loc>)([^<]+)~';
-
-		Config::$modSettings['pretty_bufferusecache'] = false;
 
 		if (function_exists('pretty_rewrite_buffer')) {
 			$generator->content = \pretty_rewrite_buffer($generator->content);
