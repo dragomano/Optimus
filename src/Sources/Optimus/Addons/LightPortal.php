@@ -8,18 +8,18 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 26.05.25
+ * @version 17.10.25
  */
 
 namespace Bugo\Optimus\Addons;
 
 use Bugo\Compat\{Config, Db};
-use Bugo\LightPortal\Enums\EntryType;
-use Bugo\LightPortal\Enums\Permission;
-use Bugo\LightPortal\Enums\Status;
 use Bugo\Optimus\Events\AddonEvent;
 use Bugo\Optimus\Services\RobotsGenerator;
 use Bugo\Optimus\Services\SitemapGenerator;
+use LightPortal\Enums\EntryType;
+use LightPortal\Enums\Permission;
+use LightPortal\Enums\Status;
 
 if (! defined('SMF'))
 	die('No direct access...');
