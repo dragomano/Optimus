@@ -14,8 +14,12 @@ src/Themes/default/languages/Optimus/*
 src/Themes/default/languages/Optimus/index.php
 !src/Themes/default/languages/Optimus/Optimus.english.php
 
-src/Sources/Optimus/Addons/*/
+src/Sources/Optimus/Addons/*/*
 src/Sources/Optimus/Addons/StructuredData.php
+!src/Sources/Optimus/Addons/*/
+!src/Sources/Optimus/Addons/*/langs/
+src/Sources/Optimus/Addons/*/langs/*
+!src/Sources/Optimus/Addons/*/langs/english.php
 
 src/Sources/Optimus/Libs/*
 !src/Sources/Optimus/Libs/index.php

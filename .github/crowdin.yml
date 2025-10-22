@@ -1,14 +1,24 @@
 project_id_env: CROWDIN_PROJECT_ID
 api_token_env: CROWDIN_API_TOKEN
-base_path: '..'
-base_url: 'https://api.crowdin.com'
+base_path: ".."
+base_url: "https://api.crowdin.com"
 preserve_hierarchy: true
 
 files:
   [
     {
-      source: 'src/Themes/default/languages/Optimus/Optimus.english.php',
-      dest: 'Themes/default/languages/Optimus/Optimus.english.php',
-      translation: '%original_path%/Optimus.%language%.php',
+      source: "src/Sources/Optimus/Addons/ExtraSettings/langs/english.php",
+      dest: "Sources/Optimus/Addons/ExtraSettings/langs/english.php",
+      translation: "%original_path%/%language%.php",
+    },
+    {
+      source: "src/Sources/Optimus/Addons/IndexNow/langs/english.php",
+      dest: "Sources/Optimus/Addons/IndexNow/langs/english.php",
+      translation: "%original_path%/%language%.php",
+    },
+    {
+      source: "src/Themes/default/languages/Optimus/Optimus.english.php",
+      dest: "Themes/default/languages/Optimus/Optimus.english.php",
+      translation: "%original_path%/Optimus.%language%.php",
     },
   ]
