@@ -7,7 +7,7 @@
  * @copyright 2010-2025 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC4
+ * @version 3.0 RC5
  */
 
 namespace Bugo\Optimus\Utils;
