@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 import { remarkHeadingId } from "remark-custom-heading-id";
+import starlightUiTweaks from 'starlight-ui-tweaks';
 
 // https://astro.build/config
 export default defineConfig({
@@ -10,6 +11,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			plugins: [
+				starlightUiTweaks(),
 				starlightLinksValidator({
 					errorOnRelativeLinks: false
 				})

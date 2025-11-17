@@ -11,11 +11,12 @@
   "dependencies": {
     "@astrojs/starlight": "^0.36.2",
     "@yohns/picocss": "^2.2.10",
-    "accessible-astro-components": "^5.0.1",
-    "astro": "^5.15.4",
+    "accessible-astro-components": "^5.0.3",
+    "astro": "^5.15.8",
     "remark-custom-heading-id": "^2.0.0",
-    "sass": "^1.93.3",
+    "sass": "^1.94.0",
     "sharp": "^0.34.5",
-    "starlight-links-validator": "^0.18.1"
+    "starlight-links-validator": "^0.19.1",
+    "starlight-ui-tweaks": "^0.1.0"
   }
 }
