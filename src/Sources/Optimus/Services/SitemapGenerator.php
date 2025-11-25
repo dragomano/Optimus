@@ -44,8 +44,9 @@ class SitemapGenerator
 
 	public function generate(): bool
 	{
-		if (empty(Config::$modSettings['optimus_sitemap_enable']))
+		if (empty(Config::$modSettings['optimus_sitemap_enable'])) {
 			return false;
+		}
 
 		$this->initialize();
 		$this->removeOldFiles();
@@ -235,8 +236,9 @@ class SitemapGenerator
 
 	private function getLastDate(array $links): int
 	{
-		if (empty($links))
+		if (empty($links)) {
 			return time();
+		}
 
 		$data = array_values(array_values($links));
 
@@ -250,8 +252,9 @@ class SitemapGenerator
 
 	private function getDateIso8601(int $timestamp): string
 	{
-		if (empty($timestamp))
+		if (empty($timestamp)) {
 			return '';
+		}
 
 		$gmt = substr(date('O', $timestamp), 0, 3) . ':00';
 

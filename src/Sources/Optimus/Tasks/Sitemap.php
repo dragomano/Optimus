@@ -27,8 +27,9 @@ class Sitemap extends BackgroundTask
 {
 	public function execute(): bool
 	{
-		if (empty(Config::$modSettings['optimus_sitemap_enable']))
+		if (empty(Config::$modSettings['optimus_sitemap_enable'])) {
 			return false;
+		}
 
 		$startYear = (int) (Config::$modSettings['optimus_start_year'] ?? 0);
 
@@ -73,10 +74,10 @@ class Sitemap extends BackgroundTask
 
 	private function getTaskUpdateIntervalInDays(): int
 	{
-		if (empty(Config::$modSettings['optimus_update_frequency']))
-			return 1;
+		$frequency = (int) (Config::$modSettings['optimus_update_frequency'] ?? 0);
 
-		return match (Config::$modSettings['optimus_update_frequency']) {
+		return match ($frequency) {
+			0 => 1,
 			1 => 3,
 			2 => 7,
 			3 => 14,

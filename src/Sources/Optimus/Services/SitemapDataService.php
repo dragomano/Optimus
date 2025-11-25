@@ -49,7 +49,7 @@ class SitemapDataService
 				AND b.id_board NOT IN ({array_int:ignored_boards})') . '
 				AND b.redirect = {string:empty_string}
 				AND b.num_posts > {int:num_posts}' . ($this->startYear ? '
-				AND YEAR(FROM_UNIXTIME(m.poster_time)) >= {int:start_year}' : '') . '
+				AND m.poster_time >= UNIX_TIMESTAMP(CONCAT({int:start_year}, \'-01-01\'))' : '') . '
 			ORDER BY b.id_board DESC',
 			[
 				'ignored_boards' => $this->ignoredBoards,
@@ -81,14 +81,15 @@ class SitemapDataService
 
 	public function getTopicLinks(): array
 	{
-		if (empty($this->openBoards))
+		if (empty($this->openBoards)) {
 			return [];
+		}
 
 		$tempCache = Db::$cache;
 		Db::$cache = [];
 
 		$start = 0;
-		$limit = 1000;
+		$limit = 100;
 
 		$totalRows = $this->getTotalRows();
 
@@ -124,12 +125,12 @@ class SitemapDataService
 				INNER JOIN {db_prefix}messages AS m ON (m.id_msg = t.id_last_msg)
 				LEFT JOIN {db_prefix}attachments AS a ON (a.id_msg = t.id_first_msg
 					AND a.attachment_type = {int:attach_type})
-					AND a.width <> {int:attach_width}
-					AND a.height <> {int:attach_height}
+					AND a.width > {int:attach_width}
+					AND a.height > {int:attach_height}
 					AND a.approved = {int:attach_approved}
 			WHERE t.id_board IN ({array_int:boards})' . ($numReplies ? '
 				AND t.num_replies >= {int:num_replies}' : '') .	($this->startYear ? '
-				AND YEAR(FROM_UNIXTIME(m.poster_time)) >= {int:start_year}' : '') . '
+				AND m.poster_time >= UNIX_TIMESTAMP(CONCAT({int:start_year}, \'-01-01\'))' : '') . '
 			ORDER BY t.id_topic DESC, last_date
 			LIMIT {int:start}, {int:limit}',
 			[
@@ -159,11 +160,10 @@ class SitemapDataService
 				];
 			}
 
-			if (
-				! empty(Config::$modSettings['optimus_sitemap_add_found_images'])
-				&& ! empty($row['id_attach'])
-				&& $this->isImageFile($row['fileext'])
-			) {
+			if (empty(Config::$modSettings['optimus_sitemap_add_found_images']) || empty($row['id_attach']))
+				continue;
+
+			if ($this->isImageFile($row['fileext'])) {
 				$this->images[$row['id_topic']] = [
 					'loc' => implode('', [
 						Config::$scripturl . '?action=dlattach;topic=',
