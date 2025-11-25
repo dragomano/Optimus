@@ -8,12 +8,12 @@ use Tests\TestDbMapper;
 
 beforeEach(function () {
 	Config::$modSettings = [
-		'queryless_urls' => null,
-		'recycle_board' => null,
-		'optimus_sitemap_boards' => true,
+		'queryless_urls'                     => null,
+		'recycle_board'                      => null,
+		'optimus_sitemap_boards'             => true,
 		'optimus_sitemap_topics_num_replies' => 0,
-		'optimus_sitemap_all_topic_pages' => false,
-		'optimus_sitemap_add_found_images' => false,
+		'optimus_sitemap_all_topic_pages'    => false,
+		'optimus_sitemap_add_found_images'   => false,
 	];
 
 	Db::$db = new class extends TestDbMapper {
@@ -33,22 +33,22 @@ beforeEach(function () {
 			if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
 				return [
 					[
-						'id_topic' => '1',
-						'id_board' => '1',
+						'id_topic'    => '1',
+						'id_board'    => '1',
 						'num_replies' => '5',
-						'last_date' => time(),
-						'subject' => 'Test Topic',
-						'id_attach' => '1',
-						'fileext' => 'jpg',
+						'last_date'   => time(),
+						'subject'     => 'Test Topic',
+						'id_attach'   => '1',
+						'fileext'     => 'jpg',
 					],
 					[
-						'id_topic' => '2',
-						'id_board' => '2',
+						'id_topic'    => '2',
+						'id_board'    => '2',
 						'num_replies' => '3',
-						'last_date' => time(),
-						'subject' => 'Another Topic',
-						'id_attach' => null,
-						'fileext' => null,
+						'last_date'   => time(),
+						'subject'     => 'Another Topic',
+						'id_attach'   => null,
+						'fileext'     => null,
 					],
 				];
 			}
@@ -148,13 +148,13 @@ describe('SitemapDataService', function () {
 				if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
 					return [
 						[
-							'id_topic' => '1',
-							'id_board' => '1',
+							'id_topic'    => '1',
+							'id_board'    => '1',
 							'num_replies' => '10', // High replies to create multiple pages
-							'last_date' => time(),
-							'subject' => 'Test Topic',
-							'id_attach' => null,
-							'fileext' => null,
+							'last_date'   => time(),
+							'subject'     => 'Test Topic',
+							'id_attach'   => null,
+							'fileext'     => null,
 						],
 					];
 				}
@@ -170,7 +170,7 @@ describe('SitemapDataService', function () {
 	});
 
 	it('handles multiple batches in getTopicLinks when totalRows > limit', function () {
-		Config::$modSettings['totalTopics'] = 1500; // > 1000 limit
+		Config::$modSettings['totalTopics'] = 1500; // > 100 limit
 		Config::$modSettings['optimus_sitemap_all_topic_pages'] = false;
 
 		$this->sitemapDataService->getBoardLinks();
@@ -187,13 +187,13 @@ describe('SitemapDataService', function () {
 					if ($params['start'] == 0) {
 						return [
 							[
-								'id_topic' => '1',
-								'id_board' => '1',
+								'id_topic'    => '1',
+								'id_board'    => '1',
 								'num_replies' => '5',
-								'last_date' => time(),
-								'subject' => 'Test Topic',
-								'id_attach' => null,
-								'fileext' => null,
+								'last_date'   => time(),
+								'subject'     => 'Test Topic',
+								'id_attach'   => null,
+								'fileext'     => null,
 							],
 						];
 					}
@@ -208,8 +208,7 @@ describe('SitemapDataService', function () {
 		$links = $this->sitemapDataService->getTopicLinks();
 
 		expect($links)->toHaveCount(1)
-            ->and($callCount)->toBe(2);
-        // Two batches called
+			->and($callCount)->toBe(intval(Config::$modSettings['totalTopics'] / 100));
 	});
 
 	it('processes topics with images correctly', function () {
@@ -296,9 +295,9 @@ describe('SitemapDataService', function () {
 		$isImageFile = new ReflectionMethod($this->sitemapDataService, 'isImageFile');
 
 		expect($isImageFile->invoke($this->sitemapDataService, 'jpg'))->toBeTrue()
-            ->and($isImageFile->invoke($this->sitemapDataService, 'png'))->toBeTrue()
-            ->and($isImageFile->invoke($this->sitemapDataService, 'txt'))->toBeFalse();
-    });
+			->and($isImageFile->invoke($this->sitemapDataService, 'png'))->toBeTrue()
+			->and($isImageFile->invoke($this->sitemapDataService, 'txt'))->toBeFalse();
+	});
 
 	it('builds topic page url correctly', function () {
 		$buildTopicPageUrl = new ReflectionMethod($this->sitemapDataService, 'buildTopicPageUrl');
