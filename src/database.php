@@ -2,16 +2,19 @@
 
 global $user_info, $smcFunc;
 
-if (file_exists(dirname(__FILE__) . '/SSI.php') && ! defined('SMF'))
+if (file_exists(dirname(__FILE__) . '/SSI.php') && ! defined('SMF')) {
 	require_once dirname(__FILE__) . '/SSI.php';
-elseif (! defined('SMF'))
+} elseif (! defined('SMF')) {
 	die('<b>Error:</b> Cannot install - please verify that you put this file in the same place as SMF\'s index.php and SSI.php files.');
+}
 
-if (version_compare(PHP_VERSION, '8.1', '<'))
+if (version_compare(PHP_VERSION, '8.1', '<')) {
 	die('This mod needs PHP 8.1 or greater. You will not be able to install/use this mod, contact your host and ask for a php upgrade.');
+}
 
-if ((SMF === 'SSI') && ! $user_info['is_admin'])
+if (SMF === 'SSI' && ! $user_info['is_admin']) {
 	die('Admin privileges required.');
+}
 
 $tables[] = [
 	'name'    => 'optimus_keywords',
@@ -136,6 +139,22 @@ $smcFunc['db_add_column'](
 	'do_nothing'
 );
 
+// Add extra indexes for sitemap
+$smcFunc['db_add_index']('{db_prefix}topics', [
+	'name' => 'idx_topics_sitemap',
+	'type' => 'index',
+	'columns' => [
+		'id_board', 'num_replies', 'id_topic', 'id_first_msg', 'id_last_msg',
+	]
+]);
+$smcFunc['db_add_index']('{db_prefix}messages', [
+	'name' => 'idx_messages_sitemap',
+	'type' => 'index',
+	'columns' => [
+		'id_msg', 'poster_time', 'modified_time', 'subject',
+	]
+]);
+
 $smcFunc['db_query']('', '
 	DELETE FROM {db_prefix}background_tasks
 	WHERE task_file LIKE {string:task_file}',
@@ -146,5 +165,6 @@ $smcFunc['db_query']('', '
 
 updateSettings(['optimus_sitemap_enable' => 0]);
 
-if (SMF === 'SSI')
+if (SMF === 'SSI') {
 	echo 'Database changes are complete! Please wait...';
+}
