@@ -88,6 +88,10 @@ final class SettingHandler
 				'sitemap'  => [Lang::getTxt('optimus_sitemap_title')],
 			]
 		];
+
+		if (str_starts_with(SMF_VERSION, '3.0')) {
+			$admin_areas['config']['areas']['optimus']['label'] = 'optimus_title';
+		}
 	}
 
 	public function adminSearch(array $language_files, array $include_files, array &$settings_search): void

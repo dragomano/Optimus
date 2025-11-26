@@ -37,6 +37,10 @@ final class TopicHandler
 		);
 
 		IntegrationHook::add(
+			'integrate_permissions_list', self::class . '::permissionsList#', false, __FILE__
+		);
+
+		IntegrationHook::add(
 			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__
 		);
 
@@ -105,6 +109,28 @@ final class TopicHandler
 			return;
 
 		$permissionList['membergroup']['optimus_add_descriptions'] = [true, 'general', 'view_basic_info'];
+	}
+
+	public function permissionsList(array &$permissions): void
+	{
+		if (empty(Config::$modSettings['optimus_allow_change_topic_desc']))
+			return;
+
+		$permissions['optimus_add_descriptions_own'] = [
+			'generic_name' => 'optimus_add_descriptions',
+			'own_any'      => 'own',
+			'view_group'   => 'general',
+			'scope'        => 'global',
+			'never_guests' => true,
+		];
+
+		$permissions['optimus_add_descriptions_any'] = [
+			'generic_name' => 'optimus_add_descriptions',
+			'own_any'      => 'any',
+			'view_group'   => 'general',
+			'scope'        => 'global',
+			'never_guests' => true,
+		];
 	}
 
 	public function basicSettings(array &$config_vars): void

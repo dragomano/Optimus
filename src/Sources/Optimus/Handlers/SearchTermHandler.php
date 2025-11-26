@@ -29,6 +29,10 @@ final class SearchTermHandler
 		);
 
 		IntegrationHook::add(
+			'integrate_permissions_list', self::class . '::permissionsList#', false, __FILE__
+		);
+
+		IntegrationHook::add(
 			'integrate_menu_buttons', self::class . '::prepareSearchTerms#', false, __FILE__
 		);
 
@@ -43,6 +47,18 @@ final class SearchTermHandler
 			return;
 
 		$permissionList['membergroup']['optimus_view_search_terms'] = [false, 'general', 'view_basic_info'];
+	}
+
+	public function permissionsList(array &$permissions): void
+	{
+		if (empty(Config::$modSettings['optimus_log_search']))
+			return;
+
+		$permissions['optimus_view_search_terms'] = [
+			'view_group'   => 'general',
+			'scope'        => 'global',
+			'never_guests' => true,
+		];
 	}
 
 	public function prepareSearchTerms(): void
