@@ -72,19 +72,46 @@ test('prepareOgImage method with topic_first_image', function () {
 	expect(Theme::$current->settings['og_image'])->toBe('https://picsum.photos/seed/wPSdlIrIS3LM5vKU/400/200');
 });
 
-test('loadPermissions method', function () {
-	$permissionList = [];
+describe('loadPermissions method', function () {
+	it('checks basic usage', function () {
+		Config::$modSettings['optimus_allow_change_topic_desc'] = false;
 
-	Config::$modSettings['optimus_allow_change_topic_desc'] = false;
+		$permissionList = [];
 
-	expect($this->handler->loadPermissions([], $permissionList))->toBeNull();
+		expect($this->handler->loadPermissions([], $permissionList))->toBeEmpty();
+	});
 
-	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_allow_change_topic_desc'] = true;
 
-	$this->handler->loadPermissions([], $permissionList);
+		$permissionList = [];
 
-	expect($permissionList['membergroup'])
-		->toHaveKey('optimus_add_descriptions');
+		$this->handler->loadPermissions([], $permissionList);
+
+		expect($permissionList['membergroup'])
+			->toHaveKey('optimus_add_descriptions');
+	});
+});
+
+describe('permissionsList method', function () {
+	it('checks basic usage', function () {
+		Config::$modSettings['optimus_allow_change_topic_desc'] = false;
+
+		$permissionList = [];
+
+		expect($this->handler->permissionsList($permissionList))->toBeEmpty();
+	});
+
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_allow_change_topic_desc'] = true;
+
+		$permissionList = [];
+
+		$this->handler->permissionsList($permissionList);
+
+		expect($permissionList)
+			->toHaveKeys(['optimus_add_descriptions_own', 'optimus_add_descriptions_any']);
+	});
 });
 
 test('basicSettings method', function () {

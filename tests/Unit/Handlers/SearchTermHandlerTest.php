@@ -64,32 +64,32 @@ afterEach(function () {
 });
 
 describe('__invoke method', function () {
-    it('does nothing when search_params is not set', function () {
-        Utils::$context['search_params'] = null;
+	it('does nothing when search_params is not set', function () {
+		Utils::$context['search_params'] = null;
 
-        $this->handler->__invoke();
+		$this->handler->__invoke();
 
-        expect(Utils::$context['page_title'])->toBeEmpty();
-    });
+		expect(Utils::$context['page_title'])->toBeEmpty();
+	});
 
-    it('does nothing when search term is empty', function () {
-        Utils::$context['search_params'] = ['search' => ''];
+	it('does nothing when search term is empty', function () {
+		Utils::$context['search_params'] = ['search' => ''];
 
-        $this->handler->__invoke();
+		$this->handler->__invoke();
 
-        expect(Utils::$context['page_title'])->toBeEmpty();
-    });
+		expect(Utils::$context['page_title'])->toBeEmpty();
+	});
 
-    it('preserves existing page title when template is empty', function () {
-        Utils::$context['search_params'] = ['search' => 'test query'];
-        Utils::$context['page_title'] = 'Existing Title';
+	it('preserves existing page title when template is empty', function () {
+		Utils::$context['search_params'] = ['search' => 'test query'];
+		Utils::$context['page_title'] = 'Existing Title';
 
-        Config::$modSettings['optimus_search_page_title'] = '';
+		Config::$modSettings['optimus_search_page_title'] = '';
 
-        $this->handler->__invoke();
+		$this->handler->__invoke();
 
-        expect(Utils::$context['page_title'])->toBe('Existing Title');
-    });
+		expect(Utils::$context['page_title'])->toBe('Existing Title');
+	});
 });
 
 describe('loadPermissions method', function () {
@@ -112,6 +112,28 @@ describe('loadPermissions method', function () {
 
 		expect($permissionList['membergroup'])
 			->toHaveKey('optimus_view_search_terms');
+	});
+});
+
+describe('permissionsList method', function () {
+	it('checks case with disabled setting', function () {
+		$permissionList = [];
+
+		Config::$modSettings['optimus_log_search'] = false;
+
+		$this->handler->permissionsList($permissionList);
+
+		expect($permissionList)->toBeEmpty();
+	});
+
+	it('checks case with enabled setting', function () {
+		$permissionList = [];
+
+		Config::$modSettings['optimus_log_search'] = true;
+
+		$this->handler->permissionsList($permissionList);
+
+		expect($permissionList)->toHaveKey('optimus_view_search_terms');
 	});
 });
 

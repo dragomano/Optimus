@@ -183,6 +183,29 @@ describe('loadPermissions method', function () {
 	});
 });
 
+describe('permissionsList method', function () {
+	it('checks basic usage', function () {
+		Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
+
+		$permissionList = [];
+
+		$this->handler->permissionsList($permissionList);
+
+		expect($permissionList)->toHaveKeys(['optimus_add_keywords_own', 'optimus_add_keywords_any']);
+	});
+
+	it('checks case with disabled setting', function () {
+		Config::$modSettings['optimus_allow_change_topic_keywords'] = false;
+
+		$permissionList = [];
+
+		$this->handler->permissionsList($permissionList);
+
+		expect($permissionList)->toBeEmpty();
+	});
+});
+
+
 test('basicSettings method', function () {
 	$config_vars = [
 		['check', 'optimus_topic_extend_title']
