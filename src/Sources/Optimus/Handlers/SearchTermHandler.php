@@ -82,13 +82,15 @@ final class SearchTermHandler
 
 	public function searchParams(): bool
 	{
-		if (empty(Config::$modSettings['optimus_log_search']) || ! Input::request('search'))
+		if (empty(Config::$modSettings['optimus_log_search']) || ! Input::request('search')) {
 			return false;
+		}
 
 		$searchString = Utils::htmlspecialcharsDecode(Input::request('search'));
 
-		if (empty($searchString))
+		if (empty($searchString)) {
 			return false;
+		}
 
 		$result = Db::$db->query('
 			SELECT id_term
@@ -139,8 +141,9 @@ final class SearchTermHandler
 
 	private function canView(): bool
 	{
-		if (empty(Config::$modSettings['optimus_log_search']))
+		if (empty(Config::$modSettings['optimus_log_search'])) {
 			return false;
+		}
 
 		return User::$me->allowedTo('optimus_view_search_terms');
 	}

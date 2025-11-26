@@ -44,10 +44,22 @@ class Sitemap extends BackgroundTask
 		$result = $generator->generate();
 
 		if ($result) {
+			$this->removeOldEntries();
 			$this->scheduleNextRun();
 		}
 
 		return $result;
+	}
+
+	private function removeOldEntries(): void
+	{
+		Db::$db->query('
+			DELETE FROM {db_prefix}background_tasks
+			WHERE task_class = {string:task_class}',
+			[
+				'task_class' => '\\' . Sitemap::class,
+			]
+		);
 	}
 
 	private function scheduleNextRun(): void

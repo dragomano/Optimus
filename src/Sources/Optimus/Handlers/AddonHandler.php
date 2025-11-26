@@ -44,7 +44,7 @@ final class AddonHandler implements ListenerSubscriber
 			glob(OP_ADDONS . '/*/*.php'),
 		);
 
-		$addons = array_filter(array_map(fn($file) => $this->mapNamespace($file), $files), 'strlen');
+		$addons = array_filter(array_map($this->mapNamespace(...), $files), strlen(...));
 
 		// External integrations
 		IntegrationHook::call('integrate_optimus_addons', [&$addons]);

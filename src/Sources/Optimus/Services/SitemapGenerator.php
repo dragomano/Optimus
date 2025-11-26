@@ -71,7 +71,7 @@ class SitemapGenerator
 		if (empty(Config::$modSettings['optimus_remove_previous_xml_files']))
 			return;
 
-		array_map('unlink', glob(Config::$boarddir . '/sitemap*.xml*'));
+		array_map(unlink(...), glob(Config::$boarddir . '/sitemap*.xml*'));
 	}
 
 	private function createXml(): void

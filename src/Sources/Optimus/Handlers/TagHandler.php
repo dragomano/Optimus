@@ -33,10 +33,6 @@ final class TagHandler
 		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
-		);
-
-		IntegrationHook::add(
 			'integrate_current_action', self::class . '::currentAction#', false, __FILE__
 		);
 
@@ -92,13 +88,6 @@ final class TagHandler
 	public function parseRoute(): void
 	{
 		QueryString::$route_parsers['keywords'] = Keywords::class;
-	}
-
-	public function menuButtons(array &$buttons): void
-	{
-		if (isset($buttons['home']) && Utils::$context['current_action'] === 'keywords') {
-			$buttons['home']['action_hook'] = true;
-		}
 	}
 
 	public function currentAction(string &$action): void
@@ -595,8 +584,9 @@ final class TagHandler
 
 	private function getNameById(int $id = 0): string
 	{
-		if (empty($id))
+		if (empty($id)) {
 			return '';
+		}
 
 		$result = Db::$db->query('
 			SELECT name
@@ -616,12 +606,14 @@ final class TagHandler
 
 	private function getRandomColor(string $key): string
 	{
-		if (empty(Config::$modSettings['optimus_use_color_tags']))
+		if (empty(Config::$modSettings['optimus_use_color_tags'])) {
 			return '';
+		}
 
 		$hash = -105;
-		for ($i = 0; $i < strlen($key); $i++)
+		for ($i = 0; $i < strlen($key); $i++) {
 			$hash += ord($key[$i]);
+		}
 
 		$hsl = 'background-color: hsl(' . (($hash * 57) % 360) . ', 70%, 40%)';
 
@@ -834,8 +826,9 @@ final class TagHandler
 			Utils::$context['user']['started'] = empty(Topic::$id);
 		}
 
-		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords']))
+		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords'])) {
 			return false;
+		}
 
 		return User::$me->allowedTo('optimus_add_keywords_any')
 			|| (User::$me->allowedTo('optimus_add_keywords_own') && ! empty(Utils::$context['user']['started']));

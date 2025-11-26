@@ -294,8 +294,9 @@ final class TopicHandler
 			Utils::$context['user']['started'] = empty(Topic::$id);
 		}
 
-		if (empty(Config::$modSettings['optimus_allow_change_topic_desc']))
+		if (empty(Config::$modSettings['optimus_allow_change_topic_desc'])) {
 			return false;
+		}
 
 		return User::$me->allowedTo('optimus_add_descriptions_any')
 			|| (

@@ -151,16 +151,6 @@ describe('actions method', function () {
 	});
 });
 
-test('menuButtons method', function () {
-	Utils::$context['current_action'] = 'keywords';
-
-	$buttons = ['home' => []];
-
-	$this->handler->menuButtons($buttons);
-
-	expect($buttons['home'])->toHaveKey('action_hook');
-});
-
 test('currentAction method', function () {
 	Utils::$context['current_action'] = 'keywords';
 

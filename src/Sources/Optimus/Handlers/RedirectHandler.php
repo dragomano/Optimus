@@ -38,8 +38,9 @@ final class RedirectHandler
 			$url = Config::$scripturl . '?';
 			$to = $redirects[$queryString];
 
-			if (str_starts_with($to, 'http'))
+			if (str_starts_with($to, 'http')) {
 				$url = '';
+			}
 
 			header('location: ' . $url . $to, true, 302);
 		}

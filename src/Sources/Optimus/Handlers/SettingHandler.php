@@ -207,8 +207,9 @@ final class SettingHandler
 		// You can add your own options
 		IntegrationHook::call('integrate_optimus_basic_settings', [&$config_vars]);
 
-		if ($return_config)
+		if ($return_config) {
 			return $config_vars;
+		}
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
@@ -266,8 +267,9 @@ final class SettingHandler
 		// You can add your own options
 		IntegrationHook::call('integrate_optimus_extra_settings', [&$config_vars]);
 
-		if ($return_config)
+		if ($return_config) {
 			return $config_vars;
+		}
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
@@ -306,8 +308,9 @@ final class SettingHandler
 			['large_text', 'optimus_favicon_text'],
 		];
 
-		if ($return_config)
+		if ($return_config) {
 			return $config_vars;
+		}
 
 		Utils::$context['sub_template'] = 'favicon';
 
@@ -532,8 +535,9 @@ final class SettingHandler
 		// You can add your own options
 		IntegrationHook::call('integrate_optimus_sitemap_settings', [&$config_vars]);
 
-		if ($return_config)
+		if ($return_config) {
 			return $config_vars;
+		}
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();

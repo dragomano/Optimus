@@ -44,8 +44,9 @@ final class Str
 		// Limit given text
 		$text = Utils::shorten($text, $length);
 
-		if (count($sentences) <= $sentencesCount)
+		if (count($sentences) <= $sentencesCount) {
 			return trim($text);
+		}
 
 		$stopAt = 0;
 		foreach ($sentences as $i => $sentence) {
