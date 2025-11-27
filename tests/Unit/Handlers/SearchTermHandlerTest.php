@@ -13,7 +13,7 @@ beforeEach(function () {
 	$this->handler = new SearchTermHandler();
 
 	Utils::$context['page_title'] = '';
-    Utils::$context['canonical_url'] = '';
+	Utils::$context['canonical_url'] = '';
 
 	Config::$modSettings['optimus_search_page_title'] = '';
 

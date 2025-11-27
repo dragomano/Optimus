@@ -6,30 +6,6 @@ use Bugo\Compat\Theme;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "uses()" function to bind a different classes or traits.
-|
-*/
-
-// uses(Tests\TestCase::class)->in('Feature');
-
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
-
 uses()->beforeAll(function () {
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
@@ -95,8 +71,9 @@ function loadLanguage(string $lang): void
 
 	$file = dirname(__DIR__) . '/src/Themes/default/languages/' . $lang . '.english.php';
 
-	if (is_file($file) && isset($txt))
+	if (is_file($file) && isset($txt)) {
 		require_once $file;
+	}
 }
 
 function allowedTo(string $permission): bool
@@ -155,8 +132,9 @@ function loadJavaScriptFile(string $fileName): void
 
 function addInlineJavaScript(string $javascript, bool $defer = false): bool
 {
-	if (empty($javascript))
+	if (empty($javascript)) {
 		return false;
+	}
 
 	Utils::$context['javascript_inline'][($defer === true ? 'defer' : 'standard')][] = $javascript;
 
@@ -165,8 +143,9 @@ function addInlineJavaScript(string $javascript, bool $defer = false): bool
 
 function addInlineCss(string $css): bool
 {
-	if (empty($css))
+	if (empty($css)) {
 		return false;
+	}
 
 	Utils::$context['css_header'][] = $css;
 
@@ -188,8 +167,9 @@ function parse_bbc(string $string): string
 
 function shorten_subject(string $subject, int $length): string
 {
-	if (Utils::$smcFunc['strlen']($subject) <= $length)
+	if (Utils::$smcFunc['strlen']($subject) <= $length) {
 		return $subject;
+	}
 
 	return Utils::$smcFunc['substr']($subject, 0, $length) . '...';
 }
@@ -234,13 +214,13 @@ if (! function_exists('filter_input_array')) {
 }
 
 if (! function_exists('prepareDBSettingContext')) {
-    function prepareDBSettingContext(array &$vars): void
-    {
-    }
+	function prepareDBSettingContext(array &$vars): void
+	{
+	}
 }
 
 if (! function_exists('saveDBSettings')) {
-    function saveDBSettings(array &$vars): void
-    {
-    }
+	function saveDBSettings(array &$vars): void
+	{
+	}
 }
