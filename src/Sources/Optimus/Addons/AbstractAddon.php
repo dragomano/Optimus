@@ -35,7 +35,7 @@ abstract class AbstractAddon implements AddonInterface
 		$languages = array_merge(['english'], [$userLang ?? null]);
 
 		foreach ($languages as $lang) {
-			$langFile = "{$baseDir}/langs/{$lang}.php";
+			$langFile = "$baseDir/langs/$lang.php";
 
 			if (is_file($langFile)) {
 				$addonStrings = (array) require $langFile;

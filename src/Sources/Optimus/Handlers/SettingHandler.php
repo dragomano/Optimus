@@ -336,8 +336,11 @@ final class SettingHandler
 		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_meta_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
-		Utils::$context['optimus_metatags_rules'] = empty(Config::$modSettings['optimus_meta'])
-			? [] : unserialize(Config::$modSettings['optimus_meta']);
+		$meta_tags = empty(Config::$modSettings['optimus_meta']) ? [] : unserialize(Config::$modSettings['optimus_meta']);
+
+		IntegrationHook::call('integrate_optimus_metatags_settings', [&$meta_tags]);
+
+		Utils::$context['optimus_metatags_rules'] = $meta_tags;
 
 		$config_vars = [];
 

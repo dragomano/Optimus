@@ -38,7 +38,24 @@ final class AddonHandler implements ListenerSubscriber
 	public function subscribeListeners(ListenerRegistry $acceptor): void
 	{
 		$mods = $this->getInstalledMods();
+		$addons = $this->getAllAddons();
 
+		foreach ($addons as $listener) {
+			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
+				$addonInstance = new $listener;
+
+				/* @var array $events */
+				for ($i = 0; $i < count($listener::$events); $i++) {
+					$acceptor->subscribeTo($listener::$events[$i], $addonInstance, $listener::PRIORITY);
+				}
+			}
+		}
+
+		self::$hasSubscribed = true;
+	}
+
+	private function getAllAddons(): array
+	{
 		$files = array_merge(
 			glob(OP_ADDONS . '/*.php'),
 			glob(OP_ADDONS . '/*/*.php'),
@@ -49,16 +66,7 @@ final class AddonHandler implements ListenerSubscriber
 		// External integrations
 		IntegrationHook::call('integrate_optimus_addons', [&$addons]);
 
-		foreach ($addons as $listener) {
-			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
-				/* @var array $events */
-				for ($i = 0; $i < count($listener::$events); $i++) {
-					$acceptor->subscribeTo($listener::$events[$i], new $listener, $listener::PRIORITY);
-				}
-			}
-		}
-
-		self::$hasSubscribed = true;
+		return $addons;
 	}
 
 	private function getInstalledMods(): array
