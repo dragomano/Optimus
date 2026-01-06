@@ -10,7 +10,7 @@
 [![Docs](https://img.shields.io/badge/Docs-Site-orange.svg)](https://dragomano.github.io/Optimus/)
 
 - **Tested on:** PHP 8.5.0 / MariaDB 12.0
-- **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian, Polish
+- **Languages:** English, Russian, Dutch, Turkish, Spanish, German, Italian, Polish, Portuguese, Romanian
 
 ### Reviews
 
