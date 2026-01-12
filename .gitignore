@@ -1,6 +1,10 @@
 .idea/
 .phpunit.cache/
 coverage/
+coverage-report/
+docs/
 src/
 vendor/
 composer.lock
+coverage.xml
+*.zip
