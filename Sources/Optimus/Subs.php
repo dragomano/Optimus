@@ -8,7 +8,7 @@ namespace Bugo\Optimus;
  * @package Optimus
  * @link https://custom.simplemachines.org/mods/index.php?mod=2659
  * @author Bugo https://dragomano.ru/mods/optimus
- * @copyright 2010-2024 Bugo
+ * @copyright 2010-2026 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @version 2.7.6
@@ -368,6 +368,6 @@ class Subs
 		global $context;
 
 		if ($context['current_action'] == 'credits')
-			$context['copyrights']['mods'][] = '<a href="https://github.com/dragomano/Optimus/releases" target="_blank" rel="noopener">' . OP_NAME . '</a> &copy; 2010&ndash;2024, Bugo';
+			$context['copyrights']['mods'][] = '<a href="https://github.com/dragomano/Optimus/releases" target="_blank" rel="noopener">' . OP_NAME . '</a> &copy; 2010&ndash;' . date('Y') . ', Bugo';
 	}
 }
