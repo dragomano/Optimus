@@ -11,7 +11,7 @@ namespace Bugo\Optimus;
  * @copyright 2010-2026 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.6
+ * @version 2.7.7
  */
 
 if (!defined('SMF'))

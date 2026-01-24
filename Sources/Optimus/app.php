@@ -9,7 +9,7 @@
  * @copyright 2010-2026 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 2.7.6
+ * @version 2.7.7
  */
 
 use Bugo\Optimus\Integration;
@@ -19,7 +19,7 @@ if (!defined('SMF'))
 	die('Hacking attempt...');
 
 defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
-defined('OP_VERSION') || define('OP_VERSION', '2.7.6');
+defined('OP_VERSION') || define('OP_VERSION', '2.7.7');
 
 /**
  * @param $classname
