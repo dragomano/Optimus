@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@astrojs/starlight':
         specifier: ^0.37.1
-        version: 0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))
+        version: 0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))
       '@yohns/picocss':
         specifier: ^2.2.10
         version: 2.2.10
@@ -19,7 +19,7 @@ importers:
         version: 5.1.2
       astro:
         specifier: ^5.16.6
-        version: 5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)
+        version: 5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)
       remark-custom-heading-id:
         specifier: ^2.0.0
         version: 2.0.0
@@ -31,10 +31,10 @@ importers:
         version: 0.34.5
       starlight-links-validator:
         specifier: ^0.19.2
-        version: 0.19.2(@astrojs/starlight@0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)))(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))
+        version: 0.19.2(@astrojs/starlight@0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)))(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))
       starlight-ui-tweaks:
         specifier: ^0.2.0
-        version: 0.2.2(@astrojs/starlight@0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)))(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))(vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3))
+        version: 0.2.2(@astrojs/starlight@0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)))(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))(vite@6.4.1(sass@1.97.3))
 
 packages:
 
@@ -425,8 +425,8 @@ packages:
   '@expressive-code/plugin-text-markers@0.41.7':
     resolution: {integrity: sha512-Ewpwuc5t6eFdZmWlFyeuy3e1PTQC0jFvw2Q+2bpcWXbOZhPLsT7+h8lsSIJxb5mS7wZko7cKyQ2RLYDyK6Fpmw==}
 
-  '@img/colour@1.0.0':
-    resolution: {integrity: sha512-A5P/LfWGFSl6nsckYtjw9da+19jB8hkJ6ACTGcDfEJ0aE+l2n2El7dsVM7UVHZQ9s2lmYMWlrS21YLy2IR1LUw==}
+  '@img/colour@1.1.0':
+    resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
     engines: {node: '>=18'}
 
   '@img/sharp-darwin-arm64@0.34.5':
@@ -906,9 +906,6 @@ packages:
   '@types/node@17.0.45':
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
 
-  '@types/node@25.0.3':
-    resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
-
   '@types/picomatch@3.0.2':
     resolution: {integrity: sha512-n0i8TD3UDB7paoMMxA3Y65vUncFJXjcUf7lQY7YyKGl6031FNjfsLs6pdLFCy2GNFxItPJG8GvvpbZc2skH7WA==}
 
@@ -944,8 +941,8 @@ packages:
   ansi-align@3.0.1:
     resolution: {integrity: sha512-IOfwwBF5iczOjp/WeY4YxyjqAFMQoZufdQWDd19SEExbVLNXqvpzSJ/M7Za4/sCPmQ0+GRquoA7bGcINcxew6w==}
 
-  ansi-escapes@7.2.0:
-    resolution: {integrity: sha512-g6LhBsl+GBPRWGWsBtutpzBYuIIdBkLEvad5C/va/74Db018+5TZiyA26cZJAr3Rft5lprVqOIPxf5Vid6tqAw==}
+  ansi-escapes@7.3.0:
+    resolution: {integrity: sha512-BvU8nYgGQBxcmMuEeUEmNTvrMVjJNSH7RgW24vXexN4Ven6qCvy4TntnvlnwnMLTVlcRQQdbRY8NKnaIoeWDNg==}
     engines: {node: '>=18'}
 
   ansi-regex@5.0.1:
@@ -1116,9 +1113,6 @@ packages:
       supports-color:
         optional: true
 
-  decode-named-character-reference@1.2.0:
-    resolution: {integrity: sha512-c6fcElNV6ShtZXmsgNgFFV5tVX2PaV4g+MOAkb8eXHvn6sryJBrZa9r0zV6+dtTyoCKxtDy5tyQ5ZwQuidtd+Q==}
-
   decode-named-character-reference@1.3.0:
     resolution: {integrity: sha512-GtpQYB283KrPp6nRw50q3U9/VfOutZOe103qlN7BPP6Ad27xYnOIWv4lPzo8HCAL+mMZofJ9KEy30fq6MfaK6Q==}
 
@@ -1131,11 +1125,6 @@ packages:
 
   destr@2.0.5:
     resolution: {integrity: sha512-ugFTXCtDZunbzasqBxrK93Ik/DRYsO6S/fedkWEMKqt04xZ4csmnmwGDBAb07QWNaGMAmnTIemsYZCksjATwsA==}
-
-  detect-libc@1.0.3:
-    resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
-    engines: {node: '>=0.10'}
-    hasBin: true
 
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
@@ -1425,10 +1414,6 @@ packages:
     resolution: {integrity: sha512-e6rvdUCiQCAuumZslxRJWR/Doq4VpPR82kqclvcS0efgt430SlGIk05vdCN58+VrzgtIcfNODjozVielycD4Sw==}
     engines: {node: '>=16'}
 
-  jiti@2.4.2:
-    resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
-    hasBin: true
-
   js-yaml@4.1.1:
     resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
     hasBin: true
@@ -1444,74 +1429,6 @@ packages:
   klona@2.0.6:
     resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
     engines: {node: '>= 8'}
-
-  lightningcss-darwin-arm64@1.29.1:
-    resolution: {integrity: sha512-HtR5XJ5A0lvCqYAoSv2QdZZyoHNttBpa5EP9aNuzBQeKGfbyH5+UipLWvVzpP4Uml5ej4BYs5I9Lco9u1fECqw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [darwin]
-
-  lightningcss-darwin-x64@1.29.1:
-    resolution: {integrity: sha512-k33G9IzKUpHy/J/3+9MCO4e+PzaFblsgBjSGlpAaFikeBFm8B/CkO3cKU9oI4g+fjS2KlkLM/Bza9K/aw8wsNA==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [darwin]
-
-  lightningcss-freebsd-x64@1.29.1:
-    resolution: {integrity: sha512-0SUW22fv/8kln2LnIdOCmSuXnxgxVC276W5KLTwoehiO0hxkacBxjHOL5EtHD8BAXg2BvuhsJPmVMasvby3LiQ==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [freebsd]
-
-  lightningcss-linux-arm-gnueabihf@1.29.1:
-    resolution: {integrity: sha512-sD32pFvlR0kDlqsOZmYqH/68SqUMPNj+0pucGxToXZi4XZgZmqeX/NkxNKCPsswAXU3UeYgDSpGhu05eAufjDg==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm]
-    os: [linux]
-
-  lightningcss-linux-arm64-gnu@1.29.1:
-    resolution: {integrity: sha512-0+vClRIZ6mmJl/dxGuRsE197o1HDEeeRk6nzycSy2GofC2JsY4ifCRnvUWf/CUBQmlrvMzt6SMQNMSEu22csWQ==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [glibc]
-
-  lightningcss-linux-arm64-musl@1.29.1:
-    resolution: {integrity: sha512-UKMFrG4rL/uHNgelBsDwJcBqVpzNJbzsKkbI3Ja5fg00sgQnHw/VrzUTEc4jhZ+AN2BvQYz/tkHu4vt1kLuJyw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [linux]
-    libc: [musl]
-
-  lightningcss-linux-x64-gnu@1.29.1:
-    resolution: {integrity: sha512-u1S+xdODy/eEtjADqirA774y3jLcm8RPtYztwReEXoZKdzgsHYPl0s5V52Tst+GKzqjebkULT86XMSxejzfISw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
-  lightningcss-linux-x64-musl@1.29.1:
-    resolution: {integrity: sha512-L0Tx0DtaNUTzXv0lbGCLB/c/qEADanHbu4QdcNOXLIe1i8i22rZRpbT3gpWYsCh9aSL9zFujY/WmEXIatWvXbw==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [linux]
-    libc: [musl]
-
-  lightningcss-win32-arm64-msvc@1.29.1:
-    resolution: {integrity: sha512-QoOVnkIEFfbW4xPi+dpdft/zAKmgLgsRHfJalEPYuJDOWf7cLQzYg0DEh8/sn737FaeMJxHZRc1oBreiwZCjog==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [arm64]
-    os: [win32]
-
-  lightningcss-win32-x64-msvc@1.29.1:
-    resolution: {integrity: sha512-NygcbThNBe4JElP+olyTI/doBNGJvLs3bFCRPdvuCcxZCcCZ71B858IHpdm7L1btZex0FvCmM17FK98Y9MRy1Q==}
-    engines: {node: '>= 12.0.0'}
-    cpu: [x64]
-    os: [win32]
-
-  lightningcss@1.29.1:
-    resolution: {integrity: sha512-FmGoeD4S05ewj+AkhTY+D+myDvXI6eL27FjHIjoyUkO/uw7WZD1fBVs0QxeYWa7E17CUHJaYX/RUGISCtcrG4Q==}
-    engines: {node: '>= 12.0.0'}
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
@@ -1544,9 +1461,6 @@ packages:
 
   mdast-util-find-and-replace@3.0.2:
     resolution: {integrity: sha512-Tmd1Vg/m3Xz43afeNxDIhWRtFZgM2VLyaf4vSTYwudTyeuTneoL3qtWMA5jeLyz/O1vDJmmV4QuScFCA2tBPwg==}
-
-  mdast-util-from-markdown@2.0.2:
-    resolution: {integrity: sha512-uZhTV/8NBuw0WHkPTrCqDOl0zVe1BIng5ZtHoDk49ME1qqcjYmmLmOf0gELgcRMxN4w2iuIeVso5/6QymSrgmA==}
 
   mdast-util-from-markdown@2.0.3:
     resolution: {integrity: sha512-W4mAWTvSlKvf8L6J+VN9yLSqQ9AOAAvHuoDAmPkz4dHf553m5gVj2ejadHJhoJmcmxEnOv6Pa8XJhpxE93kb8Q==}
@@ -1930,11 +1844,6 @@ packages:
     resolution: {integrity: sha512-21IYA3Q5cQf089Z6tgaUTr7lDAyzoTPx5HRtbhsME8Udispad8dC/+sziTNugOEx54ilvatQ9YCzl4KQLPcRHA==}
     engines: {node: '>=11.0.0'}
 
-  semver@7.7.3:
-    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   semver@7.7.4:
     resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
     engines: {node: '>=10'}
@@ -2063,8 +1972,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  typescript@5.7.2:
-    resolution: {integrity: sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -2076,9 +1985,6 @@ packages:
 
   uncrypto@0.1.3:
     resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
-
-  undici-types@7.16.0:
-    resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
@@ -2112,9 +2018,6 @@ packages:
 
   unist-util-visit-parents@6.0.2:
     resolution: {integrity: sha512-goh1s1TBrqSqukSc8wrjwWhL0hiJxgA8m4kFxGlQ+8FYQ3C/m11FcTs4YYem7V664AhHVvgoQLk890Ssdsr2IQ==}
-
-  unist-util-visit@5.0.0:
-    resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
 
   unist-util-visit@5.1.0:
     resolution: {integrity: sha512-m+vIdyeCOpdr/QeQCu2EzxX/ohgS8KbnPDgFni4dQsfSCtpz8UqDyY5GjRru8PDKuYn7Fq19j1CQ+nJSsGKOzg==}
@@ -2329,12 +2232,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.3.13(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))':
+  '@astrojs/mdx@4.3.13(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
       '@mdx-js/mdx': 3.1.1
       acorn: 8.16.0
-      astro: 5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)
+      astro: 5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)
       es-module-lexer: 1.7.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -2358,17 +2261,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/starlight@0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))':
+  '@astrojs/starlight@0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
-      '@astrojs/mdx': 4.3.13(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))
+      '@astrojs/mdx': 4.3.13(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))
       '@astrojs/sitemap': 3.7.0
       '@pagefind/default-ui': 1.4.0
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)
-      astro-expressive-code: 0.41.7(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))
+      astro: 5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)
+      astro-expressive-code: 0.41.7(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -2611,7 +2514,7 @@ snapshots:
     dependencies:
       '@expressive-code/core': 0.41.7
 
-  '@img/colour@1.0.0': {}
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.34.5':
     optionalDependencies:
@@ -2968,11 +2871,6 @@ snapshots:
 
   '@types/node@17.0.45': {}
 
-  '@types/node@25.0.3':
-    dependencies:
-      undici-types: 7.16.0
-    optional: true
-
   '@types/picomatch@3.0.2': {}
 
   '@types/sax@1.2.7':
@@ -2999,7 +2897,7 @@ snapshots:
     dependencies:
       string-width: 4.2.3
 
-  ansi-escapes@7.2.0:
+  ansi-escapes@7.3.0:
     dependencies:
       environment: 1.1.0
 
@@ -3024,12 +2922,12 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.7(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)):
+  astro-expressive-code@0.41.7(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)):
     dependencies:
-      astro: 5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)
+      astro: 5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)
       rehype-expressive-code: 0.41.7
 
-  astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2):
+  astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3):
     dependencies:
       '@astrojs/compiler': 2.13.1
       '@astrojs/internal-helpers': 0.7.5
@@ -3080,20 +2978,20 @@ snapshots:
       svgo: 4.0.0
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
-      tsconfck: 3.1.6(typescript@5.7.2)
+      tsconfck: 3.1.6(typescript@5.9.3)
       ultrahtml: 1.6.0
       unifont: 0.7.4
       unist-util-visit: 5.1.0
       unstorage: 1.17.4
       vfile: 6.0.3
-      vite: 6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3)
-      vitefu: 1.1.2(vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3))
+      vite: 6.4.1(sass@1.97.3)
+      vitefu: 1.1.2(vite@6.4.1(sass@1.97.3))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
       zod: 3.25.76
       zod-to-json-schema: 3.25.1(zod@3.25.76)
-      zod-to-ts: 1.2.0(typescript@5.7.2)(zod@3.25.76)
+      zod-to-ts: 1.2.0(typescript@5.9.3)(zod@3.25.76)
     optionalDependencies:
       sharp: 0.34.5
     transitivePeerDependencies:
@@ -3234,10 +3132,6 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  decode-named-character-reference@1.2.0:
-    dependencies:
-      character-entities: 2.0.2
-
   decode-named-character-reference@1.3.0:
     dependencies:
       character-entities: 2.0.2
@@ -3247,9 +3141,6 @@ snapshots:
   dequal@2.0.3: {}
 
   destr@2.0.5: {}
-
-  detect-libc@1.0.3:
-    optional: true
 
   detect-libc@2.1.2: {}
 
@@ -3700,9 +3591,6 @@ snapshots:
     dependencies:
       is-inside-container: 1.0.0
 
-  jiti@2.4.2:
-    optional: true
-
   js-yaml@4.1.1:
     dependencies:
       argparse: 2.0.1
@@ -3712,52 +3600,6 @@ snapshots:
   kleur@4.1.5: {}
 
   klona@2.0.6: {}
-
-  lightningcss-darwin-arm64@1.29.1:
-    optional: true
-
-  lightningcss-darwin-x64@1.29.1:
-    optional: true
-
-  lightningcss-freebsd-x64@1.29.1:
-    optional: true
-
-  lightningcss-linux-arm-gnueabihf@1.29.1:
-    optional: true
-
-  lightningcss-linux-arm64-gnu@1.29.1:
-    optional: true
-
-  lightningcss-linux-arm64-musl@1.29.1:
-    optional: true
-
-  lightningcss-linux-x64-gnu@1.29.1:
-    optional: true
-
-  lightningcss-linux-x64-musl@1.29.1:
-    optional: true
-
-  lightningcss-win32-arm64-msvc@1.29.1:
-    optional: true
-
-  lightningcss-win32-x64-msvc@1.29.1:
-    optional: true
-
-  lightningcss@1.29.1:
-    dependencies:
-      detect-libc: 1.0.3
-    optionalDependencies:
-      lightningcss-darwin-arm64: 1.29.1
-      lightningcss-darwin-x64: 1.29.1
-      lightningcss-freebsd-x64: 1.29.1
-      lightningcss-linux-arm-gnueabihf: 1.29.1
-      lightningcss-linux-arm64-gnu: 1.29.1
-      lightningcss-linux-arm64-musl: 1.29.1
-      lightningcss-linux-x64-gnu: 1.29.1
-      lightningcss-linux-x64-musl: 1.29.1
-      lightningcss-win32-arm64-msvc: 1.29.1
-      lightningcss-win32-x64-msvc: 1.29.1
-    optional: true
 
   longest-streak@3.1.0: {}
 
@@ -3805,23 +3647,6 @@ snapshots:
       escape-string-regexp: 5.0.0
       unist-util-is: 6.0.1
       unist-util-visit-parents: 6.0.2
-
-  mdast-util-from-markdown@2.0.2:
-    dependencies:
-      '@types/mdast': 4.0.4
-      '@types/unist': 3.0.3
-      decode-named-character-reference: 1.2.0
-      devlop: 1.1.0
-      mdast-util-to-string: 4.0.0
-      micromark: 4.0.2
-      micromark-util-decode-numeric-character-reference: 2.0.2
-      micromark-util-decode-string: 2.0.1
-      micromark-util-normalize-identifier: 2.0.1
-      micromark-util-symbol: 2.0.1
-      micromark-util-types: 2.0.2
-      unist-util-stringify-position: 4.0.0
-    transitivePeerDependencies:
-      - supports-color
 
   mdast-util-from-markdown@2.0.3:
     dependencies:
@@ -3916,7 +3741,7 @@ snapshots:
       '@types/unist': 3.0.3
       ccount: 2.0.1
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.3
       mdast-util-to-markdown: 2.1.2
       parse-entities: 4.0.2
       stringify-entities: 4.0.4
@@ -4471,7 +4296,7 @@ snapshots:
     dependencies:
       mdast-heading-id: 2.0.0
       micromark-heading-id: 2.0.0
-      unist-util-visit: 5.0.0
+      unist-util-visit: 5.1.0
 
   remark-directive@3.0.1:
     dependencies:
@@ -4596,15 +4421,13 @@ snapshots:
 
   sax@1.5.0: {}
 
-  semver@7.7.3: {}
-
   semver@7.7.4: {}
 
   sharp@0.34.5:
     dependencies:
-      '@img/colour': 1.0.0
+      '@img/colour': 1.1.0
       detect-libc: 2.1.2
-      semver: 7.7.3
+      semver: 7.7.4
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.34.5
       '@img/sharp-darwin-x64': 0.34.5
@@ -4659,11 +4482,11 @@ snapshots:
 
   space-separated-tokens@2.0.2: {}
 
-  starlight-links-validator@0.19.2(@astrojs/starlight@0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)))(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)):
+  starlight-links-validator@0.19.2(@astrojs/starlight@0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)))(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)):
     dependencies:
-      '@astrojs/starlight': 0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))
+      '@astrojs/starlight': 0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))
       '@types/picomatch': 3.0.2
-      astro: 5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)
+      astro: 5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)
       github-slugger: 2.0.0
       hast-util-from-html: 2.0.3
       hast-util-has-property: 3.0.0
@@ -4673,15 +4496,15 @@ snapshots:
       mdast-util-to-string: 4.0.0
       picomatch: 4.0.3
       terminal-link: 5.0.0
-      unist-util-visit: 5.0.0
+      unist-util-visit: 5.1.0
     transitivePeerDependencies:
       - supports-color
 
-  starlight-ui-tweaks@0.2.2(@astrojs/starlight@0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)))(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))(vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3)):
+  starlight-ui-tweaks@0.2.2(@astrojs/starlight@0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)))(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))(vite@6.4.1(sass@1.97.3)):
     dependencies:
-      '@astrojs/starlight': 0.37.6(astro@5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2))
-      astro: 5.18.0(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(rollup@4.59.0)(sass@1.97.3)(typescript@5.7.2)
-      vite-plugin-virtual: 0.5.0(vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3))
+      '@astrojs/starlight': 0.37.6(astro@5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3))
+      astro: 5.18.0(rollup@4.59.0)(sass@1.97.3)(typescript@5.9.3)
+      vite-plugin-virtual: 0.5.0(vite@6.4.1(sass@1.97.3))
     transitivePeerDependencies:
       - vite
 
@@ -4739,7 +4562,7 @@ snapshots:
 
   terminal-link@5.0.0:
     dependencies:
-      ansi-escapes: 7.2.0
+      ansi-escapes: 7.3.0
       supports-hyperlinks: 4.4.0
 
   tiny-inflate@1.0.3: {}
@@ -4755,25 +4578,22 @@ snapshots:
 
   trough@2.2.0: {}
 
-  tsconfck@3.1.6(typescript@5.7.2):
+  tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
-      typescript: 5.7.2
+      typescript: 5.9.3
 
   tslib@2.8.1:
     optional: true
 
   type-fest@4.41.0: {}
 
-  typescript@5.7.2: {}
+  typescript@5.9.3: {}
 
   ufo@1.6.3: {}
 
   ultrahtml@1.6.0: {}
 
   uncrypto@0.1.3: {}
-
-  undici-types@7.16.0:
-    optional: true
 
   unified@11.0.5:
     dependencies:
@@ -4831,12 +4651,6 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.1
 
-  unist-util-visit@5.0.0:
-    dependencies:
-      '@types/unist': 3.0.3
-      unist-util-is: 6.0.1
-      unist-util-visit-parents: 6.0.2
-
   unist-util-visit@5.1.0:
     dependencies:
       '@types/unist': 3.0.3
@@ -4871,11 +4685,11 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-virtual@0.5.0(vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3)):
+  vite-plugin-virtual@0.5.0(vite@6.4.1(sass@1.97.3)):
     dependencies:
-      vite: 6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3)
+      vite: 6.4.1(sass@1.97.3)
 
-  vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3):
+  vite@6.4.1(sass@1.97.3):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4884,15 +4698,12 @@ snapshots:
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.0.3
       fsevents: 2.3.3
-      jiti: 2.4.2
-      lightningcss: 1.29.1
       sass: 1.97.3
 
-  vitefu@1.1.2(vite@6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3)):
+  vitefu@1.1.2(vite@6.4.1(sass@1.97.3)):
     optionalDependencies:
-      vite: 6.4.1(@types/node@25.0.3)(jiti@2.4.2)(lightningcss@1.29.1)(sass@1.97.3)
+      vite: 6.4.1(sass@1.97.3)
 
   web-namespaces@2.0.1: {}
 
@@ -4924,9 +4735,9 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  zod-to-ts@1.2.0(typescript@5.7.2)(zod@3.25.76):
+  zod-to-ts@1.2.0(typescript@5.9.3)(zod@3.25.76):
     dependencies:
-      typescript: 5.7.2
+      typescript: 5.9.3
       zod: 3.25.76
 
   zod@3.25.76: {}
