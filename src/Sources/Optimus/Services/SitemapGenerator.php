@@ -55,6 +55,32 @@ class SitemapGenerator
 		return true;
 	}
 
+	protected function getLinks(): array
+	{
+		$this->links = array_merge($this->dataService->getBoardLinks(), $this->dataService->getTopicLinks());
+
+		// You can add custom links
+		$this->dispatcher->dispatchEvent(AddonInterface::SITEMAP_LINKS, $this);
+
+		// External integrations
+		IntegrationHook::call('integrate_optimus_sitemap_links', [&$this->links]);
+
+		// Adding the main page
+		$home = [
+			'loc'     => Config::$boardurl . '/',
+			'lastmod' => empty(Config::$modSettings['optimus_main_page_frequency'])
+				? time()
+				: $this->getLastDate($this->links)
+		];
+
+		// You can process links with SEF handler
+		$this->dispatcher->dispatchEvent(AddonInterface::CREATE_SEF_URLS, $this);
+
+		array_unshift($this->links, $home);
+
+		return $this->links;
+	}
+
 	private function initialize(): void
 	{
 		@ini_set('opcache.enable', '0');
@@ -206,32 +232,6 @@ class SitemapGenerator
 		} catch (FileSystemException $e) {
 			ErrorHandler::log(OP_NAME . ' says: Error creating sitemap. ' . $e->getMessage(), 'critical');
 		}
-	}
-
-	private function getLinks(): array
-	{
-		$this->links = array_merge($this->dataService->getBoardLinks(), $this->dataService->getTopicLinks());
-
-		// You can add custom links
-		$this->dispatcher->dispatchEvent(AddonInterface::SITEMAP_LINKS, $this);
-
-		// External integrations
-		IntegrationHook::call('integrate_optimus_sitemap_links', [&$this->links]);
-
-		// Adding the main page
-		$home = [
-			'loc'     => Config::$boardurl . '/',
-			'lastmod' => empty(Config::$modSettings['optimus_main_page_frequency'])
-				? time()
-				: $this->getLastDate($this->links)
-		];
-
-		// You can process links with SEF handler
-		$this->dispatcher->dispatchEvent(AddonInterface::CREATE_SEF_URLS, $this);
-
-		array_unshift($this->links, $home);
-
-		return $this->links;
 	}
 
 	private function getLastDate(array $links): int
