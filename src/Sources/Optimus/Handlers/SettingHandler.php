@@ -7,7 +7,7 @@
  * @copyright 2010-2026 Bugo
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
- * @version 3.0 RC5
+ * @version 3.0
  */
 
 namespace Bugo\Optimus\Handlers;
@@ -41,11 +41,6 @@ final class SettingHandler
 		);
 	}
 
-	/**
-	 * Remove meta_keywords setting and move it to the Optimus settings
-	 *
-	 * Удаляем настройку meta_keywords и помещаем на страницу настроек Optimus
-	 */
 	public function modifyBasicSettings(array &$config_vars): void
 	{
 		foreach ($config_vars as $key => $dump) {
