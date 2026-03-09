@@ -250,3 +250,18 @@ describe('canView method', function () {
 		Mockery::close();
 	});
 });
+
+describe('prepareSearchTerms method - additional coverage', function () {
+	it('returns early when current_action is not search or search2', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		Utils::$context['current_action'] = 'home';
+
+		unset(Utils::$context['search_terms']);
+
+		$this->handler->prepareSearchTerms();
+
+		// Should return early without setting search_terms (line 70)
+		expect(isset(Utils::$context['search_terms']))->toBeFalse();
+	});
+});

@@ -484,7 +484,6 @@ it('triggers handleContent event', function () {
 	expect($eventTriggered)->toBeTrue();
 });
 
-
 it('handles empty gzMaps in processMultipleSitemaps', function () {
 	Config::$modSettings['optimus_sitemap_items_display'] = 1;
 
@@ -546,3 +545,191 @@ it('handles empty items slice in processMultipleSitemaps', function () {
 	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue();
 });
 
+it('returns early when no items are generated', function () {
+	Config::$modSettings['optimus_sitemap_items_display'] = 1000;
+
+	$dataService = new class(2020) extends SitemapDataService {
+		public function getBoardLinks(): array {
+			return [];
+		}
+
+		public function getTopicLinks(): array {
+			return [];
+		}
+	};
+
+	// Create a subclass that overrides getLinks to return empty array
+	$generator = new class(
+		$dataService,
+		new FileSystem($this->tempDir),
+		new XmlGenerator(Config::$scripturl),
+		$this->dispatcher,
+		2020
+	) extends SitemapGenerator {
+		protected function getLinks(): array {
+			return [];
+		}
+	};
+
+	// Call createXml directly - should return early without creating files (line 95)
+	$method = new ReflectionMethod($generator, 'createXml');
+	$method->invoke($generator);
+
+	// No sitemap files should be created because items array is empty
+	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse()
+		->and(file_exists($this->tempDir . '/sitemap_0.xml'))->toBeFalse();
+});
+
+it('skips empty items in processMultipleSitemaps', function () {
+	Config::$modSettings['optimus_sitemap_items_display'] = 2;
+
+	$dataService = new class(2020) extends SitemapDataService {
+		public function getBoardLinks(): array {
+			return [
+				['loc' => 'https://example.com/board1', 'lastmod' => time()],
+				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+			];
+		}
+
+		public function getTopicLinks(): array {
+			return [];
+		}
+	};
+
+	$generator = new SitemapGenerator(
+		$dataService,
+		new FileSystem($this->tempDir),
+		new XmlGenerator(Config::$scripturl),
+		$this->dispatcher,
+		2020
+	);
+
+	// Manually create items array with an empty slot to trigger the continue statement
+	$items = [
+		0 => [
+			['loc' => 'https://example.com/', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '1.0'],
+			['loc' => 'https://example.com/board1', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8']
+		],
+		1 => [], // Empty items array - should trigger continue on line 170
+		2 => [
+			['loc' => 'https://example.com/board2', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8']
+		]
+	];
+
+	$method = new ReflectionMethod($generator, 'processMultipleSitemaps');
+	$method->invoke($generator, $items, 2);
+
+	// Should create sitemap_0.xml and sitemap_2.xml, but skip sitemap_1.xml
+	expect(file_exists($this->tempDir . '/sitemap_0.xml'))->toBeTrue()
+		->and(file_exists($this->tempDir . '/sitemap_1.xml'))->toBeFalse()
+		->and(file_exists($this->tempDir . '/sitemap_2.xml'))->toBeTrue()
+		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue();
+});
+
+it('handles XmlGeneratorException when creating sitemap index', function () {
+	Config::$modSettings['optimus_sitemap_items_display'] = 1;
+
+	$dataService = new class(2020) extends SitemapDataService {
+		public function getBoardLinks(): array {
+			return [
+				['loc' => 'https://example.com/board1', 'lastmod' => time()],
+				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+			];
+		}
+
+		public function getTopicLinks(): array {
+			return [];
+		}
+	};
+
+	// Create a mock XmlGenerator that throws exception only for index generation
+	$xmlGenerator = new class(Config::$scripturl) extends XmlGenerator {
+		private int $callCount = 0;
+
+		public function generate(array $items, array $options = []): string {
+			$this->callCount++;
+
+			// Throw exception only when generating index (isIndex = true)
+			if (!empty($options['isIndex'])) {
+				throw new XmlGeneratorException('Failed to generate sitemap index');
+			}
+
+			// Normal generation for regular sitemaps
+			return parent::generate($items, $options);
+		}
+	};
+
+	$generator = new SitemapGenerator(
+		$dataService,
+		new FileSystem($this->tempDir),
+		$xmlGenerator,
+		$this->dispatcher,
+		2020
+	);
+
+	$generator->generate();
+
+	// Individual sitemap files should be created
+	expect(file_exists($this->tempDir . '/sitemap_0.xml'))->toBeTrue()
+		->and(file_exists($this->tempDir . '/sitemap_1.xml'))->toBeTrue();
+
+	// But index file should not be created due to exception
+	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
+});
+
+it('handles FileSystemException when creating sitemap index', function () {
+	Config::$modSettings['optimus_sitemap_items_display'] = 1;
+
+	$dataService = new class(2020) extends SitemapDataService {
+		public function getBoardLinks(): array {
+			return [
+				['loc' => 'https://example.com/board1', 'lastmod' => time()],
+				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+			];
+		}
+
+		public function getTopicLinks(): array {
+			return [];
+		}
+	};
+
+	// Create a mock FileSystem that throws exception only for sitemap.xml
+	$fileSystem = new class($this->tempDir) implements FileSystemInterface {
+		public function __construct(private string $tempDir) {}
+
+		public function writeFile(string $filename, string $content): void {
+			// Throw exception only for the index file
+			if ($filename === SitemapGenerator::XML_FILE) {
+				throw new FileSystemException('Failed to write sitemap index');
+			}
+
+			// Normal write for other files
+			file_put_contents($this->tempDir . '/' . $filename, $content);
+		}
+
+		public function writeGzFile(string $filename, string $content): void {
+			if ($filename === SitemapGenerator::XML_GZ_FILE) {
+				throw new FileSystemException('Failed to write gzipped sitemap index');
+			}
+
+			file_put_contents($this->tempDir . '/' . $filename, gzencode($content));
+		}
+	};
+
+	$generator = new SitemapGenerator(
+		$dataService,
+		$fileSystem,
+		new XmlGenerator(Config::$scripturl),
+		$this->dispatcher,
+		2020
+	);
+
+	$generator->generate();
+
+	// Individual sitemap files should be created
+	expect(file_exists($this->tempDir . '/sitemap_0.xml'))->toBeTrue()
+		->and(file_exists($this->tempDir . '/sitemap_1.xml'))->toBeTrue();
+
+	// But index file should not be created due to exception
+	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
+});

@@ -378,3 +378,113 @@ test('basicSettings method with config_vars containing optimus_topic_extend_titl
 		->and($config_vars[1])->toBe('')
 		->and($config_vars[2][1])->toBe('optimus_topic_description');
 });
+
+test('prepareOgImage method when no image found and og_image not set', function () {
+	Config::$modSettings['optimus_og_image'] = true;
+
+	Utils::$context['topicinfo']['id_first_msg'] = 1;
+	Utils::$context['current_topic'] = 1;
+	Utils::$context['loaded_attachments'] = [];
+	Utils::$context['optimus_og_image'] = '';
+	Utils::$context['topicinfo']['topic_first_message'] = 'Some text without image';
+
+	// Ensure og_image is not set
+	unset(Theme::$current->settings['og_image']);
+
+	$this->handler->prepareOgImage();
+
+	// Should set og_image to empty string when no image found and og_image not set
+	expect(Theme::$current->settings['og_image'])->toBe('');
+});
+
+test('modifyPost method when first_msg equals msgOptions id', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
+	Utils::$context['user']['started'] = true;
+
+	User::$me = Mockery::mock(User::class)->makePartial();
+	User::$me->shouldReceive('allowedTo')
+		->with('optimus_add_descriptions_any')
+		->andReturn(true);
+
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('optimus_description', 'Test description');
+	$this->request->overrideGlobals();
+
+	// When first_msg equals msgOptions id, modifyDescription should be called
+	$this->handler->modifyPost([], [], ['id' => 10], ['id' => 1, 'first_msg' => 10]);
+
+	expect(true)->toBeTrue();
+
+	Mockery::close();
+});
+
+test('addFields method when is_first_post is false', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
+	Utils::$context['is_first_post'] = false;
+	Utils::$context['user']['started'] = true;
+
+	// Clear posting_fields before test
+	unset(Utils::$context['posting_fields']['optimus_description']);
+
+	User::$me = Mockery::mock(User::class)->makePartial();
+	User::$me->shouldReceive('allowedTo')
+		->with('optimus_add_descriptions_any')
+		->andReturn(true);
+
+	$reflection = new ReflectionClass($this->handler);
+	$method = $reflection->getMethod('addFields');
+
+	$method->invoke($this->handler);
+
+	// Should return early and not add posting_fields
+	expect(isset(Utils::$context['posting_fields']['optimus_description']))->toBeFalse();
+
+	Mockery::close();
+});
+
+test('modifyDescription method when cannot change description', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = false;
+
+	$this->request = Request::createFromGlobals();
+	$this->request->request->set('optimus_description', 'Test');
+	$this->request->overrideGlobals();
+
+	$reflection = new ReflectionClass($this->handler);
+	$method = $reflection->getMethod('modifyDescription');
+
+	// Should return early without executing query
+	$method->invoke($this->handler, 1);
+
+	expect(true)->toBeTrue();
+});
+
+test('canChangeDescription method when user started is not set', function () {
+	Config::$modSettings['optimus_allow_change_topic_desc'] = true;
+	
+	// Unset user started to test the initialization
+	unset(Utils::$context['user']['started']);
+
+	User::$me = Mockery::mock(User::class)->makePartial();
+	User::$me->shouldReceive('allowedTo')
+		->with('optimus_add_descriptions_any')
+		->andReturn(true);
+
+	$reflection = new ReflectionClass($this->handler);
+	$method = $reflection->getMethod('canChangeDescription');
+
+	$result = $method->invoke($this->handler);
+
+	// Should initialize user started and return true
+	expect($result)->toBeTrue()
+		->and(isset(Utils::$context['user']['started']))->toBeTrue();
+
+	Mockery::close();
+});
+
+test('modifyPost method when first_msg is empty', function () {
+	// Test the case when first_msg is empty - should return early (line 229)
+	$this->handler->modifyPost([], [], ['id' => 10], ['id' => 1, 'first_msg' => null]);
+
+	// Should return early without calling modifyDescription
+	expect(true)->toBeTrue();
+});

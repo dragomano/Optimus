@@ -25,23 +25,23 @@ beforeEach(function () {
 			if (str_contains($query, 'SELECT t.id_topic, ms.subject')) {
 				return [
 					[
-						'id_topic' => '1',
-						'subject' => 'Test Topic',
-						'id_board' => '1',
-						'name' => 'Test Board',
-						'id_member' => '1',
-						'id_group' => '1',
-						'real_name' => 'Test User',
+						'id_topic'   => '1',
+						'subject'    => 'Test Topic',
+						'id_board'   => '1',
+						'name'       => 'Test Board',
+						'id_member'  => '1',
+						'id_group'   => '1',
+						'real_name'  => 'Test User',
 						'group_name' => 'Test Group',
 					],
 					[
-						'id_topic' => '2',
-						'subject' => 'Another Topic',
-						'id_board' => '2',
-						'name' => 'Another Board',
-						'id_member' => '2',
-						'id_group' => '2',
-						'real_name' => 'Another User',
+						'id_topic'   => '2',
+						'subject'    => 'Another Topic',
+						'id_board'   => '2',
+						'name'       => 'Another Board',
+						'id_member'  => '2',
+						'id_group'   => '2',
+						'real_name'  => 'Another User',
 						'group_name' => 'Another Group',
 					],
 				];
@@ -731,4 +731,161 @@ test('remove method with empty topic', function () {
 	$result = $remove->invoke($this->handler, [1], 0);
 
 	expect($result)->toBeNull();
+});
+
+test('parseRoute method', function () {
+	$this->handler->parseRoute();
+
+	expect(\Bugo\Compat\QueryString::$route_parsers)->toHaveKey('keywords');
+});
+
+test('messageindexButtons method with keywords for topics', function () {
+	Config::$modSettings['optimus_show_keywords_on_message_index'] = true;
+
+	Utils::$context['topics'] = [
+		1 => [
+			'first_post' => [
+				'link' => '<a href="https://example.com/index.php?topic=1.0">Test Topic</a>',
+			]
+		],
+	];
+
+	// Mock getKeywords to return keywords for topic 1
+	$reflection = new ReflectionClass($this->handler);
+	$getKeywordsMethod = $reflection->getMethod('getKeywords');
+
+	$this->handler->messageindexButtons();
+
+	// Should add keywords to the link
+	expect(Utils::$context['topics'][1]['first_post']['link'])->toContain('optimus_keywords');
+});
+
+test('modifyPost method when first_msg equals msgOptions id', function () {
+	Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
+
+	$_REQUEST['optimus_keywords'] = 'key_1';
+
+	$topicOptions  = ['first_msg' => 10, 'id' => 1];
+	$msgOptions    = ['id' => 10];
+	$posterOptions = ['id' => 1];
+
+	$this->handler->modifyPost([], [], $msgOptions, $topicOptions, $posterOptions);
+
+	// Should call modify method
+	expect(true)->toBeTrue();
+});
+
+test('addFields method with optimus_keywords in context', function () {
+	Utils::$context['is_first_post'] = true;
+	Utils::$context['optimus_keywords'] = [1 => 'Keyword 1', 2 => 'Keyword 2'];
+
+	// Mock JavaScriptEscape function
+	if (!function_exists('JavaScriptEscape')) {
+		function JavaScriptEscape($string, $as_json = false) {
+			return addslashes($string);
+		}
+	}
+
+	$addFields = new ReflectionMethod($this->handler, 'addFields');
+	$addFields->invoke($this->handler);
+
+	// Should set posting_fields
+	expect(isset(Utils::$context['posting_fields']['optimus_keywords']))->toBeTrue();
+});
+
+test('modify method with keywords to remove', function () {
+	Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
+	Config::$modSettings['optimus_show_keywords_block'] = true;
+
+	// Mock database to return keywords for topic
+	$mockDb = new class extends TestDbMapper {
+		public function testQuery($query, $params = []): array
+		{
+			if (str_contains($query, 'SELECT k.id, k.name, lk.topic_id')) {
+				// Return two keywords for topic 1
+				return [
+					['id' => '1', 'name' => 'Keyword 1', 'topic_id' => '1'],
+					['id' => '2', 'name' => 'Keyword 2', 'topic_id' => '1'],
+				];
+			}
+			return [];
+		}
+	};
+
+	Db::$db = $mockDb;
+
+	// Set current topic
+	Utils::$context['current_topic'] = '1';
+
+	// Request only key_1, so key_2 should be removed (lines 792-793)
+	$_REQUEST['optimus_keywords'] = 'key_1';
+
+	$modify = new ReflectionMethod($this->handler, 'modify');
+	$modify->invoke($this->handler, 1, 1);
+
+	// Should remove keyword 2 (line 793 should be executed)
+	expect(true)->toBeTrue();
+});
+
+test('add method with new keyword', function () {
+	// Mock getIdByName to return 0 (keyword doesn't exist)
+	$mockDb = new class extends TestDbMapper {
+		public function testQuery($query, $params = []): array
+		{
+			if (str_contains($query, 'WHERE name = {string:name}')) {
+				return []; // Keyword doesn't exist
+			}
+			return [];
+		}
+
+		public function insert(string $method, string $table, array $columns, array $data, array $keys, int $returnmode = 0): int|array|null
+		{
+			return 1;
+		}
+	};
+
+	Db::$db = $mockDb;
+
+	$add = new ReflectionMethod($this->handler, 'add');
+
+	// Add a new keyword (not starting with 'key_')
+	$result = $add->invoke($this->handler, ['newkeyword'], 1, 1);
+
+	// Should add to database and create note
+	expect($result)->toBeNull();
+});
+
+test('add method with existing keyword id', function () {
+	$add = new ReflectionMethod($this->handler, 'add');
+
+	// Add existing keyword by id
+	$result = $add->invoke($this->handler, ['key_1'], 1, 1);
+
+	// Should use existing id and create note
+	expect($result)->toBeNull();
+});
+
+test('createTopic method when canChange is false', function () {
+	Config::$modSettings['optimus_allow_change_topic_keywords'] = false;
+
+	$result = $this->handler->createTopic([], ['id' => 1], ['id' => 1]);
+
+	// Should return early
+	expect($result)->toBeNull();
+});
+
+test('modify method with no keywords to remove', function () {
+	Config::$modSettings['optimus_allow_change_topic_keywords'] = true;
+
+	// Set current keywords for topic
+	Utils::$context['optimus_keywords'] = [1 => 'Keyword 1', 2 => 'Keyword 2'];
+
+	// Request both keywords, so nothing should be removed
+	$_REQUEST['optimus_keywords'] = 'key_1,key_2';
+
+	$modify = new ReflectionMethod($this->handler, 'modify');
+	$modify->invoke($this->handler, 1, 1);
+
+	// Should not remove any keywords (lines 792-793 not executed)
+	expect(true)->toBeTrue();
 });

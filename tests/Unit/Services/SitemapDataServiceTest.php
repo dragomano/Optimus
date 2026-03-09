@@ -309,4 +309,50 @@ describe('SitemapDataService', function () {
 
 		expect($url)->toBe('https://example.com/index.php?topic=1.20');
 	});
+
+	it('includes images in topic pages when optimus_sitemap_all_topic_pages is enabled', function () {
+		Config::$modSettings['optimus_sitemap_all_topic_pages'] = true;
+		Config::$modSettings['optimus_sitemap_add_found_images'] = true;
+		Config::$modSettings['defaultMaxMessages'] = 20;
+		Config::$modSettings['totalMessages'] = 100; // Need this for getTotalRows()
+
+		// Mock data with topic that has an image
+		Db::$db = new class extends TestDbMapper {
+			public function testQuery($query, $params = []): array
+			{
+				if (str_contains($query, 'SELECT b.id_board')) {
+					return [
+						['id_board' => '1', 'last_date' => time()],
+					];
+				}
+
+				if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
+					return [
+						[
+							'id_topic'    => '1',
+							'id_board'    => '1',
+							'num_replies' => '5',
+							'last_date'   => time(),
+							'subject'     => 'Test Topic with Image',
+							'id_attach'   => '123',
+							'fileext'     => 'jpg',
+						],
+					];
+				}
+				return [];
+			}
+		};
+
+		$sitemapDataService = new SitemapDataService(2020);
+		$sitemapDataService->getBoardLinks();
+		$links = $sitemapDataService->getTopicLinks();
+
+		// Should have 1 link with image data
+		expect($links)->toHaveCount(1)
+			->and($links[0])->toHaveKey('image')
+			->and($links[0]['image'])->toHaveKey('image:loc')
+			->and($links[0]['image']['image:loc'])->toContain('action=dlattach')
+			->and($links[0]['image']['image:loc'])->toContain('topic=1.0')
+			->and($links[0]['image']['image:loc'])->toContain('attach=123');
+	});
 });
