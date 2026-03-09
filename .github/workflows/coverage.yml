@@ -6,34 +6,34 @@ on:
     branches:
       - main
     paths:
-      - 'src/**'
+      - "src/**"
   pull_request:
     branches:
       - main
     paths:
-      - 'src/**'
+      - "src/**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
 
-    - name: Install dependencies
-      run: composer update
+      - name: Install dependencies
+        run: composer update
 
-    - name: Run tests
-      run: vendor/bin/pest --coverage-clover build/logs/clover.xml
+      - name: Run tests
+        run: vendor/bin/pest --coverage-clover build/logs/clover.xml
 
-    - name: Upload coverage results to Coveralls
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        composer global require php-coveralls/php-coveralls
-        php-coveralls --coverage_clover=build/logs/clover.xml -v
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v
