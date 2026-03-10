@@ -13,6 +13,7 @@
   "schedule": [
     "every weekend"
   ],
+  "dependencyDashboard": false,
   "ignoreTests": true,
   "packageRules": [
     {
