@@ -9,14 +9,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.38.0",
+    "@astrojs/starlight": "^0.38.1",
     "@yohns/picocss": "^2.2.10",
-    "accessible-astro-components": "^5.0.4",
-    "astro": "^5.16.6",
+    "accessible-astro-components": "^5.2.0",
+    "astro": "^6.0.4",
     "remark-custom-heading-id": "^2.0.0",
-    "sass": "^1.97.2",
+    "sass": "^1.98.0",
     "sharp": "^0.34.5",
-    "starlight-links-validator": "^0.20.0",
-    "starlight-ui-tweaks": "^0.2.0"
+    "starlight-links-validator": "^0.20.1",
+    "starlight-ui-tweaks": "^0.2.2"
   }
 }
