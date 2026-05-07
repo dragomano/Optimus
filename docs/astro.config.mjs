@@ -38,24 +38,18 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Greetings',
-					translations: {
-						'ru': 'Приветствие',
-					},
+					translations: { 'ru': 'Приветствие' },
 					link: '/',
 				},
 				{
 					label: 'Settings',
-					translations: {
-						'ru': 'Настройки',
-					},
-					autogenerate: { directory: 'settings' },
+					translations: { 'ru': 'Настройки' },
+					items: [{ autogenerate: { directory: 'settings' } }],
 				},
 				{
 					label: 'Addons',
-					translations: {
-						'ru': 'Аддоны',
-					},
-					autogenerate: { directory: 'addons' },
+					translations: { 'ru': 'Аддоны' },
+					items: [{ autogenerate: { directory: 'addons' } }],
 				},
 			],
 		}),
