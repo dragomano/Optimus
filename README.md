@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/github/license/dragomano/optimus)
 ![Hooks only: Yes](https://img.shields.io/badge/Hooks%20only-YES-blue)
 [![Coverage Status](https://coveralls.io/repos/github/dragomano/Optimus/badge.svg?branch=main)](https://coveralls.io/github/dragomano/Optimus?branch=main)
-![PHP](https://img.shields.io/badge/PHP-^8.1-blue.svg?style=flat)
+![PHP](https://img.shields.io/badge/PHP-^8.2-blue.svg?style=flat)
 [![Crowdin](https://badges.crowdin.net/smf-optimus/localized.svg)](https://crowdin.com/project/smf-optimus)
 [![Docs](https://img.shields.io/badge/Docs-Site-orange.svg)](https://dragomano.github.io/Optimus/)
 

@@ -187,7 +187,7 @@ describe('filter', function () {
 		$this->request->overrideGlobals();
 
 		expect(Input::filter('foo', 'unknown'))->toBe(Input::filter('foo'))
-			->and(Input::filter('foo', 'unknown'))->toBe(Input::xss($this->request->get('foo')));
+			->and(Input::filter('foo', 'unknown'))->toBe(Input::xss($this->request->request->get('foo')));
 	});
 
 	it('checks with url type and valid URL', function () {

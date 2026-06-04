@@ -6,7 +6,7 @@ use Bugo\Compat\Theme;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 
-uses()->beforeAll(function () {
+uses()->beforeEach(function () {
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
 	User::$me->language = 'english';

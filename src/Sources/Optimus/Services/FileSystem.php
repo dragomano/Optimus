@@ -12,15 +12,15 @@
 
 namespace Bugo\Optimus\Services;
 
-final class FileSystem implements FileSystemInterface
+final readonly class FileSystem implements FileSystemInterface
 {
 	public function __construct(
-		private readonly string $basePath,
-		private readonly mixed $fopenFunc = 'fopen',
-		private readonly mixed $gzopenFunc = 'gzopen',
-		private readonly mixed $gzwriteFunc = 'gzwrite',
-		private readonly mixed $flockFunc = 'flock',
-		private readonly mixed $fwriteFunc = 'fwrite'
+		private string $basePath,
+		private mixed $fopenFunc = 'fopen',
+		private mixed $gzopenFunc = 'gzopen',
+		private mixed $gzwriteFunc = 'gzwrite',
+		private mixed $flockFunc = 'flock',
+		private mixed $fwriteFunc = 'fwrite'
 	) {}
 
 	public function writeFile(string $filename, string $content): void
