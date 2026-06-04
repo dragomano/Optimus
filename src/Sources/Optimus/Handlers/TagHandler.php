@@ -723,10 +723,10 @@ final class TagHandler
 			]
 		);
 
-		[$id] = Db::$db->fetch_row($result);
+		$row = Db::$db->fetch_row($result);
 		Db::$db->free_result($result);
 
-		return (int) $id;
+		return (int) ($row[0] ?? 0);
 	}
 
 	private function addToDatabase(string $keyword): int
