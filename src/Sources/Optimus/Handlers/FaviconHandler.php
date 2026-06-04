@@ -22,7 +22,7 @@ final class FaviconHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::handle#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::handle#', false
 		);
 	}
 

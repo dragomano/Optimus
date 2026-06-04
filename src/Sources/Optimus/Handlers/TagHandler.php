@@ -25,55 +25,55 @@ final class TagHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_actions', self::class . '::actions#', false, __FILE__
+			'integrate_actions', self::class . '::actions#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_parse_route', self::class . '::parseRoute#', false, __FILE__
+			'integrate_parse_route', self::class . '::parseRoute#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_current_action', self::class . '::currentAction#', false, __FILE__
+			'integrate_current_action', self::class . '::currentAction#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
+			'integrate_load_permissions', self::class . '::loadPermissions#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_permissions_list', self::class . '::permissionsList#', false, __FILE__
+			'integrate_permissions_list', self::class . '::permissionsList#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__
+			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_messageindex_buttons', self::class . '::messageindexButtons#', false, __FILE__
+			'integrate_messageindex_buttons', self::class . '::messageindexButtons#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_display_topic', self::class . '::displayTopic#', false, __FILE__
+			'integrate_display_topic', self::class . '::displayTopic#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false, __FILE__
+			'integrate_prepare_display_context', self::class . '::prepareDisplayContext#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_create_topic', self::class . '::createTopic#', false, __FILE__
+			'integrate_create_topic', self::class . '::createTopic#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_post_end', self::class . '::postEnd#', false, __FILE__
+			'integrate_post_end', self::class . '::postEnd#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_modify_post', self::class . '::modifyPost#', false, __FILE__
+			'integrate_modify_post', self::class . '::modifyPost#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_remove_topics', self::class . '::removeTopics#', false, __FILE__
+			'integrate_remove_topics', self::class . '::removeTopics#', false
 		);
 	}
 

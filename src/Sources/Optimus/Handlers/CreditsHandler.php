@@ -24,7 +24,7 @@ final class CreditsHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_credits', self::class . '::credits#', false, __FILE__
+			'integrate_credits', self::class . '::credits#', false
 		);
 	}
 

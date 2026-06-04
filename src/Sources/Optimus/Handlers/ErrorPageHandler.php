@@ -23,11 +23,11 @@ final class ErrorPageHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_load_theme', self::class . '::handleWrongActions#', false, __FILE__
+			'integrate_load_theme', self::class . '::handleWrongActions#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::handleWrongBoardsTopics#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::handleWrongBoardsTopics#', false
 		);
 	}
 

@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 26.05.25
+ * @version 04.06.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -45,7 +45,7 @@ final class TinyPortal extends AbstractAddon
 	public function postInit(): void
 	{
 		IntegrationHook::add(
-			'integrate_tp_post_init', self::class . '::prepareArticleMeta#', false,	__FILE__
+			'integrate_tp_post_init', self::class . '::prepareArticleMeta#', false
 		);
 	}
 

@@ -25,39 +25,39 @@ final class TopicHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::prepareOgImage#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::prepareOgImage#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::menuButtons#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
+			'integrate_load_permissions', self::class . '::loadPermissions#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_permissions_list', self::class . '::permissionsList#', false, __FILE__
+			'integrate_permissions_list', self::class . '::permissionsList#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false, __FILE__
+			'integrate_optimus_basic_settings', self::class . '::basicSettings#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_display_topic', self::class . '::displayTopic#', false, __FILE__
+			'integrate_display_topic', self::class . '::displayTopic#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_before_create_topic', self::class . '::beforeCreateTopic#', false, __FILE__
+			'integrate_before_create_topic', self::class . '::beforeCreateTopic#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_modify_post', self::class . '::modifyPost#', false, __FILE__
+			'integrate_modify_post', self::class . '::modifyPost#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_post_end', self::class . '::postEnd#', false, __FILE__
+			'integrate_post_end', self::class . '::postEnd#', false
 		);
 	}
 

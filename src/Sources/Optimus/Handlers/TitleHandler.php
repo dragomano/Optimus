@@ -22,7 +22,7 @@ final class TitleHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_theme_context', self::class . '::handle#', false, __FILE__
+			'integrate_theme_context', self::class . '::handle#', false
 		);
 	}
 

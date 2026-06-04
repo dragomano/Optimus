@@ -25,19 +25,19 @@ final class SearchTermHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_load_permissions', self::class . '::loadPermissions#', false, __FILE__
+			'integrate_load_permissions', self::class . '::loadPermissions#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_permissions_list', self::class . '::permissionsList#', false, __FILE__
+			'integrate_permissions_list', self::class . '::permissionsList#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::prepareSearchTerms#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::prepareSearchTerms#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_search_params', self::class . '::searchParams#', false, __FILE__
+			'integrate_search_params', self::class . '::searchParams#', false
 		);
 	}
 

@@ -29,15 +29,15 @@ final class SettingHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_modify_basic_settings', self::class . '::modifyBasicSettings#', false, __FILE__
+			'integrate_modify_basic_settings', self::class . '::modifyBasicSettings#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_admin_areas', self::class . '::adminAreas#', false, __FILE__
+			'integrate_admin_areas', self::class . '::adminAreas#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_admin_search', self::class . '::adminSearch#', false, __FILE__
+			'integrate_admin_search', self::class . '::adminSearch#', false
 		);
 	}
 

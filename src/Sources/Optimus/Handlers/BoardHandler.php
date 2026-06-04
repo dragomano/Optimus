@@ -27,31 +27,31 @@ final class BoardHandler
 			return;
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::menuButtons#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::menuButtons#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_load_board', self::class . '::loadBoard#', false, __FILE__
+			'integrate_load_board', self::class . '::loadBoard#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_board_info', self::class . '::boardInfo#', false, __FILE__
+			'integrate_board_info', self::class . '::boardInfo#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_pre_boardtree', self::class . '::preBoardtree#', false, __FILE__
+			'integrate_pre_boardtree', self::class . '::preBoardtree#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_boardtree_board', self::class . '::boardtreeBoard#', false, __FILE__
+			'integrate_boardtree_board', self::class . '::boardtreeBoard#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_edit_board', self::class . '::editBoard#', false, __FILE__
+			'integrate_edit_board', self::class . '::editBoard#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_modify_board', self::class . '::modifyBoard#', false, __FILE__
+			'integrate_modify_board', self::class . '::modifyBoard#', false
 		);
 	}
 

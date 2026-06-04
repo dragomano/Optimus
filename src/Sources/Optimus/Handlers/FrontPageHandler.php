@@ -24,11 +24,11 @@ final class FrontPageHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_load_theme', self::class . '::changeTitle#', false, __FILE__
+			'integrate_load_theme', self::class . '::changeTitle#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::addDescription#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::addDescription#', false
 		);
 	}
 

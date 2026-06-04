@@ -24,7 +24,7 @@ final class AssetHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_load_theme', self::class . '::handle#', false, __FILE__
+			'integrate_load_theme', self::class . '::handle#', false
 		);
 	}
 

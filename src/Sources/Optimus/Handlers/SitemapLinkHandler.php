@@ -25,15 +25,15 @@ final class SitemapLinkHandler
 	public function __invoke(): void
 	{
 		IntegrationHook::add(
-			'integrate_actions', self::class . '::actions#', false, __FILE__
+			'integrate_actions', self::class . '::actions#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_pre_log_stats', self::class . '::preLogStats#', false, __FILE__
+			'integrate_pre_log_stats', self::class . '::preLogStats#', false
 		);
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::addLink#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::addLink#', false
 		);
 	}
 
@@ -84,7 +84,7 @@ final class SitemapLinkHandler
 
 	public function addLink(): void
 	{
-		if (isset(Utils::$context['uninstalling']) || empty(Config::$modSettings['optimus_sitemap_link']))
+		if (empty(Config::$modSettings['optimus_sitemap_link']))
 			return;
 
 		if (empty(Lang::getTxt('optimus_sitemap_title', file: 'Optimus/Optimus')))

@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 09.12.24
+ * @version 04.06.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -33,7 +33,7 @@ final class SafeLinks extends AbstractAddon
 			return;
 
 		IntegrationHook::add(
-			'integrate_bbc_codes', self::class . '::changeAttributesForLinks#', false, __FILE__
+			'integrate_bbc_codes', self::class . '::changeAttributesForLinks#', false
 		);
 	}
 

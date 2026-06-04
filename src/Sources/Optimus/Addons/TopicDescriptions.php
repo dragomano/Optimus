@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 08.11.24
+ * @version 04.06.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -33,7 +33,7 @@ final class TopicDescriptions extends AbstractAddon
 			return;
 
 		IntegrationHook::add(
-			'integrate_menu_buttons', self::class . '::useTopicDescription#', false, __FILE__
+			'integrate_menu_buttons', self::class . '::useTopicDescription#', false
 		);
 	}
 

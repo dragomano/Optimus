@@ -22,7 +22,7 @@ final class RedirectHandler
 {
 	public function __invoke(): void
 	{
-		IntegrationHook::add('integrate_actions', self::class . '::handle#', false, __FILE__);
+		IntegrationHook::add('integrate_actions', self::class . '::handle#', false);
 	}
 
 	public function handle(): void
