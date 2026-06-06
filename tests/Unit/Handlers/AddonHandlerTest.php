@@ -51,12 +51,18 @@ test('handler does not subscribe when already subscribed', function () {
 });
 
 test('getInstalledMods fetches from database when cache is null', function () {
+	global $cacheGetDataReturn;
+	
+	$cacheGetDataReturn['optimus_installed_mods'] = null;
+
 	$handler = new AddonHandler();
 	$method = new ReflectionMethod($handler, 'getInstalledMods');
 
 	$result = $method->invoke($handler);
 
 	expect($result)->toBeArray();
+
+	unset($cacheGetDataReturn['optimus_installed_mods']);
 });
 
 test('mapNamespace returns empty string for Interface file', function () {

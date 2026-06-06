@@ -48,156 +48,214 @@ uses()->beforeEach(function () {
 |
 */
 
-function add_integration_function(...$params): void
-{
-}
-
-function call_integration_hook(string $hook, array $args): array
-{
-	return [$hook => $args];
-}
-
-function send_http_status(...$params): void
-{
-}
-
-function loadTemplate(string $name): void
-{
-}
-
-function loadLanguage(string $lang): void
-{
-	global $txt;
-
-	$file = dirname(__DIR__) . '/src/Themes/default/languages/' . $lang . '.english.php';
-
-	if (is_file($file) && isset($txt)) {
-		require_once $file;
+if (! function_exists('add_integration_function')) {
+	function add_integration_function(...$params): void
+	{
 	}
 }
 
-function allowedTo(string $permission): bool
-{
-	return !!$permission;
-}
-
-function isAllowedTo(string|array $permission): bool
-{
-	return !!$permission;
-}
-
-function db_extend(string $type): void
-{
-}
-
-function un_htmlspecialchars(string $string): string
-{
-	return htmlspecialchars_decode($string);
-}
-
-function cache_get_data(string $key, int $ttl = 120): ?array
-{
-	if ($key == 'optimus_search_terms') return null;
-	if ($key == 'optimus_topic_keywords') return null;
-	if ($key == 'optimus_all_keywords') return null;
-
-	return [];
-}
-
-function cache_put_data(string $key, mixed $value, int $ttl = 120): void
-{
-}
-
-function clean_cache(): void
-{
-}
-
-function updateSettings(array $settings): void
-{
-}
-
-function loadCSSFile(string $fileName): void
-{
-	$id = (empty($id) ? strtr(str_replace('.css', '', basename($fileName)), '?', '_') : $id) . '_css';
-
-	Utils::$context['css_files'][$id] = ['fileName' => $fileName];
-}
-
-function loadJavaScriptFile(string $fileName): void
-{
-	$id = (empty($id) ? strtr(str_replace('.js', '', basename($fileName)), '?', '_') : $id) . '_js';
-
-	Utils::$context['javascript_files'][$id] = ['fileName' => $fileName];
-}
-
-function addInlineJavaScript(string $javascript, bool $defer = false): bool
-{
-	if (empty($javascript)) {
-		return false;
+if (! function_exists('call_integration_hook')) {
+	function call_integration_hook(string $hook, array $args): array
+	{
+		return [$hook => $args];
 	}
-
-	Utils::$context['javascript_inline'][($defer === true ? 'defer' : 'standard')][] = $javascript;
-
-	return true;
 }
 
-function addInlineCss(string $css): bool
-{
-	if (empty($css)) {
-		return false;
+if (! function_exists('send_http_status')) {
+	function send_http_status(...$params): void
+	{
 	}
-
-	Utils::$context['css_header'][] = $css;
-
-	return true;
 }
 
-function createList(array $options): void
-{
-}
-
-function obExit(...$params): void
-{
-}
-
-function parse_bbc(string $string): string
-{
-	return $string;
-}
-
-function shorten_subject(string $subject, int $length): string
-{
-	if (Utils::$smcFunc['strlen']($subject) <= $length) {
-		return $subject;
+if (! function_exists('loadTemplate')) {
+	function loadTemplate(string $name): void
+	{
 	}
-
-	return Utils::$smcFunc['substr']($subject, 0, $length) . '...';
 }
 
-function checkSession(string $type = 'post'): string
-{
-	return $type;
+if (! function_exists('loadLanguage')) {
+	function loadLanguage(string $lang): void
+	{
+		global $txt;
+
+		$file = dirname(__DIR__) . '/src/Themes/default/languages/' . $lang . '.english.php';
+
+		if (is_file($file) && isset($txt)) {
+			require_once $file;
+		}
+	}
 }
 
-function redirectexit(string $url = ''): void
-{
+if (! function_exists('allowedTo')) {
+	function allowedTo(string $permission): bool
+	{
+		return !!$permission;
+	}
 }
 
-function smf_chmod(string $file): bool
-{
-	return !!$file;
+if (! function_exists('isAllowedTo')) {
+	function isAllowedTo(string|array $permission): bool
+	{
+		return !!$permission;
+	}
+}
+
+if (! function_exists('db_extend')) {
+	function db_extend(string $type): void
+	{
+	}
+}
+
+if (! function_exists('un_htmlspecialchars')) {
+	function un_htmlspecialchars(string $string): string
+	{
+		return htmlspecialchars_decode($string);
+	}
+}
+
+if (! function_exists('cache_get_data')) {
+	function cache_get_data(string $key, int $ttl = 120): ?array
+	{
+		global $cacheGetDataReturn;
+
+		if ($key == 'optimus_search_terms') return null;
+		if ($key == 'optimus_topic_keywords') return null;
+		if ($key == 'optimus_all_keywords') return null;
+
+		if (array_key_exists($key, (array) $cacheGetDataReturn)) return $cacheGetDataReturn[$key];
+
+		return [];
+	}
+}
+
+if (! function_exists('cache_put_data')) {
+	function cache_put_data(string $key, mixed $value, int $ttl = 120): void
+	{
+	}
+}
+
+if (! function_exists('clean_cache')) {
+	function clean_cache(): void
+	{
+	}
+}
+
+if (! function_exists('updateSettings')) {
+	function updateSettings(array $settings): void
+	{
+	}
+}
+
+if (! function_exists('loadCSSFile')) {
+	function loadCSSFile(string $fileName): void
+	{
+		$id = (empty($id) ? strtr(str_replace('.css', '', basename($fileName)), '?', '_') : $id) . '_css';
+
+		Utils::$context['css_files'][$id] = ['fileName' => $fileName];
+	}
+}
+
+if (! function_exists('loadJavaScriptFile')) {
+	function loadJavaScriptFile(string $fileName): void
+	{
+		$id = (empty($id) ? strtr(str_replace('.js', '', basename($fileName)), '?', '_') : $id) . '_js';
+
+		Utils::$context['javascript_files'][$id] = ['fileName' => $fileName];
+	}
+}
+
+if (! function_exists('addInlineJavaScript')) {
+	function addInlineJavaScript(string $javascript, bool $defer = false): bool
+	{
+		if (empty($javascript)) {
+			return false;
+		}
+
+		Utils::$context['javascript_inline'][($defer === true ? 'defer' : 'standard')][] = $javascript;
+
+		return true;
+	}
+}
+
+if (! function_exists('addInlineCss')) {
+	function addInlineCss(string $css): bool
+	{
+		if (empty($css)) {
+			return false;
+		}
+
+		Utils::$context['css_header'][] = $css;
+
+		return true;
+	}
+}
+
+if (! function_exists('createList')) {
+	function createList(array $options): void
+	{
+	}
+}
+
+if (! function_exists('obExit')) {
+	function obExit(...$params): void
+	{
+	}
+}
+
+if (! function_exists('parse_bbc')) {
+	function parse_bbc(string $string): string
+	{
+		return $string;
+	}
+}
+
+if (! function_exists('shorten_subject')) {
+	function shorten_subject(string $subject, int $length): string
+	{
+		if (Utils::$smcFunc['strlen']($subject) <= $length) {
+			return $subject;
+		}
+
+		return Utils::$smcFunc['substr']($subject, 0, $length) . '...';
+	}
+}
+
+if (! function_exists('checkSession')) {
+	function checkSession(string $type = 'post'): string
+	{
+		return $type;
+	}
+}
+
+if (! function_exists('redirectexit')) {
+	function redirectexit(string $url = ''): void
+	{
+	}
+}
+
+if (! function_exists('smf_chmod')) {
+	function smf_chmod(string $file): bool
+	{
+		global $makeWritableReturn;
+
+		return $makeWritableReturn ?? !!$file;
+	}
 }
 
 $makeWritableReturn = true;
 
-function log_error(string $message, string $level = 'user'): string
-{
-	return $message;
+if (! function_exists('log_error')) {
+	function log_error(string $message, string $level = 'user'): string
+	{
+		return $message;
+	}
 }
 
-function fatal_lang_error(...$params): void
-{
-	Utils::$context['error_title'] = Lang::getTxt($params[0]);
+if (! function_exists('fatal_lang_error')) {
+	function fatal_lang_error(...$params): void
+	{
+		Utils::$context['error_title'] = Lang::getTxt($params[0]);
+	}
 }
 
 if (! function_exists('httpsOn')) {

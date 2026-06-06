@@ -256,15 +256,97 @@ describe('Tabs', function () {
 	});
 
 	test('sitemapTabSettings sets error when directory not writable', function () {
-		$originalBoarddir = Config::$boarddir;
-		Config::$boarddir = '/nonexistent';
+		global $makeWritableReturn;
+		
+		$makeWritableReturn = false;
 
 		expect($this->handler->sitemapTabSettings())->toBeNull();
 
-		Config::$boarddir = $originalBoarddir;
+		$makeWritableReturn = true;
+	});
+
+	test('sitemapTabSettings save with optimus_sitemap_enable calls db insert', function () {
+		$_POST['optimus_sitemap_enable'] = '1';
+
+		$insertCalled = false;
+
+		Db::$db = new class($insertCalled) extends TestDbMapper {
+			public function __construct(private bool &$insertCalled) {}
+
+			public function testQuery($query, $params = []): array
+			{
+				return [];
+			}
+
+			public function insert(string $method, string $table, array $columns, array $data, array $keys, int $returnmode = 0): int|array|null
+			{
+				$this->insertCalled = true;
+				return null;
+			}
+		};
+
+		$this->handler->sitemapTabSettings();
+
+		expect($insertCalled)->toBeTrue();
+
+		unset($_POST['optimus_sitemap_enable']);
+	});
+
+	test('robotsTabSettings sets robots_content to empty when path is not writable', function () {
+		global $makeWritableReturn;
+		$makeWritableReturn = false;
+
+		unset($_GET['save']);
+		$this->handler->robotsTabSettings();
+
+		expect(Utils::$context['robots_content'])->toBe('');
+
+		$makeWritableReturn = true;
+	});
+
+	test('htaccessTabSettings sets htaccess_content to empty when path is not writable', function () {
+		global $makeWritableReturn;
+		$makeWritableReturn = false;
+
+		unset($_GET['save']);
+		$this->handler->htaccessTabSettings();
+
+		expect(Utils::$context['htaccess_content'])->toBe('');
+
+		$makeWritableReturn = true;
 	});
 
 	afterEach(function () {
 		unset($_GET['save']);
 	});
+});
+
+test('addDefaultSettings returns early when settings is empty', function () {
+	$method = new ReflectionMethod($this->handler, 'addDefaultSettings');
+
+	$method->invoke($this->handler, []);
+
+	expect(Config::$modSettings)->toBe([]);
+});
+
+test('actions method does not add tips layer when area is not optimus', function () {
+	$_REQUEST['area'] = 'config';
+	$_REQUEST['sa'] = 'basic';
+
+	$this->handler->actions();
+
+	expect(Utils::$context['template_layers'])->not->toContain('tips');
+
+	unset($_REQUEST['area'], $_REQUEST['sa']);
+});
+
+test('actions method does not add tips layer when template_layers is empty', function () {
+	$_REQUEST['area'] = 'optimus';
+	Utils::$context['template_layers'] = [];
+
+	$this->handler->actions();
+
+	expect(Utils::$context['template_layers'])->not->toContain('tips');
+
+	unset($_REQUEST['area']);
 });
