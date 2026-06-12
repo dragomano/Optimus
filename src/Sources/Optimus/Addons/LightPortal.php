@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 17.10.25
+ * @version 09.06.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -66,7 +66,7 @@ final class LightPortal extends AbstractAddon
 			ORDER BY page_id DESC',
 			[
 				'status'       => Status::ACTIVE->value,
-				'entry_type'   => EntryType::DEFAULT->name(),
+				'entry_type'   => EntryType::DEFAULT->value,
 				'current_time' => time(),
 				'permissions'  => [Permission::GUEST->value, Permission::ALL->value],
 				'start_year'   => $generator->startYear,
