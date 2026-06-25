@@ -74,7 +74,7 @@ if (! function_exists('loadTemplate')) {
 }
 
 if (! function_exists('loadLanguage')) {
-	function loadLanguage(string $lang): void
+	function loadLanguage(string $lang): string
 	{
 		global $txt;
 
@@ -83,6 +83,8 @@ if (! function_exists('loadLanguage')) {
 		if (is_file($file) && isset($txt)) {
 			require_once $file;
 		}
+
+		return $lang;
 	}
 }
 
