@@ -14,11 +14,11 @@ namespace Bugo\Optimus\Enums;
 
 enum Priority: string
 {
-	case Supreme = '1.0';    // Highest priority, absolute SEO focus
-	case Prime = '0.8';      // High priority, regularly refreshed
+	case Supreme  = '1.0';   // Highest priority, absolute SEO focus
+	case Prime    = '0.8';   // High priority, regularly refreshed
 	case Elevated = '0.6';   // Important, but not top-level
-	case Base = '0.4';       // Standard content, normal indexing
-	case Minimal = '0.2';    // Low relevance, rarely updated
+	case Base     = '0.4';   // Standard content, normal indexing
+	case Minimal  = '0.2';   // Low relevance, rarely updated
 
 	public static function fromTimestamp(int $timestamp): self
 	{

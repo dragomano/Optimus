@@ -14,12 +14,12 @@ namespace Bugo\Optimus\Enums;
 
 enum Frequency: string
 {
-	case Always = 'always';
-	case Hourly = 'hourly';
-	case Daily = 'daily';
-	case Weekly = 'weekly';
+	case Always  = 'always';
+	case Hourly  = 'hourly';
+	case Daily   = 'daily';
+	case Weekly  = 'weekly';
 	case Monthly = 'monthly';
-	case Yearly = 'yearly';
+	case Yearly  = 'yearly';
 
 	public static function fromTimestamp(int $timestamp): self
 	{

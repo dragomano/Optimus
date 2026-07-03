@@ -37,7 +37,7 @@ final class AddonHandler implements ListenerSubscriber
 
 	public function subscribeListeners(ListenerRegistry $acceptor): void
 	{
-		$mods = $this->getInstalledMods();
+		$mods   = $this->getInstalledMods();
 		$addons = $this->getAllAddons();
 
 		foreach ($addons as $listener) {

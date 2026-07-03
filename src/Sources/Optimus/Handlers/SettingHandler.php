@@ -68,9 +68,9 @@ final class SettingHandler
 		}
 
 		$admin_areas['config']['areas']['optimus'] = [
-			'label' => Lang::getTxt('optimus_title', file: 'Optimus/Optimus'),
-			'function' => $this->actions(...),
-			'icon' => 'optimus',
+			'label'       => Lang::getTxt('optimus_title', file: 'Optimus/Optimus'),
+			'function'    => $this->actions(...),
+			'icon'        => 'optimus',
 			'subsections' => [
 				'basic'    => [Lang::getTxt('optimus_basic_title')],
 				'extra'    => [Lang::getTxt('optimus_extra_title')],
@@ -347,9 +347,9 @@ final class SettingHandler
 
 			$meta = [];
 			if (Input::isPost('custom_tag_name') && Input::isPost('custom_tag_value')) {
-				$custom_tag_name = Input::post('custom_tag_name');
+				$custom_tag_name  = Input::post('custom_tag_name');
 				$custom_tag_value = Input::post('custom_tag_value');
-				$custom_tag_name = array_filter($custom_tag_name);
+				$custom_tag_name  = array_filter($custom_tag_name);
 
 				foreach ($custom_tag_name as $key => $value) {
 					$meta[$value] = $custom_tag_value[$key];

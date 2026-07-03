@@ -57,7 +57,9 @@ final class TinyPortal extends AbstractAddon
 		$article = Utils::$context['TPortal']['article'];
 
 		$pattern = $article['rendertype'] == 'bbc' ? '/\[img.*]([^\]\[]+)\[\/img\]/U' : '/<img(.*)src(.*)=(.*)"(.*)"/U';
+
 		$firstPostImage = preg_match($pattern, $article['body'], $value);
+
 		Theme::$current->settings['og_image'] = $firstPostImage ? array_pop($value) : null;
 
 		Utils::$context['meta_description'] = Str::teaser($article['intro'] ?: $article['body']);

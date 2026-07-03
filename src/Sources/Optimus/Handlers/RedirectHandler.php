@@ -36,7 +36,7 @@ final class RedirectHandler
 		// @codeCoverageIgnoreStart
 		if (isset($redirects[$queryString])) {
 			$url = Config::$scripturl . '?';
-			$to = $redirects[$queryString];
+			$to  = $redirects[$queryString];
 
 			if (str_starts_with($to, 'http')) {
 				$url = '';

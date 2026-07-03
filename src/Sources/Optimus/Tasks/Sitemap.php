@@ -89,10 +89,10 @@ class Sitemap extends BackgroundTask
 		$frequency = (int) (Config::$modSettings['optimus_update_frequency'] ?? 0);
 
 		return match ($frequency) {
-			0 => 1,
-			1 => 3,
-			2 => 7,
-			3 => 14,
+			0       => 1,
+			1       => 3,
+			2       => 7,
+			3       => 14,
 			default => 30,
 		};
 	}

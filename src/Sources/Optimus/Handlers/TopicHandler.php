@@ -74,7 +74,9 @@ final class TopicHandler
 			&& isset(Utils::$context['loaded_attachments'][$firstMessageId])
 		) {
 			$attachments = Utils::$context['loaded_attachments'][$firstMessageId];
+
 			$attach = ';attach=' . ($key = array_key_first($attachments)) . ';image';
+
 			Theme::$current->settings['og_image'] = Config::$scripturl . '?action=dlattach;topic='
 				. Utils::$context['current_topic'] . $attach;
 
@@ -192,8 +194,9 @@ final class TopicHandler
 		$this->makeDescriptionByOptimus();
 
 		// Additional data
-		$startedName = Utils::$context['topicinfo']['topic_started_name'] ?? '';
+		$startedName  = Utils::$context['topicinfo']['topic_started_name'] ?? '';
 		$modifiedTime = Utils::$context['topicinfo']['topic_modified_time'] ?? 0;
+
 		Utils::$context['optimus_og_type']['article'] = [
 			'published_time' => date('Y-m-d\TH:i:s', (int) Utils::$context['topicinfo']['topic_started_time']),
 			'modified_time'  => empty($modifiedTime) ? null : date('Y-m-d\TH:i:s', (int) $modifiedTime),

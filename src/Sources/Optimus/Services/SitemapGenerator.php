@@ -35,11 +35,11 @@ class SitemapGenerator
 	public string $content = '';
 
 	public function __construct(
-		private readonly SitemapDataService    $dataService,
-		private readonly FileSystemInterface   $fileSystem,
+		private readonly SitemapDataService $dataService,
+		private readonly FileSystemInterface $fileSystem,
 		private readonly XmlGeneratorInterface $xmlGenerator,
-		private readonly Dispatcher            $dispatcher,
-		public readonly int                    $startYear = 0,
+		private readonly Dispatcher $dispatcher,
+		public readonly int $startYear = 0,
 	) {}
 
 	public function generate(): bool
@@ -162,7 +162,7 @@ class SitemapGenerator
 
 	private function processMultipleSitemaps(array $items, int $sitemapCounter): void
 	{
-		$gzMaps = [];
+		$gzMaps       = [];
 		$sitemapIndex = [];
 
 		for ($i = 0; $i <= $sitemapCounter; $i++) {
@@ -180,6 +180,7 @@ class SitemapGenerator
 
 				if (function_exists('gzencode') && strlen($this->content) > (self::MAX_FILESIZE)) {
 					$this->fileSystem->writeGzFile($filename . '.gz', $this->content);
+
 					$gzMaps[] = $filename . '.gz';
 				}
 

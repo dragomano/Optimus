@@ -170,7 +170,7 @@ final class TagHandler
 			$keywords = $this->getKeywords()[$topic] ?? [];
 
 			foreach ($keywords as $id => $key) {
-				$link = Config::$scripturl . '?action=keywords;id=' . $id;
+				$link  = Config::$scripturl . '?action=keywords;id=' . $id;
 				$style = ' style="' . $this->getRandomColor($key) . '"';
 
 				$data['first_post']['link'] .= ' ' . Str::html('a', $key)
@@ -196,7 +196,7 @@ final class TagHandler
 			$class = empty(Config::$modSettings['optimus_use_color_tags']) ? 'button' : 'descbox';
 
 			foreach (Utils::$context['optimus_keywords'] as $id => $keyword) {
-				$href = Config::$scripturl . '?action=keywords;id=' . $id;
+				$href  = Config::$scripturl . '?action=keywords;id=' . $id;
 				$style = 'margin-right: 2px;' . $this->getRandomColor($keyword);
 
 				$link = Str::html('a', $keyword)

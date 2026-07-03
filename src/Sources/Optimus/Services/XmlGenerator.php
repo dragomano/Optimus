@@ -37,7 +37,7 @@ class XmlGenerator implements XmlGeneratorInterface
 	public function generate(array $data, array $options = []): string
 	{
 		try {
-			$root = $this->prepareRootElement($options);
+			$root  = $this->prepareRootElement($options);
 			$array = $this->prepareData($data, $options);
 
 			$arrayToXml = new ArrayToXml($array, $root, true, 'UTF-8');
@@ -52,7 +52,7 @@ class XmlGenerator implements XmlGeneratorInterface
 	private function prepareRootElement(array $options): array
 	{
 		$isIndex = $options['isIndex'] ?? false;
-		$root = $isIndex ? self::INDEX_ROOT : self::DEFAULT_ROOT;
+		$root    = $isIndex ? self::INDEX_ROOT : self::DEFAULT_ROOT;
 
 		if (! $isIndex) {
 			if ($options['mobile'] ?? false) {
@@ -76,7 +76,7 @@ class XmlGenerator implements XmlGeneratorInterface
 	 */
 	private function prepareData(array $data, array $options): array
 	{
-		$isIndex = $options['isIndex'] ?? false;
+		$isIndex     = $options['isIndex'] ?? false;
 		$rootElement = $isIndex ? 'sitemap' : 'url';
 
 		return [

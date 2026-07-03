@@ -213,7 +213,7 @@ class SitemapDataService
 
 	private function buildTopicPageUrl(int $topicId, int $page, int $messagesPerPage): string
 	{
-		$start = $page * $messagesPerPage;
+		$start  = $page * $messagesPerPage;
 		$suffix = $start === 0 ? '.0' : '.' . $start;
 
 		return Entity::TOPIC->buildUrl($topicId . $suffix);
