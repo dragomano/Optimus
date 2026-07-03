@@ -139,8 +139,11 @@ $smcFunc['db_add_column'](
 	'do_nothing'
 );
 
-// Add extra indexes for sitemap
-$smcFunc['db_add_index']('{db_prefix}topics', [
+// Remove extra indexes for sitemap
+$smcFunc['db_remove_index']('{db_prefix}topics', 'idx_topics_sitemap');
+$smcFunc['db_remove_index']('{db_prefix}messages', 'idx_messages_sitemap');
+
+/* $smcFunc['db_add_index']('{db_prefix}topics', [
 	'name' => 'idx_topics_sitemap',
 	'type' => 'index',
 	'columns' => [
@@ -153,7 +156,7 @@ $smcFunc['db_add_index']('{db_prefix}messages', [
 	'columns' => [
 		'id_msg', 'poster_time', 'modified_time', 'subject',
 	]
-]);
+]); */
 
 $smcFunc['db_query']('', '
 	DELETE FROM {db_prefix}background_tasks
