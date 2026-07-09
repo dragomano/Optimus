@@ -84,7 +84,7 @@ final class SitemapLinkHandler
 
 	public function addLink(): void
 	{
-		if (empty(Config::$modSettings['optimus_sitemap_link']))
+		if (isset(Utils::$context['uninstalling']) || empty(Config::$modSettings['optimus_sitemap_link']))
 			return;
 
 		if (empty(Lang::getTxt('optimus_sitemap_title', file: 'Optimus/Optimus')))
