@@ -3,6 +3,14 @@
 use Bugo\Compat\{Config, Lang, Utils};
 use Bugo\Optimus\Utils\Input;
 
+function optimus_settings_saved_alert(): void
+{
+	if (! empty(Utils::$context['saved_successful'])) {
+		echo '
+		<div class="infobox">', Lang::getTxt('settings_saved', file: 'Admin'), '</div>';
+	}
+}
+
 function template_tips_above(): void
 {
 	$links = [
@@ -36,6 +44,8 @@ function template_tips_below(): void
 
 function template_favicon(): void
 {
+	optimus_settings_saved_alert();
+
 	echo '
 	<div class="cat_bar">
 		<h3 class="catbg">', Lang::getTxt('optimus_favicon_title'), '</h3>
@@ -62,6 +72,8 @@ function template_favicon(): void
 
 function template_metatags(): void
 {
+	optimus_settings_saved_alert();
+
 	echo '
 	<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], '">
 		<div class="cat_bar">
@@ -140,6 +152,8 @@ function template_metatags(): void
 
 function template_redirect(): void
 {
+	optimus_settings_saved_alert();
+
 	echo '
 	<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], /** @lang text */ '">
 		<div class="cat_bar">
@@ -203,6 +217,8 @@ function template_redirect(): void
 
 function template_counters(): void
 {
+	optimus_settings_saved_alert();
+
 	echo '
 	<form class="optimus" action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], /** @lang text */ '">
 		<div class="cat_bar">
@@ -257,6 +273,8 @@ function template_counters(): void
 
 function template_robots(): void
 {
+	optimus_settings_saved_alert();
+
 	echo '
 	<form action="', Utils::$context['post_url'], '" method="post">
 		<div class="cat_bar">
@@ -292,6 +310,8 @@ function template_robots(): void
 
 function template_htaccess(): void
 {
+	optimus_settings_saved_alert();
+
 	echo '
 	<div class="cat_bar">
 		<h3 class="catbg">', Lang::getTxt('optimus_htaccess_title'), '</h3>
