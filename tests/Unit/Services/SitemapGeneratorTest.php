@@ -20,14 +20,14 @@ beforeEach(function () {
 	Config::$boarddir = $this->tempDir;
 
 	Config::$modSettings = [
-		'optimus_sitemap_enable' => true,
-		'optimus_sitemap_items_display' => 1000,
-		'optimus_sitemap_add_found_images' => false,
+		'optimus_sitemap_enable'             => true,
+		'optimus_sitemap_items_display'      => 1000,
+		'optimus_sitemap_add_found_images'   => false,
 		'optimus_sitemap_topics_num_replies' => 0,
-		'optimus_sitemap_all_topic_pages' => false,
-		'optimus_remove_previous_xml_files' => true,
-		'queryless_urls' => false,
-		'defaultMaxMessages' => 20
+		'optimus_sitemap_all_topic_pages'    => false,
+		'optimus_remove_previous_xml_files'  => true,
+		'queryless_urls'                     => false,
+		'defaultMaxMessages'                 => 20,
 	];
 
 	$this->dataService = new class(2020) extends SitemapDataService {
@@ -40,8 +40,8 @@ beforeEach(function () {
 		}
 	};
 
-	$fileSystem = new FileSystem($this->tempDir);
-	$xmlGenerator = new XmlGenerator(Config::$scripturl);
+	$fileSystem       = new FileSystem($this->tempDir);
+	$xmlGenerator     = new XmlGenerator(Config::$scripturl);
 	$this->dispatcher = (new DispatcherFactory())();
 
 	$this->generator = new SitemapGenerator(
@@ -97,7 +97,7 @@ it('does not remove old files when disabled', function () {
 it('processes single sitemap correctly', function () {
 	$items = [
 		['loc' => 'https://example.com/page1', 'lastmod' => time()],
-		['loc' => 'https://example.com/page2', 'lastmod' => time()]
+		['loc' => 'https://example.com/page2', 'lastmod' => time()],
 	];
 
 	$method = new ReflectionMethod($this->generator, 'processSingleSitemap');
@@ -113,8 +113,8 @@ it('processes single sitemap correctly', function () {
 
 it('prepares entry correctly', function () {
 	$entry = [
-		'loc' => 'https://example.com/test',
-		'lastmod' => time()
+		'loc'     => 'https://example.com/test',
+		'lastmod' => time(),
 	];
 
 	$method = new ReflectionMethod($this->generator, 'prepareEntry');
@@ -129,9 +129,9 @@ it('prepares entry correctly', function () {
 
 it('prepares entry with image data', function () {
 	$entry = [
-		'loc' => 'https://example.com/test',
+		'loc'     => 'https://example.com/test',
 		'lastmod' => time(),
-		'image' => ['url' => 'https://example.com/image.jpg']
+		'image'   => ['url' => 'https://example.com/image.jpg'],
 	];
 
 	$method = new ReflectionMethod($this->generator, 'prepareEntry');
@@ -144,9 +144,9 @@ it('prepares entry with image data', function () {
 
 it('prepares entry with video data', function () {
 	$entry = [
-		'loc' => 'https://example.com/test',
+		'loc'     => 'https://example.com/test',
 		'lastmod' => time(),
-		'video' => ['title' => 'Test Video']
+		'video'   => ['title' => 'Test Video'],
 	];
 
 	$method = new ReflectionMethod($this->generator, 'prepareEntry');
@@ -159,10 +159,10 @@ it('prepares entry with video data', function () {
 
 it('prepares entry with both image and video data', function () {
 	$entry = [
-		'loc' => 'https://example.com/test',
+		'loc'     => 'https://example.com/test',
 		'lastmod' => time(),
-		'image' => ['url' => 'https://example.com/image.jpg'],
-		'video' => ['title' => 'Test Video']
+		'image'   => ['url' => 'https://example.com/image.jpg'],
+		'video'   => ['title' => 'Test Video'],
 	];
 
 	$method = new ReflectionMethod($this->generator, 'prepareEntry');
@@ -171,36 +171,6 @@ it('prepares entry with both image and video data', function () {
 	expect($result)
 		->toHaveKey('image:image')
 		->and($result)->toHaveKey('video:video');
-});
-
-it('returns empty array for getImageData when no image', function () {
-	$method = new ReflectionMethod($this->generator, 'getImageData');
-	$result = $method->invoke($this->generator, ['loc' => 'https://example.com/test']);
-
-	expect($result)->toBe([]);
-});
-
-it('returns image data for getImageData when image exists', function () {
-	$entry = ['image' => ['url' => 'https://example.com/image.jpg']];
-	$method = new ReflectionMethod($this->generator, 'getImageData');
-	$result = $method->invoke($this->generator, $entry);
-
-	expect($result)->toBe(['image:image' => ['url' => 'https://example.com/image.jpg']]);
-});
-
-it('returns empty array for getVideoData when no video', function () {
-	$method = new ReflectionMethod($this->generator, 'getVideoData');
-	$result = $method->invoke($this->generator, ['loc' => 'https://example.com/test']);
-
-	expect($result)->toBe([]);
-});
-
-it('returns video data for getVideoData when video exists', function () {
-	$entry = ['video' => ['title' => 'Test Video']];
-	$method = new ReflectionMethod($this->generator, 'getVideoData');
-	$result = $method->invoke($this->generator, $entry);
-
-	expect($result)->toBe(['video:video' => ['title' => 'Test Video']]);
 });
 
 it('creates sitemap successfully', function () {
@@ -216,7 +186,7 @@ it('creates multiple sitemap files when needed', function () {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
 				['loc' => 'https://example.com/board2', 'lastmod' => time()],
-				['loc' => 'https://example.com/board3', 'lastmod' => time()]
+				['loc' => 'https://example.com/board3', 'lastmod' => time()],
 			];
 		}
 
@@ -272,8 +242,8 @@ it('allows adding custom links through event dispatcher', function () {
 		public function changeSitemap(SitemapGenerator $sitemap): void
 		{
 			$sitemap->links[] = [
-				'loc' => 'https://example.com/custom',
-				'lastmod' => time()
+				'loc'     => 'https://example.com/custom',
+				'lastmod' => time(),
 			];
 		}
 	};
@@ -296,9 +266,9 @@ it('allows adding custom links through event dispatcher', function () {
 
 it('gets last date from links array', function () {
 	$maxDate = time();
-	$links = [
+	$links   = [
 		['loc' => 'https://example.com/page1', 'lastmod' => strtotime('-3 days', $maxDate)],
-		['loc' => 'https://example.com/page2', 'lastmod' => $maxDate]
+		['loc' => 'https://example.com/page2', 'lastmod' => $maxDate],
 	];
 
 	$method = new ReflectionMethod($this->generator, 'getLastDate');
@@ -376,7 +346,7 @@ it('handles XmlGeneratorException in processMultipleSitemaps', function () {
 		public function getBoardLinks(): array {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
-				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+				['loc' => 'https://example.com/board2', 'lastmod' => time()],
 			];
 		}
 
@@ -415,7 +385,7 @@ it('handles FileSystemException in processMultipleSitemaps', function () {
 		public function getBoardLinks(): array {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
-				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+				['loc' => 'https://example.com/board2', 'lastmod' => time()],
 			];
 		}
 
@@ -490,7 +460,7 @@ it('handles empty gzMaps in processMultipleSitemaps', function () {
 	$dataService = new class(2020) extends SitemapDataService {
 		public function getBoardLinks(): array {
 			return [
-				['loc' => 'https://example.com/board1', 'lastmod' => time()]
+				['loc' => 'https://example.com/board1', 'lastmod' => time()],
 			];
 		}
 
@@ -520,7 +490,7 @@ it('handles empty items slice in processMultipleSitemaps', function () {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
 				['loc' => 'https://example.com/board2', 'lastmod' => time()],
-				['loc' => 'https://example.com/board3', 'lastmod' => time()]
+				['loc' => 'https://example.com/board3', 'lastmod' => time()],
 			];
 		}
 
@@ -587,7 +557,7 @@ it('skips empty items in processMultipleSitemaps', function () {
 		public function getBoardLinks(): array {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
-				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+				['loc' => 'https://example.com/board2', 'lastmod' => time()],
 			];
 		}
 
@@ -608,11 +578,11 @@ it('skips empty items in processMultipleSitemaps', function () {
 	$items = [
 		0 => [
 			['loc' => 'https://example.com/', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '1.0'],
-			['loc' => 'https://example.com/board1', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8']
+			['loc' => 'https://example.com/board1', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
 		],
 		1 => [], // Empty items array - should trigger continue on line 170
 		2 => [
-			['loc' => 'https://example.com/board2', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8']
+			['loc' => 'https://example.com/board2', 'lastmod' => date('Y-m-d'), 'changefreq' => 'daily', 'priority' => '0.8'],
 		]
 	];
 
@@ -633,7 +603,7 @@ it('handles XmlGeneratorException when creating sitemap index', function () {
 		public function getBoardLinks(): array {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
-				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+				['loc' => 'https://example.com/board2', 'lastmod' => time()],
 			];
 		}
 
@@ -684,7 +654,7 @@ it('handles FileSystemException when creating sitemap index', function () {
 		public function getBoardLinks(): array {
 			return [
 				['loc' => 'https://example.com/board1', 'lastmod' => time()],
-				['loc' => 'https://example.com/board2', 'lastmod' => time()]
+				['loc' => 'https://example.com/board2', 'lastmod' => time()],
 			];
 		}
 

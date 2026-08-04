@@ -106,10 +106,8 @@ class SitemapGenerator
 
 		$sitemapCounter = 0;
 
-		$getLinks = fn() => yield from $this->getLinks();
-
 		$items = [];
-		foreach ($getLinks() as $counter => $entry) {
+		foreach ($this->getLinks() as $counter => $entry) {
 			if (! empty($counter) && $counter % $maxItems == 0) {
 				$sitemapCounter++;
 			}
@@ -127,22 +125,22 @@ class SitemapGenerator
 	{
 		$entry['lastmod'] = (int) ($entry['lastmod'] ?? 0);
 
-		return array_merge([
+		$result = [
 			'loc'        => $entry['loc'],
 			'lastmod'    => $entry['lastmod'] ? $this->getDateIso8601($entry['lastmod']) : null,
 			'changefreq' => $entry['lastmod'] ? Frequency::fromTimestamp($entry['lastmod'])->value : null,
 			'priority'   => $entry['lastmod'] ? Priority::fromTimestamp($entry['lastmod'])->value : null,
-		], $this->getImageData($entry), $this->getVideoData($entry));
-	}
+		];
 
-	private function getImageData(array $entry): array
-	{
-		return empty($entry['image']) ? [] : ['image:image' => $entry['image']];
-	}
+		if (! empty($entry['image'])) {
+			$result['image:image'] = $entry['image'];
+		}
 
-	private function getVideoData(array $entry): array
-	{
-		return empty($entry['video']) ? [] : ['video:video' => $entry['video']];
+		if (! empty($entry['video'])) {
+			$result['video:video'] = $entry['video'];
+		}
+
+		return $result;
 	}
 
 	private function processItems(array $items, int $sitemapCounter): void
@@ -241,7 +239,7 @@ class SitemapGenerator
 			return time();
 		}
 
-		$data = array_values(array_values($links));
+		$data = array_values($links);
 
 		$dates = [];
 		foreach ($data as $value) {

@@ -88,15 +88,12 @@ class SitemapDataService
 		$tempCache = Db::$cache;
 		Db::$cache = [];
 
-		$start = 0;
-		$limit = 100;
+		$limit  = 500;
+		$lastId = null;
 
-		$totalRows = $this->getTotalRows();
-
-		while ($start < $totalRows) {
-			$this->processTopicBatch($start, $limit);
-			$start += $limit;
-		}
+		do {
+			$lastId = $this->processTopicBatch($lastId, $limit);
+		} while ($lastId !== null);
 
 		$this->processTopicPages();
 
@@ -105,15 +102,7 @@ class SitemapDataService
 		return array_values($this->links);
 	}
 
-	private function getTotalRows(): int
-	{
-		return (int) (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])
-			? (Config::$modSettings['totalTopics'] ?? 0)
-			: (Config::$modSettings['totalMessages'] ?? 0)
-		);
-	}
-
-	private function processTopicBatch(int $start, int $limit): void
+	private function processTopicBatch(?int $lastId, int $limit): ?int
 	{
 		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
 
@@ -130,9 +119,10 @@ class SitemapDataService
 					AND a.approved = {int:attach_approved}
 			WHERE t.id_board IN ({array_int:boards})' . ($numReplies ? '
 				AND t.num_replies >= {int:num_replies}' : '') .	($this->startYear ? '
-				AND m.poster_time >= UNIX_TIMESTAMP(CONCAT({int:start_year}, \'-01-01\'))' : '') . '
-			ORDER BY t.id_topic DESC, last_date
-			LIMIT {int:start}, {int:limit}',
+				AND m.poster_time >= UNIX_TIMESTAMP(CONCAT({int:start_year}, \'-01-01\'))' : '') . ($lastId !== null ? '
+				AND t.id_topic < {int:last_id}' : '') . '
+			ORDER BY t.id_topic DESC
+			LIMIT {int:limit}',
 			[
 				'attach_type'     => 0,
 				'attach_width'    => 0,
@@ -141,12 +131,16 @@ class SitemapDataService
 				'boards'          => $this->openBoards,
 				'num_replies'     => $numReplies,
 				'start_year'      => $this->startYear,
-				'start'           => $start,
+				'last_id'         => $lastId ?? 0,
 				'limit'           => $limit,
 			]
 		);
 
+		$newLastId = null;
+
 		while ($row = Db::$db->fetch_assoc($result)) {
+			$newLastId = (int) $row['id_topic'];
+
 			$topicUrl = $this->buildTopicUrl($row['id_topic']);
 
 			if (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
@@ -175,6 +169,8 @@ class SitemapDataService
 		}
 
 		Db::$db->free_result($result);
+
+		return $newLastId;
 	}
 
 	private function buildTopicUrl(string $topicId): string
@@ -195,18 +191,17 @@ class SitemapDataService
 		$messagesPerPage = (int) (Config::$modSettings['defaultMaxMessages'] ?? 20);
 
 		foreach ($this->topics as $topicId => $topic) {
-			$numPages = ceil(($topic['num_replies'] + 1) / $messagesPerPage);
+			$numPages = (int) ceil(($topic['num_replies'] + 1) / $messagesPerPage);
+
+			$imagePart = isset($this->images[$topicId])
+				? ['image' => ['image:loc' => $this->images[$topicId]['loc']]]
+				: [];
 
 			for ($page = 0; $page < $numPages; $page++) {
-				$pageUrl = $this->buildTopicPageUrl($topicId, $page, $messagesPerPage);
-
-				$entry = ['loc' => $pageUrl, 'lastmod' => $topic['last_date']];
-
-				if (isset($this->images[$topicId])) {
-					$entry['image'] = ['image:loc' => $this->images[$topicId]['loc']];
-				}
-
-				$this->links[] = $entry;
+				$this->links[] = [
+					'loc'     => $this->buildTopicPageUrl($topicId, $page, $messagesPerPage),
+					'lastmod' => $topic['last_date'],
+				] + $imagePart;
 			}
 		}
 	}

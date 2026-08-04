@@ -5,11 +5,11 @@
     "ext-zlib": "*"
   },
   "require-dev": {
-    "pestphp/pest": "^3.8",
+    "pestphp/pest": "^3.8|^4.7",
     "mockery/mockery": "dev-bugfix/spy-generics",
     "phing/phing": "^3.0",
-    "rector/rector": "^2.4",
-    "symfony/http-foundation": "^7.4|^8.0"
+    "rector/rector": "^2.5",
+    "symfony/http-foundation": "^7.4|^8.1"
   },
   "autoload": {
     "psr-4": {

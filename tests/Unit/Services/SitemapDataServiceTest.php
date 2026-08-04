@@ -31,6 +31,10 @@ beforeEach(function () {
 			}
 
 			if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
+				if (! empty($params['last_id'])) {
+					return [];
+				}
+
 				return [
 					[
 						'id_topic'    => '1',
@@ -102,7 +106,7 @@ describe('SitemapDataService', function () {
 	it('processes topic batch correctly', function () {
 		$linksProperty = new ReflectionProperty($this->sitemapDataService, 'links');
 		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
-		$processTopicBatch->invoke($this->sitemapDataService, 0, 10);
+		$processTopicBatch->invoke($this->sitemapDataService, null, 10);
 
 		$links = $linksProperty->getValue($this->sitemapDataService);
 
@@ -117,7 +121,7 @@ describe('SitemapDataService', function () {
 
 		$topicsProperty = new ReflectionProperty($this->sitemapDataService, 'topics');
 		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
-		$processTopicBatch->invoke($this->sitemapDataService, 0, 10);
+		$processTopicBatch->invoke($this->sitemapDataService, null, 10);
 
 		$topics = $topicsProperty->getValue($this->sitemapDataService);
 
@@ -137,7 +141,6 @@ describe('SitemapDataService', function () {
 	it('processes multiple topic pages when num_replies is high', function () {
 		Config::$modSettings['optimus_sitemap_all_topic_pages'] = true;
 		Config::$modSettings['defaultMaxMessages'] = 2;
-		Config::$modSettings['totalMessages'] = 100; // Ensure totalRows > 0
 
 		$this->sitemapDataService->getBoardLinks();
 
@@ -146,6 +149,10 @@ describe('SitemapDataService', function () {
 			public function testQuery($query, $params = []): array
 			{
 				if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
+					if (! empty($params['last_id'])) {
+						return [];
+					}
+
 					return [
 						[
 							'id_topic'    => '1',
@@ -169,13 +176,11 @@ describe('SitemapDataService', function () {
 		expect($links)->toHaveCount(6); // ceil((10+1)/2) = 6 pages
 	});
 
-	it('handles multiple batches in getTopicLinks when totalRows > limit', function () {
-		Config::$modSettings['totalTopics'] = 1500; // > 100 limit
+	it('handles multiple batches in getTopicLinks until no more topics found', function () {
 		Config::$modSettings['optimus_sitemap_all_topic_pages'] = false;
 
 		$this->sitemapDataService->getBoardLinks();
 
-		// Mock to return data only for first batch
 		$callCount = 0;
 		$mockDb = new class($callCount) extends TestDbMapper {
 			public function __construct(private int &$callCount) {}
@@ -184,10 +189,11 @@ describe('SitemapDataService', function () {
 			{
 				if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
 					$this->callCount++;
-					if ($params['start'] == 0) {
+
+					if (empty($params['last_id'])) {
 						return [
 							[
-								'id_topic'    => '1',
+								'id_topic'    => '2',
 								'id_board'    => '1',
 								'num_replies' => '5',
 								'last_date'   => time(),
@@ -197,7 +203,22 @@ describe('SitemapDataService', function () {
 							],
 						];
 					}
-					return []; // No more data for second batch
+
+					if ($params['last_id'] == 2) {
+						return [
+							[
+								'id_topic'    => '1',
+								'id_board'    => '1',
+								'num_replies' => '3',
+								'last_date'   => time(),
+								'subject'     => 'Another Topic',
+								'id_attach'   => null,
+								'fileext'     => null,
+							],
+						];
+					}
+
+					return [];
 				}
 				return [];
 			}
@@ -207,8 +228,8 @@ describe('SitemapDataService', function () {
 
 		$links = $this->sitemapDataService->getTopicLinks();
 
-		expect($links)->toHaveCount(1)
-			->and($callCount)->toBe(intval(Config::$modSettings['totalTopics'] / 100));
+		expect($links)->toHaveCount(2)
+			->and($callCount)->toBe(3);
 	});
 
 	it('processes topics with images correctly', function () {
@@ -216,7 +237,7 @@ describe('SitemapDataService', function () {
 
 		$imagesProperty = new ReflectionProperty($this->sitemapDataService, 'images');
 		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
-		$processTopicBatch->invoke($this->sitemapDataService, 0, 10);
+		$processTopicBatch->invoke($this->sitemapDataService, null, 10);
 
 		$images = $imagesProperty->getValue($this->sitemapDataService);
 
@@ -262,28 +283,6 @@ describe('SitemapDataService', function () {
 		expect($links)->toBeArray();
 	});
 
-	it('calculates total rows correctly when optimus_sitemap_all_topic_pages is true', function () {
-		Config::$modSettings['optimus_sitemap_all_topic_pages'] = true;
-		Config::$modSettings['totalTopics'] = 100;
-		Config::$modSettings['totalMessages'] = 500;
-
-		$getTotalRows = new ReflectionMethod($this->sitemapDataService, 'getTotalRows');
-		$totalRows = $getTotalRows->invoke($this->sitemapDataService);
-
-		expect($totalRows)->toBe(500);
-	});
-
-	it('calculates total rows correctly when optimus_sitemap_all_topic_pages is false', function () {
-		Config::$modSettings['optimus_sitemap_all_topic_pages'] = false;
-		Config::$modSettings['totalTopics'] = 100;
-		Config::$modSettings['totalMessages'] = 500;
-
-		$getTotalRows = new ReflectionMethod($this->sitemapDataService, 'getTotalRows');
-		$totalRows = $getTotalRows->invoke($this->sitemapDataService);
-
-		expect($totalRows)->toBe(100);
-	});
-
 	it('builds topic url correctly', function () {
 		$buildTopicUrl = new ReflectionMethod($this->sitemapDataService, 'buildTopicUrl');
 		$url = $buildTopicUrl->invoke($this->sitemapDataService, '1');
@@ -314,7 +313,6 @@ describe('SitemapDataService', function () {
 		Config::$modSettings['optimus_sitemap_all_topic_pages'] = true;
 		Config::$modSettings['optimus_sitemap_add_found_images'] = true;
 		Config::$modSettings['defaultMaxMessages'] = 20;
-		Config::$modSettings['totalMessages'] = 100; // Need this for getTotalRows()
 
 		// Mock data with topic that has an image
 		Db::$db = new class extends TestDbMapper {
@@ -327,6 +325,10 @@ describe('SitemapDataService', function () {
 				}
 
 				if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
+					if (! empty($params['last_id'])) {
+						return [];
+					}
+
 					return [
 						[
 							'id_topic'    => '1',
