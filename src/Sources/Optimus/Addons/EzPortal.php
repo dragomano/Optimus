@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 26.05.25
+ * @version 03.09.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -55,11 +55,11 @@ final class EzPortal extends AbstractAddon
 			SELECT id_page, date, title, permissions
 			FROM {db_prefix}ezp_page
 			WHERE {int:guests} IN (permissions)' . ($generator->startYear ? '
-				AND YEAR(FROM_UNIXTIME(date)) >= {int:start_year}' : '') . '
+				AND date >= {int:start_date}' : '') . '
 			ORDER BY id_page DESC',
 			[
 				'guests'     => -1, // The page must be available to guests
-				'start_year' => $generator->startYear,
+				'start_date' => $generator->getStartDate(),
 			]
 		);
 

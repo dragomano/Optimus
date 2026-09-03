@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 04.06.26
+ * @version 03.09.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -82,13 +82,13 @@ final class TinyPortal extends AbstractAddon
 			WHERE a.approved = {int:approved}
 				AND a.off = {int:off_status}
 				AND {int:guests} IN (v.value3)' . ($generator->startYear ? '
-				AND YEAR(FROM_UNIXTIME(a.date)) >= {int:start_year}' : '') . '
+				AND a.date >= {int:start_date}' : '') . '
 			ORDER BY a.id DESC',
 			[
 				'approved'   => 1, // The article must be approved
 				'off_status' => 0, // The article must be active
 				'guests'     => -1, // The article category must be available to guests
-				'start_year' => $generator->startYear,
+				'start_date' => $generator->getStartDate(),
 			]
 		);
 

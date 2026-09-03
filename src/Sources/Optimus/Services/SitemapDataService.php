@@ -27,6 +27,8 @@ class SitemapDataService
 
 	private array $images = [];
 
+	private ?int $startDate = null;
+
 	public function __construct(private readonly int $startYear) {}
 
 	public function getBoardLinks(): array
@@ -49,13 +51,13 @@ class SitemapDataService
 				AND b.id_board NOT IN ({array_int:ignored_boards})') . '
 				AND b.redirect = {string:empty_string}
 				AND b.num_posts > {int:num_posts}' . ($this->startYear ? '
-				AND m.poster_time >= UNIX_TIMESTAMP(CONCAT({int:start_year}, \'-01-01\'))' : '') . '
+				AND m.poster_time >= {int:start_date}' : '') . '
 			ORDER BY b.id_board DESC',
 			[
 				'ignored_boards' => $this->ignoredBoards,
 				'empty_string'   => '',
 				'num_posts'      => 0,
-				'start_year'     => $this->startYear,
+				'start_date'     => $this->getStartDate(),
 			]
 		);
 
@@ -102,6 +104,13 @@ class SitemapDataService
 		return array_values($this->links);
 	}
 
+	public function getStartDate(): int
+	{
+		return $this->startDate ??= $this->startYear
+			? gmmktime(0, 0, 0, 1, 1, $this->startYear)
+			: 0;
+	}
+
 	private function processTopicBatch(?int $lastId, int $limit): ?int
 	{
 		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
@@ -119,7 +128,7 @@ class SitemapDataService
 					AND a.approved = {int:attach_approved}
 			WHERE t.id_board IN ({array_int:boards})' . ($numReplies ? '
 				AND t.num_replies >= {int:num_replies}' : '') .	($this->startYear ? '
-				AND m.poster_time >= UNIX_TIMESTAMP(CONCAT({int:start_year}, \'-01-01\'))' : '') . ($lastId !== null ? '
+				AND m.poster_time >= {int:start_date}' : '') . ($lastId !== null ? '
 				AND t.id_topic < {int:last_id}' : '') . '
 			ORDER BY t.id_topic DESC
 			LIMIT {int:limit}',
@@ -130,7 +139,7 @@ class SitemapDataService
 				'attach_approved' => 1,
 				'boards'          => $this->openBoards,
 				'num_replies'     => $numReplies,
-				'start_year'      => $this->startYear,
+				'start_date'      => $this->getStartDate(),
 				'last_id'         => $lastId ?? 0,
 				'limit'           => $limit,
 			]
