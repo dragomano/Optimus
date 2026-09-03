@@ -21,9 +21,7 @@ final class DispatcherFactory
 
 	public function __invoke(): Dispatcher
 	{
-		if (self::$dispatcher === null) {
-			self::$dispatcher = new Dispatcher();
-		}
+		self::$dispatcher ??= new Dispatcher();
 
 		return self::$dispatcher;
 	}

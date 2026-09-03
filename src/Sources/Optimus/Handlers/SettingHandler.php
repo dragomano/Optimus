@@ -67,8 +67,12 @@ final class SettingHandler
 			Theme::loadCSSFile('optimus/optimus.css');
 		}
 
+		// The call also loads the language file the subsection labels below rely on
+		$title = Lang::getTxt('optimus_title', file: 'Optimus/Optimus');
+
 		$admin_areas['config']['areas']['optimus'] = [
-			'label'       => Lang::getTxt('optimus_title', file: 'Optimus/Optimus'),
+			// SMF 3.0 resolves language keys on its own
+			'label'       => str_starts_with(SMF_VERSION, '3.0') ? 'optimus_title' : $title,
 			'function'    => $this->actions(...),
 			'icon'        => 'optimus',
 			'subsections' => [
@@ -83,10 +87,6 @@ final class SettingHandler
 				'sitemap'  => [Lang::getTxt('optimus_sitemap_title')],
 			]
 		];
-
-		if (str_starts_with(SMF_VERSION, '3.0')) {
-			$admin_areas['config']['areas']['optimus']['label'] = 'optimus_title';
-		}
 	}
 
 	public function adminSearch(array $language_files, array $include_files, array &$settings_search): void

@@ -34,7 +34,7 @@ final class RobotsGenerator
 
 	public bool $useSef = false;
 
-	public string $urlPath = '';
+	public string $urlPath;
 
 	private array $rules = [
 		'*' => [
@@ -81,9 +81,7 @@ final class RobotsGenerator
 		$this->addContentRules();
 
 		foreach ($this->customRules as $userAgent => $rules) {
-			if (! isset($this->rules[$userAgent])) {
-				$this->rules[$userAgent] = [self::RULE_DISALLOW => [], self::RULE_ALLOW => []];
-			}
+			$this->rules[$userAgent] ??= [self::RULE_DISALLOW => [], self::RULE_ALLOW => []];
 
 			$this->rules[$userAgent][self::RULE_DISALLOW] = array_merge(
 				$this->rules[$userAgent][self::RULE_DISALLOW],

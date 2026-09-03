@@ -196,6 +196,14 @@ describe('searchParams method', function () {
 
 		expect($this->handler->searchParams())->toBeFalse();
 	});
+
+	it('checks case with missing search param', function () {
+		Config::$modSettings['optimus_log_search'] = true;
+
+		unset($_REQUEST['search']);
+
+		expect($this->handler->searchParams())->toBeFalse();
+	});
 });
 
 describe('showChart method', function () {

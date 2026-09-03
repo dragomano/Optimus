@@ -98,11 +98,11 @@ final class SearchTermHandler
 
 	public function searchParams(): bool
 	{
-		if (empty(Config::$modSettings['optimus_log_search']) || ! Input::request('search')) {
+		if (empty(Config::$modSettings['optimus_log_search'])) {
 			return false;
 		}
 
-		$searchString = Utils::htmlspecialcharsDecode(Input::request('search'));
+		$searchString = Utils::htmlspecialcharsDecode(Input::request('search', ''));
 
 		if (empty($searchString)) {
 			return false;

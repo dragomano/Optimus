@@ -22,9 +22,7 @@ class Keywords implements Routable
 
 		unset($params['action']);
 
-		if (! isset($params['id'])) {
-			$params['id'] = 'all';
-		}
+		$params['id'] ??= 'all';
 
 		if (isset($params['id'])) {
 			if ($params['id'] > 0) {

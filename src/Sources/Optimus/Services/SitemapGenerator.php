@@ -24,7 +24,7 @@ class SitemapGenerator
 {
 	public const MAX_ITEMS = 50_000;
 
-	public const MAX_FILESIZE = 50 * 1024 * 1024;
+	public const GZIP_THRESHOLD = 1024 * 1024;
 
 	public const XML_FILE = 'sitemap.xml';
 
@@ -33,6 +33,8 @@ class SitemapGenerator
 	public array $links = [];
 
 	public string $content = '';
+
+	private array $writtenFiles = [];
 
 	public function __construct(
 		private readonly SitemapDataService $dataService,
@@ -49,8 +51,12 @@ class SitemapGenerator
 		}
 
 		$this->initialize();
-		$this->removeOldFiles();
-		$this->createXml();
+
+		if (! $this->createXml()) {
+			return false;
+		}
+
+		$this->removeStaleFiles();
 
 		return true;
 	}
@@ -92,33 +98,32 @@ class SitemapGenerator
 		Config::$modSettings['disableQueryCheck'] = true;
 	}
 
-	private function removeOldFiles(): void
+	private function createXml(): bool
 	{
-		if (empty(Config::$modSettings['optimus_remove_previous_xml_files']))
-			return;
-
-		array_map(unlink(...), glob(Config::$boarddir . '/sitemap*.xml*'));
-	}
-
-	private function createXml(): void
-	{
-		$maxItems = Config::$modSettings['optimus_sitemap_items_display'] ?? self::MAX_ITEMS;
+		$maxItems = (int) (Config::$modSettings['optimus_sitemap_items_display'] ?? 0);
+		$maxItems = $maxItems > 0 ? $maxItems : self::MAX_ITEMS;
 
 		$sitemapCounter = 0;
 
-		$items = [];
+		$items    = [];
+		$lastmods = [];
 		foreach ($this->getLinks() as $counter => $entry) {
-			if (! empty($counter) && $counter % $maxItems == 0) {
+			if (! empty($counter) && $counter % $maxItems === 0) {
 				$sitemapCounter++;
 			}
 
 			$items[$sitemapCounter][] = $this->prepareEntry($entry);
+
+			$lastmods[$sitemapCounter] = max($lastmods[$sitemapCounter] ?? 0, (int) ($entry['lastmod'] ?? 0));
 		}
 
-		if (empty($items))
-			return;
+		// The prepared items hold everything we still need, so the raw links can be released
+		$this->links = [];
 
-		$this->processItems($items, $sitemapCounter);
+		if (empty($items))
+			return false;
+
+		return $this->processItems($items, $lastmods);
 	}
 
 	private function prepareEntry(array $entry): array
@@ -143,7 +148,7 @@ class SitemapGenerator
 		return $result;
 	}
 
-	private function processItems(array $items, int $sitemapCounter): void
+	private function processItems(array $items, array $lastmods): bool
 	{
 		if (empty(Config::$modSettings['optimus_main_page_frequency'])) {
 			$items[0][0]['changefreq'] = Frequency::Always->value;
@@ -151,40 +156,28 @@ class SitemapGenerator
 
 		$items[0][0]['priority'] = Priority::Supreme->value;
 
-		if ($sitemapCounter > 0) {
-			$this->processMultipleSitemaps($items, $sitemapCounter);
-		} else {
-			$this->processSingleSitemap($items[0]);
-		}
+		return count($items) > 1
+			? $this->processMultipleSitemaps($items, $lastmods)
+			: $this->processSingleSitemap($items[0]);
 	}
 
-	private function processMultipleSitemaps(array $items, int $sitemapCounter): void
+	private function processMultipleSitemaps(array $items, array $lastmods): bool
 	{
-		$gzMaps       = [];
 		$sitemapIndex = [];
 
-		for ($i = 0; $i <= $sitemapCounter; $i++) {
-			if (empty($items[$i]))
-				continue;
-
+		foreach ($items as $i => $chunk) {
 			$filename = 'sitemap_' . $i . '.xml';
 
 			try {
-				$this->content = $this->xmlGenerator->generate($items[$i], SitemapFeature::getOptions());
+				$this->content = $this->xmlGenerator->generate($chunk, SitemapFeature::getOptions());
 
 				$this->handleContent();
 
-				$this->fileSystem->writeFile($filename, $this->content);
-
-				if (function_exists('gzencode') && strlen($this->content) > (self::MAX_FILESIZE)) {
-					$this->fileSystem->writeGzFile($filename . '.gz', $this->content);
-
-					$gzMaps[] = $filename . '.gz';
-				}
+				$this->writeSitemap($filename, $this->content);
 
 				$sitemapIndex[] = [
 					'loc'     => Config::$boardurl . '/' . $filename,
-					'lastmod' => date('Y-m-d'),
+					'lastmod' => $this->getDateIso8601(empty($lastmods[$i]) ? time() : $lastmods[$i]),
 				];
 			} catch (XmlGeneratorException $e) {
 				ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
@@ -194,42 +187,74 @@ class SitemapGenerator
 		}
 
 		if (empty($sitemapIndex))
-			return;
+			return false;
 
 		try {
-			$indexXml = $this->xmlGenerator->generate($sitemapIndex, [
-				'rootElement' => 'sitemapindex',
-				'isIndex'     => true,
-			]);
-
-			$this->fileSystem->writeFile(self::XML_FILE, $indexXml);
-
-			if (! empty($gzMaps)) {
-				$this->fileSystem->writeGzFile(self::XML_GZ_FILE, $indexXml);
-			}
+			$this->writeSitemap(self::XML_FILE, $this->xmlGenerator->generate($sitemapIndex, ['isIndex' => true]));
 		} catch (XmlGeneratorException $e) {
 			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
+
+			return false;
 		} catch (FileSystemException $e) {
 			ErrorHandler::log(OP_NAME . ' says: Error creating sitemap index. ' . $e->getMessage(), 'critical');
+
+			return false;
 		}
+
+		return true;
 	}
 
-	private function processSingleSitemap(array $items): void
+	private function processSingleSitemap(array $items): bool
 	{
 		try {
 			$this->content = $this->xmlGenerator->generate($items, SitemapFeature::getOptions());
 
 			$this->handleContent();
 
-			$this->fileSystem->writeFile(self::XML_FILE, $this->content);
-
-			if (function_exists('gzencode') && strlen($this->content) > (self::MAX_FILESIZE)) {
-				$this->fileSystem->writeGzFile(self::XML_GZ_FILE, $this->content);
-			}
+			$this->writeSitemap(self::XML_FILE, $this->content);
 		} catch (XmlGeneratorException $e) {
 			ErrorHandler::log(OP_NAME . ' says: ' . $e->getMessage(), 'critical');
+
+			return false;
 		} catch (FileSystemException $e) {
 			ErrorHandler::log(OP_NAME . ' says: Error creating sitemap. ' . $e->getMessage(), 'critical');
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * @throws FileSystemException
+	 */
+	private function writeSitemap(string $filename, string $content): void
+	{
+		$this->fileSystem->writeFile($filename, $content);
+
+		$this->writtenFiles[] = $filename;
+
+		if (strlen($content) < self::GZIP_THRESHOLD)
+			return;
+
+		$this->fileSystem->writeGzFile($filename . '.gz', $content);
+
+		$this->writtenFiles[] = $filename . '.gz';
+	}
+
+	/**
+	 * Drops the files left over from previous runs, keeping the ones we have just published
+	 */
+	private function removeStaleFiles(): void
+	{
+		if (empty(Config::$modSettings['optimus_remove_previous_xml_files']))
+			return;
+
+		foreach (glob(Config::$boarddir . '/sitemap*.xml*') ?: [] as $file) {
+			if (in_array(basename($file), $this->writtenFiles, true))
+				continue;
+
+			unlink($file);
 		}
 	}
 

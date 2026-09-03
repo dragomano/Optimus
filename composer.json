@@ -6,9 +6,9 @@
   },
   "require-dev": {
     "pestphp/pest": "^3.8|^4.7",
-    "mockery/mockery": "dev-bugfix/spy-generics",
+    "mockery/mockery": "^1.6.15",
     "phing/phing": "^3.0",
-    "rector/rector": "^2.5",
+    "rector/rector": "^2.6",
     "symfony/http-foundation": "^7.4|^8.1"
   },
   "autoload": {
@@ -24,6 +24,7 @@
   "minimum-stability": "alpha",
   "scripts": {
     "check": "vendor/bin/rector process --dry-run --clear-cache",
+    "rector": "vendor/bin/rector process",
     "test": "vendor/bin/pest --colors=always",
     "test-coverage": "vendor/bin/pest --colors=always --coverage --min=98",
     "test-coverage-clover": "vendor/bin/pest --colors=always --min=98 --coverage-clover coverage.xml",

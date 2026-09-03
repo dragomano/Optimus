@@ -41,14 +41,13 @@ class Sitemap extends BackgroundTask
 			$startYear
 		);
 
-		$result = $generator->generate();
+		// Failures are logged by the generator, and a heavy task must not be retried in a loop
+		$generator->generate();
 
-		if ($result) {
-			$this->removeOldEntries();
-			$this->scheduleNextRun();
-		}
+		$this->removeOldEntries();
+		$this->scheduleNextRun();
 
-		return $result;
+		return true;
 	}
 
 	private function removeOldEntries(): void

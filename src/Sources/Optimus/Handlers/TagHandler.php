@@ -848,9 +848,7 @@ final class TagHandler
 
 	private function canChange(): bool
 	{
-		if (! isset(Utils::$context['user']['started'])) {
-			Utils::$context['user']['started'] = empty(Topic::$id);
-		}
+		Utils::$context['user']['started'] ??= empty(Topic::$id);
 
 		if (empty(Config::$modSettings['optimus_allow_change_topic_keywords'])) {
 			return false;

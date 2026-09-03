@@ -171,4 +171,58 @@ describe('FileSystem', function () {
 		expect(fn() => $fileSystem->writeFile('test.txt', 'content'))
 			->toThrow(FileSystemException::class, 'Cannot write to file');
 	});
+
+	it('throws exception when the file cannot be replaced', function () {
+		$renameMock = function ($from, $to) {
+			return false; // Simulate rename failure
+		};
+
+		$fileSystem = new FileSystem($this->tempDir, renameFunc: $renameMock);
+
+		expect(fn() => $fileSystem->writeFile('test.txt', 'content'))
+			->toThrow(FileSystemException::class, 'Cannot replace file');
+
+		expect(file_exists($this->tempDir . '/test.txt.tmp'))->toBeFalse();
+	});
+
+	it('throws exception when the gzipped file cannot be replaced', function () {
+		if (! function_exists('gzopen')) {
+			$this->markTestSkipped('Gzip functions are not available');
+		}
+
+		$renameMock = function ($from, $to) {
+			return false; // Simulate rename failure
+		};
+
+		$fileSystem = new FileSystem($this->tempDir, renameFunc: $renameMock);
+
+		expect(fn() => $fileSystem->writeGzFile('test.gz', 'content'))
+			->toThrow(FileSystemException::class, 'Cannot replace file');
+
+		expect(file_exists($this->tempDir . '/test.gz.tmp'))->toBeFalse();
+	});
+
+	it('leaves no temporary file behind when writing fails', function () {
+		$fwriteMock = function ($fp, $content) {
+			return false;
+		};
+
+		$fileSystem = new FileSystem($this->tempDir, fwriteFunc: $fwriteMock);
+
+		try {
+			$fileSystem->writeFile('test.txt', 'content');
+		} catch (FileSystemException) {
+		}
+
+		expect(file_exists($this->tempDir . '/test.txt.tmp'))->toBeFalse()
+			->and(file_exists($this->tempDir . '/test.txt'))->toBeFalse();
+	});
+
+	it('replaces an existing file', function () {
+		$this->fileSystem->writeFile('test.txt', 'old content');
+		$this->fileSystem->writeFile('test.txt', 'new content');
+
+		expect(file_get_contents($this->tempDir . '/test.txt'))->toBe('new content')
+			->and(file_exists($this->tempDir . '/test.txt.tmp'))->toBeFalse();
+	});
 });
