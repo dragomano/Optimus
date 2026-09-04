@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
+import { satteri } from '@astrojs/markdown-satteri';
 import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
-import { remarkHeadingId } from "remark-custom-heading-id";
 import starlightUiTweaks from 'starlight-ui-tweaks';
 
 // https://astro.build/config
@@ -29,7 +29,7 @@ export default defineConfig({
 				},
 				ru: {
 					label: 'Русский',
-					lanag: 'ru',
+					lang: 'ru',
 				}
 			},
 			social: [
@@ -64,6 +64,8 @@ export default defineConfig({
 		},
 	},
 	markdown: {
-		remarkPlugins: [remarkHeadingId],
+		processor: satteri({
+			features: { headingAttributes: true },
+		}),
 	},
 });
