@@ -61,6 +61,11 @@ class SitemapGenerator
 		return true;
 	}
 
+	public function getStartDate(): int
+	{
+		return $this->dataService->getStartDate();
+	}
+
 	protected function getLinks(): array
 	{
 		$this->links = array_merge($this->dataService->getBoardLinks(), $this->dataService->getTopicLinks());

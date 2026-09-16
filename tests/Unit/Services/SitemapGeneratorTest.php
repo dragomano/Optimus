@@ -220,6 +220,20 @@ it('creates multiple sitemap files when needed', function () {
 });
 
 describe('Generator helper methods', function () {
+	it('computes the start date from the start year', function () {
+		expect($this->generator->getStartDate())->toBe(gmmktime(0, 0, 0, 1, 1, 2020));
+
+		$generator = new SitemapGenerator(
+			new SitemapDataService(0),
+			new FileSystem($this->tempDir),
+			new XmlGenerator(Config::$scripturl),
+			$this->dispatcher,
+			0
+		);
+
+		expect($generator->getStartDate())->toBe(0);
+	});
+
 	it('formats date correctly', function () {
 		$timestamp = strtotime('2024-01-01 12:00:00');
 
