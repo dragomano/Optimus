@@ -9,14 +9,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.4.0",
-    "@astrojs/starlight": "^0.41.11",
+    "@astrojs/markdown-satteri": "^0.4.1",
+    "@astrojs/starlight": "^0.42.1",
     "@yohns/picocss": "^2.2.10",
-    "accessible-astro-components": "^5.7.1",
-    "astro": "^7.3.1",
-    "sass": "^1.104.0",
+    "accessible-astro-components": "^5.8.0",
+    "astro": "^7.3.2",
+    "sass": "^1.104.1",
     "sharp": "^0.35.4",
-    "starlight-links-validator": "^0.25.3",
+    "starlight-links-validator": "^0.26.0",
     "starlight-ui-tweaks": "^0.2.2"
   }
 }
