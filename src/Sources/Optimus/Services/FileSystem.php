@@ -107,8 +107,15 @@ final readonly class FileSystem implements FileSystemInterface
 	 */
 	private function publish(string $temp, string $path): void
 	{
-		if (($this->renameFunc)($temp, $path)) {
-			return;
+		$attempts = 3;
+		$delayMs  = 100;
+
+		for ($i = 0; $i < $attempts; $i++) {
+			if (($this->renameFunc)($temp, $path)) {
+				return;
+			}
+
+			usleep($delayMs * 1000);
 		}
 
 		$this->removeTemp($temp);

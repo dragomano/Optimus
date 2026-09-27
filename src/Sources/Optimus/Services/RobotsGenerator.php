@@ -141,7 +141,7 @@ final class RobotsGenerator
 		$assets = ['.css$', '.js$', '.png$', '.jpg$', '.gif$'];
 
 		foreach ($assets as $asset) {
-			$this->rules['*'][self::RULE_ALLOW][] = '/*' . $asset;
+			$this->rules['*'][self::RULE_ALLOW][] = $this->urlPath . '/*' . $asset;
 		}
 	}
 

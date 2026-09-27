@@ -25,11 +25,15 @@ final class Str
 	{
 		$text = BBCodeParser::load()->parse($text);
 
-		// Replace all <br> and duplicate spaces
-		$text = preg_replace('~\s+~', ' ', strip_tags(str_replace('<br>', ' ', $text)));
+		// Replace all <br>
+		$text = str_replace('<br>', ' ', $text);
+		$text = strip_tags($text);
 
 		// Remove all urls
-		$text = preg_replace('~http(s)?://(.*)\s~U', '', $text);
+		$text = preg_replace('~http(s)?://\S+~', '', $text);
+
+		// Replace duplicate spaces
+		$text = preg_replace('~\s+~', ' ', $text);
 
 		// Additional replacements
 		$replacements = ['&nbsp;' => ' ', '&amp;nbsp;' => ' ', '&quot;' => ''];

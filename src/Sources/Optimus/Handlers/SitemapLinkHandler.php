@@ -44,7 +44,9 @@ final class SitemapLinkHandler
 
 	public function xsl(): void
 	{
-		ob_end_clean();
+		if (ob_get_level() > 0) {
+			ob_end_clean();
+		}
 
 		empty(Config::$modSettings['enableCompressedOutput']) ? ob_start() : @ob_start('ob_gzhandler');
 

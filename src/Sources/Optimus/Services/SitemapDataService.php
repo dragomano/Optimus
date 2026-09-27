@@ -189,7 +189,7 @@ class SitemapDataService
 
 	private function isImageFile(string $extension): bool
 	{
-		return in_array($extension, ['jpg', 'png', 'gif', 'webp', 'svg']);
+		return in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
 	}
 
 	private function processTopicPages(): void

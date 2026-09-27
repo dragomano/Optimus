@@ -273,7 +273,7 @@ class SitemapGenerator
 
 		$dates = [];
 		foreach ($data as $value) {
-			$dates[] = (int) $value['lastmod'];
+			$dates[] = (int) ($value['lastmod'] ?? 0);
 		}
 
 		return max($dates);

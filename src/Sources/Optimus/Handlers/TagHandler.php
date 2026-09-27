@@ -802,9 +802,11 @@ final class TagHandler
 		if (empty($keywords) || empty($topic) || empty($user))
 			return;
 
+		$prefix = 'key_';
+
 		foreach ($keywords as $keyword) {
-			$id = str_starts_with($keyword, 'key_')
-				? (int) ltrim($keyword, 'key_')
+			$id = str_starts_with($keyword, $prefix)
+				? (int) substr($keyword, strlen($prefix))
 				: $this->getIdByName($keyword);
 
 			if (empty($id)) {

@@ -47,14 +47,21 @@ final class Input
 
 	public static function server(string $name = ''): mixed
 	{
-		if (empty($name))
+		if (empty($name)) {
 			return $_SERVER;
+		}
 
 		if ($name !== 'argv') {
 			$name = strtoupper($name);
 		}
 
-		return $_SERVER[$name] ?? getenv($name) ?? null;
+		if (isset($_SERVER[$name])) {
+			return $_SERVER[$name];
+		}
+
+		$envValue = getenv($name);
+
+		return $envValue === false ? null : $envValue;
 	}
 
 	public static function session(array|string $name = ''): mixed

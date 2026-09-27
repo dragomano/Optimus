@@ -17,11 +17,11 @@ use League\Event\HasEventName;
 if (! defined('SMF'))
 	die('No direct access...');
 
-final class AddonEvent implements HasEventName
+final readonly class AddonEvent implements HasEventName
 {
 	public function __construct(
-		private readonly string $name,
-		private readonly mixed $target
+		private string $name,
+		private mixed $target
 	) {}
 
 	public function eventName(): string

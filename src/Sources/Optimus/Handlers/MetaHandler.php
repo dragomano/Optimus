@@ -75,17 +75,18 @@ final class MetaHandler
 
 	private function prepareOgImageTags(array &$tags): void
 	{
-		$imageKey = 0;
+		$imageKey = null;
 
 		foreach ($tags as $key => $value) {
 			foreach ($value as $v) {
 				if ($v === 'og:image') {
 					$imageKey = $key;
+					break 2;
 				}
 			}
 		}
 
-		if (empty(Utils::$context['optimus_og_image']))
+		if ($imageKey === null || empty(Utils::$context['optimus_og_image']))
 			return;
 
 		$tags = array_merge(

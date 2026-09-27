@@ -14,6 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\Cache\CacheApi;
 use Bugo\Compat\{Db, IntegrationHook};
+use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\ListenerRegistry;
 use League\Event\ListenerSubscriber;
@@ -66,7 +67,10 @@ final class AddonHandler implements ListenerSubscriber
 		// External integrations
 		IntegrationHook::call('integrate_optimus_addons', [&$addons]);
 
-		return $addons;
+		return array_filter(
+			$addons,
+			static fn($class): bool => is_string($class) && class_exists($class) && is_subclass_of($class, AddonInterface::class),
+		);
 	}
 
 	private function getInstalledMods(): array
