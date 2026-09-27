@@ -39,6 +39,8 @@ $txt['optimus_extra_settings'] = 'Additional settings';
 $txt['optimus_errors_for_wrong_actions'] = 'Display a 404 page for non-existent forum areas';
 $txt['optimus_errors_for_wrong_boards_topics'] = 'Display a 403/404 page for inaccessible/non-existent boards and topics';
 $txt['optimus_log_search'] = 'Enable logging of search terms';
+$txt['optimus_search_terms_limit'] = 'Maximum number of search phrases to store';
+$txt['optimus_search_terms_limit_subtext'] = 'One-time phrases are removed weekly, and only the most popular ones are kept beyond this limit (0 = no limit);';
 
 $txt['optimus_extra_title'] = 'Metadata';
 $txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages.';

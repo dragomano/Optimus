@@ -17,7 +17,7 @@ use Bugo\Compat\{Config, Db, ErrorHandler};
 use Bugo\Compat\{IntegrationHook, Lang};
 use Bugo\Compat\{Theme, User, Utils};
 use Bugo\Optimus\Services\RobotsGenerator;
-use Bugo\Optimus\Tasks\Sitemap;
+use Bugo\Optimus\Tasks\{PruneSearchTerms, Sitemap};
 use Bugo\Optimus\Utils\Input;
 use Bugo\Optimus\Utils\Str;
 
@@ -201,6 +201,13 @@ final class SettingHandler
 			['check', 'optimus_errors_for_wrong_actions'],
 			['check', 'optimus_errors_for_wrong_boards_topics'],
 			['check', 'optimus_log_search'],
+			[
+				'int',
+				'optimus_search_terms_limit',
+				'min' => 0,
+				'max' => 50000,
+				'subtext' => Lang::getTxt('optimus_search_terms_limit_subtext')
+			],
 		];
 
 		// You can add your own options
@@ -212,6 +219,8 @@ final class SettingHandler
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
+
+			$this->schedulePruneSearchTermsTask(Input::isPost('optimus_log_search'));
 
 			if (Input::isPost('optimus_forum_index')) {
 				Input::post(['optimus_forum_index' => Input::filter('optimus_forum_index')]);
@@ -603,5 +612,37 @@ final class SettingHandler
 		$vars = array_filter($settings, fn($key) => ! isset(Config::$modSettings[$key]), ARRAY_FILTER_USE_KEY);
 
 		Config::updateModSettings($vars);
+	}
+
+	private function schedulePruneSearchTermsTask(bool $enabled): void
+	{
+		Db::$db->query('
+			DELETE FROM {db_prefix}background_tasks
+			WHERE task_class = {string:task_class}',
+			[
+				'task_class' => '\\' . PruneSearchTerms::class,
+			]
+		);
+
+		if (! $enabled) {
+			return;
+		}
+
+		Db::$db->insert('insert',
+			'{db_prefix}background_tasks',
+			[
+				'task_file'    => 'string-255',
+				'task_class'   => 'string-255',
+				'task_data'    => 'string',
+				'claimed_time' => 'int',
+			],
+			[
+				'$sourcedir/Optimus/Tasks/PruneSearchTerms.php',
+				'\\' . PruneSearchTerms::class,
+				'',
+				time() + 7 * 24 * 60 * 60,
+			],
+			['id_task'],
+		);
 	}
 }

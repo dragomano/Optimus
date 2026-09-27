@@ -7,6 +7,7 @@ use Bugo\Compat\Theme;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 use Bugo\Optimus\Handlers\SettingHandler;
+use Bugo\Optimus\Tasks\PruneSearchTerms;
 use Tests\TestDbMapper;
 
 beforeEach(function () {
@@ -290,6 +291,37 @@ describe('Tabs', function () {
 		expect($insertCalled)->toBeTrue();
 
 		unset($_POST['optimus_sitemap_enable']);
+	});
+
+	test('basicTabSettings save with optimus_log_search calls db insert', function () {
+		$_POST['optimus_log_search'] = '1';
+
+		$insertParams = [];
+
+		Db::$db = new class($insertParams) extends TestDbMapper {
+			public function __construct(private array &$insertParams) {}
+
+			public function testQuery($query, $params = []): array
+			{
+				return [];
+			}
+
+			public function insert(string $method, string $table, array $columns, array $data, array $keys, int $returnmode = 0): int|array|null
+			{
+				$this->insertParams = [$method, $table, $columns, $data, $keys];
+				return null;
+			}
+		};
+
+		$this->handler->basicTabSettings();
+
+		expect($insertParams)->not->toBeEmpty()
+			->and($insertParams[0])->toBe('insert')
+			->and($insertParams[1])->toBe('{db_prefix}background_tasks')
+			->and($insertParams[3][1])->toBe('\\' . PruneSearchTerms::class)
+			->and($insertParams[3][3])->toBeInt();
+
+		unset($_POST['optimus_log_search']);
 	});
 
 	test('robotsTabSettings sets robots_content to empty when path is not writable', function () {

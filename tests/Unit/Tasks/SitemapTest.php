@@ -4,16 +4,6 @@ use Bugo\Compat\{Config, Db};
 use Bugo\Optimus\Tasks\Sitemap;
 use Tests\TestDbMapper;
 
-abstract class SMF_BackgroundTask
-{
-	protected array $_details;
-
-	public function __construct(array $details)
-	{
-		$this->_details = $details;
-	}
-}
-
 beforeEach(function () {
 	$this->tempDir = sys_get_temp_dir() . '/optimus_test_' . uniqid();
 	mkdir($this->tempDir, 0777, true);
@@ -38,7 +28,7 @@ beforeEach(function () {
 
 afterEach(function () {
 	if (is_dir($this->tempDir)) {
-		array_map('unlink', glob($this->tempDir . '/*'));
+		array_map(unlink(...), glob($this->tempDir . '/*'));
 		rmdir($this->tempDir);
 	}
 });
@@ -71,7 +61,7 @@ it('schedules next run after successful generation', function () {
 			array $data = [],
 			array $keys = [],
 			int $returnmode = 0
-		): int|array|null {
+		): int {
 			$this->insertCalled = true;
 
 			expect($table)->toBe('{db_prefix}background_tasks')
@@ -120,7 +110,7 @@ it('uses correct update interval based on settings', function () {
 				array $data = [],
 				array $keys = [],
 				int $returnmode = 0
-			): int|array|null {
+			): int {
 				$this->nextRunTime = $data[3] - time();
 
 				return 1;

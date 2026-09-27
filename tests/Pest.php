@@ -48,6 +48,15 @@ uses()->beforeEach(function () {
 |
 */
 
+if (! class_exists('SMF_BackgroundTask')) {
+	abstract class SMF_BackgroundTask
+	{
+		public function __construct(protected array $_details)
+		{
+		}
+	}
+}
+
 if (! function_exists('add_integration_function')) {
 	function add_integration_function(...$params): void
 	{
