@@ -1,7 +1,7 @@
 {
   "require": {
     "php": "^8.2",
-    "ext-dom": "*",
+    "ext-xmlwriter": "*",
     "ext-zlib": "*"
   },
   "require-dev": {

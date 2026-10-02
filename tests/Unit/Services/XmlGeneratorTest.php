@@ -59,6 +59,28 @@ it('generates XML with extended data types', function () {
 		->and($xml)->toContain('<video:content_loc>https://example.com/video.mp4</video:content_loc>');
 });
 
+it('skips numeric keys in nested elements', function () {
+	$data = [
+		[
+			'loc'         => 'https://example.com/item1',
+			'image:image' => ['image:loc' => 'https://example.com/image.png', 5 => 'ignored'],
+		],
+	];
+
+	$xml = $this->xmlGenerator->generate($data);
+
+	expect($xml)->toContain('<image:loc>https://example.com/image.png</image:loc>')
+		->and($xml)->not->toContain('ignored');
+});
+
+it('throws exception for invalid element name', function () {
+	$data = [
+		['loc' => 'https://example.com/item1', ' ' => 'invalid'],
+	];
+
+	$this->xmlGenerator->generate($data);
+})->throws(XmlGeneratorException::class);
+
 it('generates empty XML node for invalid data', function () {
 	$data = [['one', 'two', 'three']];
 
