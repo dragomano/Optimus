@@ -31,14 +31,14 @@ public function __invoke(AddonEvent $event): void
 Затем мы создаем соответствующие методы `changeRobots` и `changeSitemap` (названия вы регулируете сами):
 
 ```php
-public function changeRobots(RobotsGenerator $robots): void
+public function changeRobots(RobotsGenerator $generator): void
 {
-	var_dump($robots);
+	var_dump($generator);
 }
 
-public function changeSitemap(SitemapGenerator $sitemap): void
+public function changeSitemap(SitemapGenerator $generator): void
 {
-	var_dump($sitemap);
+	var_dump($generator);
 }
 ```
 
