@@ -21,7 +21,7 @@ use Bugo\Optimus\Services\SitemapGenerator;
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class TinyPortal extends AbstractAddon
 {

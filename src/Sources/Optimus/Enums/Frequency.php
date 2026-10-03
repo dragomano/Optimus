@@ -26,11 +26,11 @@ enum Frequency: string
 		$frequency = time() - $timestamp;
 
 		return match (true) {
-			$frequency < 86400 => self::Hourly,  // 24 * 60 * 60
-			$frequency < 604800 => self::Daily,  // 7 * 24 * 60 * 60
-			$frequency < 2628000 => self::Weekly, // (52 / 12) * 7 * 24 * 60 * 60
+			$frequency < 86400    => self::Hourly,  // 24 * 60 * 60
+			$frequency < 604800   => self::Daily,  // 7 * 24 * 60 * 60
+			$frequency < 2628000  => self::Weekly, // (52 / 12) * 7 * 24 * 60 * 60
 			$frequency < 31536000 => self::Monthly, // 365 * 24 * 60 * 60
-			default => self::Yearly,
+			default               => self::Yearly,
 		};
 	}
 }

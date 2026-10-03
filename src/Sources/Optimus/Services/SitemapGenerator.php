@@ -277,8 +277,9 @@ class SitemapGenerator
 		// The name of the very first chunk depends on the total number of chunks,
 		// so its content is only kept until the end of generation
 		if ($index === 0) {
-			$this->firstChunkContent  = $this->content;
-			$this->firstChunkLastmod  = $chunkLastmod;
+			$this->firstChunkContent = $this->content;
+			$this->firstChunkLastmod = $chunkLastmod;
+
 			$this->chunkCount++;
 
 			return;

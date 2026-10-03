@@ -23,7 +23,7 @@ use League\Event\ListenerSubscriber;
 use ReflectionClass;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class AddonHandler implements ListenerSubscriber
 {
@@ -70,7 +70,6 @@ final class AddonHandler implements ListenerSubscriber
 	{
 		$mods = $this->getInstalledMods();
 		$off  = $this->getDisabledAddons();
-
 		$data = [];
 
 		foreach ($this->getAllAddons() as $class) {

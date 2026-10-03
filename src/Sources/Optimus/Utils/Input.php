@@ -15,7 +15,7 @@ namespace Bugo\Optimus\Utils;
 use Bugo\Compat\Utils;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class Input
 {

@@ -17,7 +17,7 @@ use Bugo\Compat\IntegrationHook;
 use Bugo\Optimus\Events\AddonEvent;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class SafeLinks extends AbstractAddon
 {

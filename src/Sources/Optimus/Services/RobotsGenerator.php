@@ -70,6 +70,7 @@ final class RobotsGenerator
 		$this->addSitemaps();
 
 		$content = $this->generateContent();
+
 		Utils::$context['new_robots_content'] = BBCodeParser::load()->parse('[code]' . $content . '[/code]');
 	}
 

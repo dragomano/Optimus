@@ -17,7 +17,7 @@ use Bugo\Compat\{Lang, Theme, Utils};
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class BoardHandler
 {
@@ -142,6 +142,7 @@ final class BoardHandler
 	{
 		if (Input::isPost('optimus_og_image')) {
 			$boardUpdates[] = 'optimus_og_image = {string:og_image}';
+
 			$boardUpdateParameters['og_image'] = Input::filter('optimus_og_image', 'url');
 		}
 	}

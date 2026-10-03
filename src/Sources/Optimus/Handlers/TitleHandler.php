@@ -15,7 +15,7 @@ namespace Bugo\Optimus\Handlers;
 use Bugo\Compat\{Board, Config, IntegrationHook, Utils};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class TitleHandler
 {
@@ -29,7 +29,7 @@ final class TitleHandler
 	public function handle(): void
 	{
 		if (SMF === 'SSI')
-			return;
+			return; // @codeCoverageIgnore
 
 		$this->handleBoardTitles();
 		$this->handleTopicTitles();

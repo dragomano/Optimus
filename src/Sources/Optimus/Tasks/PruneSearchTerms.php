@@ -16,7 +16,7 @@ use Bugo\Compat\{Cache\CacheApi, Config, Db};
 use Bugo\Compat\Tasks\BackgroundTask;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 class PruneSearchTerms extends BackgroundTask
 {

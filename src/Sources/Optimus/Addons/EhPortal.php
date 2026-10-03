@@ -19,7 +19,7 @@ use Bugo\Optimus\Services\RobotsGenerator;
 use Bugo\Optimus\Services\SitemapGenerator;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class EhPortal extends AbstractAddon
 {

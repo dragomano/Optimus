@@ -15,7 +15,7 @@ namespace Bugo\Optimus\Addons;
 use Bugo\Compat\{IntegrationHook, Lang};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 /**
  * Addons that are not included in the standard Optimus package.

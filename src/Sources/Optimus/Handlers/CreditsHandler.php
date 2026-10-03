@@ -17,7 +17,7 @@ use Bugo\Compat\Utils;
 use Bugo\Optimus\Utils\Copyright;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class CreditsHandler
 {

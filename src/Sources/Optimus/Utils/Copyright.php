@@ -15,7 +15,7 @@ namespace Bugo\Optimus\Utils;
 use Bugo\Compat\Lang;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class Copyright
 {

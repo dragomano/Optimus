@@ -22,7 +22,7 @@ use LightPortal\Enums\Permission;
 use LightPortal\Enums\Status;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class LightPortal extends AbstractAddon
 {

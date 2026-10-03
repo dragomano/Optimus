@@ -18,7 +18,7 @@ use Bugo\Optimus\Routes\Keywords;
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class TagHandler
 {
@@ -302,10 +302,12 @@ final class TagHandler
 			'url'  => Config::$scripturl . '?action=keywords',
 		];
 
-		Utils::$context['linktree'][] = [
-			'name' => Utils::$context['page_title'],
-			'url'  => Utils::$context['canonical_url'],
-		];
+		if (! empty($keywordName)) {
+			Utils::$context['linktree'][] = [
+				'name' => Utils::$context['page_title'],
+				'url'  => Utils::$context['canonical_url'],
+			];
+		}
 
 		$listOptions = [
 			'id'               => 'topics',
@@ -426,6 +428,7 @@ final class TagHandler
 		);
 
 		[$count] = Db::$db->fetch_row($result);
+
 		Db::$db->free_result($result);
 
 		return (int) $count;
@@ -539,6 +542,7 @@ final class TagHandler
 		);
 
 		[$count] = Db::$db->fetch_row($result);
+
 		Db::$db->free_result($result);
 
 		return (int) $count;
@@ -625,9 +629,10 @@ final class TagHandler
 		);
 
 		[$name] = Db::$db->fetch_row($result);
+
 		Db::$db->free_result($result);
 
-		return $name;
+		return $name ?: '';
 	}
 
 	private function getRandomColor(string $key): string
@@ -724,6 +729,7 @@ final class TagHandler
 		);
 
 		$row = Db::$db->fetch_row($result);
+
 		Db::$db->free_result($result);
 
 		return (int) ($row[0] ?? 0);

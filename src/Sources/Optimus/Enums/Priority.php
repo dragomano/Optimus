@@ -28,7 +28,7 @@ enum Priority: string
 			$daysDiff <= 30 => self::Prime,
 			$daysDiff <= 60 => self::Elevated,
 			$daysDiff <= 90 => self::Base,
-			default => self::Minimal,
+			default         => self::Minimal,
 		};
 	}
 }

@@ -24,8 +24,8 @@ enum Entity: string
 	{
 		return Config::$scripturl . match (true) {
 			empty(Config::$modSettings['queryless_urls']) => "?$this->value=$id",
-			str_starts_with(SMF_VERSION, '3.0') => "?$this->value=$id",
-			default => "/$this->value,$id.html",
+			str_starts_with(SMF_VERSION, '3.0')           => "?$this->value=$id",
+			default                                       => "/$this->value,$id.html",
 		};
 	}
 
@@ -33,8 +33,8 @@ enum Entity: string
 	{
 		return match (true) {
 			empty(Config::$modSettings['queryless_urls']) => "/*$this->value=*.0$",
-			str_starts_with(SMF_VERSION, '3.0') => "/{$this->value}s/*$",
-			default => "/*$this->value,*.0.html$",
+			str_starts_with(SMF_VERSION, '3.0')           => "/{$this->value}s/*$",
+			default                                       => "/*$this->value,*.0.html$",
 		};
 	}
 }

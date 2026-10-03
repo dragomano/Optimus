@@ -17,7 +17,7 @@ use Bugo\Compat\Parsers\BBCodeParser;
 use Nette\Utils\Html;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class Str
 {

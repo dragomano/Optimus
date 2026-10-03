@@ -17,7 +17,7 @@ use Bugo\Optimus\Events\DispatcherFactory;
 use Bugo\Optimus\Handlers\HandlerLoader;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class Prime
 {

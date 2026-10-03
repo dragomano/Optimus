@@ -17,7 +17,7 @@ use Bugo\Compat\{Theme, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class AssetHandler
 {
@@ -78,6 +78,7 @@ final class AssetHandler
 			return;
 
 		Theme::loadTemplate('Optimus');
+
 		Utils::$context['template_layers'][] = 'footer_counters';
 
 		if (empty(Config::$modSettings['optimus_counters_css']))

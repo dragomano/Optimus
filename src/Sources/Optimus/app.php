@@ -13,7 +13,7 @@
 use Bugo\Optimus\Prime;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
 defined('OP_VERSION') || define('OP_VERSION', '3.0.5');

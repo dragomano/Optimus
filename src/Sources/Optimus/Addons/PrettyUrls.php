@@ -20,7 +20,7 @@ use Bugo\Optimus\Services\SitemapGenerator;
 use League\Event\ListenerPriority;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class PrettyUrls extends AbstractAddon
 {

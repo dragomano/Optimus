@@ -18,7 +18,7 @@ use Bugo\Optimus\Enums\Action;
 use Bugo\Optimus\Utils\Str;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class SitemapLinkHandler
 {

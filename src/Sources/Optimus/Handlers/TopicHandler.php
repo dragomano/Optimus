@@ -18,7 +18,7 @@ use Bugo\Compat\Parsers\BBCodeParser;
 use Bugo\Optimus\Utils\{Input, Str};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class TopicHandler
 {

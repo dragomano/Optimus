@@ -15,7 +15,7 @@ namespace Bugo\Optimus\Handlers;
 use Bugo\Compat\{Config, IntegrationHook, Utils};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class FaviconHandler
 {

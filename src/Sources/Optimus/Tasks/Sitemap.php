@@ -21,7 +21,7 @@ use Bugo\Optimus\Services\SitemapGenerator;
 use Bugo\Optimus\Services\XmlGenerator;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 class Sitemap extends BackgroundTask
 {

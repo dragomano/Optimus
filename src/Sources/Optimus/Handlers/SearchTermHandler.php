@@ -18,7 +18,7 @@ use Bugo\Compat\{Theme, User, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class SearchTermHandler
 {
@@ -119,6 +119,7 @@ final class SearchTermHandler
 		);
 
 		[$id] = Db::$db->fetch_row($result);
+
 		Db::$db->free_result($result);
 
 		if (empty($id)) {

@@ -17,7 +17,7 @@ use Bugo\Compat\{Config, Lang, User, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 /**
  * The admin page with a list of all addons of the modification.

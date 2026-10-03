@@ -16,7 +16,7 @@ use Bugo\Compat\{Config, IntegrationHook};
 use Bugo\Compat\{Board, Lang, Theme, Utils};
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class ErrorPageHandler
 {
@@ -63,11 +63,11 @@ final class ErrorPageHandler
 
 		Theme::addInlineCss('#fatal_error { text-align: center }');
 
-		Utils::$context['page_title'] = Lang::getTxt("optimus_{$code}_page_title", file: 'Optimus/Optimus');
-		Utils::$context['error_code'] = '';
-		Utils::$context['error_link'] = 'javascript:history.go(-1)';
-		Utils::$context['error_title'] = Lang::getTxt("optimus_{$code}_h2");
-		Utils::$context['error_message'] = Lang::getTxt("optimus_{$code}_h3");
+		Utils::$context['page_title']     = Lang::getTxt("optimus_{$code}_page_title", file: 'Optimus/Optimus');
+		Utils::$context['error_code']     = '';
+		Utils::$context['error_link']     = 'javascript:history.go(-1)';
+		Utils::$context['error_title']    = Lang::getTxt("optimus_{$code}_h2");
+		Utils::$context['error_message']  = Lang::getTxt("optimus_{$code}_h3");
 		Utils::$context['error_message'] .= '<br>' . sprintf(Lang::getTxt('optimus_goto_main_page'), Config::$scripturl);
 	}
 }

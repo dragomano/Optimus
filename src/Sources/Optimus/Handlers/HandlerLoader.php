@@ -13,7 +13,7 @@
 namespace Bugo\Optimus\Handlers;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class HandlerLoader
 {

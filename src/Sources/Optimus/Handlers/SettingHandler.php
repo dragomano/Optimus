@@ -22,7 +22,7 @@ use Bugo\Optimus\Utils\Input;
 use Bugo\Optimus\Utils\Str;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class SettingHandler
 {
@@ -151,7 +151,6 @@ final class SettingHandler
 		];
 
 		$this->addBlockWithTips();
-
 		$this->callActionFromAreas($subActions);
 	}
 
@@ -460,7 +459,7 @@ final class SettingHandler
 		]);
 
 		$title = Lang::getTxt('admin_maintenance', file: 'ManageMaintenance') . ' - ' . Lang::getTxt('maintain_recount');
-		$link = Str::html('a', $title)->class('bbc_link')
+		$link  = Str::html('a', $title)->class('bbc_link')
 			->href(sprintf('%s?action=admin;area=maintain;sa=routine', Config::$scripturl));
 
 		Utils::$context['settings_insert_above'] = Str::html('div')->class('roundframe')
@@ -547,6 +546,7 @@ final class SettingHandler
 		Utils::$context['sub_template'] = 'show_settings';
 
 		$sa = Input::request('sa', 'basic');
+
 		Input::request(['sa' => isset($subActions[$sa]) ? $sa : key($subActions)]);
 
 		$this->{$subActions[Input::request('sa')]}();

@@ -17,7 +17,7 @@ use Bugo\Compat\{Theme, Utils};
 use Bugo\Optimus\Utils\Input;
 
 if (! defined('SMF'))
-	die('No direct access...');
+	die('No direct access...'); // @codeCoverageIgnore
 
 final class MetaHandler
 {
