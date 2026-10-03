@@ -13,11 +13,14 @@
 namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\Cache\CacheApi;
-use Bugo\Compat\{Db, IntegrationHook};
+use Bugo\Compat\{Config, Db, IntegrationHook, Lang};
 use Bugo\Optimus\Addons\AddonInterface;
+use Bugo\Optimus\Addons\DownloadableAddons;
+use Bugo\Optimus\Addons\HasSettingsInterface;
 use Bugo\Optimus\Events\DispatcherFactory;
 use League\Event\ListenerRegistry;
 use League\Event\ListenerSubscriber;
+use ReflectionClass;
 
 if (! defined('SMF'))
 	die('No direct access...');
@@ -40,8 +43,13 @@ final class AddonHandler implements ListenerSubscriber
 	{
 		$mods   = $this->getInstalledMods();
 		$addons = $this->getAllAddons();
+		$off    = $this->getDisabledAddons();
 
 		foreach ($addons as $listener) {
+			if (in_array($listener::PACKAGE_ID, $off)) {
+				continue;
+			}
+
 			if (in_array($listener::PACKAGE_ID, $mods) || str_starts_with($listener::PACKAGE_ID, 'Optimus:')) {
 				$addonInstance = new $listener;
 
@@ -53,6 +61,111 @@ final class AddonHandler implements ListenerSubscriber
 		}
 
 		self::$hasSubscribed = true;
+	}
+
+	/**
+	 * Get data of all detected addons for the admin page.
+	 */
+	public function getAddonData(): array
+	{
+		$mods = $this->getInstalledMods();
+		$off  = $this->getDisabledAddons();
+
+		$data = [];
+
+		foreach ($this->getAllAddons() as $class) {
+			$packageId = $class::PACKAGE_ID;
+			$name      = (new ReflectionClass($class))->getShortName();
+
+			$data[] = [
+				'class'           => $class,
+				'package_id'      => $packageId,
+				'name'            => $name,
+				'description'     => Lang::getTxt('optimus_addon_' . strtolower($name) . '_desc'),
+				'is_builtin'      => str_starts_with($packageId, 'Optimus:'),
+				'is_active'       => str_starts_with($packageId, 'Optimus:') || in_array($packageId, $mods),
+				'is_disabled'     => in_array($packageId, $off),
+				'has_settings'    => is_subclass_of($class, HasSettingsInterface::class),
+				'is_downloadable' => false,
+			];
+		}
+
+		$data = $this->addDownloadable($data);
+
+		$rank = static fn(array $row): int => match (true) {
+			$row['is_downloadable'] => 3,
+			! $row['is_active']     => 2,
+			$row['is_disabled']     => 1,
+			default                 => 0,
+		};
+
+		usort($data, static fn(array $a, array $b): int => $rank($a) <=> $rank($b) ?: strcmp($a['name'], $b['name']));
+
+		return $data;
+	}
+
+	/**
+	 * Add registry entries for downloadable addons that are
+	 * physically absent on the forum.
+	 */
+	private function addDownloadable(array $data): array
+	{
+		$present = array_column($data, 'name');
+
+		foreach (DownloadableAddons::all() as $addon) {
+			if (in_array($addon['name'], $present)) {
+				continue;
+			}
+
+			$data[] = [
+				'class'           => '',
+				'package_id'      => $addon['package_id'],
+				'name'            => $addon['name'],
+				'description'     => $addon['description'],
+				'is_builtin'      => false,
+				'is_active'       => false,
+				'is_disabled'     => false,
+				'has_settings'    => false,
+				'is_downloadable' => true,
+				'url'             => $addon['url'],
+			];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Enable or disable the addon with the given package id.
+	 */
+	public function toggle(string $packageId): bool
+	{
+		$known = array_map(
+			static fn(string $class): string => $class::PACKAGE_ID,
+			$this->getAllAddons()
+		);
+
+		if (! in_array($packageId, $known)) {
+			return false;
+		}
+
+		$disabled = $this->getDisabledAddons();
+
+		if (in_array($packageId, $disabled)) {
+			$disabled = array_values(array_diff($disabled, [$packageId]));
+		} else {
+			$disabled[] = $packageId;
+		}
+
+		Config::updateModSettings(['optimus_disabled_addons' => implode(',', $disabled)]);
+
+		return true;
+	}
+
+	public function getDisabledAddons(): array
+	{
+		$disabled = (string) (Config::$modSettings['optimus_disabled_addons'] ?? '');
+
+		return array_values(array_filter(array_map(trim(...), explode(',', $disabled))));
 	}
 
 	private function getAllAddons(): array

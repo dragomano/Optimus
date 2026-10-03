@@ -285,11 +285,21 @@ if (! function_exists('filter_input_array')) {
 if (! function_exists('prepareDBSettingContext')) {
 	function prepareDBSettingContext(array &$vars): void
 	{
+		Utils::$context['admin-dbsc_token'] = uniqid();
+		Utils::$context['admin-dbsc_token_var'] = 'var_' . uniqid();
 	}
 }
 
 if (! function_exists('saveDBSettings')) {
 	function saveDBSettings(array &$vars): void
 	{
+	}
+}
+
+if (! function_exists('template_show_settings')) {
+	function template_show_settings(): void
+	{
+		echo '<input type="hidden" name="' . Utils::$context['admin-dbsc_token_var'] . '" value="'
+			. Utils::$context['admin-dbsc_token'] . '">';
 	}
 }

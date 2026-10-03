@@ -226,6 +226,15 @@ describe('Tabs', function () {
 		expect($this->handler->htaccessTabSettings())->toBeNull();
 	});
 
+	test('addonsTabSettings method', function () {
+		Utils::$smcFunc['random_bytes'] = fn(int $length) => random_bytes($length);
+
+		$this->handler->addonsTabSettings();
+
+		expect(Utils::$context['sub_template'])->toBe('addons')
+			->and(Utils::$context['optimus_addons'])->not->toBeEmpty();
+	});
+
 	test('htaccessTabSettings save with backup creation', function () {
 		// Create a temporary .htaccess file
 		$htaccessPath = $this->tempDir . DIRECTORY_SEPARATOR . '.htaccess';

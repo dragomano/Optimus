@@ -85,6 +85,7 @@ final class SettingHandler
 				'robots'   => [Lang::getTxt('optimus_robots_title')],
 				'htaccess' => [Lang::getTxt('optimus_htaccess_title')],
 				'sitemap'  => [Lang::getTxt('optimus_sitemap_title')],
+				'addons'   => [Lang::getTxt('optimus_addons_title')],
 			]
 		];
 	}
@@ -115,6 +116,7 @@ final class SettingHandler
 			'robots'   => 'robotsTabSettings',
 			'htaccess' => 'htaccessTabSettings',
 			'sitemap'  => 'sitemapTabSettings',
+			'addons'   => 'addonsTabSettings',
 		];
 
 		Utils::$context[Utils::$context['admin_menu_name']]['tab_data'] = [
@@ -152,6 +154,9 @@ final class SettingHandler
 				],
 				'sitemap' => [
 					'description' => sprintf(Lang::getTxt('optimus_sitemap_desc'), OP_NAME)
+				],
+				'addons' => [
+					'description' => Lang::getTxt('optimus_addons_desc')
 				]
 			]
 		];
@@ -580,6 +585,11 @@ final class SettingHandler
 		}
 
 		ACP::prepareDBSettingContext($config_vars);
+	}
+
+	public function addonsTabSettings(): void
+	{
+		(new AddonSettingsHandler())->handle();
 	}
 
 	private function addBlockWithTips(): void

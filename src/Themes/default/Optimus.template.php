@@ -330,6 +330,85 @@ function template_htaccess(): void
 	</div>';
 }
 
+function template_addons(): void
+{
+	optimus_settings_saved_alert();
+
+	echo '
+	<div class="cat_bar">
+		<h3 class="catbg">', Lang::getTxt('optimus_addons_title'), '</h3>
+	</div>
+	<div class="information">', Lang::getTxt('optimus_addons_info'), '</div>
+	<div class="windowbg noup">
+		<table class="table_grid">
+			<thead>
+				<tr class="title_bar">
+					<th>', Lang::getTxt('optimus_addon'), '</th>
+					<th>', Lang::getTxt('optimus_addons_status'), '</th>
+					<th class="centertext">', Lang::getTxt('optimus_addons_actions'), '</th>
+				</tr>
+			</thead>
+			<tbody>';
+
+	foreach (Utils::$context['optimus_addons'] as $addon) {
+		$status = match (true) {
+			$addon['is_downloadable'] => 'optimus_addons_status_downloadable',
+			! $addon['is_active']     => 'optimus_addons_status_inactive',
+			$addon['is_disabled']     => 'optimus_addons_status_disabled',
+			default                   => 'optimus_addons_status_active',
+		};
+
+		$blockId = 'addon_settings_' . strtolower($addon['name']);
+
+		$actions = '';
+
+		if ($addon['is_downloadable']) {
+			$actions = '<a class="button" href="' . $addon['url'] . '" target="_blank" rel="noopener">'
+				. Lang::getTxt('optimus_addons_download') . '</a>';
+		} elseif ($addon['is_active']) {
+			$actions = '<a class="button" href="' . Config::$scripturl . '?action=admin;area=optimus;sa=addons;toggle='
+				. rawurlencode($addon['package_id']) . ';' . Utils::$context['session_var'] . '='
+				. Utils::$context['session_id'] . '">'
+				. Lang::getTxt($addon['is_disabled'] ? 'optimus_addons_enable' : 'optimus_addons_disable')
+				. '</a>';
+
+			if (! empty($addon['settings_html'])) {
+				$actions .= ' <a class="bbc_link" href="#" onclick="return toggleAddonSettings(\'' . $blockId
+					. '\')">' . Lang::getTxt('optimus_addons_settings') . '</a>';
+			}
+		}
+
+		echo '
+				<tr class="windowbg">
+					<td>
+						<strong>', $addon['name'], '</strong> <span class="smalltext">(', $addon['package_id'], ')</span>', '
+						', $addon['description'] !== '' ? '<br><span class="smalltext">' . $addon['description'] . '</span>' : '', '
+					</td>
+					<td>', Lang::getTxt($status), '</td>
+					<td class="centertext">', $actions, '</td>
+				</tr>';
+
+		if (! empty($addon['settings_html'])) {
+			echo '
+				<tr class="windowbg" id="', $blockId, '" style="display: none">
+					<td colspan="3">', $addon['settings_html'], '</td>
+				</tr>';
+		}
+	}
+
+	echo '
+			</tbody>
+		</table>
+	</div>
+	<script>
+		function toggleAddonSettings(id) {
+			const row = document.getElementById(id);
+			row.style.display = row.style.display === "none" ? "" : "none";
+			return false;
+		}
+	</script>';
+}
+
 function template_footer_counters_above()
 {
 }

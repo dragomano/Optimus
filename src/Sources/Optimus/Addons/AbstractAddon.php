@@ -23,6 +23,13 @@ abstract class AbstractAddon implements AddonInterface
 
 	public static array $events = [];
 
+	/**
+	 * Additional actions when saving the addon settings, if any.
+	 */
+	public function saveSettings(): void
+	{
+	}
+
 	protected function loadLanguages(string $baseDir): void
 	{
 		if (empty(Lang::$txt))
