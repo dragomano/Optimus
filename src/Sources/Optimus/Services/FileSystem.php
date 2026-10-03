@@ -67,7 +67,7 @@ final readonly class FileSystem implements FileSystemInterface
 
 	public function writeGzFile(string $filename, string $content): void
 	{
-		if (! function_exists('gzopen')) {
+		if (! is_callable($this->gzopenFunc)) {
 			throw new FileSystemException('Gzip functions are not available');
 		}
 

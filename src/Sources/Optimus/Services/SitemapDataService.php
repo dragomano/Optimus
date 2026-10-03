@@ -14,18 +14,15 @@ namespace Bugo\Optimus\Services;
 
 use Bugo\Compat\{Config, Db};
 use Bugo\Optimus\Enums\Entity;
+use Generator;
 
 class SitemapDataService
 {
+	private const BATCH_SIZE = 500;
+
 	private array $openBoards = [];
 
 	private array $ignoredBoards = [];
-
-	private array $links = [];
-
-	private array $topics = [];
-
-	private array $images = [];
 
 	private ?int $startDate = null;
 
@@ -81,27 +78,34 @@ class SitemapDataService
 		return $links;
 	}
 
-	public function getTopicLinks(): array
+	/**
+	 * Streams topic links one by one, without accumulating the entire list in memory
+	 */
+	public function getTopicLinks(): Generator
 	{
 		if (empty($this->openBoards)) {
-			return [];
+			return;
 		}
 
 		$tempCache = Db::$cache;
 		Db::$cache = [];
 
-		$limit  = 500;
-		$lastId = null;
+		try {
+			$allPages = ! empty(Config::$modSettings['optimus_sitemap_all_topic_pages']);
+			$lastId   = null;
 
-		do {
-			$lastId = $this->processTopicBatch($lastId, $limit);
-		} while ($lastId !== null);
+			do {
+				$batch = $this->processTopicBatch($lastId, self::BATCH_SIZE, $allPages);
 
-		$this->processTopicPages();
+				foreach ($batch as $link) {
+					yield $link;
+				}
 
-		Db::$cache = $tempCache;
-
-		return array_values($this->links);
+				$lastId = $batch->getReturn();
+			} while ($lastId !== null);
+		} finally {
+			Db::$cache = $tempCache;
+		}
 	}
 
 	public function getStartDate(): int
@@ -111,7 +115,10 @@ class SitemapDataService
 			: 0;
 	}
 
-	private function processTopicBatch(?int $lastId, int $limit): ?int
+	/**
+	 * @return Generator Yields the links of a single batch; the last processed topic id is available via getReturn()
+	 */
+	private function processTopicBatch(?int $lastId, int $limit, bool $allPages): Generator
 	{
 		$numReplies = (int) (Config::$modSettings['optimus_sitemap_topics_num_replies'] ?? 0);
 
@@ -150,36 +157,57 @@ class SitemapDataService
 		while ($row = Db::$db->fetch_assoc($result)) {
 			$newLastId = (int) $row['id_topic'];
 
-			$topicUrl = $this->buildTopicUrl($row['id_topic']);
-
-			if (empty(Config::$modSettings['optimus_sitemap_all_topic_pages'])) {
-				$this->links[$row['id_topic']] = ['loc' => $topicUrl, 'lastmod' => $row['last_date']];
-			} else {
-				$this->topics[$row['id_topic']] = [
-					'url'         => $topicUrl,
-					'last_date'   => $row['last_date'],
-					'num_replies' => $row['num_replies'],
-					'subject'     => $row['subject'],
-				];
-			}
-
-			if (empty(Config::$modSettings['optimus_sitemap_add_found_images']) || empty($row['id_attach']))
-				continue;
-
-			if ($this->isImageFile($row['fileext'])) {
-				$this->images[$row['id_topic']] = [
-					'loc' => implode('', [
-						Config::$scripturl . '?action=dlattach;topic=',
-						$row['id_topic'] . '.0;attach=',
-						$row['id_attach'] . ';image',
-					])
-				];
+			foreach ($this->buildTopicLinks($row, $allPages) as $link) {
+				yield $link;
 			}
 		}
 
 		Db::$db->free_result($result);
 
 		return $newLastId;
+	}
+
+	private function buildTopicLinks(array $row, bool $allPages): array
+	{
+		$image = $this->getImagePart($row);
+
+		if (! $allPages) {
+			return [[
+				'loc'     => $this->buildTopicUrl($row['id_topic']),
+				'lastmod' => $row['last_date'],
+			] + $image];
+		}
+
+		$messagesPerPage = (int) (Config::$modSettings['defaultMaxMessages'] ?? 20);
+		$numPages        = (int) ceil(((int) $row['num_replies'] + 1) / $messagesPerPage);
+
+		$links = [];
+
+		for ($page = 0; $page < $numPages; $page++) {
+			$links[] = [
+				'loc'     => $this->buildTopicPageUrl((int) $row['id_topic'], $page, $messagesPerPage),
+				'lastmod' => $row['last_date'],
+			] + $image;
+		}
+
+		return $links;
+	}
+
+	private function getImagePart(array $row): array
+	{
+		if (empty(Config::$modSettings['optimus_sitemap_add_found_images']) || empty($row['id_attach'])) {
+			return [];
+		}
+
+		if (! $this->isImageFile($row['fileext'])) {
+			return [];
+		}
+
+		return ['image' => ['image:loc' => implode('', [
+			Config::$scripturl . '?action=dlattach;topic=',
+			$row['id_topic'] . '.0;attach=',
+			$row['id_attach'] . ';image',
+		])]];
 	}
 
 	private function buildTopicUrl(string $topicId): string
@@ -190,29 +218,6 @@ class SitemapDataService
 	private function isImageFile(string $extension): bool
 	{
 		return in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
-	}
-
-	private function processTopicPages(): void
-	{
-		if (empty($this->topics))
-			return;
-
-		$messagesPerPage = (int) (Config::$modSettings['defaultMaxMessages'] ?? 20);
-
-		foreach ($this->topics as $topicId => $topic) {
-			$numPages = (int) ceil(($topic['num_replies'] + 1) / $messagesPerPage);
-
-			$imagePart = isset($this->images[$topicId])
-				? ['image' => ['image:loc' => $this->images[$topicId]['loc']]]
-				: [];
-
-			for ($page = 0; $page < $numPages; $page++) {
-				$this->links[] = [
-					'loc'     => $this->buildTopicPageUrl($topicId, $page, $messagesPerPage),
-					'lastmod' => $topic['last_date'],
-				] + $imagePart;
-			}
-		}
 	}
 
 	private function buildTopicPageUrl(int $topicId, int $page, int $messagesPerPage): string

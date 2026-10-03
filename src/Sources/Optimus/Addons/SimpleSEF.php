@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 26.05.25
+ * @version 3.10.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -30,7 +30,7 @@ final class SimpleSEF extends AbstractAddon
 
 	public static array $events = [
 		self::ROBOTS_RULES,
-		self::CREATE_SEF_URLS,
+		self::SITEMAP_URL_REWRITER,
 	];
 
 	public function __invoke(AddonEvent $event): void
@@ -43,8 +43,8 @@ final class SimpleSEF extends AbstractAddon
 		}
 
 		match ($event->eventName()) {
-			self::ROBOTS_RULES    => $this->changeRobots($event->getTarget()),
-			self::CREATE_SEF_URLS => $this->createSefUrls($event->getTarget()),
+			self::ROBOTS_RULES         => $this->changeRobots($event->getTarget()),
+			self::SITEMAP_URL_REWRITER => $this->registerUrlRewriter($event->getTarget()),
 		};
 	}
 
@@ -54,13 +54,11 @@ final class SimpleSEF extends AbstractAddon
 			&& is_file(dirname(__DIR__, 2) . '/SimpleSEF.php');
 	}
 
-	public function createSefUrls(SitemapGenerator $generator): void
+	public function registerUrlRewriter(SitemapGenerator $generator): void
 	{
 		$engine = new \SimpleSEF();
 		$method = method_exists('\SimpleSEF', 'getSefUrl') ? 'getSefUrl' : 'create_sef_url';
 
-		foreach ($generator->links as &$url) {
-			$url['loc'] = $engine->$method($url['loc']);
-		}
+		$generator->addUrlRewriter(fn(string $url): string => $engine->$method($url));
 	}
 }

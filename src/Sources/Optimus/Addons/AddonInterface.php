@@ -24,6 +24,11 @@ interface AddonInterface
 
 	public const SITEMAP_CONTENT = 'optimus_sitemap_content';
 
+	public const SITEMAP_URL_REWRITER = 'optimus_sitemap_url_rewriter';
+
+	/**
+	 * @deprecated Use SITEMAP_URL_REWRITER instead
+	 */
 	public const CREATE_SEF_URLS = 'optimus_create_sef_urls';
 
 	public function __invoke(AddonEvent $event): void;

@@ -20,4 +20,13 @@ final class Dispatcher extends EventDispatcher
 	{
 		return $this->dispatch(new AddonEvent($name, $target));
 	}
+
+	public function hasListeners(string $name, mixed $target): bool
+	{
+		foreach ($this->listenerProvider->getListenersForEvent(new AddonEvent($name, $target)) as $listener) {
+			return true;
+		}
+
+		return false;
+	}
 }

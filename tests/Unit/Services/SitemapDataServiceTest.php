@@ -96,46 +96,41 @@ describe('SitemapDataService', function () {
 		expect($openBoards->getValue($this->sitemapDataService))->toBe([2]);
 	});
 
-	it('gets topic links correctly', function () {
+	it('streams topic links correctly', function () {
 		$this->sitemapDataService->getBoardLinks();
-		$links = $this->sitemapDataService->getTopicLinks();
 
-		expect($links)->toBeArray();
-	});
-
-	it('processes topic batch correctly', function () {
-		$linksProperty = new ReflectionProperty($this->sitemapDataService, 'links');
-		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
-		$processTopicBatch->invoke($this->sitemapDataService, null, 10);
-
-		$links = $linksProperty->getValue($this->sitemapDataService);
+		$links = iterator_to_array($this->sitemapDataService->getTopicLinks());
 
 		expect($links)->toBeArray()
 			->and(count($links))->toBe(2)
-			->and($links[1]['loc'])->toBe('https://example.com/index.php?topic=1.0')
-			->and($links[2]['loc'])->toBe('https://example.com/index.php?topic=2.0');
+			->and($links[0]['loc'])->toBe('https://example.com/index.php?topic=1.0')
+			->and($links[1]['loc'])->toBe('https://example.com/index.php?topic=2.0');
+	});
+
+	it('processes topic batch correctly', function () {
+		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
+
+		$batch = $processTopicBatch->invoke($this->sitemapDataService, null, 10, false);
+
+		$links = iterator_to_array($batch);
+
+		expect($links)->toBeArray()
+			->and(count($links))->toBe(2)
+			->and($links[0]['loc'])->toBe('https://example.com/index.php?topic=1.0')
+			->and($links[1]['loc'])->toBe('https://example.com/index.php?topic=2.0')
+			->and($batch->getReturn())->toBe(2);
 	});
 
 	it('processes all topic pages correctly', function () {
 		Config::$modSettings['optimus_sitemap_all_topic_pages'] = true;
 
-		$topicsProperty = new ReflectionProperty($this->sitemapDataService, 'topics');
-		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
-		$processTopicBatch->invoke($this->sitemapDataService, null, 10);
-
-		$topics = $topicsProperty->getValue($this->sitemapDataService);
-
-		expect($topics)->toHaveCount(2)
-			->and($topics[1])->toHaveKeys(['url', 'last_date', 'num_replies', 'subject'])
-			->and($topics[1]['subject'])->toBe('Test Topic')
-			->and($topics[2]['subject'])->toBe('Another Topic');
-
 		$this->sitemapDataService->getBoardLinks();
-		$links = $this->sitemapDataService->getTopicLinks();
+
+		$links = iterator_to_array($this->sitemapDataService->getTopicLinks());
 
 		expect($links)->toHaveCount(2)
-			->and($links[0]['loc'])->toBe($topics[1]['url'])
-			->and($links[1]['loc'])->toBe($topics[2]['url']);
+			->and($links[0]['loc'])->toBe('https://example.com/index.php?topic=1.0')
+			->and($links[1]['loc'])->toBe('https://example.com/index.php?topic=2.0');
 	});
 
 	it('processes multiple topic pages when num_replies is high', function () {
@@ -171,7 +166,7 @@ describe('SitemapDataService', function () {
 
 		Db::$db = $mockDb;
 
-		$links = $this->sitemapDataService->getTopicLinks();
+		$links = iterator_to_array($this->sitemapDataService->getTopicLinks());
 
 		expect($links)->toHaveCount(6); // ceil((10+1)/2) = 6 pages
 	});
@@ -226,7 +221,7 @@ describe('SitemapDataService', function () {
 
 		Db::$db = $mockDb;
 
-		$links = $this->sitemapDataService->getTopicLinks();
+		$links = iterator_to_array($this->sitemapDataService->getTopicLinks());
 
 		expect($links)->toHaveCount(2)
 			->and($callCount)->toBe(3);
@@ -235,14 +230,55 @@ describe('SitemapDataService', function () {
 	it('processes topics with images correctly', function () {
 		Config::$modSettings['optimus_sitemap_add_found_images'] = true;
 
-		$imagesProperty = new ReflectionProperty($this->sitemapDataService, 'images');
-		$processTopicBatch = new ReflectionMethod($this->sitemapDataService, 'processTopicBatch');
-		$processTopicBatch->invoke($this->sitemapDataService, null, 10);
+		$this->sitemapDataService->getBoardLinks();
 
-		$images = $imagesProperty->getValue($this->sitemapDataService);
+		$links = iterator_to_array($this->sitemapDataService->getTopicLinks());
 
-		expect($images)->toHaveCount(1)
-			->and($images[1])->toContain('https://example.com/index.php?action=dlattach;topic=1.0;attach=1;image');
+		expect($links)->toHaveCount(2)
+			->and($links[0])->toHaveKey('image')
+			->and($links[0]['image']['image:loc'])->toContain('https://example.com/index.php?action=dlattach;topic=1.0;attach=1;image')
+			->and($links[1])->not->toHaveKey('image');
+	});
+
+	it('skips attachments that are not images', function () {
+		Config::$modSettings['optimus_sitemap_add_found_images'] = true;
+
+		Db::$db = new class extends TestDbMapper {
+			public function testQuery($query, $params = []): array
+			{
+				if (str_contains($query, 'SELECT b.id_board')) {
+					return [
+						['id_board' => '1', 'last_date' => time()],
+					];
+				}
+
+				if (str_contains($query, 'SELECT t.id_topic, t.id_board, t.num_replies')) {
+					if (! empty($params['last_id'])) {
+						return [];
+					}
+
+					return [
+						[
+							'id_topic'    => '1',
+							'id_board'    => '1',
+							'num_replies' => '5',
+							'last_date'   => time(),
+							'subject'     => 'Topic with an archive attached',
+							'id_attach'   => '1',
+							'fileext'     => 'zip',
+						],
+					];
+				}
+				return [];
+			}
+		};
+
+		$sitemapDataService = new SitemapDataService(2020);
+		$sitemapDataService->getBoardLinks();
+		$links = iterator_to_array($sitemapDataService->getTopicLinks());
+
+		expect($links)->toHaveCount(1)
+			->and($links[0])->not->toHaveKey('image');
 	});
 
 	it('does not add board links when optimus_sitemap_boards is false', function () {
@@ -257,19 +293,8 @@ describe('SitemapDataService', function () {
 		expect($openBoards->getValue($this->sitemapDataService))->toBe([1, 2]);
 	});
 
-	it('returns empty array when openBoards is empty for getTopicLinks', function () {
-		$links = $this->sitemapDataService->getTopicLinks();
-
-		expect($links)->toBeArray()
-			->and(count($links))->toBe(0);
-	});
-
-	it('does nothing in processTopicPages when topics is empty', function () {
-		$processTopicPages = new ReflectionMethod($this->sitemapDataService, 'processTopicPages');
-		$processTopicPages->invoke($this->sitemapDataService);
-
-		$linksProperty = new ReflectionProperty($this->sitemapDataService, 'links');
-		$links = $linksProperty->getValue($this->sitemapDataService);
+	it('returns empty list when openBoards is empty for getTopicLinks', function () {
+		$links = iterator_to_array($this->sitemapDataService->getTopicLinks());
 
 		expect($links)->toBeArray()
 			->and(count($links))->toBe(0);
@@ -281,6 +306,10 @@ describe('SitemapDataService', function () {
 		$links = $sitemapDataService->getBoardLinks();
 
 		expect($links)->toBeArray();
+
+		$sitemapDataService->getBoardLinks();
+
+		expect(iterator_to_array($sitemapDataService->getTopicLinks()))->toBeArray();
 	});
 
 	it('builds topic url correctly', function () {
@@ -347,7 +376,7 @@ describe('SitemapDataService', function () {
 
 		$sitemapDataService = new SitemapDataService(2020);
 		$sitemapDataService->getBoardLinks();
-		$links = $sitemapDataService->getTopicLinks();
+		$links = iterator_to_array($sitemapDataService->getTopicLinks());
 
 		// Should have 1 link with image data
 		expect($links)->toHaveCount(1)

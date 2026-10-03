@@ -7,9 +7,14 @@ tableOfContents: false
 
 - `AddonInterface::HOOK_EVENT`: универсальное событие для работы с хуками SMF
 - `AddonInterface::ROBOTS_RULES`: событие для работы с генератором правил `robots.txt`
-- `AddonInterface::SITEMAP_LINKS`: событие для работы с генератором xml-карты
+- `AddonInterface::SITEMAP_LINKS`: событие для добавления своих ссылок в xml-карту
 - `AddonInterface::SITEMAP_CONTENT`: специальное событие для обработки контента xml-карты сразу после формирования её структуры
-- `AddonInterface::CREATE_SEF_URLS`: специальное событие для обработки ссылок в xml-карте до формирования её структуры
+- `AddonInterface::SITEMAP_URL_REWRITER`: событие для регистрации переписчика URL, применяемого к каждой ссылке xml-карты
+- ~~`AddonInterface::CREATE_SEF_URLS`~~: устаревшее событие для обработки ссылок в xml-карте до формирования её структуры
+
+:::note
+Ссылки темы попадают в xml-карту в виде потока (порциями прямо из базы данных), поэтому в объекте `SitemapGenerator`, который передается в событие `SITEMAP_LINKS`, свойство `$links` содержит только ваши собственные ссылки. Если старое событие `CREATE_SEF_URLS` все же используется одним из аддонов, генератор автоматически переключается в совместимый режим с полным списком ссылок.
+:::
 
 Для реализации связи с выбранным событием в классе аддона нужно заполнить поле `$events` и создать метод `__invoke`. На примере аддона `LightPortal` это выглядит так:
 
@@ -45,6 +50,15 @@ public function changeSitemap(SitemapGenerator $generator): void
 Как видите, в качестве объекта события `self::ROBOTS_RULES` передается класс `RobotsGenerator` для работы с генератором `robots.txt`.
 
 Соответственно, в качестве объекта события `self::SITEMAP_LINKS` передается класс `SitemapGenerator` для работы с генератором xml-карты.
+
+А событие `self::SITEMAP_URL_REWRITER` позволяет зарегистрировать переписчик для каждой ссылки карты (так работает аддон `SimpleSEF`):
+
+```php
+public function registerUrlRewriter(SitemapGenerator $generator): void
+{
+	$generator->addUrlRewriter(fn(string $url): string => myRewriteFunction($url));
+}
+```
 
 А дальше уже всё зависит от полёта вашей фантазии и конкретных целей. Примеры реализаций встроенных аддонов можно увидеть на [GitHub](https://github.com/dragomano/Optimus/blob/main/src/Sources/Optimus/Addons).
 

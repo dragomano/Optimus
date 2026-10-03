@@ -10,6 +10,7 @@ use Bugo\Optimus\Services\{
 	XmlGeneratorException,
 	FileSystemException
 };
+use Bugo\Optimus\Enums\Priority;
 use Bugo\Optimus\Events\{AddonEvent, DispatcherFactory};
 use Bugo\Optimus\Addons\AddonInterface;
 
@@ -35,8 +36,8 @@ beforeEach(function () {
 			return [['loc' => 'https://example.com/board1', 'lastmod' => time()]];
 		}
 
-		public function getTopicLinks(): array {
-			return [['loc' => 'https://example.com/topic1', 'lastmod' => time()]];
+		public function getTopicLinks(): Generator {
+			yield ['loc' => 'https://example.com/topic1', 'lastmod' => time()];
 		}
 	};
 
@@ -94,19 +95,13 @@ it('keeps files from previous runs when removal is disabled', function () {
 });
 
 it('processes single sitemap correctly', function () {
-	$items = [
-		['loc' => 'https://example.com/page1', 'lastmod' => time()],
-		['loc' => 'https://example.com/page2', 'lastmod' => time()],
-	];
-
-	$method = new ReflectionMethod($this->generator, 'processSingleSitemap');
-	$method->invoke($this->generator, $items);
+	expect($this->generator->generate())->toBeTrue();
 
 	$content = file_get_contents($this->tempDir . '/sitemap.xml');
 
 	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue()
-		->and($content)->toContain('<loc>https://example.com/page1</loc>')
-		->and($content)->toContain('<loc>https://example.com/page2</loc>')
+		->and($content)->toContain('<loc>https://example.com/board1</loc>')
+		->and($content)->toContain('<loc>https://example.com/topic1</loc>')
 		->and($content)->toContain('<?xml version="1.0" encoding="UTF-8"?>');
 });
 
@@ -172,6 +167,20 @@ it('prepares entry with both image and video data', function () {
 		->and($result)->toHaveKey('video:video');
 });
 
+it('gives the home page the highest priority and always frequency', function () {
+	$entry = [
+		'loc'     => 'https://example.com/',
+		'lastmod' => time(),
+		'is_home' => true,
+	];
+
+	$method = new ReflectionMethod($this->generator, 'prepareEntry');
+	$result = $method->invoke($this->generator, $entry);
+
+	expect($result['priority'])->toBe(Priority::Supreme->value)
+		->and($result['changefreq'])->toBe('always');
+});
+
 it('creates sitemap successfully', function () {
 	expect($this->generator->generate())->toBeTrue()
 		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue();
@@ -197,10 +206,8 @@ it('creates multiple sitemap files when needed', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [
-				['loc' => 'https://example.com/topic1', 'lastmod' => time()]
-			];
+		public function getTopicLinks(): Generator {
+			yield ['loc' => 'https://example.com/topic1', 'lastmod' => time()];
 		}
 	};
 
@@ -285,21 +292,48 @@ it('allows adding custom links through event dispatcher', function () {
 		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeTrue();
 });
 
-it('gets last date from links array', function () {
-	$maxDate = time();
-	$links   = [
-		['loc' => 'https://example.com/page1', 'lastmod' => strtotime('-3 days', $maxDate)],
-		['loc' => 'https://example.com/page2', 'lastmod' => $maxDate],
-	];
+it('applies URL rewriters registered through the SITEMAP_URL_REWRITER event', function () {
+	$this->dispatcher->subscribeTo(
+		AddonInterface::SITEMAP_URL_REWRITER,
+		function (AddonEvent $event) {
+			$event->getTarget()->addUrlRewriter(
+				fn(string $url): string => str_replace('example.com', 'rewritten.com', $url)
+			);
+		}
+	);
 
-	$method = new ReflectionMethod($this->generator, 'getLastDate');
-	$result = $method->invoke($this->generator, $links);
+	$this->generator->generate();
 
-	expect($result)->toBe($maxDate);
+	$content = file_get_contents($this->tempDir . '/sitemap.xml');
 
-	$result = $method->invoke($this->generator, []);
+	expect($content)
+		->toContain('<loc>https://rewritten.com/board1</loc>')
+		->toContain('<loc>https://rewritten.com/topic1</loc>')
+		// The home page is already a clean URL, so it must not be rewritten
+		->toContain('<loc>https://example.com/</loc>')
+		->not->toContain('rewritten.com/</loc>');
+});
 
-	expect($result)->toBe($maxDate);
+it('supports legacy CREATE_SEF_URLS listeners that rewrite the whole links array', function () {
+	$this->dispatcher->subscribeTo(
+		AddonInterface::CREATE_SEF_URLS,
+		function (AddonEvent $event) {
+			$generator = $event->getTarget();
+
+			foreach ($generator->links as &$url) {
+				$url['loc'] = 'https://sef.example.com/' . md5($url['loc']);
+			}
+		}
+	);
+
+	$this->generator->generate();
+
+	$content = file_get_contents($this->tempDir . '/sitemap.xml');
+
+	expect($content)
+		->toContain('https://sef.example.com/')
+		->not->toContain('<loc>https://example.com/board1</loc>')
+		->not->toContain('<loc>https://example.com/topic1</loc>');
 });
 
 it('returns false when sitemap is disabled', function () {
@@ -310,7 +344,7 @@ it('returns false when sitemap is disabled', function () {
 	expect($result)->toBeFalse();
 });
 
-it('handles XmlGeneratorException in processSingleSitemap', function () {
+it('handles XmlGeneratorException in processChunk', function () {
 	$xmlGenerator = $this->createMock(XmlGenerator::class);
 	$xmlGenerator->method('generate')->willThrowException(new XmlGeneratorException('XML generation failed'));
 
@@ -322,15 +356,11 @@ it('handles XmlGeneratorException in processSingleSitemap', function () {
 		2020
 	);
 
-	$items = [['loc' => 'https://example.com/test', 'lastmod' => time()]];
-
-	$method = new ReflectionMethod($generator, 'processSingleSitemap');
-	$method->invoke($generator, $items);
-
-	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
+	expect($generator->generate())->toBeFalse()
+		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
 });
 
-it('handles FileSystemException in processSingleSitemap', function () {
+it('handles FileSystemException in processChunk', function () {
 	$fileSystem = new class implements FileSystemInterface {
 		public function writeFile(string $filename, string $content): void {
 			throw new FileSystemException('File write failed');
@@ -349,15 +379,11 @@ it('handles FileSystemException in processSingleSitemap', function () {
 		2020
 	);
 
-	$items = [['loc' => 'https://example.com/test', 'lastmod' => time()]];
-
-	$method = new ReflectionMethod($generator, 'processSingleSitemap');
-	$method->invoke($generator, $items);
-
-	expect(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
+	expect($generator->generate())->toBeFalse()
+		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
 });
 
-it('handles XmlGeneratorException in processMultipleSitemaps', function () {
+it('handles XmlGeneratorException in processChunk for multiple sitemaps', function () {
 	Config::$modSettings['optimus_sitemap_items_display'] = 1;
 
 	$xmlGenerator = $this->createMock(XmlGenerator::class);
@@ -371,8 +397,8 @@ it('handles XmlGeneratorException in processMultipleSitemaps', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 
@@ -388,7 +414,7 @@ it('handles XmlGeneratorException in processMultipleSitemaps', function () {
 		->and(file_exists($this->tempDir . '/sitemap.xml'))->toBeFalse();
 });
 
-it('handles FileSystemException in processMultipleSitemaps', function () {
+it('handles FileSystemException in processChunk for multiple sitemaps', function () {
 	Config::$modSettings['optimus_sitemap_items_display'] = 1;
 
 	$fileSystem = new class implements FileSystemInterface {
@@ -409,8 +435,8 @@ it('handles FileSystemException in processMultipleSitemaps', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 
@@ -470,8 +496,8 @@ it('does not gzip small sitemaps', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 
@@ -500,8 +526,8 @@ it('creates a file for every chunk', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 
@@ -529,12 +555,12 @@ it('returns early when no items are generated', function () {
 			return [];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 
-	// Create a subclass that overrides getLinks to return empty array
+	// Create a subclass that overrides getLinkStream to return empty generator
 	$generator = new class(
 		$dataService,
 		new FileSystem($this->tempDir),
@@ -542,8 +568,8 @@ it('returns early when no items are generated', function () {
 		$this->dispatcher,
 		2020
 	) extends SitemapGenerator {
-		protected function getLinks(): array {
-			return [];
+		protected function getLinkStream(): Generator {
+			yield from [];
 		}
 	};
 
@@ -561,14 +587,41 @@ it('puts the last modification date of every chunk into the index', function () 
 	$firstDate  = strtotime('2024-01-15 10:00:00');
 	$secondDate = strtotime('2025-06-20 10:00:00');
 
-	$items = [
-		[['loc' => 'https://example.com/board1']],
-		[['loc' => 'https://example.com/board2']],
-	];
+	// With a fixed home frequency, the home page goes last,
+	// so the first two chunks contain the links with known dates
+	Config::$modSettings['optimus_main_page_frequency'] = 'daily';
+	Config::$modSettings['optimus_sitemap_items_display'] = 1;
 
-	$method = new ReflectionMethod($this->generator, 'processMultipleSitemaps');
+	$dataService = new class(2020, $firstDate, $secondDate) extends SitemapDataService {
+		public function __construct(
+			int $startYear,
+			private readonly int $firstDate = 0,
+			private readonly int $secondDate = 0,
+		) {
+			parent::__construct($startYear);
+		}
 
-	expect($method->invoke($this->generator, $items, [$firstDate, $secondDate]))->toBeTrue();
+		public function getBoardLinks(): array {
+			return [
+				['loc' => 'https://example.com/board1', 'lastmod' => $this->firstDate],
+				['loc' => 'https://example.com/board2', 'lastmod' => $this->secondDate],
+			];
+		}
+
+		public function getTopicLinks(): Generator {
+			yield from [];
+		}
+	};
+
+	$generator = new SitemapGenerator(
+		$dataService,
+		new FileSystem($this->tempDir),
+		new XmlGenerator(Config::$scripturl),
+		$this->dispatcher,
+		2020
+	);
+
+	expect($generator->generate())->toBeTrue();
 
 	$index = file_get_contents($this->tempDir . '/sitemap.xml');
 
@@ -581,14 +634,31 @@ it('puts the last modification date of every chunk into the index', function () 
 });
 
 it('falls back to the current date for a chunk without dates', function () {
-	$items = [
-		[['loc' => 'https://example.com/board1']],
-		[['loc' => 'https://example.com/board2']],
-	];
+	Config::$modSettings['optimus_main_page_frequency'] = 'daily';
+	Config::$modSettings['optimus_sitemap_items_display'] = 1;
 
-	$method = new ReflectionMethod($this->generator, 'processMultipleSitemaps');
+	$dataService = new class(2020) extends SitemapDataService {
+		public function getBoardLinks(): array {
+			return [
+				['loc' => 'https://example.com/board1'],
+				['loc' => 'https://example.com/board2'],
+			];
+		}
 
-	expect($method->invoke($this->generator, $items, []))->toBeTrue()
+		public function getTopicLinks(): Generator {
+			yield from [];
+		}
+	};
+
+	$generator = new SitemapGenerator(
+		$dataService,
+		new FileSystem($this->tempDir),
+		new XmlGenerator(Config::$scripturl),
+		$this->dispatcher,
+		2020
+	);
+
+	expect($generator->generate())->toBeTrue()
 		->and(file_get_contents($this->tempDir . '/sitemap.xml'))
 		->toContain('<lastmod>' . date('Y-m-d') . 'T');
 });
@@ -604,8 +674,8 @@ it('handles XmlGeneratorException when creating sitemap index', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 
@@ -655,8 +725,8 @@ it('handles FileSystemException when creating sitemap index', function () {
 			];
 		}
 
-		public function getTopicLinks(): array {
-			return [];
+		public function getTopicLinks(): Generator {
+			yield from [];
 		}
 	};
 

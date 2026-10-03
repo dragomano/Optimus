@@ -120,6 +120,13 @@ describe('FileSystem', function () {
 			->and(file_get_contents($this->tempDir . '/' . $filename))->toBe($content);
 	});
 
+	it('throws exception when gzip functions are not available', function () {
+		$fileSystem = new FileSystem($this->tempDir, gzopenFunc: 'nonexistent_gzopen_function');
+
+		expect(fn() => $fileSystem->writeGzFile('test.gz', 'content'))
+			->toThrow(FileSystemException::class, 'Gzip functions are not available');
+	});
+
 	it('throws exception when gzopen fails', function () {
 		if (! function_exists('gzopen')) {
 			$this->markTestSkipped('Gzip functions are not available');
