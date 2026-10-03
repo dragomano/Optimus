@@ -14,12 +14,13 @@ function optimus_settings_saved_alert(): void
 function template_tips_above(): void
 {
 	$links = [
-		'basic'    => 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=',
-		'extra'    => 'https://developers.facebook.com/docs/sharing/webmasters',
-		'favicon'  => 'https://developers.google.com/search/docs/appearance/favicon-in-search?hl=',
-		'metatags' => 'https://developers.google.com/search/docs/fundamentals/get-on-google?hl=',
-		'robots'   => 'https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt?hl=',
-		'sitemap'  => 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=',
+		'basic_seo'        => 'https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=',
+		'basic_facebook'   => 'https://developers.facebook.com/docs/sharing/webmasters',
+		'metatags_favicon' => 'https://developers.google.com/search/docs/appearance/favicon-in-search?hl=',
+		'metatags_google'  => 'https://developers.google.com/search/docs/fundamentals/get-on-google?hl=',
+		'files'            => 'https://developers.google.com/search/docs/crawling-indexing/robots/create-robots-txt?hl=',
+		'sitemap'          => 'https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap?hl=',
+		'addons'           => 'https://dragomano.github.io/Optimus/addons/new_addon/',
 	];
 
 	if (empty(Input::isRequest('sa')))
@@ -27,47 +28,31 @@ function template_tips_above(): void
 
 	$sa = Input::request('sa');
 
-	if (! array_key_exists($sa, Lang::getTxt('optimus_tips')))
+	$candidates = array_filter(
+		$links,
+		static fn(string $key): bool => $key === $sa || str_starts_with($key, $sa . '_'),
+		ARRAY_FILTER_USE_KEY
+	);
+
+	if ($candidates === [])
+		return;
+
+	$key  = array_rand($candidates);
+	$tips = Lang::getTxt('optimus_tips');
+
+	if (! array_key_exists($key, $tips))
 		return;
 
 	echo '
 	<div class="noticebox">
-		<a class="bbc_link" href="' . $links[$sa] . ($sa !== 'extra' ? Lang::getTxt('lang_dictionary') : '') . '" target="_blank" rel="noopener">
-			', Lang::getTxt('optimus_tips')[$sa], '
+		<a class="bbc_link" href="' . $candidates[$key] . ($key !== 'basic_facebook' ? Lang::getTxt('lang_dictionary') : '') . '" target="_blank" rel="noopener">
+			', $tips[$key], '
 		</a>
 	</div>';
 }
 
 function template_tips_below(): void
 {
-}
-
-function template_favicon(): void
-{
-	optimus_settings_saved_alert();
-
-	echo '
-	<div class="cat_bar">
-		<h3 class="catbg">', Lang::getTxt('optimus_favicon_title'), '</h3>
-	</div>
-	<div class="optimus windowbg noup">
-		<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], '">
-			<div class="title_bar centertext">
-				<label for="optimus_favicon_text">', Lang::getTxt('optimus_favicon_text'), '</label>
-			</div>
-			<div class="information centertext">
-				<td>', Lang::getTxt('optimus_favicon_help'), '</td>
-			</div>
-			<div class="descbox">
-				<textarea rows="5" name="optimus_favicon_text" id="optimus_favicon_text">', empty(Config::$modSettings['optimus_favicon_text']) ? '' : Config::$modSettings['optimus_favicon_text'], '</textarea>
-			</div>
-			<div class="windowbg" id="op_settings_footer">
-				<input type="hidden" name="', Utils::$context['session_var'], '" value="', Utils::$context['session_id'], '">
-				<input type="hidden" name="', Utils::$context['admin-dbsc_token_var'], '" value="', Utils::$context['admin-dbsc_token'], '">
-				<input type="submit" class="button" value="', Lang::getTxt('save'), '">
-			</div>
-		</form>
-	</div>';
 }
 
 function template_metatags(): void
@@ -123,7 +108,7 @@ function template_metatags(): void
 		}
 	}
 
-	echo /** @lang text */ '
+	echo '
 				</tbody>
 			</table>
 		</div>
@@ -135,7 +120,7 @@ function template_metatags(): void
 			</noscript>
 			<div id="moreTags"></div>
 			<div style="margin-top: 1ex; display: none" id="newtag_link">
-				<a href="#" onclick="addNewTag(); return false;" class="bbc_link">', Lang::getTxt('optimus_meta_addtag'), /** @lang text */ '</a>
+				<a href="#" onclick="addNewTag(); return false;" class="bbc_link">', Lang::getTxt('optimus_meta_addtag'), '</a>
 			</div>
 			<script>
 				document.getElementById("newtag_link").style.display = "";
@@ -143,6 +128,15 @@ function template_metatags(): void
 					setOuterHTML(document.getElementById("moreTags"), \'<div style="margin-top: 1ex"><input type="text" name="custom_tag_name[]" size="24" class="input_text"> => <input type="text" name="custom_tag_value[]" size="40" class="input_text"><\' + \'/div><div id="moreTags"><\' + \'/div>\');
 				}
 			</script>
+		</div>
+		<div class="cat_bar">
+			<h3 class="catbg">', Lang::getTxt('optimus_favicon_title'), '</h3>
+		</div>
+		<div class="information centertext">', Lang::getTxt('optimus_favicon_help'), '</div>
+		<div class="optimus windowbg">
+			<textarea rows="5" name="optimus_favicon_text" id="optimus_favicon_text">', empty(Config::$modSettings['optimus_favicon_text']) ? '' : Config::$modSettings['optimus_favicon_text'], '</textarea>
+		</div>
+		<div class="windowbg centertext">
 			<input type="hidden" name="', Utils::$context['session_var'], '" value="', Utils::$context['session_id'], '">
 			<input type="hidden" name="', Utils::$context['admin-dbsc_token_var'], '" value="', Utils::$context['admin-dbsc_token'], '">
 			<input type="submit" class="button" value="', Lang::getTxt('save'), '">
@@ -155,14 +149,14 @@ function template_redirect(): void
 	optimus_settings_saved_alert();
 
 	echo '
-	<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], /** @lang text */ '">
+	<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], '">
 		<div class="cat_bar">
-			<h3 class="catbg">', Lang::getTxt('optimus_redirect_title'), /** @lang text */ '</h3>
+			<h3 class="catbg">', Lang::getTxt('optimus_redirect_title'), '</h3>
 		</div>
 		<div class="information centertext">', Lang::getTxt('optimus_redirect_info'), '</div>';
 
 	if (! empty(Utils::$context['optimus_redirect_rules'])) {
-		echo /** @lang text */ '
+		echo '
 		<div class="windowbg">
 			<table class="table_grid centertext">
 				<thead>
@@ -174,7 +168,7 @@ function template_redirect(): void
 				<tbody>';
 
 		foreach (Utils::$context['optimus_redirect_rules'] as $from => $to) {
-			echo /** @lang text */ '
+			echo '
 					<tr class="windowbg">
 						<td>
 							<input type="text" name="custom_redirect_from[]" value="', $from, '">
@@ -185,13 +179,13 @@ function template_redirect(): void
 					</tr>';
 		}
 
-		echo /** @lang text */ '
+		echo '
 				</tbody>
 			</table>
 		</div>';
 	}
 
-	echo /** @lang text */ '
+	echo '
 		<div class="windowbg centertext">
 			<noscript>
 				<div style="margin-top: 1ex">
@@ -200,7 +194,7 @@ function template_redirect(): void
 			</noscript>
 			<div id="moreRedirects"></div>
 			<div style="margin-top: 1ex; display: none" id="new_redirect_link">
-				<a href="#" onclick="addNewRedirect(); return false;" class="bbc_link">', Lang::getTxt('optimus_add_redirect'), /** @lang text */ '</a>
+				<a href="#" onclick="addNewRedirect(); return false;" class="bbc_link">', Lang::getTxt('optimus_add_redirect'), '</a>
 			</div>
 			<script>
 				document.getElementById("new_redirect_link").style.display = "";
@@ -220,7 +214,7 @@ function template_counters(): void
 	optimus_settings_saved_alert();
 
 	echo '
-	<form class="optimus" action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], /** @lang text */ '">
+	<form class="optimus" action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], '">
 		<div class="cat_bar">
 			<h3 class="catbg">', Lang::getTxt('optimus_counters'), '</h3>
 		</div>
@@ -271,16 +265,17 @@ function template_counters(): void
 	</form>';
 }
 
-function template_robots(): void
+function template_files(): void
 {
 	optimus_settings_saved_alert();
 
 	echo '
-	<form action="', Utils::$context['post_url'], '" method="post">
+	<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], '">
 		<div class="cat_bar">
 			<h3 class="catbg">', Lang::getTxt('optimus_robots_title'), '</h3>
 		</div>
-		<div class="optimus roundframe">
+		<div class="information centertext">', Lang::getTxt('optimus_robots_desc'), '</div>
+		<div class="optimus windowbg">
 			<div class="half_content">
 				<div class="title_bar">
 					<h4 class="titlebg">', Lang::getTxt('optimus_rules'), '</h4>
@@ -292,42 +287,26 @@ function template_robots(): void
 			</div>
 			<div class="half_content">
 				<div class="title_bar">
-					<h4 class="titlebg"><a href="/robots.txt">robots.txt</a></h4>
+					<h4 class="titlebg">robots.txt</h4>
 				</div>
 				<div class="inner">
 					<textarea rows="18" id="optimus_robots" name="optimus_robots">', Utils::$context['robots_content'], '</textarea>
 				</div>
 			</div>
-			<hr>
-			<div id="op_settings_footer">
-				<input type="hidden" name="', Utils::$context['session_var'], '" value="', Utils::$context['session_id'], '">
-				<input type="hidden" name="', Utils::$context['admin-dbsc_token_var'], '" value="', Utils::$context['admin-dbsc_token'], '">
-				<input type="submit" class="button" value="', Lang::getTxt('save'), '">
-			</div>
+		</div>
+		<div class="cat_bar">
+			<h3 class="catbg">', Lang::getTxt('optimus_htaccess_title'), '</h3>
+		</div>
+		<div class="information centertext">', Lang::getTxt('optimus_htaccess_desc'), '</div>
+		<div class="optimus windowbg">
+			<textarea rows="10" name="optimus_htaccess" id="optimus_htaccess">', Utils::$context['htaccess_content'], '</textarea>
+		</div>
+		<div class="windowbg centertext">
+			<input type="hidden" name="', Utils::$context['session_var'], '" value="', Utils::$context['session_id'], '">
+			<input type="hidden" name="', Utils::$context['admin-dbsc_token_var'], '" value="', Utils::$context['admin-dbsc_token'], '">
+			<input type="submit" class="button" value="', Lang::getTxt('save'), '">
 		</div>
 	</form>';
-}
-
-function template_htaccess(): void
-{
-	optimus_settings_saved_alert();
-
-	echo '
-	<div class="cat_bar">
-		<h3 class="catbg">', Lang::getTxt('optimus_htaccess_title'), '</h3>
-	</div>
-	<div class="optimus windowbg noup">
-		<form action="', Utils::$context['post_url'], '" method="post" accept-charset="', Utils::$context['character_set'], '">
-			<div class="descbox">
-				<textarea rows="10" name="optimus_htaccess" id="optimus_htaccess">', Utils::$context['htaccess_content'], '</textarea>
-			</div>
-			<div class="windowbg" id="op_settings_footer">
-				<input type="hidden" name="', Utils::$context['session_var'], '" value="', Utils::$context['session_id'], '">
-				<input type="hidden" name="', Utils::$context['admin-dbsc_token_var'], '" value="', Utils::$context['admin-dbsc_token'], '">
-				<input type="submit" class="button" value="', Lang::getTxt('save'), '">
-			</div>
-		</form>
-	</div>';
 }
 
 function template_addons(): void
@@ -340,7 +319,7 @@ function template_addons(): void
 	</div>
 	<div class="information">', Lang::getTxt('optimus_addons_info'), '</div>
 	<div class="windowbg noup">
-		<table class="table_grid">
+		<table class="table_grid optimus_addons_table">
 			<thead>
 				<tr class="title_bar">
 					<th>', Lang::getTxt('optimus_addon'), '</th>
@@ -359,7 +338,6 @@ function template_addons(): void
 		};
 
 		$blockId = 'addon_settings_' . strtolower($addon['name']);
-
 		$actions = '';
 
 		if ($addon['is_downloadable']) {
@@ -380,12 +358,12 @@ function template_addons(): void
 
 		echo '
 				<tr class="windowbg">
-					<td>
+					<td class="optimus_addon_name">
 						<strong>', $addon['name'], '</strong> <span class="smalltext">(', $addon['package_id'], ')</span>', '
 						', $addon['description'] !== '' ? '<br><span class="smalltext">' . $addon['description'] . '</span>' : '', '
 					</td>
-					<td>', Lang::getTxt($status), '</td>
-					<td class="centertext">', $actions, '</td>
+					<td class="optimus_addon_status" data-label="', Lang::getTxt('optimus_addons_status'), '">', Lang::getTxt($status), '</td>
+					<td class="centertext optimus_addon_actions">', $actions, '</td>
 				</tr>';
 
 		if (! empty($addon['settings_html'])) {
@@ -445,17 +423,19 @@ function template_search_terms_above(): void
 		echo '
 	<div class="windowbg noup">';
 
-		$i = 0;
+		$i    = 0;
 		$rows = '';
+
 		foreach (Utils::$context['search_terms'] as $data) {
 			if ($data['hit'] > 10) {
 				$i++;
+
 				$rows .= '["' . $data['text'] . '",' . $data['hit'] . '],';
 			}
 		}
 
 		if (! empty($rows)) {
-			echo /** @lang text */ '
+			echo '
 		<script src="https://www.gstatic.com/charts/loader.js"></script>
 		<script>
 			google.charts.load(\'current\', {\'packages\':[\'corechart\']});
@@ -464,7 +444,7 @@ function template_search_terms_above(): void
 				let data = new google.visualization.DataTable();
 				data.addColumn("string", "Query");
 				data.addColumn("number", "Hits");
-				data.addRows([', $rows, /** @lang text */ ']);
+				data.addRows([', $rows, ']);
 				let options = {"title":"' . sprintf(Lang::getTxt('optimus_chart_title'), $i) . '", "backgroundColor":"transparent", "width":"800"};
 				let chart = new google.visualization.PieChart(document.getElementById("chart_div"));
 				chart.draw(data, options);

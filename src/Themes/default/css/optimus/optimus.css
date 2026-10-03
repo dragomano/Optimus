@@ -1,9 +1,92 @@
-.optimus textarea {width:100%}
-td > input {width: 100%}
+.optimus textarea {
+	width: 100%;
+}
+
+td > input {
+	width: 100%;
+}
+
 @media screen and (max-width:720px) {
-	.metatags th:first-child, .metatags td:first-child {display:none}
-	td input {display:block;width:100%}
-	input[name^=custom_tag_] {width:100%}
-	#optimus_favicon_api_key {width:100%}
-	#form_button {float:none!important;margin-left:0;width:100%}
+	.metatags th:first-child, .metatags td:first-child {
+		display: none;
+	}
+
+	td input {
+		display: block;
+		width: 100%;
+	}
+
+	input[name^=custom_tag_] {
+		width: 100%;
+	}
+
+	#form_button {
+		float: none !important;
+		margin-left: 0;
+		width: 100%;
+	}
+
+	.optimus_addons_table thead {
+		display: none;
+	}
+
+	.optimus_addons_table tbody {
+		display: block;
+	}
+
+	.optimus_addons_table tr {
+		display: block;
+		margin-bottom: 1em;
+		border: 1px solid #d1d5db;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.optimus_addons_table tr:last-child {
+		margin-bottom: 0;
+	}
+
+	.optimus_addons_table th, .optimus_addons_table td {
+		display: block;
+		box-sizing: border-box;
+		border: none !important;
+		width: 100% !important;
+		text-align: left !important;
+	}
+
+	.optimus_addons_table td.optimus_addon_name {
+		padding: 1em;
+		background-color: inherit;
+	}
+
+	.optimus_addons_table td.optimus_addon_status {
+		padding: .75em 1em;
+		font-size: .9em;
+		color: #6b7280;
+		background-color:rgba(0,0,0,.02);
+		position: relative;
+		padding-left: 6em;
+	}
+
+	.optimus_addons_table td.optimus_addon_status::before {
+		content: attr(data-label) ": ";
+		font-weight: 600;
+		color: #374151;
+		position: absolute;
+		left: 1em;
+	}
+
+	.optimus_addons_table td.optimus_addon_actions {
+		padding: 1em;
+		background-color: inherit;
+	}
+
+	.optimus_addons_table td.optimus_addon_actions:empty {
+		display: none;
+	}
+
+	.optimus_addons_table tr[id^="addon_settings_"] td {
+		padding: 1em;
+		background-color:rgba(0,0,0,.03);
+	}
 }

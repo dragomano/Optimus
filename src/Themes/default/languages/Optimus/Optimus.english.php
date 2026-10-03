@@ -3,12 +3,13 @@
 $txt['optimus_title'] = 'Search Engine Optimization';
 
 $txt['optimus_tips'] = [
-	'basic' => 'Search Engine Optimization (SEO) Starter Guide',
-	'extra' => 'A Guide to Sharing for Webmasters',
-	'favicon' => 'Define a favicon to show in search results',
-	'metatags' => 'Get your website on Google',
-	'robots' => 'How to write and submit a robots.txt file',
+	'basic_seo' => 'Search Engine Optimization (SEO) Starter Guide',
+	'basic_facebook' => 'A Guide to Sharing for Webmasters',
+	'metatags_favicon' => 'Define a favicon to show in search results',
+	'metatags_google' => 'Get your website on Google',
+	'files' => 'How to write and submit a robots.txt file',
 	'sitemap' => 'Build and submit a sitemap',
+	'addons' => 'How to create your own addon',
 ];
 
 $txt['optimus_basic_title'] = 'Base settings';
@@ -42,8 +43,8 @@ $txt['optimus_log_search'] = 'Enable logging of search terms';
 $txt['optimus_search_terms_limit'] = 'Maximum number of search phrases to store';
 $txt['optimus_search_terms_limit_subtext'] = 'One-time phrases are removed weekly, and only the most popular ones are kept beyond this limit (0 = no limit);';
 
-$txt['optimus_extra_title'] = 'Metadata';
-$txt['optimus_extra_desc'] = 'Here you can add the <a href="https://ogp.me/" target="_blank" rel="noopener" class="bbc_link">Open Graph markup</a> for forum pages.';
+$txt['optimus_extra_title'] = 'Additional';
+$txt['optimus_extra_desc'] = 'Other settings: error pages and search phrase tracking.';
 /* Argument: $scripturl */
 $txt['optimus_extra_info'] = 'Use <a href="https://webmaster.yandex.ru/tools/microtest/" target="_blank" rel="noopener" class="bbc_link">structured data validator</a> (Yandex.Webmaster) or <a href="https://developers.facebook.com/tools/debug" target="_blank" rel="noopener" class="bbc_link">Facebook Sharing Debugger</a> to debug your Open Graph tags.<hr><strong>Note</strong>: Facebook caches images and other OG data. To reset the cache, in the repost debugger, type the page address with the parameter <em>fbrefresh</em>, i.e. %1$s?fbrefresh=reset.';
 
@@ -59,7 +60,6 @@ $txt['optimus_tw_cards'] = 'X account name (if you have)';
 $txt['optimus_tw_cards_help'] = 'Read more about X Cards <a href="https://dev.twitter.com/cards/overview" target="_blank" rel="noopener" class="bbc_link"><strong>here</strong></a>.';
 
 $txt['optimus_favicon_title'] = 'Favicon';
-$txt['optimus_favicon_desc'] = 'Create your own forum icon. It will be displayed by the browser as an image next to the open tab and other interface elements.';
 
 $txt['optimus_favicon_text'] = 'The favicon code';
 $txt['optimus_favicon_help'] = 'Generate your own favicon <a href="https://realfavicongenerator.net" target="_blank" rel="noopener" class="bbc_link">here</a>.<br>Then upload the favicon files to the forum root, and save the code from the generator site in the field on the right.<br>This code will be load at the top of the site pages, between the &lt;head&gt;&lt;/head&gt; tags.';
@@ -86,8 +86,8 @@ $txt['optimus_redirect_from'] = 'From';
 $txt['optimus_redirect_to'] = 'To';
 $txt['optimus_add_redirect'] = 'Add a new redirect';
 
-$txt['optimus_counters'] = 'AdSense/JS code';
-$txt['optimus_counters_desc'] = 'You can add and change any JS code in this section to log stats/visits of your forum.';
+$txt['optimus_counters'] = 'Custom HTML';
+$txt['optimus_counters_desc'] = 'Custom HTML in forum pages. Use the exclusion list to choose pages where the code must not load.';
 
 $txt['optimus_head_code'] = 'Invisible JS with loading in the <strong>head</strong> section';
 $txt['optimus_head_code_subtext'] = 'For example, <a href="https://www.google.com/analytics/sign_up.html" target="_blank" rel="noopener" class="bbc_link">Google Analytics</a>, or <a href="https://www.google.com/adsense/start/" target="_blank" rel="noopener" class="bbc_link">Google AdSense</a>';
@@ -97,6 +97,9 @@ $txt['optimus_count_code'] = 'Visible JS (image counters, banners, etc)';
 $txt['optimus_counters_css'] = 'Appearance for visible counters (CSS code)';
 $txt['optimus_ignored_actions'] = 'Ignored actions';
 $txt['optimus_ignored_actions_subtext'] = 'Counters will not be loaded on these areas!';
+
+$txt['optimus_files_title'] = 'robots.txt and .htaccess';
+$txt['optimus_files_desc'] = 'Errors when editing robots.txt and .htaccess can harm indexing and forum operation!';
 
 $txt['optimus_robots_title'] = 'Manage robots.txt';
 $txt['optimus_robots_desc'] = 'The rule generator is updated depending on the installed mods and some settings of your SMF.';
@@ -200,7 +203,6 @@ $txt['optimus_seo_keywords'] = 'Tags';
 $txt['optimus_enter_keywords'] = 'Enter one or more tags';
 /* Argument: $keyword_name */
 $txt['optimus_topics_with_keyword'] = 'Forum topics with tag "%s"';
-$txt['optimus_keyword_id_not_found'] = 'The specified tag ID was not found.';
 $txt['optimus_no_keywords'] = 'There is no information about this tag identifier.';
 $txt['optimus_all_keywords'] = 'All tags in the forum topics';
 $txt['optimus_keyword_column'] = 'Tag';

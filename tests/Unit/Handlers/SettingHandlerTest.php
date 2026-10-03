@@ -143,10 +143,12 @@ describe('Tabs', function () {
 	test('basicTabSettings save with post data', function () {
 		$_POST['optimus_forum_index'] = 'Test Forum';
 		$_POST['optimus_description'] = 'Test Description';
+		$_POST['optimus_fb_appid'] = '123456789';
+		$_POST['optimus_tw_cards'] = '@testuser';
 
 		expect($this->handler->basicTabSettings())->toBeNull();
 
-		unset($_POST['optimus_forum_index'], $_POST['optimus_description']);
+		unset($_POST['optimus_forum_index'], $_POST['optimus_description'], $_POST['optimus_fb_appid'], $_POST['optimus_tw_cards']);
 	});
 
 	test('extraTabSettings method', function () {
@@ -166,12 +168,10 @@ describe('Tabs', function () {
 		unset($_POST['optimus_fb_appid'], $_POST['optimus_tw_cards']);
 	});
 
-	test('faviconTabSettings method', function () {
-		expect($this->handler->faviconTabSettings())->toBeNull();
-
+	test('filesTabSettings method', function () {
 		unset($_GET['save']);
 
-		expect($this->handler->faviconTabSettings(true))->toBeArray();
+		expect($this->handler->filesTabSettings())->toBeNull();
 	});
 
 	test('metatagsTabSettings method', function () {
@@ -208,22 +208,13 @@ describe('Tabs', function () {
 		expect($this->handler->counterTabSettings())->toBeNull();
 	});
 
-	test('robotsTabSettings method', function () {
-		expect($this->handler->robotsTabSettings())->toBeNull();
-	});
-
-	test('robotsTabSettings save with robots content', function () {
+	test('filesTabSettings save with robots and htaccess content', function () {
 		$_POST['optimus_robots'] = 'User-agent: *';
-
-		expect($this->handler->robotsTabSettings())->toBeNull();
-
-		unset($_POST['optimus_robots']);
-	});
-
-	test('htaccessTabSettings method', function () {
 		$_POST['optimus_htaccess'] = '# comment';
 
-		expect($this->handler->htaccessTabSettings())->toBeNull();
+		expect($this->handler->filesTabSettings())->toBeNull();
+
+		unset($_POST['optimus_robots'], $_POST['optimus_htaccess']);
 	});
 
 	test('addonsTabSettings method', function () {
@@ -235,14 +226,14 @@ describe('Tabs', function () {
 			->and(Utils::$context['optimus_addons'])->not->toBeEmpty();
 	});
 
-	test('htaccessTabSettings save with backup creation', function () {
+	test('filesTabSettings save with backup creation', function () {
 		// Create a temporary .htaccess file
 		$htaccessPath = $this->tempDir . DIRECTORY_SEPARATOR . '.htaccess';
 		file_put_contents($htaccessPath, 'original content');
 
 		$_POST['optimus_htaccess'] = 'new content';
 
-		$this->handler->htaccessTabSettings();
+		$this->handler->filesTabSettings();
 
 		expect(file_exists($htaccessPath . '.backup'))->toBeTrue();
 
@@ -302,7 +293,7 @@ describe('Tabs', function () {
 		unset($_POST['optimus_sitemap_enable']);
 	});
 
-	test('basicTabSettings save with optimus_log_search calls db insert', function () {
+	test('extraTabSettings save with optimus_log_search calls db insert', function () {
 		$_POST['optimus_log_search'] = '1';
 
 		$insertParams = [];
@@ -322,7 +313,7 @@ describe('Tabs', function () {
 			}
 		};
 
-		$this->handler->basicTabSettings();
+		$this->handler->extraTabSettings();
 
 		expect($insertParams)->not->toBeEmpty()
 			->and($insertParams[0])->toBe('insert')
@@ -333,26 +324,15 @@ describe('Tabs', function () {
 		unset($_POST['optimus_log_search']);
 	});
 
-	test('robotsTabSettings sets robots_content to empty when path is not writable', function () {
+	test('filesTabSettings sets content to empty when paths are not writable', function () {
 		global $makeWritableReturn;
 		$makeWritableReturn = false;
 
 		unset($_GET['save']);
-		$this->handler->robotsTabSettings();
+		$this->handler->filesTabSettings();
 
-		expect(Utils::$context['robots_content'])->toBe('');
-
-		$makeWritableReturn = true;
-	});
-
-	test('htaccessTabSettings sets htaccess_content to empty when path is not writable', function () {
-		global $makeWritableReturn;
-		$makeWritableReturn = false;
-
-		unset($_GET['save']);
-		$this->handler->htaccessTabSettings();
-
-		expect(Utils::$context['htaccess_content'])->toBe('');
+		expect(Utils::$context['robots_content'])->toBe('')
+			->and(Utils::$context['htaccess_content'])->toBe('');
 
 		$makeWritableReturn = true;
 	});

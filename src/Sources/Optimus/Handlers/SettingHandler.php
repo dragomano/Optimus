@@ -78,12 +78,10 @@ final class SettingHandler
 			'subsections' => [
 				'basic'    => [Lang::getTxt('optimus_basic_title')],
 				'extra'    => [Lang::getTxt('optimus_extra_title')],
-				'favicon'  => [Lang::getTxt('optimus_favicon_title')],
 				'metatags' => [Lang::getTxt('optimus_meta_title')],
 				'redirect' => [Lang::getTxt('optimus_redirect_title')],
 				'counters' => [Lang::getTxt('optimus_counters')],
-				'robots'   => [Lang::getTxt('optimus_robots_title')],
-				'htaccess' => [Lang::getTxt('optimus_htaccess_title')],
+				'files'    => [Lang::getTxt('optimus_files_title')],
 				'sitemap'  => [Lang::getTxt('optimus_sitemap_title')],
 				'addons'   => [Lang::getTxt('optimus_addons_title')],
 			]
@@ -94,7 +92,6 @@ final class SettingHandler
 	{
 		$settings_search[] = [$this->basicTabSettings(...), 'area=optimus;sa=basic'];
 		$settings_search[] = [$this->extraTabSettings(...), 'area=optimus;sa=extra'];
-		$settings_search[] = [$this->faviconTabSettings(...), 'area=optimus;sa=favicon'];
 		$settings_search[] = [$this->sitemapTabSettings(...), 'area=optimus;sa=sitemap'];
 	}
 
@@ -109,12 +106,10 @@ final class SettingHandler
 		$subActions = [
 			'basic'    => 'basicTabSettings',
 			'extra'    => 'extraTabSettings',
-			'favicon'  => 'faviconTabSettings',
 			'metatags' => 'metatagsTabSettings',
 			'redirect' => 'redirectTabSettings',
 			'counters' => 'counterTabSettings',
-			'robots'   => 'robotsTabSettings',
-			'htaccess' => 'htaccessTabSettings',
+			'files'    => 'filesTabSettings',
 			'sitemap'  => 'sitemapTabSettings',
 			'addons'   => 'addonsTabSettings',
 		];
@@ -134,9 +129,6 @@ final class SettingHandler
 				'extra' => [
 					'description' => Lang::getTxt('optimus_extra_desc')
 				],
-				'favicon' => [
-					'description' => Lang::getTxt('optimus_favicon_desc')
-				],
 				'metatags' => [
 					'description' => Lang::getTxt('optimus_meta_desc')
 				],
@@ -146,11 +138,8 @@ final class SettingHandler
 				'counters' => [
 					'description' => Lang::getTxt('optimus_counters_desc')
 				],
-				'robots' => [
-					'description' => Lang::getTxt('optimus_robots_desc')
-				],
-				'htaccess' => [
-					'description' => Lang::getTxt('optimus_htaccess_desc')
+				'files' => [
+					'description' => Lang::getTxt('optimus_files_desc')
 				],
 				'sitemap' => [
 					'description' => sprintf(Lang::getTxt('optimus_sitemap_desc'), OP_NAME)
@@ -178,6 +167,8 @@ final class SettingHandler
 			['optimus_forum_index' => sprintf(Lang::getTxt('forum_index'), Utils::$context['forum_name'])]
 		);
 
+		Lang::setTxt('optimus_extra_info', sprintf(Lang::getTxt('optimus_extra_info'), Config::$scripturl));
+
 		$config_vars = [
 			['title', 'optimus_main_page'],
 			[
@@ -203,16 +194,23 @@ final class SettingHandler
 			['select', 'optimus_topic_extend_title', Lang::getTxt('optimus_topic_extend_title_set')],
 			'',
 			['title', 'optimus_extra_settings'],
-			['check', 'optimus_errors_for_wrong_actions'],
-			['check', 'optimus_errors_for_wrong_boards_topics'],
-			['check', 'optimus_log_search'],
+			['desc', 'optimus_extra_info'],
 			[
-				'int',
-				'optimus_search_terms_limit',
-				'min' => 0,
-				'max' => 50000,
-				'subtext' => Lang::getTxt('optimus_search_terms_limit_subtext')
+				'check',
+				'optimus_og_image',
+				'help' => 'optimus_og_image_help',
+				'subtext' => sprintf(Lang::getTxt('optimus_og_image_subtext'), implode('', [
+					Config::$scripturl . '?action=admin;area=theme;sa=list;th=',
+					Theme::$current->settings['theme_id']  . '#options_og_image',
+				]))
 			],
+			[
+				'check',
+				'optimus_allow_change_board_og_image',
+				'subtext' => Lang::getTxt('optimus_allow_change_board_og_image_subtext')
+			],
+			['text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'],
+			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'],
 		];
 
 		// You can add your own options
@@ -225,14 +223,20 @@ final class SettingHandler
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
 
-			$this->schedulePruneSearchTermsTask(Input::isPost('optimus_log_search'));
-
 			if (Input::isPost('optimus_forum_index')) {
 				Input::post(['optimus_forum_index' => Input::filter('optimus_forum_index')]);
 			}
 
 			if (Input::isPost('optimus_description')) {
 				Input::post(['optimus_description' => Input::filter('optimus_description')]);
+			}
+
+			if (Input::isPost('optimus_fb_appid')) {
+				Input::post(['optimus_fb_appid' => Input::filter('optimus_fb_appid')]);
+			}
+
+			if (Input::isPost('optimus_tw_cards')) {
+				Input::post(['optimus_tw_cards' => str_replace('@', '', Input::filter('optimus_tw_cards'))]);
 			}
 
 			IntegrationHook::call('integrate_save_optimus_basic_settings');
@@ -254,27 +258,18 @@ final class SettingHandler
 		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_extra_title');
 		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=extra;save';
 
-		Lang::setTxt('optimus_extra_info', sprintf(Lang::getTxt('optimus_extra_info'), Config::$scripturl));
-
 		$config_vars = [
 			['title', 'optimus_extra_title'],
-			['desc', 'optimus_extra_info'],
+			['check', 'optimus_errors_for_wrong_actions'],
+			['check', 'optimus_errors_for_wrong_boards_topics'],
+			['check', 'optimus_log_search'],
 			[
-				'check',
-				'optimus_og_image',
-				'help' => 'optimus_og_image_help',
-				'subtext' => sprintf(Lang::getTxt('optimus_og_image_subtext'), implode('', [
-					Config::$scripturl . '?action=admin;area=theme;sa=list;th=',
-					Theme::$current->settings['theme_id']  . '#options_og_image',
-				]))
+				'int',
+				'optimus_search_terms_limit',
+				'min' => 0,
+				'max' => 50000,
+				'subtext' => Lang::getTxt('optimus_search_terms_limit_subtext')
 			],
-			[
-				'check',
-				'optimus_allow_change_board_og_image',
-				'subtext' => Lang::getTxt('optimus_allow_change_board_og_image_subtext')
-			],
-			['text', 'optimus_fb_appid', 40, 'help' => 'optimus_fb_appid_help'],
-			['text', 'optimus_tw_cards', 40, 'preinput' => '@', 'help' => 'optimus_tw_cards_help'],
 		];
 
 		// You can add your own options
@@ -287,16 +282,7 @@ final class SettingHandler
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
 
-			if (Input::isPost('optimus_fb_appid')) {
-				Input::post(['optimus_fb_appid' => Input::filter('optimus_fb_appid')]);
-			}
-
-			if (Input::isPost('optimus_tw_cards')) {
-				Input::post([
-					'optimus_tw_cards' => str_replace(
-						'@', '', Input::filter('optimus_tw_cards'))
-				]);
-			}
+			$this->schedulePruneSearchTermsTask(Input::isPost('optimus_log_search'));
 
 			IntegrationHook::call('integrate_save_optimus_extra_settings');
 
@@ -304,36 +290,6 @@ final class SettingHandler
 			ACP::saveDBSettings($save_vars);
 
 			Utils::redirectexit('action=admin;area=optimus;sa=extra');
-		}
-
-		ACP::prepareDBSettingContext($config_vars);
-	}
-
-	/**
-	 * @return void|array
-	 */
-	public function faviconTabSettings(bool $return_config = false)
-	{
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_favicon_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=favicon;save';
-
-		$config_vars = [
-			['large_text', 'optimus_favicon_text'],
-		];
-
-		if ($return_config) {
-			return $config_vars;
-		}
-
-		Utils::$context['sub_template'] = 'favicon';
-
-		if (Input::isGet('save')) {
-			User::$me->checkSession();
-
-			$save_vars = $config_vars;
-			ACP::saveDBSettings($save_vars);
-
-			Utils::redirectexit('action=admin;area=optimus;sa=favicon');
 		}
 
 		ACP::prepareDBSettingContext($config_vars);
@@ -351,7 +307,9 @@ final class SettingHandler
 
 		Utils::$context['optimus_metatags_rules'] = $meta_tags;
 
-		$config_vars = [];
+		$config_vars = [
+			['large_text', 'optimus_favicon_text'],
+		];
 
 		if (Input::isGet('save')) {
 			User::$me->checkSession();
@@ -443,17 +401,21 @@ final class SettingHandler
 		ACP::prepareDBSettingContext($config_vars);
 	}
 
-	public function robotsTabSettings(): void
+	public function filesTabSettings(): void
 	{
-		Utils::$context['sub_template'] = 'robots';
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_robots_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=robots;save';
+		Utils::$context['sub_template'] = 'files';
+		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_files_title');
+		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=files;save';
 
 		$config_vars = [];
 
-		$path = (Input::server('document_root') ?: Config::$boarddir) . '/robots.txt';
+		$root = Input::server('document_root') ?: Config::$boarddir;
 
-		Utils::$context['robots_content'] = Utils::makeWritable($path) ? @file_get_contents($path) : '';
+		$robotsPath   = $root . '/robots.txt';
+		$htaccessPath = $root . '/.htaccess';
+
+		Utils::$context['robots_content']   = Utils::makeWritable($robotsPath) ? @file_get_contents($robotsPath) : '';
+		Utils::$context['htaccess_content'] = Utils::makeWritable($htaccessPath) ? @file_get_contents($htaccessPath) : '';
 
 		(new RobotsGenerator())->generate();
 
@@ -463,39 +425,15 @@ final class SettingHandler
 			$save_vars = $config_vars;
 			ACP::saveDBSettings($save_vars);
 
-			file_put_contents($path, Input::filter('optimus_robots'), LOCK_EX);
+			file_put_contents($robotsPath, Input::filter('optimus_robots'), LOCK_EX);
 
-			Utils::redirectexit('action=admin;area=optimus;sa=robots');
-		}
-
-		ACP::prepareDBSettingContext($config_vars);
-	}
-
-	public function htaccessTabSettings(): void
-	{
-		Utils::$context['sub_template'] = 'htaccess';
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_htaccess_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=htaccess;save';
-
-		$config_vars = [];
-
-		$path = (Input::server('document_root') ?: Config::$boarddir) . '/.htaccess';
-
-		Utils::$context['htaccess_content'] = Utils::makeWritable($path) ? @file_get_contents($path) : '';
-
-		if (Input::isGet('save')) {
-			User::$me->checkSession();
-
-			$save_vars = $config_vars;
-			ACP::saveDBSettings($save_vars);
-
-			if (is_file($path)) {
-				copy($path, $path . '.backup');
+			if (is_file($htaccessPath)) {
+				copy($htaccessPath, $htaccessPath . '.backup');
 			}
 
-			file_put_contents($path, trim(Input::post('optimus_htaccess')), LOCK_EX);
+			file_put_contents($htaccessPath, trim(Input::post('optimus_htaccess')), LOCK_EX);
 
-			Utils::redirectexit('action=admin;area=optimus;sa=htaccess');
+			Utils::redirectexit('action=admin;area=optimus;sa=files');
 		}
 
 		ACP::prepareDBSettingContext($config_vars);
