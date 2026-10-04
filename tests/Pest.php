@@ -6,6 +6,30 @@ use Bugo\Compat\Theme;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
 
+// The test addons are not part of the shipped sources, so temporarily
+// copy them into the Addons directory while the real files are absent,
+// to exercise the addon handling everywhere, including CI
+$copiedStubs = [];
+
+foreach (['TestAddon', 'DemoAddon'] as $addon) {
+	$target = dirname(__DIR__) . '/src/Sources/Optimus/Addons/' . $addon . '.php';
+
+	if (is_file($target)) {
+		continue;
+	}
+
+	copy(__DIR__ . '/files/Addons/' . $addon . '.php', $target);
+	$copiedStubs[] = $target;
+}
+
+if ($copiedStubs) {
+	register_shutdown_function(static function () use ($copiedStubs) {
+		foreach ($copiedStubs as $file) {
+			@unlink($file);
+		}
+	});
+}
+
 uses()->beforeEach(function () {
 	require_once dirname(__DIR__) . '/src/Sources/Optimus/app.php';
 
@@ -60,6 +84,7 @@ if (! class_exists('SMF_BackgroundTask')) {
 if (! function_exists('add_integration_function')) {
 	function add_integration_function(...$params): void
 	{
+		$GLOBALS['test_integration_hooks'][] = $params;
 	}
 }
 

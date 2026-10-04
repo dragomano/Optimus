@@ -6,8 +6,6 @@ use Bugo\Compat\Db\FuncMapper;
 use Bugo\Compat\Lang;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
-use Bugo\Optimus\Addons\ExtraSettings\ExtraSettings;
-use Bugo\Optimus\Addons\IndexNow\IndexNow;
 use Bugo\Optimus\Handlers\AddonSettingsHandler;
 use Tests\TestDbMapper;
 
@@ -96,20 +94,20 @@ test('handle renders settings blocks for addons that have settings', function ()
 		// with the same random input name
 		->and($withSettings[0]['settings_html'])->toBe($withSettings[1]['settings_html'])
 		->and($withSettings[0]['settings_html'])->toContain('<input type="hidden"');
-})->skip(! class_exists(IndexNow::class) || ! class_exists(ExtraSettings::class), 'The premium addon sources are not part of this repository');
+});
 
 test('handle saves settings of the addon', function () {
-	$_REQUEST['addon'] = 'Optimus:IndexNow';
+	$_REQUEST['addon'] = 'Optimus:TestAddon';
 	$_GET['save'] = true;
-	$_POST['optimus_index_now_key'] = 'abcdef1234567890';
+	$_POST['optimus_test_addon_enabled'] = '1';
 
 	$this->handler->handle();
 
-	expect(is_file(Config::$boarddir . '/abcdef1234567890.txt'))->toBeTrue();
-})->skip(! class_exists(IndexNow::class), 'The premium IndexNow addon sources are not part of this repository');
+	expect(Utils::$context['optimus_test_addon_saved'])->toBe('1');
+});
 
 test('handle redirects when addon param is present without save', function () {
-	$_REQUEST['addon'] = 'Optimus:IndexNow';
+	$_REQUEST['addon'] = 'Optimus:TestAddon';
 
 	$this->handler->handle();
 
@@ -138,7 +136,7 @@ test('handle redirects when addon is unknown', function () {
 });
 
 test('handle toggles the addon and renders the list', function () {
-	$_GET['toggle'] = 'Optimus:IndexNow';
+	$_GET['toggle'] = 'Optimus:ExampleAddon';
 
 	$this->handler->handle();
 

@@ -26,9 +26,9 @@
     "check": "vendor/bin/rector process --dry-run --clear-cache",
     "rector": "vendor/bin/rector process",
     "test": "vendor/bin/pest --colors=always",
-    "test-coverage": "vendor/bin/pest --colors=always --coverage --min=98",
-    "test-coverage-clover": "vendor/bin/pest --colors=always --min=98 --coverage-clover coverage.xml",
-    "test-coverage-html": "vendor/bin/pest --colors=always --min=98 --coverage-html coverage",
+    "test-coverage": "vendor/bin/pest --colors=always --coverage --min=100",
+    "test-coverage-clover": "vendor/bin/pest --colors=always --min=100 --coverage-clover coverage.xml",
+    "test-coverage-html": "vendor/bin/pest --colors=always --min=100 --coverage-html coverage",
     "post-update-cmd": "cd src/Sources/Optimus && composer update --no-dev -o",
     "build": [
       "composer update",
