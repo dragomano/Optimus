@@ -6,6 +6,8 @@ use Bugo\Compat\Db\FuncMapper;
 use Bugo\Compat\Lang;
 use Bugo\Compat\User;
 use Bugo\Compat\Utils;
+use Bugo\Optimus\Addons\ExtraSettings\ExtraSettings;
+use Bugo\Optimus\Addons\IndexNow\IndexNow;
 use Bugo\Optimus\Handlers\AddonSettingsHandler;
 use Tests\TestDbMapper;
 
@@ -67,6 +69,16 @@ test('handle renders the addon list', function () {
 
 	$rows = Utils::$context['optimus_addons'];
 
+	expect(Utils::$context['sub_template'])->toBe('addons')
+		->and($rows)->not->toBeEmpty()
+		->and(Utils::$context['page_title'])->toContain('Addons');
+});
+
+test('handle renders settings blocks for addons that have settings', function () {
+	$this->handler->handle();
+
+	$rows = Utils::$context['optimus_addons'];
+
 	$withSettings = [];
 	$withoutSettings = [];
 
@@ -78,16 +90,13 @@ test('handle renders the addon list', function () {
 		}
 	}
 
-	expect(Utils::$context['sub_template'])->toBe('addons')
-		->and($rows)->not->toBeEmpty()
-		->and(Utils::$context['page_title'])->toContain('Addons')
-		->and($withSettings)->not->toBeEmpty()
+	expect($withSettings)->not->toBeEmpty()
 		->and($withoutSettings[0]['settings_html'] ?? null)->toBeNull()
 		// All settings forms must carry the same (last created) token
 		// with the same random input name
 		->and($withSettings[0]['settings_html'])->toBe($withSettings[1]['settings_html'])
 		->and($withSettings[0]['settings_html'])->toContain('<input type="hidden"');
-});
+})->skip(! class_exists(IndexNow::class) || ! class_exists(ExtraSettings::class), 'The premium addon sources are not part of this repository');
 
 test('handle saves settings of the addon', function () {
 	$_REQUEST['addon'] = 'Optimus:IndexNow';
@@ -97,7 +106,7 @@ test('handle saves settings of the addon', function () {
 	$this->handler->handle();
 
 	expect(is_file(Config::$boarddir . '/abcdef1234567890.txt'))->toBeTrue();
-});
+})->skip(! class_exists(IndexNow::class), 'The premium IndexNow addon sources are not part of this repository');
 
 test('handle redirects when addon param is present without save', function () {
 	$_REQUEST['addon'] = 'Optimus:IndexNow';

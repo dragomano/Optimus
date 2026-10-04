@@ -3,7 +3,7 @@
 use Bugo\Compat\Config;
 use Bugo\Compat\Db;
 use Bugo\Compat\Db\FuncMapper;
-use Bugo\Optimus\Addons\IndexNow;
+use Bugo\Optimus\Addons\IndexNow\IndexNow;
 use Bugo\Optimus\Addons\PrettyUrls;
 use Bugo\Optimus\Handlers\AddonHandler;
 use League\Event\ListenerRegistry;
@@ -177,10 +177,11 @@ test('getDisabledAddons returns empty array by default', function () {
 });
 
 test('toggle disables and enables the addon', function () {
-	$handler = new AddonHandler();
+	expect((new AddonHandler())->toggle('Optimus:IndexNow'))->toBeTrue();
+})->skip(! class_exists(IndexNow::class), 'The premium IndexNow addon sources are not part of this repository');
 
-	expect($handler->toggle('Optimus:IndexNow'))->toBeTrue()
-		->and($handler->toggle('Unknown:NonexistentAddon'))->toBeFalse();
+test('toggle rejects an unknown package id', function () {
+	expect((new AddonHandler())->toggle('Unknown:NonexistentAddon'))->toBeFalse();
 });
 
 test('toggle enables the previously disabled addon', function () {
@@ -189,23 +190,30 @@ test('toggle enables the previously disabled addon', function () {
 	Config::$modSettings['optimus_disabled_addons'] = 'Optimus:IndexNow';
 
 	expect((new AddonHandler())->toggle('Optimus:IndexNow'))->toBeTrue();
-});
+})->skip(! class_exists(IndexNow::class), 'The premium IndexNow addon sources are not part of this repository');
 
 test('getAddonData returns metadata for all detected addons', function () {
 	$data = (new AddonHandler())->getAddonData();
 
-	expect($data)->not->toBeEmpty();
-
-	$row = [];
 	$prettyUrls = [];
 
 	foreach ($data as $item) {
-		if ($item['package_id'] === 'Optimus:IndexNow') {
-			$row = $item;
-		}
-
 		if ($item['package_id'] === 'el:prettyurls') {
 			$prettyUrls = $item;
+		}
+	}
+
+	expect($data)->not->toBeEmpty()
+		->and($prettyUrls['is_builtin'])->toBeFalse()
+		->and($prettyUrls['is_active'])->toBeFalse();
+});
+
+test('getAddonData marks the IndexNow addon as built-in', function () {
+	$row = [];
+
+	foreach ((new AddonHandler())->getAddonData() as $item) {
+		if ($item['package_id'] === 'Optimus:IndexNow') {
+			$row = $item;
 		}
 	}
 
@@ -215,10 +223,24 @@ test('getAddonData returns metadata for all detected addons', function () {
 		->and($row['is_disabled'])->toBeFalse()
 		->and($row['has_settings'])->toBeTrue()
 		->and($row['is_downloadable'])->toBeFalse()
-		->and($row['description'])->toBeString()
-		->and($prettyUrls['is_builtin'])->toBeFalse()
-		->and($prettyUrls['is_active'])->toBeFalse();
-});
+		->and($row['description'])->toBeString();
+})->skip(! class_exists(IndexNow::class), 'The premium IndexNow addon sources are not part of this repository');
+
+test('getAddonData shows the IndexNow addon as downloadable without its sources', function () {
+	$row = [];
+
+	foreach ((new AddonHandler())->getAddonData() as $item) {
+		if ($item['package_id'] === 'Optimus:IndexNow') {
+			$row = $item;
+		}
+	}
+
+	expect($row['name'])->toBe('IndexNow')
+		->and($row['is_builtin'])->toBeFalse()
+		->and($row['is_active'])->toBeFalse()
+		->and($row['has_settings'])->toBeFalse()
+		->and($row['is_downloadable'])->toBeTrue();
+})->skip(class_exists(IndexNow::class), 'The premium IndexNow addon sources are present in this environment');
 
 test('getAddonData sorts active addons first', function () {
 	$data = (new AddonHandler())->getAddonData();
