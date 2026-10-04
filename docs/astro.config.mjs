@@ -55,6 +55,19 @@ export default defineConfig({
 		}),
 	],
 	vite: {
+		build: {
+			rollupOptions: {
+				// Astro emits the internal "use astro:head-inject" directive for every MDX
+				// page, which Rolldown warns about; the warning is harmless, so filter it out
+				onwarn(warning, warn) {
+					if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message.includes('use astro:head-inject')) {
+						return;
+					}
+
+					warn(warning);
+				},
+			},
+		},
 		css: {
 			preprocessorOptions: {
 				scss: {

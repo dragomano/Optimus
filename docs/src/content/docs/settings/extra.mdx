@@ -1,27 +1,29 @@
 ---
-title: Metadata
+title: Additional
+sidebar:
+  order: 2
 ---
 
-On this tab, you can enable the generation of some additional meta tags for [Open Graph](https://ogp.me/).
+On this tab, you can find the other mod settings: error pages for non-existent forum areas and search terms tracking.
 
 import { Steps } from '@astrojs/starlight/components';
 
 ## Available Settings
 ---
 <Steps>
-1. ### Use the Image from the First Topic Message in the Meta Tag `og:image`
+1. ### Display a 404 Page for Non-Existent Forum Areas
 
-    If enabled, when there is an image in the first message of any topic, that image will be specified in the `og:image` meta tag. This way, when you share a link to this topic on any social network that supports microdata, the image will be displayed along with the topic title.
+    Just check the forum's reaction to non-existent areas with and without this option, and choose the one you prefer.
 
-2. ### Allow a Separate Field for the Board OG Image
+2. ### Display a 403/404 Page for Inaccessible/Non-Existent Boards and Topics
 
-    Enable this if you want to specify a unique image for each section separately.
+    Simply check the forum's reaction to non-existent section and topic pages with and without this option, and choose the one you prefer.
 
-3. ### Facebook Application ID (if you have)
+3. ### Enable Logging of Search Terms
 
-    Generates a special tag for Facebook: `fb:app_id`.
+    If you enable this, phrases that your users search for on your forum will be added to a separate table in the database.
 
-4. ### X Account Name (if you have)
+4. ### Maximum Number of Search Phrases to Store
 
-    Generates special tags for the social network X (formerly known as Twitter): `twitter:card`, `twitter:site`, etc.
+    A complement to the previous option: once a week, a background task removes one-time phrases and trims the list to the specified limit, keeping only the most popular ones. Set `0` if you don't need a limit.
 </Steps>

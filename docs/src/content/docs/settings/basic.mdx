@@ -1,5 +1,7 @@
 ---
 title: General Settings
+sidebar:
+  order: 1
 ---
 
 import { Steps } from '@astrojs/starlight/components';
@@ -80,20 +82,22 @@ import { Steps } from '@astrojs/starlight/components';
 
 ## Additional Settings
 ---
+This section contains the Open Graph markup options — previously they were located on a separate tab. Links to the [structured data validator](https://webmaster.yandex.ru/tools/microtest/) (Yandex.Webmaster) and the [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug) are provided right in the settings; they are handy for checking the generated tags.
+
 <Steps>
-1. ### Display a 404 Page for Non-Existent Forum Areas
+1. ### Use the Image from the First Topic Message in the Meta Tag `og:image`
 
-    Just check the forum's reaction to non-existent areas with and without this option, and choose the one you prefer.
+    If enabled, when there is an image in the first message of any topic, that image will be specified in the `og:image` meta tag. This way, when you share a link to this topic on any social network that supports microdata, the image will be displayed along with the topic title.
 
-2. ### Display a 403/404 Page for Inaccessible/Non-Existent Boards and Topics
+2. ### Allow a Separate Field for the Board OG Image
 
-    Simply check the forum's reaction to non-existent section and topic pages with and without this option, and choose the one you prefer.
+    Enable this if you want to specify a unique image for each section separately.
 
-3. ### Enable Logging of Search Terms
+3. ### Facebook Application ID (if you have)
 
-    If you enable this, phrases that your users search for on your forum will be added to a separate table in the database.
+    Generates a special tag for Facebook: `fb:app_id`.
 
-4. ### Maximum Number of Search Phrases to Store
+4. ### X Account Name (if you have)
 
-    A complement to the previous option: once a week, a background task removes one-time phrases and trims the list to the specified limit, keeping only the most popular ones. Set `0` if you don't need a limit.
+    Generates special tags for the social network X (formerly known as Twitter): `twitter:card`, `twitter:site`, etc.
 </Steps>

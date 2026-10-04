@@ -50,3 +50,35 @@ Using `IntegrationHook::add`, we specify the hook we need and link it to a metho
 Then, the linked method performs its task. Specifically, in this addon — `ExampleAddon` — a meta tag `<meta name="robots" content="noindex,nofollow">` is added to the pages of blocked topics, as well as to topics with fewer than two replies. If you need such an addon, save its code in the corresponding file `ExampleAddon.php` and place it in the `Sources/Optimus/Addons` directory. You won't need to enable anything separately; it will work immediately.
 
 All available addons operate on the same principle.
+
+## Addon Settings
+
+If your addon has its own options, it can get its own collapsible settings block on the **Addons** tab of the Optimus admin area instead of adding its options to the general settings pages.
+
+To do this, implement the `HasSettingsInterface` interface in your addon class:
+
+```php
+final class IndexNow extends AbstractAddon implements HasSettingsInterface
+{
+	public function getSettings(): array
+	{
+		return [
+			[
+				'text',
+				'optimus_index_now_key',
+				'size'    => 128,
+				'subtext' => Lang::getTxt('optimus_index_now_key_subtext'),
+			]
+		];
+	}
+
+	public function saveSettings(): void
+	{
+		// Additional actions when saving the settings, if necessary
+	}
+}
+```
+
+The `getSettings()` method must return the addon options in the standard SMF format (the same as in the `integrate_general_settings` hook). The `saveSettings()` method is optional and is only needed for additional actions when saving — for example, creating auxiliary files.
+
+A short description of the addon displayed in the list can be provided via the `optimus_addon_<lowercase_addon_name>_desc` string in the language file.

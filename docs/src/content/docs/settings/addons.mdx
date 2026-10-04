@@ -1,0 +1,24 @@
+---
+title: Addons
+sidebar:
+  order: 8
+---
+
+This tab contains the list of all addons of the modification — both built-in ones and addons created for integration with third-party modifications.
+
+For each addon, its package identifier and current status are displayed:
+
+- **Active** — the addon is enabled and working.
+- **Disabled** — the addon has been manually disabled via the button.
+- **Inactive** — the modification intended for this addon is not installed.
+- **Available for download** — the addon is not included in the Optimus package; use the Download button to get it.
+
+Addons of installed modifications are enabled automatically; no separate activation is required. However, if necessary, any addon can be temporarily disabled (or enabled back) with a single button click — the effect is immediate. This can be useful, for example, for diagnosing forum problems.
+
+## Addon Settings
+
+If an addon has its own settings, a **Settings** link is displayed next to it. Clicking it expands a block with the options of that particular addon right on the same page.
+
+These options are no longer displayed on the general modification settings pages — each addon keeps its settings within its own block.
+
+Addon developers can add support for their own settings block by implementing the `HasSettingsInterface` interface — see [How to Create Your Own Addon](../../addons/new_addon).
