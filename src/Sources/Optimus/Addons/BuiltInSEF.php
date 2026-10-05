@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 26.05.25
+ * @version 05.10.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -32,9 +32,14 @@ class BuiltInSEF extends AbstractAddon
 		self::SITEMAP_CONTENT,
 	];
 
+	public function isAvailable(): bool
+	{
+		return str_starts_with(SMF_VERSION, '3.0');
+	}
+
 	public function __invoke(AddonEvent $event): void
 	{
-		if (str_starts_with(SMF_VERSION, '3.0') === false || empty(Config::$modSettings['queryless_urls']))
+		if (empty(Config::$modSettings['queryless_urls']))
 			return;
 
 		match ($event->eventName()) {

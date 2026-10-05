@@ -24,6 +24,15 @@ abstract class AbstractAddon implements AddonInterface
 	public static array $events = [];
 
 	/**
+	 * Whether the addon is available in the current environment
+	 * and therefore should be displayed in the general list.
+	 */
+	public function isAvailable(): bool
+	{
+		return true;
+	}
+
+	/**
 	 * Additional actions when saving the addon settings, if any.
 	 */
 	public function saveSettings(): void

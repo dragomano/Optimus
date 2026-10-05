@@ -14,6 +14,7 @@ namespace Bugo\Optimus\Handlers;
 
 use Bugo\Compat\Cache\CacheApi;
 use Bugo\Compat\{Config, Db, IntegrationHook, Lang};
+use Bugo\Optimus\Addons\AbstractAddon;
 use Bugo\Optimus\Addons\AddonInterface;
 use Bugo\Optimus\Addons\DownloadableAddons;
 use Bugo\Optimus\Addons\HasSettingsInterface;
@@ -42,7 +43,7 @@ final class AddonHandler implements ListenerSubscriber
 	public function subscribeListeners(ListenerRegistry $acceptor): void
 	{
 		$mods   = $this->getInstalledMods();
-		$addons = $this->getAllAddons();
+		$addons = $this->getAvailableAddons();
 		$off    = $this->getDisabledAddons();
 
 		foreach ($addons as $listener) {
@@ -72,7 +73,7 @@ final class AddonHandler implements ListenerSubscriber
 		$off  = $this->getDisabledAddons();
 		$data = [];
 
-		foreach ($this->getAllAddons() as $class) {
+		foreach ($this->getAvailableAddons() as $class) {
 			$packageId = $class::PACKAGE_ID;
 			$name      = (new ReflectionClass($class))->getShortName();
 
@@ -140,7 +141,7 @@ final class AddonHandler implements ListenerSubscriber
 	{
 		$known = array_map(
 			static fn(string $class): string => $class::PACKAGE_ID,
-			$this->getAllAddons()
+			$this->getAvailableAddons()
 		);
 
 		if (! in_array($packageId, $known)) {
@@ -167,7 +168,7 @@ final class AddonHandler implements ListenerSubscriber
 		return array_values(array_filter(array_map(trim(...), explode(',', $disabled))));
 	}
 
-	private function getAllAddons(): array
+	private function getAvailableAddons(): array
 	{
 		$files = array_merge(
 			glob(OP_ADDONS . '/*.php'),
@@ -179,9 +180,16 @@ final class AddonHandler implements ListenerSubscriber
 		// External integrations
 		IntegrationHook::call('integrate_optimus_addons', [&$addons]);
 
+		// Skip addons that are not available in the current environment
 		return array_filter(
 			$addons,
-			static fn($class): bool => is_string($class) && class_exists($class) && is_subclass_of($class, AddonInterface::class),
+			static function ($class): bool {
+				if (! is_string($class) || ! is_subclass_of($class, AddonInterface::class)) {
+					return false;
+				}
+
+				return ! is_subclass_of($class, AbstractAddon::class) || (new $class)->isAvailable();
+			},
 		);
 	}
 
