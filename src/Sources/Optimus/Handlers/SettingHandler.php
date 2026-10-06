@@ -185,7 +185,7 @@ final class SettingHandler
 			[
 				'large_text',
 				'meta_keywords',
-				'label' => Lang::getTxt('meta_keywords', file: 'Search'),
+				'label' => Lang::getTxt('meta_keywords', file: 'ManageSettings'),
 				'subtext' => Lang::getTxt('meta_keywords_note', file: 'ManageSettings')
 			],
 			['title', 'optimus_all_pages'],
