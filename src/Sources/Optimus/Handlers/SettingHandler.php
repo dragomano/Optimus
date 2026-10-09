@@ -160,7 +160,7 @@ final class SettingHandler
 	public function basicTabSettings(bool $return_config = false)
 	{
 		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_basic_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=basic;save';
+		Utils::$context['post_url']    = Config::$scripturl . '?action=admin;area=optimus;sa=basic;save';
 
 		$this->addDefaultSettings(
 			['optimus_forum_index' => sprintf(Lang::getTxt('forum_index'), Utils::$context['forum_name'])]
@@ -255,7 +255,7 @@ final class SettingHandler
 	public function extraTabSettings(bool $return_config = false)
 	{
 		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_extra_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=extra;save';
+		Utils::$context['post_url']    = Config::$scripturl . '?action=admin;area=optimus;sa=extra;save';
 
 		$config_vars = [
 			['title', 'optimus_extra_title'],
@@ -296,9 +296,9 @@ final class SettingHandler
 
 	public function metatagsTabSettings(): void
 	{
-		Utils::$context['sub_template'] = 'metatags';
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_meta_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=metatags;save';
+		Utils::$context['sub_template']  = 'metatags';
+		Utils::$context['page_title']   .= ' - ' . Lang::getTxt('optimus_meta_title');
+		Utils::$context['post_url']      = Config::$scripturl . '?action=admin;area=optimus;sa=metatags;save';
 
 		$meta_tags = empty(Config::$modSettings['optimus_meta']) ? [] : unserialize(Config::$modSettings['optimus_meta']);
 
@@ -336,9 +336,9 @@ final class SettingHandler
 
 	public function redirectTabSettings(): void
 	{
-		Utils::$context['sub_template'] = 'redirect';
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_redirect_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=redirect;save';
+		Utils::$context['sub_template']  = 'redirect';
+		Utils::$context['page_title']   .= ' - ' . Lang::getTxt('optimus_redirect_title');
+		Utils::$context['post_url']      = Config::$scripturl . '?action=admin;area=optimus;sa=redirect;save';
 
 		Utils::$context['optimus_redirect_rules'] = empty(Config::$modSettings['optimus_redirect'])
 			? [] : unserialize(Config::$modSettings['optimus_redirect']);
@@ -354,7 +354,7 @@ final class SettingHandler
 			$redirect = [];
 			if (Input::isPost('custom_redirect_from') && Input::isPost('custom_redirect_to')) {
 				$custom_redirect_from = Input::post('custom_redirect_from');
-				$custom_redirect_to = Input::post('custom_redirect_to');
+				$custom_redirect_to   = Input::post('custom_redirect_to');
 				$custom_redirect_from = array_filter($custom_redirect_from);
 
 				foreach ($custom_redirect_from as $to => $from) {
@@ -371,9 +371,9 @@ final class SettingHandler
 
 	public function counterTabSettings(): void
 	{
-		Utils::$context['sub_template'] = 'counters';
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_counters');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=counters;save';
+		Utils::$context['sub_template']  = 'counters';
+		Utils::$context['page_title']   .= ' - ' . Lang::getTxt('optimus_counters');
+		Utils::$context['post_url']      = Config::$scripturl . '?action=admin;area=optimus;sa=counters;save';
 
 		$this->addDefaultSettings([
 			'optimus_counters_css'    => '.counters {text-align: center}',
@@ -402,9 +402,9 @@ final class SettingHandler
 
 	public function filesTabSettings(): void
 	{
-		Utils::$context['sub_template'] = 'files';
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_files_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=files;save';
+		Utils::$context['sub_template']  = 'files';
+		Utils::$context['page_title']   .= ' - ' . Lang::getTxt('optimus_files_title');
+		Utils::$context['post_url']      = Config::$scripturl . '?action=admin;area=optimus;sa=files;save';
 
 		$config_vars = [];
 
@@ -413,8 +413,15 @@ final class SettingHandler
 		$robotsPath   = $root . '/robots.txt';
 		$htaccessPath = $root . '/.htaccess';
 
+		$isHtaccessSupported = ! empty(Utils::$context['server']['is_apache'])
+			|| ! empty(Utils::$context['server']['is_litespeed']);
+
+		Utils::$context['optimus_htaccess_supported'] = $isHtaccessSupported;
+
 		Utils::$context['robots_content']   = Utils::makeWritable($robotsPath) ? @file_get_contents($robotsPath) : '';
-		Utils::$context['htaccess_content'] = Utils::makeWritable($htaccessPath) ? @file_get_contents($htaccessPath) : '';
+		Utils::$context['htaccess_content'] = $isHtaccessSupported && Utils::makeWritable($htaccessPath)
+			? @file_get_contents($htaccessPath)
+			: '';
 
 		(new RobotsGenerator())->generate();
 
@@ -426,11 +433,13 @@ final class SettingHandler
 
 			file_put_contents($robotsPath, Input::filter('optimus_robots'), LOCK_EX);
 
-			if (is_file($htaccessPath)) {
-				copy($htaccessPath, $htaccessPath . '.backup');
-			}
+			if ($isHtaccessSupported && Input::isPost('optimus_htaccess')) {
+				if (is_file($htaccessPath)) {
+					copy($htaccessPath, $htaccessPath . '.backup');
+				}
 
-			file_put_contents($htaccessPath, trim(Input::post('optimus_htaccess')), LOCK_EX);
+				file_put_contents($htaccessPath, trim(Input::post('optimus_htaccess')), LOCK_EX);
+			}
 
 			Utils::redirectexit('action=admin;area=optimus;sa=files');
 		}
@@ -443,9 +452,9 @@ final class SettingHandler
 	 */
 	public function sitemapTabSettings(bool $return_config = false)
 	{
-		Utils::$context['page_title'] .= ' - ' . Lang::getTxt('optimus_sitemap_title');
-		Utils::$context['settings_title'] = Lang::getTxt('optimus_sitemap_title');
-		Utils::$context['post_url'] = Config::$scripturl . '?action=admin;area=optimus;sa=sitemap;save';
+		Utils::$context['page_title']     .= ' - ' . Lang::getTxt('optimus_sitemap_title');
+		Utils::$context['settings_title']  = Lang::getTxt('optimus_sitemap_title');
+		Utils::$context['post_url']        = Config::$scripturl . '?action=admin;area=optimus;sa=sitemap;save';
 
 		if (! Utils::makeWritable(Config::$boarddir)) {
 			ErrorHandler::fatalLang('optimus_root_is_not_writable');

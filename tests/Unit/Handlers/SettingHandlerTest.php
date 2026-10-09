@@ -227,6 +227,8 @@ describe('Tabs', function () {
 	});
 
 	test('filesTabSettings save with backup creation', function () {
+		Utils::$context['server'] = ['is_apache' => true];
+
 		// Create a temporary .htaccess file
 		$htaccessPath = $this->tempDir . DIRECTORY_SEPARATOR . '.htaccess';
 		file_put_contents($htaccessPath, 'original content');
@@ -246,7 +248,7 @@ describe('Tabs', function () {
 			unlink($htaccessPath . '.backup');
 		}
 
-		unset($_POST['optimus_htaccess']);
+		unset($_POST['optimus_htaccess'], Utils::$context['server']);
 	});
 
 	test('sitemapTabSettings method', function () {

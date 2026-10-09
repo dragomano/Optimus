@@ -296,11 +296,20 @@ function template_files(): void
 		</div>
 		<div class="cat_bar">
 			<h3 class="catbg">', Lang::getTxt('optimus_htaccess_title'), '</h3>
-		</div>
+		</div>';
+
+	if (empty(Utils::$context['optimus_htaccess_supported'])) {
+		echo '
+		<div class="noticebox centertext">', Lang::getTxt('optimus_htaccess_unavailable'), '</div>';
+	} else {
+		echo '
 		<div class="information centertext">', Lang::getTxt('optimus_htaccess_desc'), '</div>
 		<div class="optimus windowbg">
 			<textarea rows="10" name="optimus_htaccess" id="optimus_htaccess">', Utils::$context['htaccess_content'], '</textarea>
-		</div>
+		</div>';
+	}
+
+	echo '
 		<div class="windowbg centertext">
 			<input type="hidden" name="', Utils::$context['session_var'], '" value="', Utils::$context['session_id'], '">
 			<input type="hidden" name="', Utils::$context['admin-dbsc_token_var'], '" value="', Utils::$context['admin-dbsc_token'], '">

@@ -109,6 +109,7 @@ $txt['optimus_rules_hint'] = 'You can use these rules as an example for your rob
 
 $txt['optimus_htaccess_title'] = 'Manage .htaccess';
 $txt['optimus_htaccess_desc'] = 'Here you can modify the .htaccess file for your forum. Be careful!';
+$txt['optimus_htaccess_unavailable'] = 'The .htaccess editor is unavailable because your forum is not running on Apache or LiteSpeed.';
 
 $txt['optimus_sitemap_title'] = 'Sitemap';
 /* Argument: OP_NAME */
