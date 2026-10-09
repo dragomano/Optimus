@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/artistic-license-2.0 Artistic-2.0
  *
  * @category addon
- * @version 15.10.25
+ * @version 10.10.26
  */
 
 namespace Bugo\Optimus\Addons;
@@ -67,13 +67,11 @@ final class PrettyUrls extends AbstractAddon
 			require_once($pretty);
 		}
 
-		if (! isset(Utils::$context['session_var'])) {
-			Utils::$context['session_var'] = substr(
-				md5(Utils::$smcFunc['random_int']() . session_id() . Utils::$smcFunc['random_int']()),
-				0,
-				Utils::$smcFunc['random_int'](7, 12)
-			);
-		}
+		Utils::$context['session_var'] ??= substr(
+			md5(Utils::$smcFunc['random_int']() . session_id() . Utils::$smcFunc['random_int']()),
+			0,
+			Utils::$smcFunc['random_int'](7, 12)
+		);
 
 		if (isset(Config::$modSettings['pretty_board_urls'])) {
 			Utils::$context['pretty']['board_urls'] = @unserialize(Config::$modSettings['pretty_board_urls']);
