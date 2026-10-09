@@ -24,7 +24,7 @@ if (! defined('SMF'))
  */
 final class DownloadableAddons
 {
-	public const PREMIUM_URL = 'https://ko-fi.com/post/All-premium-addons-for-Optimus-U7U3VKQHJ';
+	public const PREMIUM_URL = 'https://app.lava.top/products/a1fc05a8-f7d9-4f3f-8619-cdcf691e2555';
 
 	public static function all(): array
 	{
