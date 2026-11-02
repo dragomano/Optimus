@@ -61,7 +61,21 @@ final class SettingHandler
 		}
 		.fa-optimus::before {
 			content: "\f717";
+		}
+		');
+
+		if (str_contains(Theme::$current->settings['name'], 'Lunarfall')) {
+			Theme::addInlineCss('
+		.fa-optimus,
+		.main_icons.optimus,
+		:is(.fa, .fas, .far, .fa-main_icons).optimus {
+			--lf-icon-code: "\f717";
+			--lf-icon-family: "Font Awesome 7 Free";
+			--lf-icon-weight: 900;
+			--lf-icon-name: "spider";
+			--lf-icon-label: "Spider";
 		}');
+		}
 
 		if (Input::request('area') === 'optimus') {
 			Theme::loadCSSFile('optimus/optimus.css');

@@ -47,7 +47,11 @@ beforeEach(function () {
 	$_REQUEST = [];
 
 	// Set Theme properties
-	Theme::$current = (object) ['settings' => ['default_images_url' => '/images', 'theme_id' => 1]];
+	Theme::$current = (object) ['settings' => [
+		'default_images_url' => '/images',
+		'theme_id'           => 1,
+		'name'               => 'SMF Default Theme',
+	]];
 
 	// Mock Db
 	Db::$db = new class extends TestDbMapper {
@@ -103,9 +107,20 @@ test('adminAreas method', function () {
 
 	$this->handler->adminAreas($admin_areas);
 
-	expect($admin_areas)->not->toBeEmpty();
+	expect($admin_areas)->not->toBeEmpty()
+		->and(Utils::$context['css_header'])->not->toContain('--lf-icon-code');
 
 	unset($_REQUEST['area']);
+});
+
+test('adminAreas method adds Lunarfall-specific css when theme name contains Lunarfall', function () {
+	Theme::$current->settings['name'] = 'Lunarfall Theme';
+
+	$admin_areas = [];
+
+	$this->handler->adminAreas($admin_areas);
+
+	expect(implode("\n", Utils::$context['css_header']))->toContain('--lf-icon-code');
 });
 
 test('adminSearch method', function () {
@@ -260,7 +275,7 @@ describe('Tabs', function () {
 
 	test('sitemapTabSettings sets error when directory not writable', function () {
 		global $makeWritableReturn;
-		
+
 		$makeWritableReturn = false;
 
 		expect($this->handler->sitemapTabSettings())->toBeNull();
@@ -281,9 +296,16 @@ describe('Tabs', function () {
 				return [];
 			}
 
-			public function insert(string $method, string $table, array $columns, array $data, array $keys, int $returnmode = 0): int|array|null
-			{
+			public function insert(
+				string $method,
+				string $table,
+				array $columns,
+				array $data,
+				array $keys,
+				int $returnmode = 0,
+			): int|array|null {
 				$this->insertCalled = true;
+
 				return null;
 			}
 		};
@@ -308,9 +330,16 @@ describe('Tabs', function () {
 				return [];
 			}
 
-			public function insert(string $method, string $table, array $columns, array $data, array $keys, int $returnmode = 0): int|array|null
-			{
+			public function insert(
+				string $method,
+				string $table,
+				array $columns,
+				array $data,
+				array $keys,
+				int $returnmode = 0,
+			): int|array|null {
 				$this->insertParams = [$method, $table, $columns, $data, $keys];
+
 				return null;
 			}
 		};
@@ -346,7 +375,6 @@ describe('Tabs', function () {
 
 test('addDefaultSettings returns early when settings is empty', function () {
 	$method = new ReflectionMethod($this->handler, 'addDefaultSettings');
-
 	$method->invoke($this->handler, []);
 
 	expect(Config::$modSettings)->toBe([]);
@@ -354,7 +382,7 @@ test('addDefaultSettings returns early when settings is empty', function () {
 
 test('actions method does not add tips layer when area is not optimus', function () {
 	$_REQUEST['area'] = 'config';
-	$_REQUEST['sa'] = 'basic';
+	$_REQUEST['sa']   = 'basic';
 
 	$this->handler->actions();
 
@@ -365,6 +393,7 @@ test('actions method does not add tips layer when area is not optimus', function
 
 test('actions method does not add tips layer when template_layers is empty', function () {
 	$_REQUEST['area'] = 'optimus';
+
 	Utils::$context['template_layers'] = [];
 
 	$this->handler->actions();
