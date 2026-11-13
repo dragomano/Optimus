@@ -16,7 +16,7 @@ if (! defined('SMF'))
 	die('No direct access...'); // @codeCoverageIgnore
 
 defined('OP_NAME') || define('OP_NAME', 'Optimus for SMF');
-defined('OP_VERSION') || define('OP_VERSION', '3.1');
+defined('OP_VERSION') || define('OP_VERSION', '3.1.1');
 defined('OP_ADDONS') || define('OP_ADDONS', __DIR__ . '/Addons');
 
 require_once __DIR__ . '/Libs/autoload.php';
