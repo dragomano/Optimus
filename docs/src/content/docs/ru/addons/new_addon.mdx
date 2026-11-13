@@ -23,7 +23,7 @@ final class ExampleAddon extends AbstractAddon
 			return;
 
 		IntegrationHook::add(
-			'integrate_theme_context', self::class . '::hideSomeTopicsFromSpiders#', false, __FILE__
+			'integrate_theme_context', self::class . '::hideSomeTopicsFromSpiders#', false
 		);
 	}
 
